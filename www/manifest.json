@@ -1,0 +1,112 @@
+{
+  "name": "Starter",
+  "short_name": "Starter",
+  "description": "A starter webapp",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/appicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "background": {
+    "service_worker": "/service.worker.js"
+  },
+  "paths": [
+    {
+      "lang": "en"
+    },
+    {
+      "lang": "zh"
+    },
+    {
+      "lang": "hi"
+    },
+    {
+      "lang": "es"
+    },
+    {
+      "lang": "ar"
+    },
+    {
+      "lang": "fr"
+    },
+    {
+      "lang": "de"
+    },
+    {
+      "lang": "ru"
+    },
+    {
+      "lang": "pt"
+    },
+    {
+      "lang": "ja"
+    },
+    {
+      "lang": "pa"
+    },
+    {
+      "lang": "bn"
+    },
+    {
+      "lang": "id"
+    },
+    {
+      "lang": "ur"
+    },
+    {
+      "lang": "ms"
+    },
+    {
+      "lang": "it"
+    },
+    {
+      "lang": "tr"
+    },
+    {
+      "lang": "ta"
+    },
+    {
+      "lang": "te"
+    },
+    {
+      "lang": "ko"
+    },
+    {
+      "lang": "vi"
+    },
+    {
+      "lang": "pl"
+    },
+    {
+      "lang": "ro"
+    },
+    {
+      "lang": "nl"
+    },
+    {
+      "lang": "el"
+    },
+    {
+      "lang": "th"
+    },
+    {
+      "lang": "cs"
+    },
+    {
+      "lang": "hu"
+    },
+    {
+      "lang": "sv"
+    },
+    {
+      "lang": "da"
+    }
+  ]
+}

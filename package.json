@@ -1,0 +1,27 @@
+{
+  "type": "module",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "examine": "deno lint ./src && deno check ./src && deno test ./src",
+    "prepack": "deno x glace ./www --out=./out",
+    "produce": "deno x glace ./www --out=./out --watch=./src,./www & deno -RNE ./src/mods/srv/bin.ts",
+    "develop": "deno x glace ./www --out=./out --watch=./src,./www --dev & deno -RNE ./src/mods/srv/bin.ts --dev"
+  },
+  "files": [
+    "./out"
+  ],
+  "dependencies": {
+    "@hazae41/immutable": "^2.0.24",
+    "@hazae41/labase": "^1.0.16",
+    "@hazae41/rewind": "^2.3.12",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@hazae41/glace": "^1.0.30",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "deno": "^2.6.3"
+  }
+}
