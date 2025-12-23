@@ -2,7 +2,7 @@
 
 import { usePathContext } from "@hazae41/chemin";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
-import React, { KeyboardEvent, MouseEvent, SyntheticEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { JSX, KeyboardEvent, MouseEvent, SyntheticEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Events } from "../events/mod.ts";
 import { Nullable } from "../nullable/mod.tsx";
@@ -165,4 +165,24 @@ export function Menu(props: ChildrenProps & DarkProps) {
       </dialog>
     </CloseContext>
   </Portal>
+}
+
+export function WideClickableNakedMenuAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
+  const { children, "aria-disabled": disabled = false, ...rest } = props
+
+  return <a className="flex-1 group po-2 rounded-xl outline-none whitespace-nowrap aria-[disabled=false]:hover:bg-default-contrast focus-visible:bg-default-contrast aria-disabled:opacity-50 transition-opacity"
+    aria-disabled={disabled}
+    {...rest}>
+    <GapperAndClickerInMenuAnchor>
+      {children}
+    </GapperAndClickerInMenuAnchor>
+  </a>
+}
+
+export function GapperAndClickerInMenuAnchor(props: ChildrenProps) {
+  const { children } = props
+
+  return <div className="h-full w-full flex items-center justify-start gap-4 group-aria-[disabled=false]:group-active:scale-90 transition-transform">
+    {children}
+  </div>
 }

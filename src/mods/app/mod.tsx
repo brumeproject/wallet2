@@ -7,9 +7,11 @@ import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "
 import { Result } from "@hazae41/result-and-option";
 import { Database } from "@hazae41/serac";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { WideClickableContrastButton, WideClickableOppositeButton } from "../../libs/button/mod.tsx";
 import { useClientContext } from "../../libs/client/mod.tsx";
 import { Dialog } from "../../libs/dialog/mod.tsx";
-import { Menu } from "../../libs/menu/mod.tsx";
+import { Outline } from "../../libs/heroicons/mod.ts";
+import { Menu, WideClickableNakedMenuAnchor } from "../../libs/menu/mod.tsx";
 
 React;
 
@@ -72,7 +74,7 @@ export function App() {
   }).catch(Errors.display), [users, uuid, file])
 
   const openUserOrAlert = useCallback((user: UserData) => Promise.try(async () => {
-    console.log(user)
+    alert(user.uuid)
   }).catch(Errors.display), [users])
 
   const LoginButton = () => {
@@ -88,17 +90,32 @@ export function App() {
     </a>
   }
 
+  const LoginMenu = () => {
+    return <div className="flex flex-col text-left gap-2">
+      {allUsers?.map(user => (
+        <WideClickableNakedMenuAnchor
+          key={user.uuid}
+          onClick={() => openUserOrAlert(user)}>
+          {user.uuid.slice(0, 8)}
+        </WideClickableNakedMenuAnchor>
+      ))}
+      <AddUserButton />
+    </div>
+  }
+
   const AddUserButton = () => {
     const coords = useCoords(hash, "/login/add")
 
-    return <a className=""
+    return <WideClickableNakedMenuAnchor
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}
-      onContextMenu={coords.onContextMenu}
-      type="button">
+      onContextMenu={coords.onContextMenu}>
+      <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast border-dashed">
+        <Outline.PlusIcon className="size-4" />
+      </div>
       Add user
-    </a>
+    </WideClickableNakedMenuAnchor>
   }
 
   return <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
@@ -106,31 +123,23 @@ export function App() {
       <HashSubpathProvider>
         {client && hash.url.pathname === "/login" &&
           <Menu>
-            {allUsers?.map(user => (
-              <button className=""
-                key={user.uuid}
-                type="button"
-                onClick={() => openUserOrAlert(user)}>
-                {user.uuid}
-              </button>
-            ))}
-            <AddUserButton />
+            <LoginMenu />
           </Menu>}
         {client && hash.url.pathname === "/login/add" &&
           <Dialog>
             <h1 className="text-xl font-medium">
               Add user
             </h1>
-            <button className=""
-              type="button"
-              onClick={pickFileOrAlert}>
-              Open
-            </button>
-            <button className=""
-              type="button"
-              onClick={addUserOrAlert}>
-              Submit
-            </button>
+            <div className="flex items-center flex-wrap-reverse gap-2">
+              <WideClickableContrastButton
+                onClick={pickFileOrAlert}>
+                Import
+              </WideClickableContrastButton>
+              <WideClickableOppositeButton
+                onClick={addUserOrAlert}>
+                Create
+              </WideClickableOppositeButton>
+            </div>
           </Dialog>}
       </HashSubpathProvider>
       <LoginButton />
