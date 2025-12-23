@@ -4,14 +4,14 @@
 
 import { Errors } from "@/libs/errors/mod.ts";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
-import { Result } from "@hazae41/result-and-option";
-import { Database } from "@hazae41/serac";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { WideClickableContrastButton, WideClickableOppositeButton } from "../../libs/button/mod.tsx";
+import { ClickableOppositeAnchor } from "../../libs/anchor/mod.tsx";
+import { WideClickableOppositeButton } from "../../libs/button/mod.tsx";
 import { useClientContext } from "../../libs/client/mod.tsx";
 import { Dialog } from "../../libs/dialog/mod.tsx";
 import { Outline } from "../../libs/heroicons/mod.ts";
 import { Menu, WideClickableNakedMenuAnchor } from "../../libs/menu/mod.tsx";
+import { useUsersDatabaseContext } from "../../libs/users/mod.tsx";
 
 React;
 
@@ -26,15 +26,7 @@ export function App() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const [users, setUsers] = useState<Result<Database>>()
-
-  const openUsersAndWrap = useCallback(() => Result.runAndWrap(async () => {
-    return await Database.openOrThrow("users", 1, () => { })
-  }), [])
-
-  useEffect(() => {
-    openUsersAndWrap().then(setUsers)
-  }, [])
+  const users = useUsersDatabaseContext()
 
   const uuid = useMemo(() => {
     return crypto.randomUUID()
@@ -54,7 +46,7 @@ export function App() {
   const [allUsers, setAllUsers] = useState<Array<UserData>>()
 
   const getAllUsers = useCallback(async () => {
-    return await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    return await users.getOrThrow().getOrThrow().getOrThrow<Array<UserData>>("list") || []
   }, [users])
 
   useEffect(() => {
@@ -64,11 +56,11 @@ export function App() {
   }, [users])
 
   const addUserOrAlert = useCallback(() => Promise.try(async () => {
-    const stale = await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    const stale = await users.getOrThrow().getOrThrow().getOrThrow<Array<UserData>>("list") || []
 
     const fresh = [...stale, { uuid, file } satisfies UserData]
 
-    await users.getOrThrow().setOrThrow("list", fresh)
+    await users.getOrThrow().getOrThrow().setOrThrow("list", fresh)
 
     setAllUsers(fresh)
   }).catch(Errors.display), [users, uuid, file])
@@ -80,14 +72,13 @@ export function App() {
   const LoginButton = () => {
     const coords = useCoords(hash, "/login")
 
-    return <a className=""
+    return <ClickableOppositeAnchor
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}
-      onContextMenu={coords.onContextMenu}
-      type="button">
+      onContextMenu={coords.onContextMenu}>
       Login
-    </a>
+    </ClickableOppositeAnchor>
   }
 
   const LoginMenu = () => {
@@ -118,6 +109,37 @@ export function App() {
     </WideClickableNakedMenuAnchor>
   }
 
+  const AddUserMenu = () => {
+    return <div className="flex flex-col text-left gap-2">
+      <ImportUserButton />
+      <CreateUserButton />
+    </div>
+  }
+
+  const ImportUserButton = () => {
+    const coords = useCoords(hash, "/login/add/import")
+
+    return <WideClickableNakedMenuAnchor
+      href={coords.url.hash}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}
+      onContextMenu={coords.onContextMenu}>
+      Import user
+    </WideClickableNakedMenuAnchor>
+  }
+
+  const CreateUserButton = () => {
+    const coords = useCoords(hash, "/login/add/create")
+
+    return <WideClickableNakedMenuAnchor
+      href={coords.url.hash}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}
+      onContextMenu={coords.onContextMenu}>
+      Create user
+    </WideClickableNakedMenuAnchor>
+  }
+
   return <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
     <div className="p-safe flex flex-col items-center">
       <HashSubpathProvider>
@@ -126,18 +148,30 @@ export function App() {
             <LoginMenu />
           </Menu>}
         {client && hash.url.pathname === "/login/add" &&
+          <Menu>
+            <AddUserMenu />
+          </Menu>}
+        {client && hash.url.pathname === "/login/add/import" &&
           <Dialog>
             <h1 className="text-xl font-medium">
-              Add user
+              Import user
             </h1>
             <div className="flex items-center flex-wrap-reverse gap-2">
-              <WideClickableContrastButton
-                onClick={pickFileOrAlert}>
-                Import
-              </WideClickableContrastButton>
               <WideClickableOppositeButton
-                onClick={addUserOrAlert}>
-                Create
+                onClick={pickFileOrAlert}>
+                Open file
+              </WideClickableOppositeButton>
+            </div>
+          </Dialog>}
+        {client && hash.url.pathname === "/login/add/create" &&
+          <Dialog>
+            <h1 className="text-xl font-medium">
+              Create user
+            </h1>
+            <div className="flex items-center flex-wrap-reverse gap-2">
+              <WideClickableOppositeButton
+                onClick={pickFileOrAlert}>
+                Save file
               </WideClickableOppositeButton>
             </div>
           </Dialog>}

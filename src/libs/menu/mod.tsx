@@ -167,6 +167,22 @@ export function Menu(props: ChildrenProps & DarkProps) {
   </Portal>
 }
 
+export function GapperAndClickerInMenuAnchor(props: ChildrenProps) {
+  const { children } = props
+
+  return <div className="h-full w-full flex items-center justify-start gap-4 group-aria-[disabled=false]:group-active:scale-90 transition-transform">
+    {children}
+  </div>
+}
+
+export function GapperAndClickerInMenuButton(props: ChildrenProps) {
+  const { children } = props
+
+  return <div className="h-full w-full flex items-center justify-start gap-4 group-enabled:group-active:scale-90 transition-transform">
+    {children}
+  </div>
+}
+
 export function WideClickableNakedMenuAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
   const { children, "aria-disabled": disabled = false, ...rest } = props
 
@@ -179,10 +195,13 @@ export function WideClickableNakedMenuAnchor(props: ChildrenProps & JSX.Intrinsi
   </a>
 }
 
-export function GapperAndClickerInMenuAnchor(props: ChildrenProps) {
-  const { children } = props
+export function WideClickableNakedMenuButton(props: ChildrenProps & JSX.IntrinsicElements["button"] & { ["data-value"]?: string } & { ["aria-selected"]?: boolean }) {
+  const { children, ...rest } = props
 
-  return <div className="h-full w-full flex items-center justify-start gap-4 group-aria-[disabled=false]:group-active:scale-90 transition-transform">
-    {children}
-  </div>
+  return <button className="flex-1 group po-2 rounded-xl outline-none whitespace-nowrap enabled:hover:bg-default-contrast focus-visible:bg-default-contrast aria-selected:bg-default-contrast disabled:opacity-50 transition-opacity"
+    {...rest}>
+    <GapperAndClickerInMenuButton>
+      {children}
+    </GapperAndClickerInMenuButton>
+  </button>
 }

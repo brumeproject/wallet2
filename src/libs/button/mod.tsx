@@ -1,5 +1,4 @@
-import * as React from "react";
-import { JSX } from "react";
+import React, { JSX } from "react";
 import { ChildrenProps } from "../props/mod.ts";
 
 React;
@@ -27,6 +26,17 @@ export function WideClickableContrastButton(props: ChildrenProps & JSX.Intrinsic
   const { children, ...rest } = props
 
   return <button className="flex-1 group po-2 bg-default-contrast rounded-xl outline-none whitespace-nowrap enabled:hover:bg-default-double-contrast focus-visible:outline-default-contrast disabled:opacity-50 transition-opacity"
+    {...rest}>
+    <GapperAndClickerInButton>
+      {children}
+    </GapperAndClickerInButton>
+  </button>
+}
+
+export function ClickableOppositeButton(props: ChildrenProps & JSX.IntrinsicElements["button"]) {
+  const { children, ...rest } = props
+
+  return <button className="group po-2 bg-opposite text-opposite rounded-xl outline-none enabled:hover:bg-opposite-double-contrast focus-visible:outline-opposite disabled:opacity-50 transition-opacity"
     {...rest}>
     <GapperAndClickerInButton>
       {children}

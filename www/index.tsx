@@ -4,6 +4,7 @@
 
 import { ClientContext } from "@/libs/client/mod.tsx";
 import { dirs, Lang } from "@/libs/lang/mod.ts";
+import { UsersDatabaseProvider } from "@/libs/users/mod.tsx";
 import { App } from "@/mods/app/mod.tsx";
 import { HashPathProvider } from "@hazae41/chemin";
 import { immutable } from "@hazae41/immutable";
@@ -78,7 +79,9 @@ function Body() {
 
   return <ClientContext.Provider value={client}>
     <HashPathProvider>
-      <App />
+      <UsersDatabaseProvider>
+        <App />
+      </UsersDatabaseProvider>
     </HashPathProvider>
   </ClientContext.Provider>
 }
