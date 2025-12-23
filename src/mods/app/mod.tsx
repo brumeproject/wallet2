@@ -7,6 +7,7 @@ import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "
 import { Result } from "@hazae41/result-and-option";
 import { Database } from "@hazae41/serac";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Dialog } from "../../libs/dialog/mod.tsx";
 import { Menu } from "../../libs/menu/mod.tsx";
 
 React;
@@ -81,17 +82,34 @@ export function App() {
       onContextMenu={coords.onContextMenu}
       type="button">
       Login
-      <HashSubpathProvider>
-        {hash.url.pathname === "/login" &&
-          <Menu>
-            Login
-          </Menu>}
-      </HashSubpathProvider>
+    </a>
+  }
+
+  const AddUserButton = () => {
+    const coords = useCoords(hash, "/login/add")
+
+    return <a className=""
+      href={coords.href}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}
+      onContextMenu={coords.onContextMenu}
+      type="button">
+      Add user
     </a>
   }
 
   return <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
     <div className="p-safe flex flex-col items-center">
+      <HashSubpathProvider>
+        {hash.url.pathname === "/login" &&
+          <Menu>
+            <AddUserButton />
+          </Menu>}
+        {hash.url.pathname === "/login/add" &&
+          <Dialog>
+            Add user
+          </Dialog>}
+      </HashSubpathProvider>
       <LoginButton />
       <h1 className="text-xl font-medium">
         Users
