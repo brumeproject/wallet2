@@ -4,6 +4,7 @@
 
 import { dirs, Lang } from "@/libs/lang/mod.ts";
 import { App } from "@/mods/app/mod.tsx";
+import { HashPathProvider } from "@hazae41/chemin";
 import { immutable } from "@hazae41/immutable";
 import { Rewind } from "@hazae41/rewind";
 import React, { ReactNode, useEffect, useState } from "react";
@@ -74,7 +75,9 @@ function Body() {
     upgrade().catch(console.error)
   }, [])
 
-  return <App />
+  return <HashPathProvider>
+    <App />
+  </HashPathProvider>
 }
 
 // @ts-ignore: process not found

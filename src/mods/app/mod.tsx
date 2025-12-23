@@ -1,9 +1,13 @@
+// deno-lint-ignore-file require-await
+
 /// <reference types="@/libs/files/lib.d.ts" />
 
 import { Errors } from "@/libs/errors/mod.ts";
+import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { Result } from "@hazae41/result-and-option";
 import { Database } from "@hazae41/serac";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Menu } from "../../libs/menu/mod.tsx";
 
 React;
 
@@ -13,6 +17,9 @@ interface UserData {
 }
 
 export function App() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
   const [users, setUsers] = useState<Result<Database>>()
 
   const openUsersAndWrap = useCallback(() => Result.runAndWrap(async () => {
@@ -64,8 +71,28 @@ export function App() {
     console.log(user)
   }).catch(Errors.display), [users])
 
+  const LoginButton = () => {
+    const coords = useCoords(hash, "/login")
+
+    return <a className=""
+      href={coords.href}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}
+      onContextMenu={coords.onContextMenu}
+      type="button">
+      Login
+      <HashSubpathProvider>
+        {hash.url.pathname === "/login" &&
+          <Menu>
+            Login
+          </Menu>}
+      </HashSubpathProvider>
+    </a>
+  }
+
   return <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
     <div className="p-safe flex flex-col items-center">
+      <LoginButton />
       <h1 className="text-xl font-medium">
         Users
       </h1>

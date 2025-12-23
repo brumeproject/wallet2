@@ -12,8 +12,10 @@
     "./out"
   ],
   "dependencies": {
+    "@hazae41/chemin": "^2.0.13",
     "@hazae41/immutable": "^2.0.24",
     "@hazae41/labase": "^1.0.16",
+    "@hazae41/react-close-context": "^1.0.3",
     "@hazae41/result-and-option": "^2.0.10",
     "@hazae41/rewind": "^2.3.12",
     "@hazae41/serac": "^1.0.6",
