@@ -26,7 +26,7 @@ export function App() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const users = useUsersDatabaseContext()
+  const users = useUsersDatabaseContext().getOrThrow()
 
   const uuid = useMemo(() => {
     return crypto.randomUUID()
@@ -46,21 +46,23 @@ export function App() {
   const [allUsers, setAllUsers] = useState<Array<UserData>>()
 
   const getAllUsers = useCallback(async () => {
-    return await users.getOrThrow().getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    return await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
   }, [users])
 
   useEffect(() => {
     if (users == null)
       return
+    if (users.isErr())
+      return
     getAllUsers().then(setAllUsers).catch(console.error)
   }, [users])
 
   const addUserOrAlert = useCallback(() => Promise.try(async () => {
-    const stale = await users.getOrThrow().getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    const stale = await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
 
     const fresh = [...stale, { uuid, file } satisfies UserData]
 
-    await users.getOrThrow().getOrThrow().setOrThrow("list", fresh)
+    await users.getOrThrow().setOrThrow("list", fresh)
 
     setAllUsers(fresh)
   }).catch(Errors.display), [users, uuid, file])

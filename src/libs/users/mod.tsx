@@ -1,4 +1,4 @@
-import { Option, Result } from "@hazae41/result-and-option";
+import { Err, Option, Result } from "@hazae41/result-and-option";
 import { Database } from "@hazae41/serac";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { Nullable } from "../../libs/nullable/mod.tsx";
@@ -6,7 +6,7 @@ import { ChildrenProps } from "../../libs/props/mod.ts";
 
 React;
 
-const UsersDatabaseContext = createContext<Nullable<Result<Database>>>(null)
+const UsersDatabaseContext = createContext<Nullable<Result<Database>>>(null);
 
 export function useUsersDatabaseContext() {
   return Option.wrap(useContext(UsersDatabaseContext))
@@ -15,7 +15,7 @@ export function useUsersDatabaseContext() {
 export function UsersDatabaseProvider(props: ChildrenProps) {
   const { children } = props
 
-  const [result, setResult] = useState<Result<Database>>(null)
+  const [result, setResult] = useState<Result<Database>>(() => new Err("Database not opened yet"))
 
   const openAndWrap = useCallback(() => Result.runAndWrap(async () => {
     return await Database.openOrThrow("users", 1, () => { })
