@@ -76,7 +76,7 @@ export function App() {
     const coords = useCoords(hash, "/login")
 
     return <a className=""
-      href={coords.href}
+      href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}
       onContextMenu={coords.onContextMenu}
@@ -89,7 +89,7 @@ export function App() {
     const coords = useCoords(hash, "/login/add")
 
     return <a className=""
-      href={coords.href}
+      href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}
       onContextMenu={coords.onContextMenu}
@@ -103,38 +103,34 @@ export function App() {
       <HashSubpathProvider>
         {hash.url.pathname === "/login" &&
           <Menu>
+            {allUsers?.map(user => (
+              <button className=""
+                key={user.uuid}
+                type="button"
+                onClick={() => openUserOrAlert(user)}>
+                {user.uuid}
+              </button>
+            ))}
             <AddUserButton />
           </Menu>}
         {hash.url.pathname === "/login/add" &&
           <Dialog>
-            Add user
+            <h1 className="text-xl font-medium">
+              Add user
+            </h1>
+            <button className=""
+              type="button"
+              onClick={pickFileOrAlert}>
+              Open
+            </button>
+            <button className=""
+              type="button"
+              onClick={addUserOrAlert}>
+              Submit
+            </button>
           </Dialog>}
       </HashSubpathProvider>
       <LoginButton />
-      <h1 className="text-xl font-medium">
-        Users
-      </h1>
-      {allUsers?.map(user => (
-        <button className=""
-          key={user.uuid}
-          type="button"
-          onClick={() => openUserOrAlert(user)}>
-          {user.uuid}
-        </button>
-      ))}
-      <h1 className="text-xl font-medium">
-        Add user
-      </h1>
-      <button className=""
-        type="button"
-        onClick={pickFileOrAlert}>
-        Open
-      </button>
-      <button className=""
-        type="button"
-        onClick={addUserOrAlert}>
-        Submit
-      </button>
     </div>
   </div>
 }
