@@ -7,6 +7,7 @@ import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "
 import { Result } from "@hazae41/result-and-option";
 import { Database } from "@hazae41/serac";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useClientContext } from "../../libs/client/mod.tsx";
 import { Dialog } from "../../libs/dialog/mod.tsx";
 import { Menu } from "../../libs/menu/mod.tsx";
 
@@ -18,6 +19,8 @@ interface UserData {
 }
 
 export function App() {
+  const client = useClientContext().getOrThrow()
+
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -101,7 +104,7 @@ export function App() {
   return <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
     <div className="p-safe flex flex-col items-center">
       <HashSubpathProvider>
-        {hash.url.pathname === "/login" &&
+        {client && hash.url.pathname === "/login" &&
           <Menu>
             {allUsers?.map(user => (
               <button className=""
@@ -113,7 +116,7 @@ export function App() {
             ))}
             <AddUserButton />
           </Menu>}
-        {hash.url.pathname === "/login/add" &&
+        {client && hash.url.pathname === "/login/add" &&
           <Dialog>
             <h1 className="text-xl font-medium">
               Add user

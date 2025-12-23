@@ -2,6 +2,7 @@
 
 /// <reference lib="dom" />
 
+import { ClientContext } from "@/libs/client/mod.tsx";
 import { dirs, Lang } from "@/libs/lang/mod.ts";
 import { App } from "@/mods/app/mod.tsx";
 import { HashPathProvider } from "@hazae41/chemin";
@@ -75,9 +76,11 @@ function Body() {
     upgrade().catch(console.error)
   }, [])
 
-  return <HashPathProvider>
-    <App />
-  </HashPathProvider>
+  return <ClientContext.Provider value={client}>
+    <HashPathProvider>
+      <App />
+    </HashPathProvider>
+  </ClientContext.Provider>
 }
 
 // @ts-ignore: process not found
