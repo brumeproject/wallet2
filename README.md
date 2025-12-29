@@ -1,3 +1,3 @@
-# Wallet
+# Wallet II
 
-The wallet with maximum privacy and security
+The wallet with maximum security and privacy
