@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@hazae41/glace": "^1.0.30",
-    "@hazae41/kdbx": "^0.2.0",
+    "@hazae41/kdbx": "^0.2.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "deno": "^2.6.3"
