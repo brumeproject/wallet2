@@ -28,27 +28,6 @@ export function App() {
 
   const users = useUsersDatabaseContext().getOrThrow()
 
-  const uuid = useMemo(() => {
-    return crypto.randomUUID()
-  }, [])
-
-  const [file, setFile] = useState<FileSystemHandle>()
-
-  const openFileOrAlert = useCallback(() => Promise.try(async () => {
-    const [file] = await showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
-
-    if (file == null)
-      return
-
-    setFile(file)
-  }).catch(Errors.display), [uuid])
-
-  const saveFileOrAlert = useCallback(() => Promise.try(async () => {
-    const file = await showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
-
-    setFile(file)
-  }).catch(Errors.display), [uuid])
-
   const [allUsers, setAllUsers] = useState<Array<UserData>>()
 
   const getAllUsers = useCallback(async () => {
@@ -62,16 +41,6 @@ export function App() {
       return
     getAllUsers().then(setAllUsers).catch(console.error)
   }, [users])
-
-  const addUserOrAlert = useCallback(() => Promise.try(async () => {
-    const stale = await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
-
-    const fresh = [...stale, { uuid, file } satisfies UserData]
-
-    await users.getOrThrow().setOrThrow("list", fresh)
-
-    setAllUsers(fresh)
-  }).catch(Errors.display), [users, uuid, file])
 
   const openUserOrAlert = useCallback((user: UserData) => Promise.try(async () => {
     alert(user.uuid)
@@ -148,84 +117,6 @@ export function App() {
     </div>
   }, [ImportUserButton, CreateUserButton])
 
-  const ImportUserDialog = useCallback(() => {
-    return <>
-      <h1 className="text-xl font-medium">
-        Import user
-      </h1>
-      <div className="h-4" />
-      <div className="font-medium">
-        Name
-      </div>
-      <div className="text-default-contrast">
-        Will be used locally for display purposes
-      </div>
-      <div className="h-2" />
-      <div className="bg-default-contrast po-2 rounded-xl">
-        <input className="w-full outline-none"
-          placeholder="Anon" />
-      </div>
-      <div className="h-4" />
-      <div className="font-medium">
-        Password
-      </div>
-      <div className="text-default-contrast">
-        At least 3 characters, will be used to decrypt your file
-      </div>
-      <div className="h-2" />
-      <div className="bg-default-contrast po-2 rounded-xl">
-        <input className="w-full outline-none"
-          type="password" />
-      </div>
-      <div className="h-4 grow" />
-      <div className="flex items-center flex-wrap-reverse gap-2">
-        <WideClickableOppositeButton
-          onClick={openFileOrAlert}>
-          Open file
-        </WideClickableOppositeButton>
-      </div>
-    </>
-  }, [openFileOrAlert])
-
-  const CreateUserDialog = useCallback(() => {
-    return <Fragment>
-      <h1 className="text-xl font-medium">
-        Create user
-      </h1>
-      <div className="h-4" />
-      <div className="font-medium">
-        Name
-      </div>
-      <div className="text-default-contrast">
-        Will be used locally for display purposes
-      </div>
-      <div className="h-2" />
-      <div className="bg-default-contrast po-2 rounded-xl">
-        <input className="w-full outline-none"
-          placeholder="Anon" />
-      </div>
-      <div className="h-4" />
-      <div className="font-medium">
-        Password
-      </div>
-      <div className="text-default-contrast">
-        At least 3 characters, will be used to encrypt your file
-      </div>
-      <div className="h-2" />
-      <div className="bg-default-contrast po-2 rounded-xl">
-        <input className="w-full outline-none"
-          type="password" />
-      </div>
-      <div className="h-4 grow" />
-      <div className="flex items-center flex-wrap-reverse gap-2">
-        <WideClickableOppositeButton
-          onClick={saveFileOrAlert}>
-          Save file
-        </WideClickableOppositeButton>
-      </div>
-    </Fragment>
-  }, [saveFileOrAlert])
-
   return <Fragment>
     <HashSubpathProvider>
       {client && hash.url.pathname === "/login" &&
@@ -248,7 +139,7 @@ export function App() {
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
         <div className="p-8 flex flex-col items-center">
-          <div className="h-[30dvh]" />
+          <div className="h-[max(12rem,25dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
             The secure and private wallet
           </h1>
@@ -258,8 +149,147 @@ export function App() {
           </div>
           <div className="h-16" />
           <LoginButton />
+          <div className="h-16" />
+          <Outline.ChevronDownIcon className="size-6 text-default-half-contrast" />
+          <div className="h-[max(24rem,50dvh)]" />
+          <h1 className="text-center text-5xl md:text-6xl font-medium">
+            Military-grade encryption
+          </h1>
+          <div className="h-4" />
+          <div className="text-center text-default-contrast text-xl md:text-2xl">
+            Your data uses the KeePass file format with military-grade encryption
+          </div>
+          <div className="h-[max(24rem,50dvh)]" />
+          <h1 className="text-center text-5xl md:text-6xl font-medium">
+            Your IP address is hidden
+          </h1>
+          <div className="h-4" />
+          <div className="text-center text-default-contrast text-xl md:text-2xl">
+            Network traffic is routed through the Tor darknet with a different circuit for each identity
+          </div>
+          <div className="h-[max(24rem,50dvh)]" />
+          <h1 className="text-center text-5xl md:text-6xl font-medium">
+            Supply-chain hardened
+          </h1>
+          <div className="h-4" />
+          <div className="text-center text-default-contrast text-xl md:text-2xl">
+            Most of our code is made in-house to prevent supply-chain attacks
+          </div>
+          <div className="h-[max(24rem,50dvh)]" />
         </div>
       </div>
+    </div>
+  </Fragment>
+}
+
+function ImportUserDialog() {
+  const users = useUsersDatabaseContext().getOrThrow()
+
+  const uuid = useMemo(() => {
+    return crypto.randomUUID()
+  }, [])
+
+  const submitOrAlert = useCallback(() => Promise.try(async () => {
+    const [file] = await showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+
+    if (file == null)
+      return
+    const stale = await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+
+    const fresh = [...stale, { uuid, file } satisfies UserData]
+
+    await users.getOrThrow().setOrThrow("list", fresh)
+  }).catch(Errors.display), [uuid, users])
+
+  return <Fragment>
+    <h1 className="text-xl font-medium">
+      Import user
+    </h1>
+    <div className="h-4" />
+    <div className="font-medium">
+      Name
+    </div>
+    <div className="text-default-contrast">
+      Will be used locally for display purposes
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl">
+      <input className="w-full outline-none"
+        placeholder="Anon" />
+    </div>
+    <div className="h-4" />
+    <div className="font-medium">
+      Password
+    </div>
+    <div className="text-default-contrast">
+      At least 3 characters, will be used to decrypt your file
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl">
+      <input className="w-full outline-none"
+        type="password" />
+    </div>
+    <div className="h-4 grow" />
+    <div className="flex items-center flex-wrap-reverse gap-2">
+      <WideClickableOppositeButton
+        onClick={submitOrAlert}>
+        Open file
+      </WideClickableOppositeButton>
+    </div>
+  </Fragment>
+}
+
+function CreateUserDialog() {
+  const users = useUsersDatabaseContext().getOrThrow()
+
+  const uuid = useMemo(() => {
+    return crypto.randomUUID()
+  }, [])
+
+  const submitOrAlert = useCallback(() => Promise.try(async () => {
+    const file = await showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+
+    const stale = await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+
+    const fresh = [...stale, { uuid, file } satisfies UserData]
+
+    await users.getOrThrow().setOrThrow("list", fresh)
+  }).catch(Errors.display), [uuid, users])
+
+  return <Fragment>
+    <h1 className="text-xl font-medium">
+      Create user
+    </h1>
+    <div className="h-4" />
+    <div className="font-medium">
+      Name
+    </div>
+    <div className="text-default-contrast">
+      Will be used locally for display purposes
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl">
+      <input className="w-full outline-none"
+        placeholder="Anon" />
+    </div>
+    <div className="h-4" />
+    <div className="font-medium">
+      Password
+    </div>
+    <div className="text-default-contrast">
+      At least 3 characters, will be used to encrypt your file
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl">
+      <input className="w-full outline-none"
+        type="password" />
+    </div>
+    <div className="h-4 grow" />
+    <div className="flex items-center flex-wrap-reverse gap-2">
+      <WideClickableOppositeButton
+        onClick={submitOrAlert}>
+        Save file
+      </WideClickableOppositeButton>
     </div>
   </Fragment>
 }
