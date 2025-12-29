@@ -11,13 +11,17 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Menu, WideClickableNakedMenuAnchor } from "@/libs/menu/mod.tsx";
 import { useUsersDatabaseContext } from "@/libs/users/mod.tsx";
+import { Readable } from "@hazae41/binary";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
+import * as KDBX from "@hazae41/kdbx";
+import { WebAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 
 React;
 
 interface UserData {
   readonly uuid: string
+  readonly name: string
   readonly file: FileSystemHandle
 }
 
@@ -257,19 +261,38 @@ function ImportUserDialog() {
     return crypto.randomUUID()
   }, [])
 
-  const submitOrAlert = useCallback(() => Promise.try(async () => {
-    const [file] = await showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+  const [name, setName] = useState("")
 
-    if (file == null)
+  const [password, setPassword] = useState("")
+
+  const submitOrAlert = useCallback(() => Promise.try(async () => {
+    const [handle] = await showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+
+    if (handle == null)
       return
+    if (handle.kind !== "file")
+      return
+
+    const file = await handle.getFile()
+
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, new Uint8Array(await file.arrayBuffer())).cloneOrThrow()
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
     const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
 
-    const fresh = [...stale, { uuid, file } satisfies UserData]
+    const fresh = [...stale, { uuid, name, file: handle } satisfies UserData]
 
     await users.value.getOrThrow().setOrThrow("list", fresh)
 
     users.update()
-  }).catch(Errors.display), [uuid, users])
+
+    if (!confirm("Do you want to create a passkey?"))
+      return
+
+    await WebAuthnStorage.createOrThrow(uuid, composite.value.bytes)
+  }).catch(Errors.display), [uuid, users, name, password])
 
   return <Fragment>
     <h1 className="text-xl font-medium">
@@ -285,7 +308,9 @@ function ImportUserDialog() {
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
       <input className="w-full outline-none"
-        placeholder="Anon" />
+        placeholder="Anon"
+        value={name}
+        onChange={e => setName(e.target.value)} />
     </div>
     <div className="h-4" />
     <div className="font-medium">
@@ -297,7 +322,9 @@ function ImportUserDialog() {
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
       <input className="w-full outline-none"
-        type="password" />
+        type="password"
+        value={password}
+        onChange={e => setPassword(e.target.value)} />
     </div>
     <div className="h-4 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
@@ -316,17 +343,21 @@ function CreateUserDialog() {
     return crypto.randomUUID()
   }, [])
 
+  const [name, setName] = useState("")
+
+  const [password, setPassword] = useState("")
+
   const submitOrAlert = useCallback(() => Promise.try(async () => {
-    const file = await showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+    const handle = await showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
 
-    const fresh = [...stale, { uuid, file } satisfies UserData]
+    const fresh = [...stale, { uuid, name, file: handle } satisfies UserData]
 
     await users.value.getOrThrow().setOrThrow("list", fresh)
 
     users.update()
-  }).catch(Errors.display), [uuid, users])
+  }).catch(Errors.display), [uuid, users, name, password])
 
   return <Fragment>
     <h1 className="text-xl font-medium">
@@ -342,7 +373,9 @@ function CreateUserDialog() {
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
       <input className="w-full outline-none"
-        placeholder="Anon" />
+        placeholder="Anon"
+        value={name}
+        onChange={e => setName(e.target.value)} />
     </div>
     <div className="h-4" />
     <div className="font-medium">
@@ -354,7 +387,9 @@ function CreateUserDialog() {
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
       <input className="w-full outline-none"
-        type="password" />
+        type="password"
+        value={password}
+        onChange={e => setPassword(e.target.value)} />
     </div>
     <div className="h-4 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">

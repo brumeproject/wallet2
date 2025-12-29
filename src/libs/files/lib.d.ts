@@ -4,7 +4,7 @@ declare function showOpenFilePicker(options?: {
   readonly multiple?: boolean,
   readonly startIn?: FileSystemHandle | "desktop" | "documents" | "downloads" | "music" | "pictures" | "videos",
   readonly types?: Array<{ readonly description?: string, readonly accept: { readonly [key: string]: Array<string> } }>
-}): Promise<Array<FileSystemHandle>>
+}): Promise<Array<FileSystemFileHandle>>
 
 declare function showSaveFilePicker(options?: {
   readonly excludeAcceptAllOption?: boolean,
@@ -12,4 +12,4 @@ declare function showSaveFilePicker(options?: {
   readonly startIn?: FileSystemHandle | "desktop" | "documents" | "downloads" | "music" | "pictures" | "videos",
   readonly suggestedName?: string
   readonly types?: Array<{ readonly description?: string, readonly accept: { readonly [key: string]: Array<string> } }>
-}): Promise<FileSystemHandle>
+}): Promise<FileSystemFileHandle>
