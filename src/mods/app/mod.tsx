@@ -2,16 +2,17 @@
 
 /// <reference types="@/libs/files/lib.d.ts" />
 
+import { ClickableOppositeAnchor } from "@/libs/anchor/mod.tsx";
+import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
+import { useClientContext } from "@/libs/client/mod.tsx";
+import { Dialog } from "@/libs/dialog/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
+import { Outline } from "@/libs/heroicons/mod.ts";
+import { Lang } from "@/libs/lang/mod.ts";
+import { Menu, WideClickableNakedMenuAnchor } from "@/libs/menu/mod.tsx";
+import { useUsersDatabaseContext } from "@/libs/users/mod.tsx";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { ClickableOppositeAnchor } from "../../libs/anchor/mod.tsx";
-import { WideClickableOppositeButton } from "../../libs/button/mod.tsx";
-import { useClientContext } from "../../libs/client/mod.tsx";
-import { Dialog } from "../../libs/dialog/mod.tsx";
-import { Outline } from "../../libs/heroicons/mod.ts";
-import { Menu, WideClickableNakedMenuAnchor } from "../../libs/menu/mod.tsx";
-import { useUsersDatabaseContext } from "../../libs/users/mod.tsx";
 
 React;
 
@@ -206,6 +207,43 @@ export function App() {
             Most of our code is made in-house to prevent supply-chain attacks
           </div>
           <div className="h-[max(24rem,50dvh)]" />
+          <a className="text-center hover:underline"
+            href="https://brume.tech"
+            target="_blank noreferrer">
+            {Lang.match({
+              en: "Made by cypherpunks",
+              zh: "由赛博朋克制作",
+              hi: "साइबरपंक द्वारा बनाया गया",
+              es: "Hecho por cypherpunks",
+              ar: "مصنوع من قبل سايفربانكس",
+              fr: "Fait par des cypherpunks",
+              de: "Hergestellt von Cypherpunks",
+              ru: "Создано киберпанками",
+              pt: "Feito por cypherpunks",
+              ja: "サイバーパンクによって作られた",
+              pa: "ਸਾਈਬਰਪੰਕਸ ਦੁਆਰਾ ਬਣਾਇਆ ਗਿਆ",
+              bn: "সাইফারপাঙ্ক দ্বারা তৈরি",
+              id: "Dibuat oleh cypherpunks",
+              ur: "سائبرپنکس کے ذریعہ بنایا گیا",
+              ms: "Dibuat oleh cypherpunks",
+              it: "Realizzato da cypherpunks",
+              tr: "Cypherpunks tarafından yapıldı",
+              ta: "சைபர்பங்க்ஸ் மூலம் உருவாக்கப்பட்டது",
+              te: "సైఫర్పంక్స్ ద్వారా తయారు చేయబడింది",
+              ko: "사이버펑크가 제작",
+              vi: "Được tạo bởi cypherpunks",
+              pl: "Stworzone przez cypherpunks",
+              ro: "Realizat de cypherpunks",
+              nl: "Gemaakt door cypherpunks",
+              el: "Κατασκευάστηκε από cypherpunks",
+              th: "สร้างโดย cypherpunks",
+              cs: "Vytvořeno cypherpunks",
+              hu: "Cypherpunks által készített",
+              sv: "Gjord av cypherpunks",
+              da: "Lavet af cypherpunks",
+            })}
+          </a>
+          <div className="h-4" />
         </div>
       </div>
     </div>
