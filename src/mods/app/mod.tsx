@@ -252,8 +252,9 @@ export function App() {
           <h1 className="text-center text-5xl md:text-6xl font-medium">
             The secure and private wallet
           </h1>
+          <div className="h-4" />
           <div className="text-center text-default-contrast text-xl md:text-2xl">
-            Meet the only wallet with maximum security and privacy
+            Meet the only crypto-wallet with maximum security and privacy
           </div>
           <div className="h-16" />
           <LoginButton />
