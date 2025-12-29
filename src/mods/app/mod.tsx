@@ -138,7 +138,7 @@ export function App() {
     </HashSubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
-        <div className="p-8 flex flex-col items-center">
+        <div className="p-8 flex flex-col items-center w-full max-w-[1000px] m-auto">
           <div className="h-[max(12rem,25dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
             The secure and private wallet
@@ -159,6 +159,18 @@ export function App() {
           <div className="text-center text-default-contrast text-xl md:text-2xl">
             Your data uses the KeePass file format with military-grade encryption
           </div>
+          <div className="h-16" />
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-default-contrast rounded-xl">
+              AES-256
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              ChaCha20
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Argon2id
+            </div>
+          </div>
           <div className="h-[max(24rem,50dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
             Your IP address is hidden
@@ -166,6 +178,24 @@ export function App() {
           <div className="h-4" />
           <div className="text-center text-default-contrast text-xl md:text-2xl">
             Network traffic is routed through the Tor darknet with a different circuit for each identity
+          </div>
+          <div className="h-16" />
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-default-contrast rounded-xl">
+              You
+            </div>
+            <div className="text-default-contrast">
+              {`<--->`}
+            </div>
+            <div className="p-4 bg-opposite text-opposite rounded-xl">
+              Tor darknet
+            </div>
+            <div className="text-default-contrast">
+              {`<--->`}
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Services
+            </div>
           </div>
           <div className="h-[max(24rem,50dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
