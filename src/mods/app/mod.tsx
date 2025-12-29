@@ -226,27 +226,39 @@ export function App() {
     </Fragment>
   }, [saveFileOrAlert])
 
-  return <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
-    <div className="p-safe flex flex-col items-center">
-      <HashSubpathProvider>
-        {client && hash.url.pathname === "/login" &&
-          <Menu>
-            <LoginMenu />
-          </Menu>}
-        {client && hash.url.pathname === "/login/add" &&
-          <Menu>
-            <AddUserMenu />
-          </Menu>}
-        {client && hash.url.pathname === "/login/add/import" &&
-          <Dialog>
-            <ImportUserDialog />
-          </Dialog>}
-        {client && hash.url.pathname === "/login/add/create" &&
-          <Dialog>
-            <CreateUserDialog />
-          </Dialog>}
-      </HashSubpathProvider>
-      <LoginButton />
+  return <Fragment>
+    <HashSubpathProvider>
+      {client && hash.url.pathname === "/login" &&
+        <Menu>
+          <LoginMenu />
+        </Menu>}
+      {client && hash.url.pathname === "/login/add" &&
+        <Menu>
+          <AddUserMenu />
+        </Menu>}
+      {client && hash.url.pathname === "/login/add/import" &&
+        <Dialog>
+          <ImportUserDialog />
+        </Dialog>}
+      {client && hash.url.pathname === "/login/add/create" &&
+        <Dialog>
+          <CreateUserDialog />
+        </Dialog>}
+    </HashSubpathProvider>
+    <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
+      <div className="p-safe flex flex-col items-center">
+        <div className="p-8 flex flex-col items-center">
+          <div className="h-[30dvh]" />
+          <h1 className="text-center text-5xl md:text-6xl font-medium">
+            The secure and private wallet
+          </h1>
+          <div className="text-center text-default-contrast text-xl md:text-2xl">
+            Meet the only wallet with maximum security and privacy
+          </div>
+          <div className="h-16" />
+          <LoginButton />
+        </div>
+      </div>
     </div>
-  </div>
+  </Fragment>
 }
