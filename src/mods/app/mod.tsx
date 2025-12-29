@@ -32,13 +32,13 @@ export function App() {
   const [allUsers, setAllUsers] = useState<Array<UserData>>()
 
   const getAllUsers = useCallback(async () => {
-    return await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    return await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
   }, [users])
 
   useEffect(() => {
     if (users == null)
       return
-    if (users.isErr())
+    if (users.value.isErr())
       return
     getAllUsers().then(setAllUsers).catch(console.error)
   }, [users])
@@ -262,11 +262,13 @@ function ImportUserDialog() {
 
     if (file == null)
       return
-    const stale = await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
 
     const fresh = [...stale, { uuid, file } satisfies UserData]
 
-    await users.getOrThrow().setOrThrow("list", fresh)
+    await users.value.getOrThrow().setOrThrow("list", fresh)
+
+    users.update()
   }).catch(Errors.display), [uuid, users])
 
   return <Fragment>
@@ -317,11 +319,13 @@ function CreateUserDialog() {
   const submitOrAlert = useCallback(() => Promise.try(async () => {
     const file = await showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
-    const stale = await users.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
 
     const fresh = [...stale, { uuid, file } satisfies UserData]
 
-    await users.getOrThrow().setOrThrow("list", fresh)
+    await users.value.getOrThrow().setOrThrow("list", fresh)
+
+    users.update()
   }).catch(Errors.display), [uuid, users])
 
   return <Fragment>
