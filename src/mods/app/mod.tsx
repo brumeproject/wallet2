@@ -117,8 +117,8 @@ export function App() {
 
   const AddUserMenu = useCallback(() => {
     return <div className="flex flex-col text-left gap-2">
-      <ImportUserButton />
       <CreateUserButton />
+      <ImportUserButton />
     </div>
   }, [ImportUserButton, CreateUserButton])
 
