@@ -4,7 +4,7 @@
 
 import { Errors } from "@/libs/errors/mod.ts";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { ClickableOppositeAnchor } from "../../libs/anchor/mod.tsx";
 import { WideClickableOppositeButton } from "../../libs/button/mod.tsx";
 import { useClientContext } from "../../libs/client/mod.tsx";
@@ -34,11 +34,17 @@ export function App() {
 
   const [file, setFile] = useState<FileSystemHandle>()
 
-  const pickFileOrAlert = useCallback(() => Promise.try(async () => {
-    const [file] = await showOpenFilePicker({ id: uuid.slice(0, 32) })
+  const openFileOrAlert = useCallback(() => Promise.try(async () => {
+    const [file] = await showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     if (file == null)
       return
+
+    setFile(file)
+  }).catch(Errors.display), [uuid])
+
+  const saveFileOrAlert = useCallback(() => Promise.try(async () => {
+    const file = await showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     setFile(file)
   }).catch(Errors.display), [uuid])
@@ -71,7 +77,7 @@ export function App() {
     alert(user.uuid)
   }).catch(Errors.display), [users])
 
-  const LoginButton = () => {
+  const LoginButton = useCallback(() => {
     const coords = useCoords(hash, "/login")
 
     return <ClickableOppositeAnchor
@@ -81,22 +87,9 @@ export function App() {
       onContextMenu={coords.onContextMenu}>
       Login
     </ClickableOppositeAnchor>
-  }
+  }, [hash])
 
-  const LoginMenu = () => {
-    return <div className="flex flex-col text-left gap-2">
-      {allUsers?.map(user => (
-        <WideClickableNakedMenuAnchor
-          key={user.uuid}
-          onClick={() => openUserOrAlert(user)}>
-          {user.uuid.slice(0, 8)}
-        </WideClickableNakedMenuAnchor>
-      ))}
-      <AddUserButton />
-    </div>
-  }
-
-  const AddUserButton = () => {
+  const AddUserButton = useCallback(() => {
     const coords = useCoords(hash, "/login/add")
 
     return <WideClickableNakedMenuAnchor
@@ -109,16 +102,22 @@ export function App() {
       </div>
       Add user
     </WideClickableNakedMenuAnchor>
-  }
+  }, [hash])
 
-  const AddUserMenu = () => {
+  const LoginMenu = useCallback(() => {
     return <div className="flex flex-col text-left gap-2">
-      <ImportUserButton />
-      <CreateUserButton />
+      {allUsers?.map(user => (
+        <WideClickableNakedMenuAnchor
+          key={user.uuid}
+          onClick={() => openUserOrAlert(user)}>
+          {user.uuid.slice(0, 8)}
+        </WideClickableNakedMenuAnchor>
+      ))}
+      <AddUserButton />
     </div>
-  }
+  }, [allUsers, openUserOrAlert, AddUserButton])
 
-  const ImportUserButton = () => {
+  const ImportUserButton = useCallback(() => {
     const coords = useCoords(hash, "/login/add/import")
 
     return <WideClickableNakedMenuAnchor
@@ -128,9 +127,9 @@ export function App() {
       onContextMenu={coords.onContextMenu}>
       Import user
     </WideClickableNakedMenuAnchor>
-  }
+  }, [hash])
 
-  const CreateUserButton = () => {
+  const CreateUserButton = useCallback(() => {
     const coords = useCoords(hash, "/login/add/create")
 
     return <WideClickableNakedMenuAnchor
@@ -140,7 +139,92 @@ export function App() {
       onContextMenu={coords.onContextMenu}>
       Create user
     </WideClickableNakedMenuAnchor>
-  }
+  }, [hash])
+
+  const AddUserMenu = useCallback(() => {
+    return <div className="flex flex-col text-left gap-2">
+      <ImportUserButton />
+      <CreateUserButton />
+    </div>
+  }, [ImportUserButton, CreateUserButton])
+
+  const ImportUserDialog = useCallback(() => {
+    return <>
+      <h1 className="text-xl font-medium">
+        Import user
+      </h1>
+      <div className="h-4" />
+      <div className="font-medium">
+        Name
+      </div>
+      <div className="text-default-contrast">
+        Will be used locally for display purposes
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl">
+        <input className="w-full outline-none"
+          placeholder="Anon" />
+      </div>
+      <div className="h-4" />
+      <div className="font-medium">
+        Password
+      </div>
+      <div className="text-default-contrast">
+        At least 3 characters, will be used to decrypt your file
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl">
+        <input className="w-full outline-none"
+          type="password" />
+      </div>
+      <div className="h-4 grow" />
+      <div className="flex items-center flex-wrap-reverse gap-2">
+        <WideClickableOppositeButton
+          onClick={openFileOrAlert}>
+          Open file
+        </WideClickableOppositeButton>
+      </div>
+    </>
+  }, [openFileOrAlert])
+
+  const CreateUserDialog = useCallback(() => {
+    return <Fragment>
+      <h1 className="text-xl font-medium">
+        Create user
+      </h1>
+      <div className="h-4" />
+      <div className="font-medium">
+        Name
+      </div>
+      <div className="text-default-contrast">
+        Will be used locally for display purposes
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl">
+        <input className="w-full outline-none"
+          placeholder="Anon" />
+      </div>
+      <div className="h-4" />
+      <div className="font-medium">
+        Password
+      </div>
+      <div className="text-default-contrast">
+        At least 3 characters, will be used to encrypt your file
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl">
+        <input className="w-full outline-none"
+          type="password" />
+      </div>
+      <div className="h-4 grow" />
+      <div className="flex items-center flex-wrap-reverse gap-2">
+        <WideClickableOppositeButton
+          onClick={saveFileOrAlert}>
+          Save file
+        </WideClickableOppositeButton>
+      </div>
+    </Fragment>
+  }, [saveFileOrAlert])
 
   return <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
     <div className="p-safe flex flex-col items-center">
@@ -155,27 +239,11 @@ export function App() {
           </Menu>}
         {client && hash.url.pathname === "/login/add/import" &&
           <Dialog>
-            <h1 className="text-xl font-medium">
-              Import user
-            </h1>
-            <div className="flex items-center flex-wrap-reverse gap-2">
-              <WideClickableOppositeButton
-                onClick={pickFileOrAlert}>
-                Open file
-              </WideClickableOppositeButton>
-            </div>
+            <ImportUserDialog />
           </Dialog>}
         {client && hash.url.pathname === "/login/add/create" &&
           <Dialog>
-            <h1 className="text-xl font-medium">
-              Create user
-            </h1>
-            <div className="flex items-center flex-wrap-reverse gap-2">
-              <WideClickableOppositeButton
-                onClick={pickFileOrAlert}>
-                Save file
-              </WideClickableOppositeButton>
-            </div>
+            <CreateUserDialog />
           </Dialog>}
       </HashSubpathProvider>
       <LoginButton />
