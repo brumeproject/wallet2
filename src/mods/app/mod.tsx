@@ -84,7 +84,7 @@ export function App() {
         <WideClickableNakedMenuAnchor
           key={user.uuid}
           onClick={() => openUserOrAlert(user)}>
-          {user.uuid.slice(0, 8)}
+          {user.name}
         </WideClickableNakedMenuAnchor>
       ))}
       <AddUserButton />
@@ -261,7 +261,9 @@ function ImportUserDialog() {
     return crypto.randomUUID()
   }, [])
 
-  const [name, setName] = useState("")
+  const [name0, setName0] = useState("")
+
+  const name = name0 || "Anon"
 
   const [password, setPassword] = useState("")
 
@@ -309,8 +311,8 @@ function ImportUserDialog() {
     <div className="bg-default-contrast po-2 rounded-xl">
       <input className="w-full outline-none"
         placeholder="Anon"
-        value={name}
-        onChange={e => setName(e.target.value)} />
+        value={name0}
+        onChange={e => setName0(e.target.value)} />
     </div>
     <div className="h-4" />
     <div className="font-medium">
