@@ -1,8 +1,8 @@
 /// <reference lib="dom" />
 
 import { ClientContext } from "@/libs/client/mod.tsx";
+import { AppDatabaseProvider } from "@/libs/database/mod.tsx";
 import { dirs, Lang } from "@/libs/lang/mod.ts";
-import { UsersDatabaseProvider } from "@/libs/users/mod.tsx";
 import { App } from "@/mods/app/mod.tsx";
 import { argon2 } from "@hazae41/argon2";
 import { argon2Wasm } from "@hazae41/argon2-wasm";
@@ -89,9 +89,9 @@ function Body() {
 
   return <ClientContext.Provider value={client}>
     <HashPathProvider>
-      <UsersDatabaseProvider>
+      <AppDatabaseProvider>
         <App />
-      </UsersDatabaseProvider>
+      </AppDatabaseProvider>
     </HashPathProvider>
   </ClientContext.Provider>
 }

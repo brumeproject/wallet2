@@ -6,7 +6,7 @@ import { ChildrenProps } from "../../libs/props/mod.ts";
 
 React;
 
-export interface UsersDatabaseHandle {
+export interface AppDatabaseHandle {
 
   readonly value: Result<Database>
 
@@ -14,19 +14,19 @@ export interface UsersDatabaseHandle {
 
 }
 
-const UsersDatabaseContext = createContext<Nullable<UsersDatabaseHandle>>(null);
+const AppDatabaseContext = createContext<Nullable<AppDatabaseHandle>>(null);
 
-export function useUsersDatabaseContext() {
-  return Option.wrap(useContext(UsersDatabaseContext))
+export function useAppDatabaseContext() {
+  return Option.wrap(useContext(AppDatabaseContext))
 }
 
-export function UsersDatabaseProvider(props: ChildrenProps) {
+export function AppDatabaseProvider(props: ChildrenProps) {
   const { children } = props
 
   const [value, setValue] = useState<Result<Database>>(() => new Err("Database not opened yet"))
 
   const openAndWrap = useCallback(() => Result.runAndWrap(async () => {
-    return await Database.openOrThrow("users", 1, () => { })
+    return await Database.openOrThrow("app", 1, () => { })
   }), [])
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export function UsersDatabaseProvider(props: ChildrenProps) {
     return { value, update }
   }, [value, update, counter])
 
-  return <UsersDatabaseContext.Provider value={handle}>
+  return <AppDatabaseContext.Provider value={handle}>
     {children}
-  </UsersDatabaseContext.Provider>
+  </AppDatabaseContext.Provider>
 }

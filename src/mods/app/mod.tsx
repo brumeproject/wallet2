@@ -1,16 +1,14 @@
-// deno-lint-ignore-file require-await no-unused-vars
-
 /// <reference types="@/libs/files/lib.d.ts" />
 
 import { ClickableOppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
+import { useAppDatabaseContext } from "@/libs/database/mod.tsx";
 import { Dialog } from "@/libs/dialog/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Menu, WideClickableNakedMenuAnchor } from "@/libs/menu/mod.tsx";
-import { useUsersDatabaseContext } from "@/libs/users/mod.tsx";
 import { Readable } from "@hazae41/binary";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
@@ -33,7 +31,7 @@ export function App() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const users = useUsersDatabaseContext().getOrThrow()
+  const users = useAppDatabaseContext().getOrThrow()
 
   const [allUsers, setAllUsers] = useState<Array<UserData>>()
 
@@ -258,7 +256,7 @@ export function App() {
 
 function ImportUserDialog() {
   const close = useCloseContext().getOrThrow()
-  const users = useUsersDatabaseContext().getOrThrow()
+  const users = useAppDatabaseContext().getOrThrow()
 
   const uuid = useMemo(() => {
     return crypto.randomUUID()
@@ -356,7 +354,7 @@ function ImportUserDialog() {
 }
 
 function CreateUserDialog() {
-  const users = useUsersDatabaseContext().getOrThrow()
+  const users = useAppDatabaseContext().getOrThrow()
 
   const uuid = useMemo(() => {
     return crypto.randomUUID()
