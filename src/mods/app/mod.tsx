@@ -14,7 +14,7 @@ import { useUsersDatabaseContext } from "@/libs/users/mod.tsx";
 import { Readable } from "@hazae41/binary";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { WebAuthnStorage } from "@hazae41/webauthnstorage";
+import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 
 React;
@@ -291,7 +291,7 @@ function ImportUserDialog() {
     if (!confirm("Do you want to create a passkey?"))
       return
 
-    await WebAuthnStorage.createOrThrow(uuid, composite.value.bytes)
+    await webAuthnStorage.createOrThrow(uuid, composite.value.bytes)
   }).catch(Errors.display), [uuid, users, name, password])
 
   return <Fragment>

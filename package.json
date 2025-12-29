@@ -20,13 +20,13 @@
     "@hazae41/result-and-option": "^2.0.10",
     "@hazae41/rewind": "^2.3.12",
     "@hazae41/serac": "^1.0.6",
-    "@hazae41/webauthnstorage": "^1.0.1",
+    "@hazae41/webauthnstorage": "^1.0.2",
     "@heroicons/react": "^2.2.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
   "devDependencies": {
-    "@hazae41/glace": "^1.0.30",
+    "@hazae41/glace": "^1.0.32",
     "@hazae41/kdbx": "^0.2.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
