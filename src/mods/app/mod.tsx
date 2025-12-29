@@ -47,6 +47,7 @@ export function App() {
     getAllUsers().then(setAllUsers).catch(console.error)
   }, [users])
 
+  // deno-lint-ignore require-await
   const openUserOrAlert = useCallback((user: UserData) => Promise.try(async () => {
     alert(user.uuid)
   }).catch(Errors.display), [users])
