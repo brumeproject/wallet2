@@ -24,6 +24,7 @@ interface UserData {
   readonly uuid: string
   readonly name: string
   readonly file: FileSystemHandle
+  readonly pass?: Uint8Array
 }
 
 export function App() {
@@ -270,32 +271,43 @@ function ImportUserDialog() {
   const [password, setPassword] = useState("")
 
   const submitOrAlert = useCallback(() => Promise.try(async () => {
-    const [handle] = await showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+    const [file] = await showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
-    if (handle == null)
+    if (file == null)
       return
-    if (handle.kind !== "file")
+    if (file.kind !== "file")
       return
 
-    const file = await handle.getFile()
+    const blob = await file.getFile()
 
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, new Uint8Array(await file.arrayBuffer())).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, new Uint8Array(await blob.arrayBuffer())).cloneOrThrow()
     const decrypted = await encrypted.decryptOrThrow(composite)
+
+    if (!confirm("Do you want to create a passkey?")) {
+      const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+
+      const fresh = [...stale, { uuid, name, file: file } satisfies UserData]
+
+      await users.value.getOrThrow().setOrThrow("list", fresh)
+
+      users.update()
+
+      close()
+
+      return
+    }
+
+    const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
 
     const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
 
-    const fresh = [...stale, { uuid, name, file: handle } satisfies UserData]
+    const fresh = [...stale, { uuid, name, file: file, pass } satisfies UserData]
 
     await users.value.getOrThrow().setOrThrow("list", fresh)
 
     users.update()
-
-    if (!confirm("Do you want to create a passkey?"))
-      return close()
-
-    await webAuthnStorage.createOrThrow(uuid, composite.value.bytes)
 
     close()
   }).catch(Errors.display), [uuid, users, name, password, close])
