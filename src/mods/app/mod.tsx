@@ -279,11 +279,11 @@ function ImportUserDialog() {
       return
 
     const blob = await file.getFile()
+    const data = new Uint8Array(await blob.arrayBuffer())
 
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, new Uint8Array(await blob.arrayBuffer())).cloneOrThrow()
-
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
     await encrypted.decryptOrThrow(composite)
 
     if (!confirm("Do you want to create a passkey?")) {
