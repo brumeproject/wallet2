@@ -21,7 +21,7 @@ React;
 interface UserData {
   readonly uuid: string
   readonly name: string
-  readonly file: FileSystemHandle
+  readonly file: FileSystemFileHandle
   readonly pass?: Uint8Array
 }
 
@@ -47,9 +47,21 @@ export function App() {
     getAllUsers().then(setAllUsers).catch(console.error)
   }, [users])
 
-  // deno-lint-ignore require-await
   const openUserOrAlert = useCallback((user: UserData) => Promise.try(async () => {
-    alert(user.uuid)
+    const file = user.file
+
+    await file.requestPermission({ mode: "readwrite" })
+
+    const blob = await file.getFile()
+    const data = new Uint8Array(await blob.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode("test")))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
   }).catch(Errors.display), [users])
 
   const LoginButton = useCallback(() => {
