@@ -38,7 +38,7 @@ export function App() {
   const [allUsers, setAllUsers] = useState<Array<UserData>>()
 
   const getAllUsers = useCallback(async () => {
-    return await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    return await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
   }, [users])
 
   useEffect(() => {
@@ -287,11 +287,11 @@ function ImportUserDialog() {
     await encrypted.decryptOrThrow(composite)
 
     if (!confirm("Do you want to create a passkey?")) {
-      const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+      const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
       const fresh = [...stale, { uuid, name, file: file } satisfies UserData]
 
-      await users.value.getOrThrow().setOrThrow("list", fresh)
+      await users.value.getOrThrow().setOrThrow("users", fresh)
 
       users.update()
 
@@ -302,11 +302,11 @@ function ImportUserDialog() {
 
     const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
 
-    const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
     const fresh = [...stale, { uuid, name, file: file, pass } satisfies UserData]
 
-    await users.value.getOrThrow().setOrThrow("list", fresh)
+    await users.value.getOrThrow().setOrThrow("users", fresh)
 
     users.update()
 
@@ -369,11 +369,11 @@ function CreateUserDialog() {
   const submitOrAlert = useCallback(() => Promise.try(async () => {
     const handle = await showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
-    const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("list") || []
+    const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
     const fresh = [...stale, { uuid, name, file: handle } satisfies UserData]
 
-    await users.value.getOrThrow().setOrThrow("list", fresh)
+    await users.value.getOrThrow().setOrThrow("users", fresh)
 
     users.update()
   }).catch(Errors.display), [uuid, users, name, password])
