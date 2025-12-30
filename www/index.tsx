@@ -1,5 +1,7 @@
 /// <reference lib="dom" />
 
+import "@hazae41/symbol-dispose-polyfill";
+
 import { ClientContext } from "@/libs/client/mod.tsx";
 import { AppDatabaseProvider } from "@/libs/database/mod.tsx";
 import { dirs, Lang } from "@/libs/lang/mod.ts";

@@ -1,4 +1,5 @@
 /// <reference types="@/libs/files/lib.d.ts" />
+// deno-lint-ignore-file no-window
 
 import { ClickableOppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
@@ -21,7 +22,7 @@ React;
 interface UserData {
   readonly uuid: string
   readonly name: string
-  readonly file: FileSystemFileHandle
+  readonly fsfh: FileSystemFileHandle
   readonly pass?: Uint8Array<ArrayBuffer>
 }
 
@@ -48,12 +49,12 @@ export function App() {
   }, [users])
 
   const openUserOrAlert = useCallback((user: UserData) => Promise.try(async () => {
-    const file = user.file
+    const fsfh = user.fsfh
 
-    await file.requestPermission({ mode: "readwrite" })
+    await fsfh.requestPermission({ mode: "readwrite" })
 
-    const blob = await file.getFile()
-    const data = new Uint8Array(await blob.arrayBuffer())
+    const file = await fsfh.getFile()
+    const data = new Uint8Array(await file.arrayBuffer())
 
     if (user.pass != null && confirm("Use passkey to login?")) {
       const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
@@ -291,54 +292,134 @@ function ImportUserDialog() {
     return crypto.randomUUID()
   }, [])
 
-  const [name0, setName0] = useState("")
+  const [rawName, setRawName] = useState("")
 
-  const name = name0 || "Anon"
+  const name = rawName || "Anon"
+
+  const [fileOrFsfh, setFileOrFsfh] = useState<File | FileSystemFileHandle>()
 
   const [password, setPassword] = useState("")
 
+  const pickOrAlert = useCallback(() => Promise.try(async () => {
+    const [fsfh] = await window.showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+
+    if (fsfh == null)
+      return
+    if (fsfh.kind !== "file")
+      return
+
+    setFileOrFsfh(fsfh)
+  }).catch(Errors.display), [uuid, users, name, fileOrFsfh, password, close])
+
   const submitOrAlert = useCallback(() => Promise.try(async () => {
-    const [file] = await showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+    if (fileOrFsfh instanceof FileSystemFileHandle) {
+      const fsfh = fileOrFsfh
+      const file = await fsfh.getFile()
+      const data = new Uint8Array(await file.arrayBuffer())
 
-    if (file == null)
-      return
-    if (file.kind !== "file")
-      return
+      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+      const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
 
-    const blob = await file.getFile()
-    const data = new Uint8Array(await blob.arrayBuffer())
+      await encrypted.decryptOrThrow(composite)
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+      if (!confirm("Do you want to create a passkey?")) {
+        const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    await encrypted.decryptOrThrow(composite)
+        const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
 
-    if (!confirm("Do you want to create a passkey?")) {
+        await users.value.getOrThrow().setOrThrow("users", fresh)
+
+        users.update()
+
+        close()
+
+        return
+      }
+
+      const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+
       const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-      const fresh = [...stale, { uuid, name, file: file } satisfies UserData]
+      const fresh = [...stale, { uuid, name, fsfh, pass } satisfies UserData]
 
       await users.value.getOrThrow().setOrThrow("users", fresh)
 
       users.update()
 
       close()
+    } else {
+      const file = fileOrFsfh
+      const data = new Uint8Array(await file.arrayBuffer())
 
-      return
+      const root = await navigator.storage.getDirectory()
+      const fsfh = await root.getFileHandle(`${uuid.slice(0, 8)}.kdbx`, { create: true })
+
+      const writable = await fsfh.createWritable()
+      await writable.write(data)
+      await writable.close()
+
+      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+      const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+
+      await encrypted.decryptOrThrow(composite)
+
+      if (!confirm("Do you want to create a passkey?")) {
+        const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+        const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
+
+        await users.value.getOrThrow().setOrThrow("users", fresh)
+
+        users.update()
+
+        close()
+
+        return
+      }
+
+      const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+
+      const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+      const fresh = [...stale, { uuid, name, fsfh, pass } satisfies UserData]
+
+      await users.value.getOrThrow().setOrThrow("users", fresh)
+
+      users.update()
+
+      close()
     }
+  }).catch(Errors.display), [uuid, users, name, fileOrFsfh, password, close])
 
-    const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+  useEffect(() => {
+    const aborter = new AbortController()
+    const { signal } = aborter
 
-    const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+    document.body.addEventListener("drop", async e => {
+      e.preventDefault()
 
-    const fresh = [...stale, { uuid, name, file: file, pass } satisfies UserData]
+      const [item] = e.dataTransfer.items as unknown as Iterable<DataTransferItem>
 
-    await users.value.getOrThrow().setOrThrow("users", fresh)
+      if ("getAsFileSystemHandle" in item === false) {
+        const fsfh = await item.getAsFileSystemHandle()
 
-    users.update()
+        if (fsfh.kind !== "file")
+          return
 
-    close()
-  }).catch(Errors.display), [uuid, users, name, password, close])
+        setFileOrFsfh(fsfh)
+        return
+      }
+
+      setFileOrFsfh(item.getAsFile())
+      return
+    }, { signal })
+
+    document.body.addEventListener("dragover", e => {
+      e.preventDefault()
+    }, { signal })
+
+    return () => aborter.abort()
+  }, [])
 
   return <Fragment>
     <h1 className="text-xl font-medium">
@@ -355,15 +436,42 @@ function ImportUserDialog() {
     <div className="bg-default-contrast po-2 rounded-xl">
       <input className="w-full outline-none"
         placeholder="Anon"
-        value={name0}
-        onChange={e => setName0(e.target.value)} />
+        value={rawName}
+        onChange={e => setRawName(e.target.value)} />
+    </div>
+    <div className="h-4" />
+    <div className="font-medium">
+      File
+    </div>
+    <div className="text-default-contrast">
+      Your existing KDBX file
+    </div>
+    <div className="h-2" />
+    <div className="relative">
+      {"showOpenFilePicker" in window === false &&
+        <input className="absolute w-full h-full opacity-0"
+          type="file"
+          accept=".kdbx"
+          onChange={e => setFileOrFsfh(e.target.files.item(0))} />}
+      {"showOpenFilePicker" in window === true &&
+        <button className="absolute w-full h-full opacity-0"
+          type="button"
+          onClick={pickOrAlert} />}
+      {fileOrFsfh != null &&
+        <div className="bg-default-contrast po-2 rounded-xl">
+          {fileOrFsfh.name} {fileOrFsfh instanceof FileSystemFileHandle ? "(file handle)" : "(file)"}
+        </div>}
+      {fileOrFsfh == null &&
+        <div className="bg-default-contrast po-2 rounded-xl">
+          Pick or drop file
+        </div>}
     </div>
     <div className="h-4" />
     <div className="font-medium">
       Password
     </div>
     <div className="text-default-contrast">
-      At least 3 characters, will be used to decrypt your file
+      Your existing password
     </div>
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
@@ -376,7 +484,7 @@ function ImportUserDialog() {
     <div className="flex items-center flex-wrap-reverse gap-2">
       <WideClickableOppositeButton
         onClick={submitOrAlert}>
-        Open file
+        Add
       </WideClickableOppositeButton>
     </div>
   </Fragment>
@@ -394,11 +502,11 @@ function CreateUserDialog() {
   const [password, setPassword] = useState("")
 
   const submitOrAlert = useCallback(() => Promise.try(async () => {
-    const handle = await showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+    const fsfh = await window.showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    const fresh = [...stale, { uuid, name, file: handle } satisfies UserData]
+    const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
 
     await users.value.getOrThrow().setOrThrow("users", fresh)
 
