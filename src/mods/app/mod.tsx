@@ -415,16 +415,16 @@ function ImportUserDialog() {
       const [item] = e.dataTransfer.items as unknown as Iterable<DataTransferItem>
 
       if ("getAsFileSystemHandle" in item === false) {
-        const fsfh = await item.getAsFileSystemHandle()
-
-        if (fsfh.kind !== "file")
-          return
-
-        setFileOrFsfh(fsfh)
+        setFileOrFsfh(item.getAsFile())
         return
       }
 
-      setFileOrFsfh(item.getAsFile())
+      const fsfh = await item.getAsFileSystemHandle()
+
+      if (fsfh.kind !== "file")
+        return
+
+      setFileOrFsfh(fsfh)
       return
     }, { signal })
 
