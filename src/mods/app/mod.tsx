@@ -22,7 +22,7 @@ React;
 interface UserData {
   readonly uuid: string
   readonly name: string
-  readonly fsfh: FileSystemFileHandle
+  readonly file: { type: "fsfh", fsfh: FileSystemFileHandle } | { type: "name", name: string }
   readonly pass?: Uint8Array<ArrayBuffer>
 }
 
@@ -49,9 +49,14 @@ export function App() {
   }, [users])
 
   const openUserOrAlert = useCallback((user: UserData) => Promise.try(async () => {
-    const fsfh = user.fsfh
+    const root = await navigator.storage.getDirectory()
 
-    await fsfh.requestPermission({ mode: "readwrite" })
+    const fsfh = user.file.type === "name"
+      ? await root.getFileHandle(user.file.name)
+      : user.file.fsfh
+
+    if (user.file.type === "fsfh")
+      await fsfh.requestPermission({ mode: "readwrite" })
 
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
@@ -300,7 +305,7 @@ function ImportUserDialog() {
 
   const [password, setPassword] = useState("")
 
-  const pickOrAlert = useCallback(() => Promise.try(async () => {
+  const openOrAlert = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     if (fsfh == null)
@@ -325,7 +330,7 @@ function ImportUserDialog() {
       if (!confirm("Do you want to create a passkey?")) {
         const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-        const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
+        const fresh = [...stale, { uuid, name, file: { type: "fsfh", fsfh } } satisfies UserData]
 
         await users.value.getOrThrow().setOrThrow("users", fresh)
 
@@ -340,7 +345,7 @@ function ImportUserDialog() {
 
       const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-      const fresh = [...stale, { uuid, name, fsfh, pass } satisfies UserData]
+      const fresh = [...stale, { uuid, name, file: { type: "fsfh", fsfh }, pass } satisfies UserData]
 
       await users.value.getOrThrow().setOrThrow("users", fresh)
 
@@ -350,6 +355,7 @@ function ImportUserDialog() {
     } else {
       const file = fileOrFsfh
       const data = new Uint8Array(await file.arrayBuffer())
+      const name = `${uuid.slice(0, 8)}.kdbx`
 
       const root = await navigator.storage.getDirectory()
       const fsfh = await root.getFileHandle(`${uuid.slice(0, 8)}.kdbx`, { create: true })
@@ -366,7 +372,7 @@ function ImportUserDialog() {
       if (!confirm("Do you want to create a passkey?")) {
         const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-        const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
+        const fresh = [...stale, { uuid, name, file: { type: "name", name } } satisfies UserData]
 
         await users.value.getOrThrow().setOrThrow("users", fresh)
 
@@ -381,7 +387,7 @@ function ImportUserDialog() {
 
       const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-      const fresh = [...stale, { uuid, name, fsfh, pass } satisfies UserData]
+      const fresh = [...stale, { uuid, name, file: { type: "name", name }, pass } satisfies UserData]
 
       await users.value.getOrThrow().setOrThrow("users", fresh)
 
@@ -456,7 +462,7 @@ function ImportUserDialog() {
       {"showOpenFilePicker" in window === true &&
         <button className="absolute w-full h-full opacity-0"
           type="button"
-          onClick={pickOrAlert} />}
+          onClick={openOrAlert} />}
       {fileOrFsfh != null &&
         <div className="bg-default-contrast po-2 rounded-xl">
           {fileOrFsfh.name} {fileOrFsfh instanceof FileSystemFileHandle ? "(file handle)" : "(file)"}
@@ -501,12 +507,12 @@ function CreateUserDialog() {
 
   const [password, setPassword] = useState("")
 
-  const submitOrAlert = useCallback(() => Promise.try(async () => {
+  const saveOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
+    const fresh = [...stale, { uuid, name, file: { type: "fsfh", fsfh } } satisfies UserData]
 
     await users.value.getOrThrow().setOrThrow("users", fresh)
 
@@ -548,7 +554,7 @@ function CreateUserDialog() {
     <div className="h-4 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       <WideClickableOppositeButton
-        onClick={submitOrAlert}>
+        onClick={saveOrAlert}>
         Save file
       </WideClickableOppositeButton>
     </div>
