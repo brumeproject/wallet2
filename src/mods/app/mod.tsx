@@ -49,14 +49,22 @@ export function App() {
   }, [users])
 
   const openUserOrAlert = useCallback((user: UserData) => Promise.try(async () => {
-    const root = await navigator.storage.getDirectory()
+    const getFsfhOrThrow = async () => {
+      if (user.file.type === "fsfh") {
+        const fsfh = user.file.fsfh
 
-    const fsfh = user.file.type === "name"
-      ? await root.getFileHandle(user.file.name)
-      : user.file.fsfh
+        await fsfh.requestPermission({ mode: "readwrite" })
 
-    if (user.file.type === "fsfh")
-      await fsfh.requestPermission({ mode: "readwrite" })
+        return fsfh
+      }
+
+      const root = await navigator.storage.getDirectory()
+      const fsfh = await root.getFileHandle(user.file.name)
+
+      return fsfh
+    }
+
+    const fsfh = await getFsfhOrThrow()
 
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
