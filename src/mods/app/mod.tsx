@@ -124,7 +124,7 @@ export function App() {
   const LoginMenu = useCallback(() => {
     return <div className="flex flex-col text-left gap-2">
       {allUsers?.map(user => (
-        <div className="group flex-1 po-2 rounded-xl not-aria-disabled:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity"
+        <div className="group flex-1 po-2 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity"
           key={user.uuid}>
           <a className="whitespace-nowrap aria-disabled:opacity-50 transition-opacity"
             href="#/login/aaa"
