@@ -9,7 +9,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Menu, WideClickableNakedMenuAnchor } from "@/libs/menu/mod.tsx";
-import { Readable } from "@hazae41/binary";
+import { Readable, Unknown } from "@hazae41/binary";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
@@ -22,7 +22,7 @@ interface UserData {
   readonly uuid: string
   readonly name: string
   readonly file: FileSystemFileHandle
-  readonly pass?: Uint8Array
+  readonly pass?: Uint8Array<ArrayBuffer>
 }
 
 export function App() {
@@ -55,8 +55,24 @@ export function App() {
     const blob = await file.getFile()
     const data = new Uint8Array(await blob.arrayBuffer())
 
+    if (user.pass != null && confirm("Use passkey to login?")) {
+      const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
+
+      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+      const composite = new KDBX.CompositeKey(new Unknown(stored))
+      const decrypted = await encrypted.decryptOrThrow(composite)
+
+      console.log(decrypted.inner.content.value.document)
+
+      alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
+
+      return
+    }
+
+    const password = prompt("Enter your password")
+
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode("test")))
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
     console.log(decrypted.inner.content.value.document)
