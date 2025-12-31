@@ -396,12 +396,12 @@ function ImportUserDialog() {
     <div className="h-2" />
     <div className="relative">
       {"showOpenFilePicker" in window === false &&
-        <input className="absolute w-full h-full opacity-0"
+        <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"
           accept=".kdbx"
           onChange={e => setFileOrFsfh(e.target.files.item(0))} />}
       {"showOpenFilePicker" in window === true &&
-        <button className="absolute w-full h-full opacity-0"
+        <button className="absolute w-full h-full opacity-0 cursor-pointer"
           type="button"
           onClick={pickOrAlert}
           onDragOver={Events.preventDefault}
@@ -587,7 +587,7 @@ function UserMenuItem(props: { user: UserData }) {
           <div className="h-4" />
         </Dialog>}
     </HashSubpathProvider>
-    <div className="relative group flex-1 rounded-xl cursor-pointer has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">
+    <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">
       {user.fsfh == null &&
         <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"
