@@ -113,8 +113,7 @@ export function App() {
     return <ClickableOppositeAnchor
       href={coords.url.hash}
       onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}
-      onContextMenu={coords.onContextMenu}>
+      onKeyDown={coords.onKeyDown}>
       Login
     </ClickableOppositeAnchor>
   }, [hash])
@@ -125,8 +124,7 @@ export function App() {
     return <WideClickableNakedMenuAnchor
       href={coords.url.hash}
       onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}
-      onContextMenu={coords.onContextMenu}>
+      onKeyDown={coords.onKeyDown}>
       <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast border-dashed">
         <Outline.PlusIcon className="size-4" />
       </div>
@@ -136,35 +134,44 @@ export function App() {
 
   const LoginMenu = useCallback(() => {
     return <div className="flex flex-col text-left gap-2">
-      {allUsers?.map(user => (
-        <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity"
-          key={user.uuid}>
-          {user.fsfh == null &&
-            <input className="absolute w-full h-full opacity-0"
-              type="file"
-              onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])} />}
-          {user.fsfh != null &&
-            <button className="absolute w-full h-full opacity-0"
-              type="button"
-              onClick={() => openOrAlert(user, user.fsfh)} />}
-          <div className="po-2 flex items-center justify-start">
-            <div className="grow flex items-center justify-start gap-4 whitespace-nowrap aria-disabled:opacity-50 transition-opacity">
-              <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast bg-opposite" />
-              {user.name}
-            </div>
-            <div className="w-8" />
-            <div className="flex items-center gap-2">
-              <a className="z-10 bg-default-contrast rounded-full p-1 aria-disabled:opacity-50 transition-opacity"
-                href="#/settings">
-                <Outline.CogIcon className="size-6" />
-              </a>
-            </div>
-          </div>
-        </div>
-      ))}
+      {allUsers?.map(user => <Fragment key={user.uuid}>
+        <UserMenuItem user={user} />
+      </Fragment>)}
       <AddUserButton />
     </div>
   }, [allUsers, openOrAlert, AddUserButton])
+
+  const UserMenuItem = useCallback(({ user }: { user: UserData }) => {
+    const settings = useCoords(hash, `/settings/${user.uuid}`)
+
+    return <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">
+      {user.fsfh == null &&
+        <input className="absolute w-full h-full opacity-0"
+          type="file"
+          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])} />}
+      {user.fsfh != null &&
+        <button className="absolute w-full h-full opacity-0"
+          type="button"
+          onClick={() => openOrAlert(user, user.fsfh)} />}
+      <div className="po-2 flex items-center justify-start">
+        <div className="grow flex items-center justify-start gap-4 whitespace-nowrap aria-disabled:opacity-50 transition-opacity">
+          <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
+            {user.name.slice(0, 1).toUpperCase()}
+          </div>
+          {user.name}
+        </div>
+        <div className="w-8" />
+        <div className="flex items-center gap-2">
+          <a className="z-10 bg-default-contrast rounded-full p-1 aria-disabled:opacity-50 transition-opacity"
+            href={settings.url.hash}
+            onClick={settings.onClick}
+            onKeyDown={settings.onKeyDown}>
+            <Outline.CogIcon className="size-6" />
+          </a>
+        </div>
+      </div>
+    </div>
+  }, [loadOrAlert, openOrAlert])
 
   const ImportUserButton = useCallback(() => {
     const coords = useCoords(hash, "/login/add/import")
@@ -172,8 +179,7 @@ export function App() {
     return <WideClickableNakedMenuAnchor
       href={coords.url.hash}
       onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}
-      onContextMenu={coords.onContextMenu}>
+      onKeyDown={coords.onKeyDown}>
       Import user
     </WideClickableNakedMenuAnchor>
   }, [hash])
@@ -185,8 +191,7 @@ export function App() {
       aria-disabled
       href={coords.url.hash}
       onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}
-      onContextMenu={coords.onContextMenu}>
+      onKeyDown={coords.onKeyDown}>
       Create user
     </WideClickableNakedMenuAnchor>
   }, [hash])
