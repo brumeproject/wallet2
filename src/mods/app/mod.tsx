@@ -49,65 +49,6 @@ export function App() {
     getAllUsers().then(setAllUsers).catch(console.error)
   }, [users])
 
-  const loadOrAlert = useCallback((user: UserData, file: File) => Promise.try(async () => {
-    const data = new Uint8Array(await file.arrayBuffer())
-
-    if (user.pass != null && confirm("Use passkey to login?")) {
-      const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
-
-      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-      const composite = new KDBX.CompositeKey(new Unknown(stored))
-      const decrypted = await encrypted.decryptOrThrow(composite)
-
-      console.log(decrypted.inner.content.value.document)
-
-      alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
-
-      return
-    }
-
-    const password = prompt("Enter your password")
-
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    alert("Logged in successfully")
-  }).catch(Errors.display), [])
-
-  const openOrAlert = useCallback((user: UserData, fsfh: FileSystemFileHandle) => Promise.try(async () => {
-    await fsfh.requestPermission({ mode: "readwrite" })
-
-    const file = await fsfh.getFile()
-    const data = new Uint8Array(await file.arrayBuffer())
-
-    if (user.pass != null && confirm("Use passkey to login?")) {
-      const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
-
-      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-      const composite = new KDBX.CompositeKey(new Unknown(stored))
-      const decrypted = await encrypted.decryptOrThrow(composite)
-
-      console.log(decrypted.inner.content.value.document)
-
-      alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
-
-      return
-    }
-
-    const password = prompt("Enter your password")
-
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    alert("Logged in successfully")
-  }).catch(Errors.display), [users])
-
   const LoginButton = useCallback(() => {
     const coords = useCoords(hash, "/login")
 
@@ -140,39 +81,7 @@ export function App() {
       </Fragment>)}
       <AddUserButton />
     </div>
-  }, [allUsers, openOrAlert, AddUserButton])
-
-  const UserMenuItem = useCallback(({ user }: { user: UserData }) => {
-    const settings = useCoords(hash, `/settings/${user.uuid}`)
-
-    return <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">
-      {user.fsfh == null &&
-        <input className="absolute w-full h-full opacity-0"
-          type="file"
-          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])} />}
-      {user.fsfh != null &&
-        <button className="absolute w-full h-full opacity-0"
-          type="button"
-          onClick={() => openOrAlert(user, user.fsfh)} />}
-      <div className="po-2 flex items-center justify-start">
-        <div className="grow flex items-center justify-start gap-4 whitespace-nowrap aria-disabled:opacity-50 transition-opacity">
-          <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
-            {user.name.slice(0, 1).toUpperCase()}
-          </div>
-          {user.name}
-        </div>
-        <div className="w-8" />
-        <div className="flex items-center gap-2">
-          <a className="z-10 bg-default-contrast rounded-full p-1 aria-disabled:opacity-50 transition-opacity"
-            href={settings.url.hash}
-            onClick={settings.onClick}
-            onKeyDown={settings.onKeyDown}>
-            <Outline.CogIcon className="size-6" />
-          </a>
-        </div>
-      </div>
-    </div>
-  }, [loadOrAlert, openOrAlert])
+  }, [client, hash, allUsers, AddUserButton])
 
   const ImportUserButton = useCallback(() => {
     const coords = useCoords(hash, "/login/add/import")
@@ -592,6 +501,118 @@ function CreateUserDialog() {
         onClick={saveOrAlert}>
         Save file
       </WideClickableOppositeButton>
+    </div>
+  </Fragment>
+}
+
+function UserMenuItem(props: { user: UserData }) {
+  const { user } = props
+
+  const client = useClientContext().getOrThrow()
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const settings = useCoords(hash, `/settings/${user.uuid}`)
+
+  const loadOrAlert = useCallback((user: UserData, file: File) => Promise.try(async () => {
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    if (user.pass != null && confirm("Use passkey to login?")) {
+      const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
+
+      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+      const composite = new KDBX.CompositeKey(new Unknown(stored))
+      const decrypted = await encrypted.decryptOrThrow(composite)
+
+      console.log(decrypted.inner.content.value.document)
+
+      alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
+
+      return
+    }
+
+    const password = prompt("Enter your password")
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    alert("Logged in successfully")
+  }).catch(Errors.display), [])
+
+  const openOrAlert = useCallback((user: UserData, fsfh: FileSystemFileHandle) => Promise.try(async () => {
+    await fsfh.requestPermission({ mode: "readwrite" })
+
+    const file = await fsfh.getFile()
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    if (user.pass != null && confirm("Use passkey to login?")) {
+      const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
+
+      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+      const composite = new KDBX.CompositeKey(new Unknown(stored))
+      const decrypted = await encrypted.decryptOrThrow(composite)
+
+      console.log(decrypted.inner.content.value.document)
+
+      alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
+
+      return
+    }
+
+    const password = prompt("Enter your password")
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    alert("Logged in successfully")
+  }).catch(Errors.display), [])
+
+  return <Fragment>
+    <HashSubpathProvider>
+      {client && hash.url.pathname === `/settings/${user.uuid}` &&
+        <Dialog>
+          <h1 className="text-xl font-medium">
+            {user.name}
+          </h1>
+          <div className="text-default-contrast">
+            {user.uuid}
+          </div>
+          <div className="h-4" />
+        </Dialog>}
+    </HashSubpathProvider>
+    <div className="relative group flex-1 rounded-xl cursor-pointer has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">
+      {user.fsfh == null &&
+        <input className="absolute w-full h-full opacity-0 cursor-pointer"
+          type="file"
+          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])} />}
+      {user.fsfh != null &&
+        <button className="absolute w-full h-full opacity-0 cursor-pointer"
+          type="button"
+          onClick={() => openOrAlert(user, user.fsfh)} />}
+      <div className="po-2 flex items-center justify-start">
+        <div className="grow flex items-center justify-start gap-4 whitespace-nowrap aria-disabled:opacity-50 transition-opacity">
+          <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
+            {user.name.slice(0, 1).toUpperCase()}
+          </div>
+          {user.name}
+        </div>
+        <div className="w-8" />
+        <div className="flex items-center gap-2">
+          <a className="z-10 bg-default-contrast rounded-full p-1 aria-disabled:opacity-50 transition-opacity"
+            href={settings.url.hash}
+            onClick={settings.onClick}
+            onKeyDown={settings.onKeyDown}>
+            <Outline.CogIcon className="size-6" />
+          </a>
+        </div>
+      </div>
     </div>
   </Fragment>
 }
