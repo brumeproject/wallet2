@@ -352,26 +352,7 @@ function ImportUserDialog() {
 
   const [password, setPassword] = useState("")
 
-  const dropOrAlert = useCallback((e: DragEvent<HTMLButtonElement>) => Promise.try(async () => {
-    e.preventDefault()
-
-    const [item] = e.dataTransfer.items as unknown as Iterable<DataTransferItem>
-
-    if ("getAsFileSystemHandle" in item === false) {
-      setFileOrFsfh(item.getAsFile())
-      return
-    }
-
-    const fsfh = await item.getAsFileSystemHandle()
-
-    if (fsfh.kind !== "file")
-      return
-
-    setFileOrFsfh(fsfh)
-    return
-  }).catch(Errors.display), [])
-
-  const openOrAlert = useCallback(() => Promise.try(async () => {
+  const pickOrAlert = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     if (fsfh == null)
@@ -381,6 +362,19 @@ function ImportUserDialog() {
 
     setFileOrFsfh(fsfh)
   }).catch(Errors.display), [uuid, users, name, fileOrFsfh, password, close])
+
+  const dropOrAlert = useCallback((e: DragEvent<HTMLButtonElement>) => Promise.try(async () => {
+    e.preventDefault()
+
+    const [item] = e.dataTransfer.items as unknown as Iterable<DataTransferItem>
+
+    const fsfh = await item.getAsFileSystemHandle()
+
+    if (fsfh.kind !== "file")
+      return
+
+    setFileOrFsfh(fsfh)
+  }).catch(Errors.display), [])
 
   const submitOrAlert = useCallback(() => Promise.try(async () => {
     if (fileOrFsfh instanceof FileSystemFileHandle) {
@@ -455,6 +449,16 @@ function ImportUserDialog() {
     }
   }).catch(Errors.display), [uuid, users, name, fileOrFsfh, password, close])
 
+  const error = useMemo(() => {
+    if (!name.length)
+      return "Name is required"
+    if (fileOrFsfh == null)
+      return "File is required"
+    if (!password.length)
+      return "Password is required"
+    return
+  }, [name, fileOrFsfh, password])
+
   return <Fragment>
     <h1 className="text-xl font-medium">
       Import user
@@ -490,12 +494,12 @@ function ImportUserDialog() {
       {"showOpenFilePicker" in window === true &&
         <button className="absolute w-full h-full opacity-0"
           type="button"
-          onClick={openOrAlert}
+          onClick={pickOrAlert}
           onDragOver={Events.preventDefault}
           onDrop={dropOrAlert} />}
       {fileOrFsfh != null &&
         <div className="bg-default-contrast po-2 rounded-xl">
-          {fileOrFsfh.name} {fileOrFsfh instanceof FileSystemFileHandle ? "(file handle)" : "(file)"}
+          {fileOrFsfh.name}
         </div>}
       {fileOrFsfh == null &&
         <div className="bg-default-contrast po-2 rounded-xl">
@@ -519,8 +523,9 @@ function ImportUserDialog() {
     <div className="h-4 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       <WideClickableOppositeButton
+        disabled={error != null}
         onClick={submitOrAlert}>
-        Add
+        {error != null ? error : "OK"}
       </WideClickableOppositeButton>
     </div>
   </Fragment>
