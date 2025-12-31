@@ -7,6 +7,7 @@ import { useClientContext } from "@/libs/client/mod.tsx";
 import { useAppDatabaseContext } from "@/libs/database/mod.tsx";
 import { Dialog } from "@/libs/dialog/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
+import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Menu, WideClickableNakedMenuAnchor } from "@/libs/menu/mod.tsx";
@@ -16,7 +17,6 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { DragEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { Events } from "../../libs/events/mod.ts";
 
 React;
 
