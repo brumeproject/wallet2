@@ -164,7 +164,7 @@ export function App() {
               ChaCha20
             </div>
             <div className="p-4 bg-default-contrast rounded-xl">
-              Argon2id
+              Argon2
             </div>
           </div>
           <div className="h-[max(24rem,50dvh)]" />
