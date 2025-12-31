@@ -22,7 +22,7 @@ React;
 interface UserData {
   readonly uuid: string
   readonly name: string
-  readonly file: { type: "fsfh", fsfh: FileSystemFileHandle } | { type: "name", name: string }
+  readonly fsfh?: FileSystemFileHandle
   readonly pass?: Uint8Array<ArrayBuffer>
 }
 
@@ -48,23 +48,36 @@ export function App() {
     getAllUsers().then(setAllUsers).catch(console.error)
   }, [users])
 
-  const openUserOrAlert = useCallback((user: UserData) => Promise.try(async () => {
-    const getFsfhOrThrow = async () => {
-      if (user.file.type === "fsfh") {
-        const fsfh = user.file.fsfh
+  const loadOrAlert = useCallback((user: UserData, file: File) => Promise.try(async () => {
+    const data = new Uint8Array(await file.arrayBuffer())
 
-        await fsfh.requestPermission({ mode: "readwrite" })
+    if (user.pass != null && confirm("Use passkey to login?")) {
+      const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
 
-        return fsfh
-      }
+      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+      const composite = new KDBX.CompositeKey(new Unknown(stored))
+      const decrypted = await encrypted.decryptOrThrow(composite)
 
-      const root = await navigator.storage.getDirectory()
-      const fsfh = await root.getFileHandle(user.file.name)
+      console.log(decrypted.inner.content.value.document)
 
-      return fsfh
+      alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
+
+      return
     }
 
-    const fsfh = await getFsfhOrThrow()
+    const password = prompt("Enter your password")
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    alert("Logged in successfully")
+  }).catch(Errors.display), [])
+
+  const openOrAlert = useCallback((user: UserData, fsfh: FileSystemFileHandle) => Promise.try(async () => {
+    await fsfh.requestPermission({ mode: "readwrite" })
 
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
@@ -91,7 +104,7 @@ export function App() {
 
     console.log(decrypted.inner.content.value.document)
 
-    alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
+    alert("Logged in successfully")
   }).catch(Errors.display), [users])
 
   const LoginButton = useCallback(() => {
@@ -124,22 +137,34 @@ export function App() {
   const LoginMenu = useCallback(() => {
     return <div className="flex flex-col text-left gap-2">
       {allUsers?.map(user => (
-        <div className="group flex-1 po-2 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity"
+        <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity"
           key={user.uuid}>
-          <a className="whitespace-nowrap aria-disabled:opacity-50 transition-opacity"
-            href="#/login/aaa"
-            onClick={() => openUserOrAlert(user)}>
-            {user.name}
-          </a>
-          <a className=""
-            href="#/settings">
-            Settings
-          </a>
+          {user.fsfh == null &&
+            <input className="absolute w-full h-full opacity-0"
+              type="file"
+              onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])} />}
+          {user.fsfh != null &&
+            <button className="absolute w-full h-full opacity-0"
+              type="button"
+              onClick={() => openOrAlert(user, user.fsfh)} />}
+          <div className="po-2 flex items-center justify-start">
+            <div className="grow flex items-center justify-start gap-4 whitespace-nowrap aria-disabled:opacity-50 transition-opacity">
+              <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast bg-opposite" />
+              {user.name}
+            </div>
+            <div className="w-8" />
+            <div className="flex items-center gap-2">
+              <a className="z-10 bg-default-contrast rounded-full p-1 aria-disabled:opacity-50 transition-opacity"
+                href="#/settings">
+                <Outline.CogIcon className="size-6" />
+              </a>
+            </div>
+          </div>
         </div>
       ))}
       <AddUserButton />
     </div>
-  }, [allUsers, openUserOrAlert, AddUserButton])
+  }, [allUsers, openOrAlert, AddUserButton])
 
   const ImportUserButton = useCallback(() => {
     const coords = useCoords(hash, "/login/add/import")
@@ -157,6 +182,7 @@ export function App() {
     const coords = useCoords(hash, "/login/add/create")
 
     return <WideClickableNakedMenuAnchor
+      aria-disabled
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}
@@ -186,10 +212,10 @@ export function App() {
         <Dialog>
           <ImportUserDialog />
         </Dialog>}
-      {client && hash.url.pathname === "/login/add/create" &&
+      {/* {client && hash.url.pathname === "/login/add/create" &&
         <Dialog>
           <CreateUserDialog />
-        </Dialog>}
+        </Dialog>} */}
     </HashSubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
@@ -345,7 +371,7 @@ function ImportUserDialog() {
       if (!confirm("Do you want to create a passkey?")) {
         const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-        const fresh = [...stale, { uuid, name, file: { type: "fsfh", fsfh } } satisfies UserData]
+        const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
 
         await users.value.getOrThrow().setOrThrow("users", fresh)
 
@@ -360,7 +386,7 @@ function ImportUserDialog() {
 
       const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-      const fresh = [...stale, { uuid, name, file: { type: "fsfh", fsfh }, pass } satisfies UserData]
+      const fresh = [...stale, { uuid, name, fsfh, pass } satisfies UserData]
 
       await users.value.getOrThrow().setOrThrow("users", fresh)
 
@@ -370,14 +396,6 @@ function ImportUserDialog() {
     } else {
       const file = fileOrFsfh
       const data = new Uint8Array(await file.arrayBuffer())
-      const name = `${uuid.slice(0, 8)}.kdbx`
-
-      const root = await navigator.storage.getDirectory()
-      const fsfh = await root.getFileHandle(`${uuid.slice(0, 8)}.kdbx`, { create: true })
-
-      const writable = await fsfh.createWritable()
-      await writable.write(data)
-      await writable.close()
 
       const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
       const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
@@ -387,7 +405,7 @@ function ImportUserDialog() {
       if (!confirm("Do you want to create a passkey?")) {
         const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-        const fresh = [...stale, { uuid, name, file: { type: "name", name } } satisfies UserData]
+        const fresh = [...stale, { uuid, name } satisfies UserData]
 
         await users.value.getOrThrow().setOrThrow("users", fresh)
 
@@ -402,7 +420,7 @@ function ImportUserDialog() {
 
       const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-      const fresh = [...stale, { uuid, name, file: { type: "name", name }, pass } satisfies UserData]
+      const fresh = [...stale, { uuid, name, pass } satisfies UserData]
 
       await users.value.getOrThrow().setOrThrow("users", fresh)
 
@@ -484,7 +502,7 @@ function ImportUserDialog() {
         </div>}
       {fileOrFsfh == null &&
         <div className="bg-default-contrast po-2 rounded-xl">
-          Click here or drop file here
+          Pick or drop file here
         </div>}
     </div>
     <div className="h-4" />
@@ -527,7 +545,7 @@ function CreateUserDialog() {
 
     const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    const fresh = [...stale, { uuid, name, file: { type: "fsfh", fsfh } } satisfies UserData]
+    const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
 
     await users.value.getOrThrow().setOrThrow("users", fresh)
 
