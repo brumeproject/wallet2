@@ -222,7 +222,7 @@ export function Dialog(props: ChildrenProps & DarkProps & { hesitant?: boolean }
             onScroll={onScroll}
             onTouchMove={onTouchStart}
             onTouchEnd={onTouchEnd}
-            onClick={Events.isolate}>
+            onClick={Events.stopPropagation}>
             <div className={`grow flex flex-col items-center w-full md:max-w-3xl md:m-auto`}>
               {hesitant &&
                 <input className="h-0 -z-10 opacity-0 md:hidden"
@@ -231,7 +231,7 @@ export function Dialog(props: ChildrenProps & DarkProps & { hesitant?: boolean }
               <div className="h-[50vh] grow md:h-8" />
               <div className={`flex flex-col w-full md:w-[max(min(100dvh-4rem-var(--safe-area-inset-top,env(safe-area-inset-top))-var(--safe-area-inset-bottom,env(safe-area-inset-bottom)),48rem),28rem)] text-default bg-default rounded-t-3xl md:rounded-3xl`}
                 aria-modal
-                onMouseDown={Events.isolate}>
+                onMouseDown={Events.stopPropagation}>
                 <div className="md:hidden p-4 flex items-center justify-center">
                   <div className="w-16 h-2 bg-backdrop rounded-full" />
                 </div>

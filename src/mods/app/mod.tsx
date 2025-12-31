@@ -15,7 +15,8 @@ import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, { DragEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Events } from "../../libs/events/mod.ts";
 
 React;
 
@@ -351,6 +352,25 @@ function ImportUserDialog() {
 
   const [password, setPassword] = useState("")
 
+  const dropOrAlert = useCallback((e: DragEvent<HTMLButtonElement>) => Promise.try(async () => {
+    e.preventDefault()
+
+    const [item] = e.dataTransfer.items as unknown as Iterable<DataTransferItem>
+
+    if ("getAsFileSystemHandle" in item === false) {
+      setFileOrFsfh(item.getAsFile())
+      return
+    }
+
+    const fsfh = await item.getAsFileSystemHandle()
+
+    if (fsfh.kind !== "file")
+      return
+
+    setFileOrFsfh(fsfh)
+    return
+  }).catch(Errors.display), [])
+
   const openOrAlert = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
@@ -435,36 +455,6 @@ function ImportUserDialog() {
     }
   }).catch(Errors.display), [uuid, users, name, fileOrFsfh, password, close])
 
-  useEffect(() => {
-    const aborter = new AbortController()
-    const { signal } = aborter
-
-    document.body.addEventListener("drop", async e => {
-      e.preventDefault()
-
-      const [item] = e.dataTransfer.items as unknown as Iterable<DataTransferItem>
-
-      if ("getAsFileSystemHandle" in item === false) {
-        setFileOrFsfh(item.getAsFile())
-        return
-      }
-
-      const fsfh = await item.getAsFileSystemHandle()
-
-      if (fsfh.kind !== "file")
-        return
-
-      setFileOrFsfh(fsfh)
-      return
-    }, { signal })
-
-    document.body.addEventListener("dragover", e => {
-      e.preventDefault()
-    }, { signal })
-
-    return () => aborter.abort()
-  }, [])
-
   return <Fragment>
     <h1 className="text-xl font-medium">
       Import user
@@ -500,7 +490,9 @@ function ImportUserDialog() {
       {"showOpenFilePicker" in window === true &&
         <button className="absolute w-full h-full opacity-0"
           type="button"
-          onClick={openOrAlert} />}
+          onClick={openOrAlert}
+          onDragOver={Events.preventDefault}
+          onDrop={dropOrAlert} />}
       {fileOrFsfh != null &&
         <div className="bg-default-contrast po-2 rounded-xl">
           {fileOrFsfh.name} {fileOrFsfh instanceof FileSystemFileHandle ? "(file handle)" : "(file)"}

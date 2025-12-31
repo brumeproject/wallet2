@@ -13,38 +13,38 @@ export function Isolate(props: ChildrenProps) {
   const { children } = props
 
   return <div
-    onClick={Events.isolate}
-    onContextMenu={Events.isolate}
-    onDoubleClick={Events.isolate}
+    onClick={Events.stopPropagation}
+    onContextMenu={Events.stopPropagation}
+    onDoubleClick={Events.stopPropagation}
 
-    onDrag={Events.isolate}
-    onDragEnd={Events.isolate}
-    onDragEnter={Events.isolate}
-    onDragExit={Events.isolate}
-    onDragLeave={Events.isolate}
-    onDragOver={Events.isolate}
-    onDragStart={Events.isolate}
-    onDrop={Events.isolate}
+    onDrag={Events.stopPropagation}
+    onDragEnd={Events.stopPropagation}
+    onDragEnter={Events.stopPropagation}
+    onDragExit={Events.stopPropagation}
+    onDragLeave={Events.stopPropagation}
+    onDragOver={Events.stopPropagation}
+    onDragStart={Events.stopPropagation}
+    onDrop={Events.stopPropagation}
 
-    onMouseDown={Events.isolate}
-    onMouseEnter={Events.isolate}
-    onMouseLeave={Events.isolate}
-    onMouseMove={Events.isolate}
-    onMouseOver={Events.isolate}
-    onMouseOut={Events.isolate}
-    onMouseUp={Events.isolate}
+    onMouseDown={Events.stopPropagation}
+    onMouseEnter={Events.stopPropagation}
+    onMouseLeave={Events.stopPropagation}
+    onMouseMove={Events.stopPropagation}
+    onMouseOver={Events.stopPropagation}
+    onMouseOut={Events.stopPropagation}
+    onMouseUp={Events.stopPropagation}
 
-    onKeyDown={Events.isolate}
-    onKeyUp={Events.isolate}
+    onKeyDown={Events.stopPropagation}
+    onKeyUp={Events.stopPropagation}
 
-    onFocus={Events.isolate}
-    onBlur={Events.isolate}
+    onFocus={Events.stopPropagation}
+    onBlur={Events.stopPropagation}
 
-    onChange={Events.isolate}
-    onInput={Events.isolate}
+    onChange={Events.stopPropagation}
+    onInput={Events.stopPropagation}
 
-    onInvalid={Events.isolate}
-    onSubmit={Events.isolate}>
+    onInvalid={Events.stopPropagation}
+    onSubmit={Events.stopPropagation}>
     {children}
   </div>
 }
