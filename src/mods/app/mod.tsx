@@ -11,7 +11,7 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Menu, WideClickableNakedMenuAnchor } from "@/libs/menu/mod.tsx";
-import { Readable, Unknown } from "@hazae41/binary";
+import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
@@ -98,7 +98,6 @@ export function App() {
     const coords = useCoords(hash, "/login/add/create")
 
     return <WideClickableNakedMenuAnchor
-      aria-disabled
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
@@ -127,10 +126,10 @@ export function App() {
         <Dialog>
           <ImportUserDialog />
         </Dialog>}
-      {/* {client && hash.url.pathname === "/login/add/create" &&
+      {client && hash.url.pathname === "/login/add/create" &&
         <Dialog>
           <CreateUserDialog />
-        </Dialog>} */}
+        </Dialog>}
     </HashSubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
@@ -249,10 +248,6 @@ function ImportUserDialog() {
   const close = useCloseContext().getOrThrow()
   const users = useAppDatabaseContext().getOrThrow()
 
-  const uuid = useMemo(() => {
-    return crypto.randomUUID()
-  }, [])
-
   const [rawName, setRawName] = useState("")
 
   const name = rawName || "Anon"
@@ -262,7 +257,7 @@ function ImportUserDialog() {
   const [password, setPassword] = useState("")
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
-    const [fsfh] = await window.showOpenFilePicker({ id: uuid.slice(0, 8), startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+    const [fsfh] = await window.showOpenFilePicker({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     if (fsfh == null)
       return
@@ -270,7 +265,7 @@ function ImportUserDialog() {
       return
 
     setFileOrFsfh(fsfh)
-  }).catch(Errors.display), [uuid, users, name, fileOrFsfh, password, close])
+  }).catch(Errors.display), [users, name, fileOrFsfh, password, close])
 
   const dropOrAlert = useCallback((e: DragEvent<HTMLButtonElement>) => Promise.try(async () => {
     e.preventDefault()
@@ -294,9 +289,17 @@ function ImportUserDialog() {
       const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
       const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
 
-      await encrypted.decryptOrThrow(composite)
+      const decrypted = await encrypted.decryptOrThrow(composite)
+
+      console.log(decrypted.outer.data.data.value)
+
+      console.log(decrypted.inner.headers)
+
+      console.log(decrypted.inner.content.value.document)
 
       if (!confirm("Do you want to create a passkey?")) {
+        const uuid = crypto.randomUUID()
+
         const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
         const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
@@ -309,6 +312,8 @@ function ImportUserDialog() {
 
         return
       }
+
+      const uuid = crypto.randomUUID()
 
       const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
 
@@ -331,6 +336,8 @@ function ImportUserDialog() {
       await encrypted.decryptOrThrow(composite)
 
       if (!confirm("Do you want to create a passkey?")) {
+        const uuid = crypto.randomUUID()
+
         const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
         const fresh = [...stale, { uuid, name } satisfies UserData]
@@ -344,6 +351,8 @@ function ImportUserDialog() {
         return
       }
 
+      const uuid = crypto.randomUUID()
+
       const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
 
       const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
@@ -356,7 +365,7 @@ function ImportUserDialog() {
 
       close()
     }
-  }).catch(Errors.display), [uuid, users, name, fileOrFsfh, password, close])
+  }).catch(Errors.display), [users, name, fileOrFsfh, password, close])
 
   const error = useMemo(() => {
     if (!name.length)
@@ -441,18 +450,19 @@ function ImportUserDialog() {
 }
 
 function CreateUserDialog() {
+  const close = useCloseContext().getOrThrow()
   const users = useAppDatabaseContext().getOrThrow()
 
-  const uuid = useMemo(() => {
-    return crypto.randomUUID()
-  }, [])
+  const [rawName, setRawName] = useState("")
 
-  const [name, setName] = useState("")
+  const name = rawName || "Anon"
 
   const [password, setPassword] = useState("")
 
-  const saveOrAlert = useCallback(() => Promise.try(async () => {
-    const fsfh = await window.showSaveFilePicker({ id: uuid.slice(0, 8), startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+  const pickOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = await window.showSaveFilePicker({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+
+    const uuid = crypto.randomUUID()
 
     const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
@@ -461,7 +471,70 @@ function CreateUserDialog() {
     await users.value.getOrThrow().setOrThrow("users", fresh)
 
     users.update()
-  }).catch(Errors.display), [uuid, users, name, password])
+
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+
+    const inner = (() => {
+      const document = new DOMParser().parseFromString(`
+<KeePassFile>
+  <Meta>
+    <Generator>Brume</Generator>
+    <DatabaseName>${name}</DatabaseName>
+    <HistoryMaxItems>10</HistoryMaxItems>
+    <HistoryMaxSize>6291456</HistoryMaxSize>
+    <RecycleBinEnabled>True</RecycleBinEnabled>
+    <RecycleBinUUID>KitVu0Z+S26bU0ek9ghs7g==</RecycleBinUUID>
+  </Meta>
+  <Root>
+    <Group>
+      <Name>Database</Name>
+      <UUID>H2qgo3GARAW5tSvIO/mYtQ==</UUID>
+      <Group>
+        <Name>Deleted</Name>
+        <UUID>KitVu0Z+S26bU0ek9ghs7g==</UUID>
+        <IconID>43</IconID>
+        <EnableAutoType>False</EnableAutoType>
+        <EnableSearching>False</EnableSearching>
+      </Group>
+    </Group>
+  </Root>
+</KeePassFile>
+`.trim(), "text/xml")
+
+      const content = new KDBX.Inner.KeePassFile(document)
+      const headers = KDBX.Inner.Headers.createOrThrow(KDBX.Inner.Cipher.ChaCha20)
+
+      return KDBX.Inner.HeadersAndContentWithBytes.computeOrThrow(headers, content)
+    })()
+
+    const outer = await (async () => {
+      const cipher = KDBX.Outer.Cipher.Aes256Cbc
+      const compression = KDBX.Outer.Compression.Gzip
+
+      const seed = new Unknown(crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer> & { length: 32 })
+      const iv = new Unknown(crypto.getRandomValues(new Uint8Array(cipher.IV.length)))
+      const kdf = KDBX.Outer.KdfParameters.Argon2d.createOrThrow()
+
+      const headers = KDBX.Outer.Headers.initOrThrow({ cipher, compression, seed, iv, kdf })
+      const wrapper = new KDBX.Outer.MagicAndVersionAndHeaders(new KDBX.Outer.Version(4, 0), headers)
+
+      const keys = await headers.deriveOrThrow(composite)
+
+      const bytes = KDBX.Outer.MagicAndVersionAndHeadersWithBytes.computeOrThrow(wrapper)
+      const hashs = await KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmac.computeOrThrow(bytes, keys)
+
+      return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, keys)
+    })()
+
+    const decrypted = new KDBX.Database.Decrypted(outer, inner)
+    const encrypted = await decrypted.encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(Writable.writeToBytesOrThrow(encrypted))
+    await writable.close()
+
+    close()
+  }).catch(Errors.display), [users, name, password, close])
 
   return <Fragment>
     <h1 className="text-xl font-medium">
@@ -478,15 +551,15 @@ function CreateUserDialog() {
     <div className="bg-default-contrast po-2 rounded-xl">
       <input className="w-full outline-none"
         placeholder="Anon"
-        value={name}
-        onChange={e => setName(e.target.value)} />
+        value={rawName}
+        onChange={e => setRawName(e.target.value)} />
     </div>
     <div className="h-4" />
     <div className="font-medium">
       Password
     </div>
     <div className="text-default-contrast">
-      At least 3 characters, will be used to encrypt your file
+      At least 3 characters
     </div>
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
@@ -497,10 +570,11 @@ function CreateUserDialog() {
     </div>
     <div className="h-4 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
-      <WideClickableOppositeButton
-        onClick={saveOrAlert}>
-        Save file
-      </WideClickableOppositeButton>
+      {"showSaveFilePicker" in window &&
+        <WideClickableOppositeButton
+          onClick={pickOrAlert}>
+          Save file
+        </WideClickableOppositeButton>}
     </div>
   </Fragment>
 }
