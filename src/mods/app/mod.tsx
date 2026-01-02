@@ -398,17 +398,17 @@ function ImportUserDialog() {
     </div>
     <div className="h-2" />
     <div className="relative">
-      {"showOpenFilePicker" in window === false &&
-        <input className="absolute w-full h-full opacity-0 cursor-pointer"
-          type="file"
-          accept=".kdbx"
-          onChange={e => setFileOrFsfh(e.target.files.item(0))} />}
       {"showOpenFilePicker" in window === true &&
         <button className="absolute w-full h-full opacity-0 cursor-pointer"
           type="button"
           onClick={pickOrAlert}
           onDragOver={Events.preventDefault}
           onDrop={dropOrAlert} />}
+      {"showOpenFilePicker" in window === false &&
+        <input className="absolute w-full h-full opacity-0 cursor-pointer"
+          type="file"
+          accept=".kdbx"
+          onChange={e => setFileOrFsfh(e.target.files.item(0))} />}
       {fileOrFsfh != null &&
         <div className="bg-default-contrast po-2 rounded-xl">
           {fileOrFsfh.name}
@@ -453,8 +453,80 @@ function CreateUserDialog() {
 
   const [password, setPassword] = useState("")
 
+  const xml = useMemo(() => `
+    <KeePassFile>
+      <Meta>
+        <Generator>Brume</Generator>
+        <DatabaseName>${name}</DatabaseName>
+        <HistoryMaxItems>10</HistoryMaxItems>
+        <HistoryMaxSize>6291456</HistoryMaxSize>
+        <RecycleBinEnabled>True</RecycleBinEnabled>
+        <RecycleBinUUID>KitVu0Z+S26bU0ek9ghs7g==</RecycleBinUUID>
+      </Meta>
+      <Root>
+        <Group>
+          <Name>Database</Name>
+          <UUID>H2qgo3GARAW5tSvIO/mYtQ==</UUID>
+          <Group>
+            <Name>Deleted</Name>
+            <UUID>KitVu0Z+S26bU0ek9ghs7g==</UUID>
+            <IconID>43</IconID>
+            <EnableAutoType>False</EnableAutoType>
+            <EnableSearching>False</EnableSearching>
+          </Group>
+        </Group>
+      </Root>
+    </KeePassFile>
+  `.trim(), [name])
+
+  const innerizeOrThrow = useCallback(() => {
+    const document = new DOMParser().parseFromString(xml, "text/xml")
+
+    const content = new KDBX.Inner.KeePassFile(document)
+    const headers = KDBX.Inner.Headers.createOrThrow(KDBX.Inner.Cipher.ChaCha20)
+
+    return KDBX.Inner.HeadersAndContentWithBytes.computeOrThrow(headers, content)
+  }, [xml])
+
+  const outerizeOrThrow = useCallback(async () => {
+    const cipher = KDBX.Outer.Cipher.Aes256Cbc
+    const compression = KDBX.Outer.Compression.Gzip
+
+    const seed = new Unknown(crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer> & { length: 32 })
+    const iv = new Unknown(crypto.getRandomValues(new Uint8Array(cipher.IV.length)))
+    const kdf = KDBX.Outer.KdfParameters.Argon2d.createOrThrow()
+
+    const headers = KDBX.Outer.Headers.initOrThrow({ cipher, compression, seed, iv, kdf })
+    const wrapper = new KDBX.Outer.MagicAndVersionAndHeaders(new KDBX.Outer.Version(4, 0), headers)
+
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+
+    const derived = await headers.deriveOrThrow(composite)
+
+    const bytes = KDBX.Outer.MagicAndVersionAndHeadersWithBytes.computeOrThrow(wrapper)
+    const hashs = await KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmac.computeOrThrow(bytes, derived)
+
+    return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, derived)
+  }, [password])
+
+  const encryptOrThrow = useCallback(async () => {
+    const inner = innerizeOrThrow()
+    const outer = await outerizeOrThrow()
+
+    const decrypted = new KDBX.Database.Decrypted(outer, inner)
+    const encrypted = await decrypted.encryptOrThrow()
+
+    return encrypted
+  }, [innerizeOrThrow, outerizeOrThrow])
+
   const pickOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+
+    const database = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(Writable.writeToBytesOrThrow(database))
+    await writable.close()
 
     const uuid = crypto.randomUUID()
 
@@ -466,69 +538,8 @@ function CreateUserDialog() {
 
     users.update()
 
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
-
-    const inner = (() => {
-      const document = new DOMParser().parseFromString(`
-<KeePassFile>
-  <Meta>
-    <Generator>Brume</Generator>
-    <DatabaseName>${name}</DatabaseName>
-    <HistoryMaxItems>10</HistoryMaxItems>
-    <HistoryMaxSize>6291456</HistoryMaxSize>
-    <RecycleBinEnabled>True</RecycleBinEnabled>
-    <RecycleBinUUID>KitVu0Z+S26bU0ek9ghs7g==</RecycleBinUUID>
-  </Meta>
-  <Root>
-    <Group>
-      <Name>Database</Name>
-      <UUID>H2qgo3GARAW5tSvIO/mYtQ==</UUID>
-      <Group>
-        <Name>Deleted</Name>
-        <UUID>KitVu0Z+S26bU0ek9ghs7g==</UUID>
-        <IconID>43</IconID>
-        <EnableAutoType>False</EnableAutoType>
-        <EnableSearching>False</EnableSearching>
-      </Group>
-    </Group>
-  </Root>
-</KeePassFile>
-`.trim(), "text/xml")
-
-      const content = new KDBX.Inner.KeePassFile(document)
-      const headers = KDBX.Inner.Headers.createOrThrow(KDBX.Inner.Cipher.ChaCha20)
-
-      return KDBX.Inner.HeadersAndContentWithBytes.computeOrThrow(headers, content)
-    })()
-
-    const outer = await (async () => {
-      const cipher = KDBX.Outer.Cipher.Aes256Cbc
-      const compression = KDBX.Outer.Compression.Gzip
-
-      const seed = new Unknown(crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer> & { length: 32 })
-      const iv = new Unknown(crypto.getRandomValues(new Uint8Array(cipher.IV.length)))
-      const kdf = KDBX.Outer.KdfParameters.Argon2d.createOrThrow()
-
-      const headers = KDBX.Outer.Headers.initOrThrow({ cipher, compression, seed, iv, kdf })
-      const wrapper = new KDBX.Outer.MagicAndVersionAndHeaders(new KDBX.Outer.Version(4, 0), headers)
-
-      const keys = await headers.deriveOrThrow(composite)
-
-      const bytes = KDBX.Outer.MagicAndVersionAndHeadersWithBytes.computeOrThrow(wrapper)
-      const hashs = await KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmac.computeOrThrow(bytes, keys)
-
-      return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, keys)
-    })()
-
-    const decrypted = new KDBX.Database.Decrypted(outer, inner)
-    const encrypted = await decrypted.encryptOrThrow()
-
-    const writable = await fsfh.createWritable()
-    await writable.write(Writable.writeToBytesOrThrow(encrypted))
-    await writable.close()
-
     close()
-  }).catch(Errors.display), [users, name, password, close])
+  }).catch(Errors.display), [users, encryptOrThrow, close])
 
   return <Fragment>
     <h1 className="text-xl font-medium">
@@ -564,7 +575,12 @@ function CreateUserDialog() {
     </div>
     <div className="h-4 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
-      {"showSaveFilePicker" in window &&
+      {"showSaveFilePicker" in window === true &&
+        <WideClickableOppositeButton
+          onClick={pickOrAlert}>
+          Save file
+        </WideClickableOppositeButton>}
+      {"showSaveFilePicker" in window === false &&
         <WideClickableOppositeButton
           onClick={pickOrAlert}>
           Save file
