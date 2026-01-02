@@ -614,7 +614,7 @@ function CreateUserDialog() {
         </WideClickableOppositeButton>}
       {"showSaveFilePicker" in window === false &&
         <WideClickableOppositeButton
-          onClick={pickOrAlert}>
+          onClick={saveOrAlert}>
           Save file
         </WideClickableOppositeButton>}
     </div>
