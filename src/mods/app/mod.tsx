@@ -289,13 +289,7 @@ function ImportUserDialog() {
       const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
       const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
 
-      const decrypted = await encrypted.decryptOrThrow(composite)
-
-      console.log(decrypted.outer.data.data.value)
-
-      console.log(decrypted.inner.headers)
-
-      console.log(decrypted.inner.content.value.document)
+      await encrypted.decryptOrThrow(composite)
 
       if (!confirm("Do you want to create a passkey?")) {
         const uuid = crypto.randomUUID()
@@ -601,7 +595,7 @@ function UserMenuItem(props: { user: UserData }) {
 
       console.log(decrypted.inner.content.value.document)
 
-      alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
+      alert("Logged in successfully")
 
       return
     }
