@@ -541,6 +541,38 @@ function CreateUserDialog() {
     close()
   }).catch(Errors.display), [users, encryptOrThrow, close])
 
+  const saveOrAlert = useCallback(() => Promise.try(async () => {
+    const database = await encryptOrThrow()
+
+    const blob = new Blob([Writable.writeToBytesOrThrow(database)], { type: "application/kdbx" })
+
+    const url = URL.createObjectURL(blob)
+
+    const a = document.createElement("a") as HTMLAnchorElement
+    a.href = url
+    a.download = "wallet.kdbx"
+
+    document.body.appendChild(a)
+
+    a.click()
+
+    document.body.removeChild(a)
+
+    URL.revokeObjectURL(url)
+
+    const uuid = crypto.randomUUID()
+
+    const stale = await users.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+    const fresh = [...stale, { uuid, name } satisfies UserData]
+
+    await users.value.getOrThrow().setOrThrow("users", fresh)
+
+    users.update()
+
+    close()
+  }).catch(Errors.display), [users, encryptOrThrow, close])
+
   return <Fragment>
     <h1 className="text-xl font-medium">
       Create user
