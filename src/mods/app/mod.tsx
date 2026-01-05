@@ -64,7 +64,7 @@ export function App() {
     {client && session != null &&
       <CloseContext.Provider value={logout}>
         <Floor>
-          <div className="h-full w-full flex items-center justify-center">
+          <div className="grow flex items-center justify-center">
             <h1 className="text-5xl md:text-6xl font-medium">
               Welcome back, {session.user.name}
             </h1>
@@ -757,7 +757,7 @@ function UserItem(props: { user: UserData } & { login(user: UserData, decrypted:
           <div className="text-default-contrast">
             {user.uuid}
           </div>
-          <div className="h-4" />
+          <div className="h-4 grow" />
         </Dialog>}
     </HashSubpathProvider>
     <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">

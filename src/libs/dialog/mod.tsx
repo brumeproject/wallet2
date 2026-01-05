@@ -215,7 +215,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
           <div className={`fixed inset-0 bg-backdrop ${premount ? "animate-opacity-in" : "animate-opacity-out"}`}
             aria-hidden="true"
             role="backdrop" />
-          <div className={`fixed inset-0 md:p-safe flex flex-col [scrollbar-gutter:stable] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xy-in" : "animate-slideup-out md:animate-scale-xy-out"}`}
+          <div className={`fixed inset-0 md:p-safe flex flex-col-reverse [scrollbar-gutter:stable] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xy-in" : "animate-slideup-out md:animate-scale-xy-out"}`}
             data-theme={dark && "dark"}
             onAnimationEnd={onAnimationEnd}
             onMouseDown={onClickOutside}
@@ -232,9 +232,6 @@ export function Dialog(props: ChildrenProps & DarkProps) {
                   <div className="w-16 h-2 bg-backdrop rounded-full" />
                 </div>
                 <div className="relative grow flex flex-col basis-[100dvh] md:basis-auto">
-                  <input className="absolute h-dvh -z-10 opacity-0 md:hidden"
-                    aria-hidden
-                    readOnly />
                   <div className="grow flex flex-col p-6">
                     <div className="grow flex flex-col p-safe md:p-0">
                       {children}

@@ -231,9 +231,6 @@ export function Floor(props: ChildrenProps & DarkProps) {
                   <div className="w-16 h-2 bg-backdrop rounded-full" />
                 </div>
                 <div className="relative grow flex flex-col basis-[100cqh]">
-                  <input className="absolute h-[100cqh] -z-10 opacity-0"
-                    aria-hidden
-                    readOnly />
                   <div className="grow flex flex-col p-6">
                     <div className="grow flex flex-col p-safe">
                       {children}
