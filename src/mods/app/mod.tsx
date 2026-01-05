@@ -407,7 +407,7 @@ function ImportUserDialog() {
       {"showOpenFilePicker" in window === false &&
         <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"
-          accept=".kdbx"
+          accept="application/octet-stream,.kdbx"
           onChange={e => setFileOrFsfh(e.target.files.item(0))} />}
       {fileOrFsfh != null &&
         <div className="bg-default-contrast po-2 rounded-xl">
@@ -711,6 +711,7 @@ function UserMenuItem(props: { user: UserData }) {
       {user.fsfh == null &&
         <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"
+          accept="application/octet-stream,.kdbx"
           onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])} />}
       {user.fsfh != null &&
         <button className="absolute w-full h-full opacity-0 cursor-pointer"
