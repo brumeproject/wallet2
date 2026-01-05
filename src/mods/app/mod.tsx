@@ -544,21 +544,26 @@ function CreateUserDialog() {
   const saveOrAlert = useCallback(() => Promise.try(async () => {
     const database = await encryptOrThrow()
 
-    const blob = new Blob([Writable.writeToBytesOrThrow(database)], { type: "application/kdbx" })
+    const file = new File([Writable.writeToBytesOrThrow(database)], "wallet.kdbx", { type: "application/kdbx" })
 
-    const url = URL.createObjectURL(blob)
+    // TODO use navigator.share
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
 
-    const a = document.createElement("a") as HTMLAnchorElement
-    a.href = url
-    a.download = "wallet.kdbx"
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
 
-    document.body.appendChild(a)
+      document.body.appendChild(a)
 
-    a.click()
+      a.click()
 
-    document.body.removeChild(a)
+      document.body.removeChild(a)
 
-    URL.revokeObjectURL(url)
+      URL.revokeObjectURL(url)
+    }
 
     const uuid = crypto.randomUUID()
 
@@ -570,7 +575,7 @@ function CreateUserDialog() {
 
     users.update()
 
-    close()
+    // close()
   }).catch(Errors.display), [users, encryptOrThrow, close])
 
   return <Fragment>
