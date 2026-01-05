@@ -28,7 +28,7 @@ interface UserData {
   readonly pass?: Uint8Array<ArrayBuffer>
 }
 
-interface Session {
+interface SessionData {
   readonly user: UserData
   readonly kdbx: KDBX.Database.Decrypted
 }
@@ -50,9 +50,9 @@ export function App() {
     </ClickableOppositeAnchor>
   }, [hash])
 
-  const [session, setSession] = useState<Session>()
+  const [session, setSession] = useState<SessionData>()
 
-  const login = useCallback((session: Session) => {
+  const login = useCallback((session: SessionData) => {
     setSession(session)
   }, [])
 
@@ -194,7 +194,7 @@ export function App() {
   </Fragment>
 }
 
-function LoginMenu(props: { login(session: Session): void }) {
+function LoginMenu(props: { login(session: SessionData): void }) {
   const { login } = props
 
   const client = useClientContext().getOrThrow()
@@ -677,7 +677,7 @@ function UserCreateDialog() {
   </Fragment>
 }
 
-function UserItem(props: { user: UserData } & { login(session: Session): void }) {
+function UserItem(props: { user: UserData } & { login(session: SessionData): void }) {
   const { user, login } = props
 
   const client = useClientContext().getOrThrow()
