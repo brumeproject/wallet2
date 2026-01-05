@@ -214,7 +214,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
             inert={!postmount}>
             <Topbar />
           </div> */}
-          <div className={`@container-[size] grow flex flex-col [scrollbar-gutter:stable] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"}`}
+          <div className={`@container-[size] grow flex flex-col-reverse [scrollbar-gutter:stable] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"}`}
             data-theme={dark && "dark"}
             onAnimationEnd={onAnimationEnd}
             onMouseDown={onClickOutside}
