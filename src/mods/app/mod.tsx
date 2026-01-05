@@ -749,6 +749,9 @@ function UserItem(props: { user: UserData }) {
 
     const password = prompt("Enter your password")
 
+    if (password == null)
+      return
+
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
     const decrypted = await encrypted.decryptOrThrow(composite)
