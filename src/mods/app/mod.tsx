@@ -546,7 +546,6 @@ function CreateUserDialog() {
 
     const file = new File([Writable.writeToBytesOrThrow(database)], "wallet.kdbx", { type: "application/kdbx" })
 
-    // TODO use navigator.share
     if (/iPad|iPhone|iPod/.test(navigator.platform)) {
       await navigator.share({ files: [file] })
     } else {
