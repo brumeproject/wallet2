@@ -14,9 +14,10 @@ import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { useCloseContext } from "@hazae41/react-close-context";
+import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { DragEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Floor } from "../../libs/floor/mod.tsx";
 
 React;
 
@@ -27,26 +28,16 @@ interface UserData {
   readonly pass?: Uint8Array<ArrayBuffer>
 }
 
+interface Session {
+  readonly user: UserData
+  readonly decrypted: KDBX.Database.Decrypted
+}
+
 export function App() {
   const client = useClientContext().getOrThrow()
-  const store = useStoreContext().getOrThrow()
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
-
-  const [users, setUsers] = useState<Array<UserData>>()
-
-  const getUsers = useCallback(async () => {
-    return await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-  }, [store])
-
-  useEffect(() => {
-    if (store == null)
-      return
-    if (store.value.isErr())
-      return
-    getUsers().then(setUsers).catch(console.error)
-  }, [store])
 
   const LoginButton = useCallback(() => {
     const coords = useCoords(hash, "/login")
@@ -59,11 +50,31 @@ export function App() {
     </ClickableOppositeAnchor>
   }, [hash])
 
+  const [session, setSession] = useState<Session>()
+
+  const login = useCallback((user: UserData, decrypted: KDBX.Database.Decrypted) => {
+    setSession({ user, decrypted })
+  }, [])
+
+  const logout = useCallback(() => {
+    setSession(undefined)
+  }, [])
+
   return <Fragment>
+    {client && session != null &&
+      <CloseContext.Provider value={logout}>
+        <Floor>
+          <div className="h-full w-full flex items-center justify-center">
+            <h1 className="text-5xl md:text-6xl font-medium">
+              Welcome back, {session.user.name}
+            </h1>
+          </div>
+        </Floor>
+      </CloseContext.Provider>}
     <HashSubpathProvider>
       {client && hash.url.pathname === "/login" &&
         <Menu>
-          <LoginMenu />
+          <LoginMenu login={login} />
         </Menu>}
     </HashSubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
@@ -179,7 +190,9 @@ export function App() {
   </Fragment>
 }
 
-function LoginMenu() {
+function LoginMenu(props: { login(user: UserData, decrypted: KDBX.Database.Decrypted): void }) {
+  const { login } = props
+
   const client = useClientContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
@@ -231,7 +244,7 @@ function LoginMenu() {
     </HashSubpathProvider>
     <div className="flex flex-col text-left gap-2">
       {users?.map(user => <Fragment key={user.uuid}>
-        <UserItem user={user} />
+        <UserItem user={user} login={login} />
       </Fragment>)}
       <UserAddButton />
     </div>
@@ -660,8 +673,8 @@ function UserCreateDialog() {
   </Fragment>
 }
 
-function UserItem(props: { user: UserData }) {
-  const { user } = props
+function UserItem(props: { user: UserData } & { login(user: UserData, decrypted: KDBX.Database.Decrypted): void }) {
+  const { user, login } = props
 
   const client = useClientContext().getOrThrow()
 
@@ -680,7 +693,7 @@ function UserItem(props: { user: UserData }) {
 
       console.log(decrypted.inner.content.value.document)
 
-      alert("Logged in successfully")
+      login(user, decrypted)
 
       return
     }
@@ -693,8 +706,8 @@ function UserItem(props: { user: UserData }) {
 
     console.log(decrypted.inner.content.value.document)
 
-    alert("Logged in successfully")
-  }).catch(Errors.display), [])
+    login(user, decrypted)
+  }).catch(Errors.display), [login])
 
   const openOrAlert = useCallback((user: UserData, fsfh: FileSystemFileHandle) => Promise.try(async () => {
     await fsfh.requestPermission({ mode: "readwrite" })
@@ -711,7 +724,7 @@ function UserItem(props: { user: UserData }) {
 
       console.log(decrypted.inner.content.value.document)
 
-      alert(decrypted.inner.content.value.getMetaOrThrow().getGeneratorOrThrow().get())
+      login(user, decrypted)
 
       return
     }
@@ -727,8 +740,8 @@ function UserItem(props: { user: UserData }) {
 
     console.log(decrypted.inner.content.value.document)
 
-    alert("Logged in successfully")
-  }).catch(Errors.display), [])
+    login(user, decrypted)
+  }).catch(Errors.display), [login])
 
   return <Fragment>
     <HashSubpathProvider>

@@ -2,23 +2,18 @@
 
 /// <reference lib="dom"/>
 
-import { usePathContext } from "@hazae41/chemin"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
 import React, { AnimationEvent, KeyboardEvent, MouseEvent, SyntheticEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
-import { Isolate, Portal } from "../portal/mod.tsx"
+import { Portal } from "../portal/mod.tsx"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
 
 React;
 
-export function Dialog(props: ChildrenProps & DarkProps) {
-  const { url } = usePathContext().getOrThrow()
+export function Floor(props: ChildrenProps & DarkProps) {
   const close = useCloseContext().getOrThrow()
   const { dark, children } = props
-
-  const maybeX = url.searchParams.get("x")
-  const maybeY = url.searchParams.get("y")
 
   const previous = useRef(document.activeElement)
 
@@ -156,7 +151,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
     /**
      * Only on mobile
      */
-    if (innerWidth > 768)
+    if (window.innerWidth > 768)
       return
 
     /**
@@ -206,16 +201,20 @@ export function Dialog(props: ChildrenProps & DarkProps) {
     return null
 
   return <Portal>
-    <Isolate>
-      <CloseContext value={hide}>
-        <dialog className={`[--x:${maybeX}px] [--y:${maybeY}px]`}
-          onKeyDown={onEscape}
-          onClose={onClose}
-          ref={setDialog}>
-          <div className={`fixed inset-0 bg-backdrop ${premount ? "animate-opacity-in" : "animate-opacity-out"}`}
-            aria-hidden="true"
-            role="backdrop" />
-          <div className={`fixed inset-0 md:p-safe flex flex-col [scrollbar-gutter:stable] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xy-in" : "animate-slideup-out md:animate-scale-xy-out"}`}
+    <CloseContext value={hide}>
+      <dialog className=""
+        onKeyDown={onEscape}
+        onClose={onClose}
+        ref={setDialog}>
+        <div className={`fixed inset-0 bg-backdrop ${premount ? "animate-opacity-in" : "animate-opacity-out"}`}
+          aria-hidden="true"
+          role="backdrop" />
+        <div className={`fixed inset-0 md:p-safe flex flex-col`}>
+          {/* <div className="z-10 bg-default"
+            inert={!postmount}>
+            <Topbar />
+          </div> */}
+          <div className={`@container-[size] grow flex flex-col [scrollbar-gutter:stable] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"}`}
             data-theme={dark && "dark"}
             onAnimationEnd={onAnimationEnd}
             onMouseDown={onClickOutside}
@@ -223,30 +222,33 @@ export function Dialog(props: ChildrenProps & DarkProps) {
             onTouchMove={onTouchStart}
             onTouchEnd={onTouchEnd}
             onClick={Events.stopPropagation}>
-            <div className={`grow flex flex-col items-center w-full md:max-w-3xl md:m-auto`}>
-              <div className="h-[50vh] grow md:h-8" />
-              <div className={`flex flex-col w-full md:w-[max(min(100dvh-4rem-var(--safe-area-inset-top,env(safe-area-inset-top))-var(--safe-area-inset-bottom,env(safe-area-inset-bottom)),48rem),28rem)] text-default bg-default rounded-t-3xl md:rounded-3xl`}
+            <div className={`grow flex flex-col items-center w-full`}>
+              <div className="h-[50cqh] grow" />
+              <div className={`flex flex-col w-full text-default bg-default rounded-t-3xl`}
                 aria-modal
                 onMouseDown={Events.stopPropagation}>
-                <div className="md:hidden p-4 flex items-center justify-center">
+                <div className="p-4 flex items-center justify-center">
                   <div className="w-16 h-2 bg-backdrop rounded-full" />
                 </div>
-                <div className="relative grow flex flex-col basis-[100dvh] md:basis-auto">
-                  <input className="absolute h-dvh -z-10 opacity-0 md:hidden"
+                <div className="relative grow flex flex-col basis-[100cqh]">
+                  <input className="absolute h-[100cqh] -z-10 opacity-0"
                     aria-hidden
                     readOnly />
                   <div className="grow flex flex-col p-6">
-                    <div className="grow flex flex-col p-safe md:p-0">
+                    <div className="grow flex flex-col p-safe">
                       {children}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="hidden md:block md:grow md:h-8" />
             </div>
           </div>
-        </dialog>
-      </CloseContext>
-    </Isolate>
+          {/* <div className="z-10 bg-default"
+            inert={!postmount}>
+            <UserBottomNavigation />
+          </div> */}
+        </div>
+      </dialog>
+    </CloseContext>
   </Portal>
 }
