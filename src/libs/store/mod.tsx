@@ -6,7 +6,7 @@ import { ChildrenProps } from "../../libs/props/mod.ts";
 
 React;
 
-export interface AppDatabaseHandle {
+export interface StoreHandle {
 
   readonly value: Result<Database>
 
@@ -14,13 +14,13 @@ export interface AppDatabaseHandle {
 
 }
 
-const AppDatabaseContext = createContext<Nullable<AppDatabaseHandle>>(null);
+const AppDatabaseContext = createContext<Nullable<StoreHandle>>(null);
 
-export function useAppDatabaseContext() {
+export function useStoreContext() {
   return Option.wrap(useContext(AppDatabaseContext))
 }
 
-export function AppDatabaseProvider(props: ChildrenProps) {
+export function StoreProvider(props: ChildrenProps) {
   const { children } = props
 
   const [value, setValue] = useState<Result<Database>>(() => new Err("Database not opened yet"))

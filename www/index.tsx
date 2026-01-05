@@ -3,8 +3,8 @@
 import "@hazae41/symbol-dispose-polyfill";
 
 import { ClientContext } from "@/libs/client/mod.tsx";
-import { AppDatabaseProvider } from "@/libs/database/mod.tsx";
 import { dirs, Lang } from "@/libs/lang/mod.ts";
+import { StoreProvider } from "@/libs/store/mod.tsx";
 import { App } from "@/mods/app/mod.tsx";
 import { argon2 } from "@hazae41/argon2";
 import { argon2Wasm } from "@hazae41/argon2-wasm";
@@ -91,9 +91,9 @@ function Body() {
 
   return <ClientContext.Provider value={client}>
     <HashPathProvider>
-      <AppDatabaseProvider>
+      <StoreProvider>
         <App />
-      </AppDatabaseProvider>
+      </StoreProvider>
     </HashPathProvider>
   </ClientContext.Provider>
 }
