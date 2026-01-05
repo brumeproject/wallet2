@@ -174,17 +174,17 @@ export function App() {
             Network traffic is routed through the Tor darknet with a different circuit for each identity
           </div>
           <div className="h-16" />
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap flex-col md:flex-row items-center text-center gap-4">
             <div className="p-4 bg-default-contrast rounded-xl">
               You
             </div>
-            <div className="text-default-contrast">
+            <div className="text-default-contrast whitespace-pre rotate-90 md:rotate-0">
               {`<--->`}
             </div>
             <div className="p-4 bg-opposite text-opposite rounded-xl">
               Tor darknet
             </div>
-            <div className="text-default-contrast">
+            <div className="text-default-contrast whitespace-pre rotate-90 md:rotate-0">
               {`<--->`}
             </div>
             <div className="p-4 bg-default-contrast rounded-xl">
