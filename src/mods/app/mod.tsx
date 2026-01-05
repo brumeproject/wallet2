@@ -30,7 +30,7 @@ interface UserData {
 
 interface Session {
   readonly user: UserData
-  readonly decrypted: KDBX.Database.Decrypted
+  readonly kdbx: KDBX.Database.Decrypted
 }
 
 export function App() {
@@ -52,8 +52,8 @@ export function App() {
 
   const [session, setSession] = useState<Session>()
 
-  const login = useCallback((user: UserData, decrypted: KDBX.Database.Decrypted) => {
-    setSession({ user, decrypted })
+  const login = useCallback((session: Session) => {
+    setSession(session)
   }, [])
 
   const logout = useCallback(() => {
@@ -194,7 +194,7 @@ export function App() {
   </Fragment>
 }
 
-function LoginMenu(props: { login(user: UserData, decrypted: KDBX.Database.Decrypted): void }) {
+function LoginMenu(props: { login(session: Session): void }) {
   const { login } = props
 
   const client = useClientContext().getOrThrow()
@@ -677,7 +677,7 @@ function UserCreateDialog() {
   </Fragment>
 }
 
-function UserItem(props: { user: UserData } & { login(user: UserData, decrypted: KDBX.Database.Decrypted): void }) {
+function UserItem(props: { user: UserData } & { login(session: Session): void }) {
   const { user, login } = props
 
   const client = useClientContext().getOrThrow()
@@ -697,7 +697,7 @@ function UserItem(props: { user: UserData } & { login(user: UserData, decrypted:
 
       console.log(decrypted.inner.content.value.document)
 
-      login(user, decrypted)
+      login({ user, kdbx: decrypted })
 
       return
     }
@@ -710,7 +710,7 @@ function UserItem(props: { user: UserData } & { login(user: UserData, decrypted:
 
     console.log(decrypted.inner.content.value.document)
 
-    login(user, decrypted)
+    login({ user, kdbx: decrypted })
   }).catch(Errors.display), [login])
 
   const openOrAlert = useCallback((user: UserData, fsfh: FileSystemFileHandle) => Promise.try(async () => {
@@ -728,7 +728,7 @@ function UserItem(props: { user: UserData } & { login(user: UserData, decrypted:
 
       console.log(decrypted.inner.content.value.document)
 
-      login(user, decrypted)
+      login({ user, kdbx: decrypted })
 
       return
     }
@@ -744,7 +744,7 @@ function UserItem(props: { user: UserData } & { login(user: UserData, decrypted:
 
     console.log(decrypted.inner.content.value.document)
 
-    login(user, decrypted)
+    login({ user, kdbx: decrypted })
   }).catch(Errors.display), [login])
 
   return <Fragment>
