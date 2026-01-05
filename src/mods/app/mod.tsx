@@ -59,76 +59,12 @@ export function App() {
     </ClickableOppositeAnchor>
   }, [hash])
 
-  const AddUserButton = useCallback(() => {
-    const coords = useCoords(hash, "/login/add")
-
-    return <WideClickableNakedMenuAnchor
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast border-dashed">
-        <Outline.PlusIcon className="size-4" />
-      </div>
-      Add user
-    </WideClickableNakedMenuAnchor>
-  }, [hash])
-
-  const LoginMenu = useCallback(() => {
-    return <div className="flex flex-col text-left gap-2">
-      {users?.map(user => <Fragment key={user.uuid}>
-        <UserItem user={user} />
-      </Fragment>)}
-      <AddUserButton />
-    </div>
-  }, [client, hash, users, AddUserButton])
-
-  const UserImportButton = useCallback(() => {
-    const coords = useCoords(hash, "/login/add/import")
-
-    return <WideClickableNakedMenuAnchor
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      Import user
-    </WideClickableNakedMenuAnchor>
-  }, [hash])
-
-  const UserCreateButton = useCallback(() => {
-    const coords = useCoords(hash, "/login/add/create")
-
-    return <WideClickableNakedMenuAnchor
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      Create user
-    </WideClickableNakedMenuAnchor>
-  }, [hash])
-
-  const UserAddMenu = useCallback(() => {
-    return <div className="flex flex-col text-left gap-2">
-      <UserCreateButton />
-      <UserImportButton />
-    </div>
-  }, [UserImportButton, UserCreateButton])
-
   return <Fragment>
     <HashSubpathProvider>
       {client && hash.url.pathname === "/login" &&
         <Menu>
           <LoginMenu />
         </Menu>}
-      {client && hash.url.pathname === "/login/add" &&
-        <Menu>
-          <UserAddMenu />
-        </Menu>}
-      {client && hash.url.pathname === "/login/add/import" &&
-        <Dialog>
-          <UserImportDialog />
-        </Dialog>}
-      {client && hash.url.pathname === "/login/add/create" &&
-        <Dialog>
-          <UserCreateDialog />
-        </Dialog>}
     </HashSubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
@@ -241,6 +177,96 @@ export function App() {
       </div>
     </div>
   </Fragment>
+}
+
+function LoginMenu() {
+  const client = useClientContext().getOrThrow()
+  const store = useStoreContext().getOrThrow()
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const [users, setUsers] = useState<Array<UserData>>()
+
+  const getUsers = useCallback(async () => {
+    return await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+  }, [store])
+
+  useEffect(() => {
+    if (store == null)
+      return
+    if (store.value.isErr())
+      return
+    getUsers().then(setUsers).catch(console.error)
+  }, [store])
+
+  const UserAddButton = useCallback(() => {
+    const coords = useCoords(hash, "/add")
+
+    return <WideClickableNakedMenuAnchor
+      href={coords.url.hash}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}>
+      <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast border-dashed">
+        <Outline.PlusIcon className="size-4" />
+      </div>
+      Add user
+    </WideClickableNakedMenuAnchor>
+  }, [hash])
+
+  return <Fragment>
+    <HashSubpathProvider>
+      {client && hash.url.pathname === "/add" &&
+        <Menu>
+          <UserAddMenu />
+        </Menu>}
+      {client && hash.url.pathname === "/add/import" &&
+        <Dialog>
+          <UserImportDialog />
+        </Dialog>}
+      {client && hash.url.pathname === "/add/create" &&
+        <Dialog>
+          <UserCreateDialog />
+        </Dialog>}
+    </HashSubpathProvider>
+    <div className="flex flex-col text-left gap-2">
+      {users?.map(user => <Fragment key={user.uuid}>
+        <UserItem user={user} />
+      </Fragment>)}
+      <UserAddButton />
+    </div>
+  </Fragment>
+}
+
+function UserAddMenu() {
+  const path = usePathContext().getOrThrow()
+
+  const UserImportButton = useCallback(() => {
+    const coords = useCoords(path, "/add/import")
+
+    return <WideClickableNakedMenuAnchor
+      href={coords.url.hash}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}>
+      Import user
+    </WideClickableNakedMenuAnchor>
+  }, [path])
+
+  const UserCreateButton = useCallback(() => {
+    const coords = useCoords(path, "/add/create")
+
+    return <WideClickableNakedMenuAnchor
+      href={coords.url.hash}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}>
+      Create user
+    </WideClickableNakedMenuAnchor>
+  }, [path])
+
+  return <div className="flex flex-col text-left gap-2">
+    <UserCreateButton />
+    <UserImportButton />
+  </div>
 }
 
 function UserImportDialog() {
@@ -638,7 +664,6 @@ function UserItem(props: { user: UserData }) {
   const { user } = props
 
   const client = useClientContext().getOrThrow()
-  const store = useStoreContext().getOrThrow()
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -705,89 +730,13 @@ function UserItem(props: { user: UserData }) {
     alert("Logged in successfully")
   }).catch(Errors.display), [])
 
-  const renameOrAlert = useCallback(() => Promise.try(async () => {
-    const name = prompt("Enter new name")
-
-    if (name == null)
-      return
-
-    const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-    const fresh = stale.map(x => x.uuid === user.uuid ? { ...x, name } : x)
-
-    await store.value.getOrThrow().setOrThrow("users", fresh)
-
-    store.update()
-  }).catch(Errors.display), [store, user])
-
-  const removeOrAlert = useCallback(() => Promise.try(async () => {
-    if (!confirm("Are you sure you want to remove this user?"))
-      return
-
-    const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-    const fresh = stale.filter(x => x.uuid !== user.uuid)
-
-    await store.value.getOrThrow().setOrThrow("users", fresh)
-
-    store.update()
-  }).catch(Errors.display), [store, user])
-
-  const UserRenameButton = useCallback(() => {
-    // TODO use Button
-    return <WideClickableNakedMenuAnchor
-      onClick={renameOrAlert}>
-      Rename
-    </WideClickableNakedMenuAnchor>
-  }, [hash, user])
-
-  const UserSettingsButton = useCallback(() => {
-    const coords = useCoords(hash, `/users/${user.uuid}/settings`)
-
-    return <WideClickableNakedMenuAnchor
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      Settings
-    </WideClickableNakedMenuAnchor>
-  }, [hash, user])
-
-  const UserRemoveButton = useCallback(() => {
-    // TODO use Button
-    return <WideClickableNakedMenuAnchor
-      onClick={removeOrAlert}>
-      Remove
-    </WideClickableNakedMenuAnchor>
-  }, [removeOrAlert])
-
-  const UserMenu = useCallback(() => {
-    return <div className="flex flex-col text-left gap-2">
-      <UserRenameButton />
-      <UserSettingsButton />
-      <UserRemoveButton />
-    </div>
-  }, [UserRenameButton, UserSettingsButton, UserRemoveButton])
-
-  const UserMenuButton = useCallback(() => {
-    const coords = useCoords(hash, `/users/${user.uuid}/menu`)
-
-    return <a className="z-10 hover:bg-default-contrast focus-visible:bg-default-contrast rounded-full p-1 cursor-pointer transition-opacity"
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      <GapperAndClickerInAnchor>
-        <Outline.EllipsisVerticalIcon className="size-6" />
-      </GapperAndClickerInAnchor>
-    </a>
-  }, [hash, user])
-
   return <Fragment>
     <HashSubpathProvider>
-      {client && hash.url.pathname === `/users/${user.uuid}/menu` &&
+      {client && hash.url.pathname === `/${user.uuid}` &&
         <Menu>
-          <UserMenu />
+          <UserMenu user={user} />
         </Menu>}
-      {client && hash.url.pathname === `/users/${user.uuid}/settings` &&
+      {client && hash.url.pathname === `/${user.uuid}/settings` &&
         <Dialog>
           <h1 className="text-xl font-medium">
             {user.name}
@@ -817,9 +766,110 @@ function UserItem(props: { user: UserData }) {
         </div>
         <div className="w-8" />
         <div className="flex items-center gap-2">
-          <UserMenuButton />
+          <UserMenuButton user={user} />
         </div>
       </div>
     </div>
   </Fragment>
+}
+
+function UserMenuButton(props: { user: UserData }) {
+  const { user } = props
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useCoords(hash, `/${user.uuid}`)
+
+  return <a className="z-10 hover:bg-default-contrast focus-visible:bg-default-contrast rounded-full p-1 cursor-pointer transition-opacity"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <GapperAndClickerInAnchor>
+      <Outline.EllipsisVerticalIcon className="size-6" />
+    </GapperAndClickerInAnchor>
+  </a>
+}
+
+function UserMenu(props: { user: UserData }) {
+  const { user } = props
+
+  return <div className="flex flex-col text-left gap-2">
+    <UserRenameButton user={user} />
+    <UserSettingsButton user={user} />
+    <UserRemoveButton user={user} />
+  </div>
+}
+
+function UserRenameButton(props: { user: UserData }) {
+  const { user } = props
+
+  const close = useCloseContext().getOrThrow()
+  const store = useStoreContext().getOrThrow()
+
+  const renameOrAlert = useCallback(() => Promise.try(async () => {
+    const name = prompt("Enter new name")
+
+    if (name == null)
+      return
+
+    const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+    const fresh = stale.map(x => x.uuid === user.uuid ? { ...x, name } : x)
+
+    await store.value.getOrThrow().setOrThrow("users", fresh)
+
+    store.update()
+
+    close()
+  }).catch(Errors.display), [store, user, close])
+
+  // TODO use Button
+  return <WideClickableNakedMenuAnchor
+    onClick={renameOrAlert}>
+    Rename
+  </WideClickableNakedMenuAnchor>
+}
+
+function UserSettingsButton(props: { user: UserData }) {
+  const { user } = props
+
+  const path = usePathContext().getOrThrow()
+
+  const coords = useCoords(path, `/${user.uuid}/settings`)
+
+  return <WideClickableNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    Settings
+  </WideClickableNakedMenuAnchor>
+}
+
+function UserRemoveButton(props: { user: UserData }) {
+  const { user } = props
+
+  const close = useCloseContext().getOrThrow()
+  const store = useStoreContext().getOrThrow()
+
+  const removeOrAlert = useCallback(() => Promise.try(async () => {
+    if (!confirm("Are you sure you want to remove this user?"))
+      return
+
+    const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+    const fresh = stale.filter(x => x.uuid !== user.uuid)
+
+    await store.value.getOrThrow().setOrThrow("users", fresh)
+
+    store.update()
+
+    close()
+  }).catch(Errors.display), [store, user, close])
+
+  // TODO use Button
+  return <WideClickableNakedMenuAnchor
+    onClick={removeOrAlert}>
+    Remove
+  </WideClickableNakedMenuAnchor>
 }
