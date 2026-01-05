@@ -695,6 +695,7 @@ function UserItem(props: { user: UserData }) {
   const { user } = props
 
   const client = useClientContext().getOrThrow()
+  const store = useStoreContext().getOrThrow()
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -761,6 +762,19 @@ function UserItem(props: { user: UserData }) {
     alert("Logged in successfully")
   }).catch(Errors.display), [])
 
+  const removeOrAlert = useCallback(() => Promise.try(async () => {
+    if (!confirm("Are you sure you want to remove this user?"))
+      return
+
+    const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+    const fresh = stale.filter(x => x.uuid !== user.uuid)
+
+    await store.value.getOrThrow().setOrThrow("users", fresh)
+
+    store.update()
+  }).catch(Errors.display), [store, user])
+
   const UserRenameButton = useCallback(() => {
     const coords = useCoords(hash, `/users/${user.uuid}/rename`)
 
@@ -783,12 +797,20 @@ function UserItem(props: { user: UserData }) {
     </WideClickableNakedMenuAnchor>
   }, [hash, user])
 
+  const UserRemoveButton = useCallback(() => {
+    return <WideClickableNakedMenuAnchor
+      onClick={removeOrAlert}>
+      Remove
+    </WideClickableNakedMenuAnchor>
+  }, [removeOrAlert])
+
   const UserMenu = useCallback(() => {
     return <div className="flex flex-col text-left gap-2">
       <UserRenameButton />
       <UserSettingsButton />
+      <UserRemoveButton />
     </div>
-  }, [UserRenameButton, UserSettingsButton])
+  }, [UserRenameButton, UserSettingsButton, UserRemoveButton])
 
   const UserMenuButton = useCallback(() => {
     const coords = useCoords(hash, `/users/${user.uuid}/menu`)
