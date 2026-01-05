@@ -6,7 +6,7 @@ export namespace Errors {
     console.error(error)
 
     if (error instanceof Error)
-      return alert(error.message)
+      return alert(`An error occured: ${error.message}`)
 
     alert("An unknown error occured")
   }
