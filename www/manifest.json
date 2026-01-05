@@ -1,7 +1,7 @@
 {
-  "name": "Starter",
-  "short_name": "Starter",
-  "description": "A starter webapp",
+  "name": "Brume Wallet",
+  "short_name": "Wallet",
+  "description": "The wallet with maximum security and privacy",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
