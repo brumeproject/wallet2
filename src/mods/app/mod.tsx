@@ -634,63 +634,6 @@ function UserCreateDialog() {
   </Fragment>
 }
 
-function UserRenameDialog(props: { user: UserData }) {
-  const { user } = props
-
-  const close = useCloseContext().getOrThrow()
-  const store = useStoreContext().getOrThrow()
-
-  const [rawName, setRawName] = useState(user.name)
-
-  const name = rawName || "Anon"
-
-  const submitOrAlert = useCallback(() => Promise.try(async () => {
-    const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-    const fresh = stale.map(x => x.uuid === user.uuid ? { ...x, name } : x)
-
-    await store.value.getOrThrow().setOrThrow("users", fresh)
-
-    store.update()
-
-    close(true) // TODO fix
-  }).catch(Errors.display), [store, user, name, close])
-
-  const error = useMemo(() => {
-    if (!name.length)
-      return "New name is required"
-    return
-  }, [name])
-
-  return <Fragment>
-    <h1 className="text-xl font-medium">
-      Rename user
-    </h1>
-    <div className="h-4" />
-    <div className="font-medium">
-      New name
-    </div>
-    <div className="text-default-contrast">
-      Will be used locally for display purposes
-    </div>
-    <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl">
-      <input className="w-full outline-none"
-        placeholder="Anon"
-        value={rawName}
-        onChange={e => setRawName(e.target.value)} />
-    </div>
-    <div className="h-4 grow" />
-    <div className="flex items-center flex-wrap-reverse gap-2">
-      <WideClickableOppositeButton
-        disabled={error != null}
-        onClick={submitOrAlert}>
-        {error != null ? error : "OK"}
-      </WideClickableOppositeButton>
-    </div>
-  </Fragment>
-}
-
 function UserItem(props: { user: UserData }) {
   const { user } = props
 
@@ -762,6 +705,21 @@ function UserItem(props: { user: UserData }) {
     alert("Logged in successfully")
   }).catch(Errors.display), [])
 
+  const renameOrAlert = useCallback(() => Promise.try(async () => {
+    const name = prompt("Enter new name")
+
+    if (name == null)
+      return
+
+    const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+    const fresh = stale.map(x => x.uuid === user.uuid ? { ...x, name } : x)
+
+    await store.value.getOrThrow().setOrThrow("users", fresh)
+
+    store.update()
+  }).catch(Errors.display), [store, user])
+
   const removeOrAlert = useCallback(() => Promise.try(async () => {
     if (!confirm("Are you sure you want to remove this user?"))
       return
@@ -776,12 +734,9 @@ function UserItem(props: { user: UserData }) {
   }).catch(Errors.display), [store, user])
 
   const UserRenameButton = useCallback(() => {
-    const coords = useCoords(hash, `/users/${user.uuid}/rename`)
-
+    // TODO use Button
     return <WideClickableNakedMenuAnchor
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
+      onClick={renameOrAlert}>
       Rename
     </WideClickableNakedMenuAnchor>
   }, [hash, user])
@@ -798,6 +753,7 @@ function UserItem(props: { user: UserData }) {
   }, [hash, user])
 
   const UserRemoveButton = useCallback(() => {
+    // TODO use Button
     return <WideClickableNakedMenuAnchor
       onClick={removeOrAlert}>
       Remove
@@ -831,10 +787,6 @@ function UserItem(props: { user: UserData }) {
         <Menu>
           <UserMenu />
         </Menu>}
-      {client && hash.url.pathname === `/users/${user.uuid}/rename` &&
-        <Dialog>
-          <UserRenameDialog user={user} />
-        </Dialog>}
       {client && hash.url.pathname === `/users/${user.uuid}/settings` &&
         <Dialog>
           <h1 className="text-xl font-medium">
