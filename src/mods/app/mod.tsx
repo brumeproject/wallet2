@@ -64,10 +64,14 @@ export function App() {
     {client && session != null &&
       <CloseContext.Provider value={logout}>
         <Floor>
-          <div className="grow flex items-center justify-center">
+          <div className="grow flex flex-col items-center justify-center">
             <h1 className="text-5xl md:text-6xl font-medium">
               Welcome back, {session.user.name}
             </h1>
+            <div className="h-4" />
+            <div className="text-center text-default-contrast text-xl md:text-2xl">
+              You have $244.4B in your wallet
+            </div>
           </div>
         </Floor>
       </CloseContext.Provider>}
