@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-unused-vars
+// deno-lint-ignore-file no-unused-vars no-window
 
 /// <reference lib="dom"/>
 
