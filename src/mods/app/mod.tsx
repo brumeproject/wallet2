@@ -64,7 +64,7 @@ export function App() {
     {client && session != null &&
       <CloseContext.Provider value={logout}>
         <Floor>
-          <div className="grow flex flex-col items-center justify-center">
+          <div className="grow flex flex-col text-center items-center justify-center">
             <h1 className="text-5xl md:text-6xl font-medium">
               Welcome back, {session.user.name}
             </h1>
