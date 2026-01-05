@@ -574,7 +574,7 @@ function CreateUserDialog() {
 
     users.update()
 
-    // close()
+    close()
   }).catch(Errors.display), [users, encryptOrThrow, close])
 
   return <Fragment>
