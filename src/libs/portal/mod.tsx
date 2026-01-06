@@ -12,7 +12,7 @@ export function Portal(props: ChildrenProps) {
 export function Isolate(props: ChildrenProps) {
   const { children } = props
 
-  return <div
+  return <div className="contents"
     onClick={Events.stopPropagation}
     onContextMenu={Events.stopPropagation}
     onDoubleClick={Events.stopPropagation}

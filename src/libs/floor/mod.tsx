@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-unused-vars no-window
+// deno-lint-ignore-file no-unused-vars
 
 /// <reference lib="dom"/>
 
@@ -6,7 +6,6 @@ import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
 import React, { AnimationEvent, KeyboardEvent, MouseEvent, SyntheticEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
-import { Portal } from "../portal/mod.tsx"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
 
 React;
@@ -110,7 +109,6 @@ export function Floor(props: ChildrenProps & DarkProps) {
     if (postmount)
       return
     close()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [premount, postmount])
 
   /**
@@ -149,9 +147,9 @@ export function Floor(props: ChildrenProps & DarkProps) {
 
   const onScroll = useCallback((e: UIEvent) => {
     /**
-     * Only on mobile
+     * Only on touch devices
      */
-    if (window.innerWidth > 768)
+    if (navigator.maxTouchPoints === 0)
       return
 
     /**
@@ -194,37 +192,45 @@ export function Floor(props: ChildrenProps & DarkProps) {
     return
   }, [hide])
 
+  const [content, setContent] = useState<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (content == null)
+      return
+    /**
+     * Scroll to the content to fit the screen
+     */
+    setTimeout(() => content.scrollIntoView({ behavior: "smooth" }))
+  }, [content])
+
   /**
    * Only unmount when transition is finished
    */
   if (!premount && !postmount)
     return null
 
-  return <Portal>
-    <CloseContext value={hide}>
-      <dialog className={`h-full w-full max-h-none max-w-none bg-transparent flex flex-col-reverse [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
-        data-theme={dark && "dark"}
-        onAnimationEnd={onAnimationEnd}
-        onMouseDown={onMouseDown}
-        // onScroll={onScroll}
-        onTouchMove={onTouchStart}
-        onTouchEnd={onTouchEnd}
-        onKeyDown={onEscape}
-        onClose={onClose}
-        ref={setDialog}>
-        <div className="grow flex flex-col">
-          <div className="basis-[50vh] grow" />
-          <div className="flex flex-col bg-default rounded-t-3xl"
-            onMouseDown={Events.stopPropagation}>
-            <div className="p-4 flex items-center justify-center">
-              <div className="w-16 h-2 bg-backdrop rounded-full" />
-            </div>
-            <div className="grow flex flex-col basis-[100vh] p-safe">
-              {children}
-            </div>
-          </div>
+  return <CloseContext value={hide}>
+    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent flex flex-col [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+      data-theme={dark && "dark"}
+      onAnimationEnd={onAnimationEnd}
+      onMouseDown={onMouseDown}
+      onTouchMove={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onKeyDown={onEscape}
+      onScroll={onScroll}
+      onClose={onClose}
+      ref={setDialog}>
+      <div className="basis-[50vh] shrink-0" />
+      <div className="flex flex-col bg-default text-default rounded-t-3xl"
+        onMouseDown={Events.stopPropagation}>
+        <div className="p-4 flex items-center justify-center">
+          <div className="w-16 h-2 bg-backdrop rounded-full" />
         </div>
-      </dialog>
-    </CloseContext>
-  </Portal>
+        <div className="basis-[100vh] flex flex-col p-safe"
+          ref={setContent}>
+          {children}
+        </div>
+      </div>
+    </dialog>
+  </CloseContext>
 }
