@@ -202,29 +202,25 @@ export function Floor(props: ChildrenProps & DarkProps) {
 
   return <Portal>
     <CloseContext value={hide}>
-      <dialog className={`${false ? "h-full w-full max-h-none max-w-none" : ""} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+      <dialog className={`h-full w-full max-h-none max-w-none bg-transparent flex flex-col-reverse [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+        data-theme={dark && "dark"}
+        onAnimationEnd={onAnimationEnd}
+        onMouseDown={onClickOutside}
+        // onScroll={onScroll}
+        onTouchMove={onTouchStart}
+        onTouchEnd={onTouchEnd}
         onKeyDown={onEscape}
         onClose={onClose}
         ref={setDialog}>
-        <div className={`fixed inset-0 grow flex flex-col-reverse [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"}`}
-          data-theme={dark && "dark"}
-          onAnimationEnd={onAnimationEnd}
-          onMouseDown={onClickOutside}
-          onScroll={onScroll}
-          onTouchMove={onTouchStart}
-          onTouchEnd={onTouchEnd}>
-          <div className="grow flex flex-col">
-            <div className="basis-[50vh] grow" />
-            <div className="flex flex-col bg-default rounded-t-3xl"
-              onMouseDown={Events.stopPropagation}>
-              <div className="p-4 flex items-center justify-center">
-                <div className="w-16 h-2 bg-backdrop rounded-full" />
-              </div>
-              <div className="grow flex flex-col basis-[100vh] p-safe">
-                <div className="bg-black h-[120vh]" >
-
-                </div>
-              </div>
+        <div className="grow flex flex-col">
+          <div className="basis-[50vh] grow" />
+          <div className="flex flex-col bg-default rounded-t-3xl"
+            onMouseDown={Events.stopPropagation}>
+            <div className="p-4 flex items-center justify-center">
+              <div className="w-16 h-2 bg-backdrop rounded-full" />
+            </div>
+            <div className="grow flex flex-col basis-[100vh] p-safe">
+              {children}
             </div>
           </div>
         </div>
