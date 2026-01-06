@@ -69,7 +69,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
   /**
    * Smoothly close the dialog on outside click
    */
-  const onClickOutside = useCallback((e: MouseEvent) => {
+  const onMouseDown = useCallback((e: MouseEvent) => {
     if (e.clientX > e.currentTarget.clientWidth)
       return
 
@@ -205,7 +205,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
       <dialog className={`h-full w-full max-h-none max-w-none bg-transparent flex flex-col-reverse [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
         data-theme={dark && "dark"}
         onAnimationEnd={onAnimationEnd}
-        onMouseDown={onClickOutside}
+        onMouseDown={onMouseDown}
         // onScroll={onScroll}
         onTouchMove={onTouchStart}
         onTouchEnd={onTouchEnd}
