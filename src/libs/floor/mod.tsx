@@ -137,7 +137,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
 
   const touch = useRef(false)
 
-  const onTouchStart = useCallback(() => {
+  const onTouchMove = useCallback(() => {
     touch.current = true
   }, [])
 
@@ -214,7 +214,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
-      onTouchMove={onTouchStart}
+      onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
       onKeyDown={onEscape}
       onScroll={onScroll}

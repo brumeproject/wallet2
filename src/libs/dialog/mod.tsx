@@ -73,7 +73,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
   /**
    * Smoothly close the dialog on outside click
    */
-  const onClickOutside = useCallback((e: MouseEvent) => {
+  const onMouseDown = useCallback((e: MouseEvent) => {
     if (e.clientX > e.currentTarget.clientWidth)
       return
 
@@ -143,7 +143,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
 
   const touch = useRef(false)
 
-  const onTouchStart = useCallback(() => {
+  const onTouchMove = useCallback(() => {
     touch.current = true
   }, [])
 
@@ -219,11 +219,11 @@ export function Dialog(props: ChildrenProps & DarkProps) {
     <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent flex flex-col [scrollbar-gutter:stable] [--x:${maybeX}px] [--y:${maybeY}px] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xy-in" : "animate-slideup-out md:animate-scale-xy-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
-      onMouseDown={onClickOutside}
-      onScroll={onScroll}
-      onTouchMove={onTouchStart}
+      onMouseDown={onMouseDown}
+      onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
       onKeyDown={onEscape}
+      onScroll={onScroll}
       onClose={onClose}
       ref={setDialog}>
       <div className="basis-[50vh] shrink-0 md:basis-auto md:grow md:shrink" />
