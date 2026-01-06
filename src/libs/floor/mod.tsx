@@ -202,48 +202,31 @@ export function Floor(props: ChildrenProps & DarkProps) {
 
   return <Portal>
     <CloseContext value={hide}>
-      <dialog className=""
+      <dialog className={`${false ? "h-full w-full max-h-none max-w-none" : ""} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
         onKeyDown={onEscape}
         onClose={onClose}
         ref={setDialog}>
-        <div className={`fixed inset-0 bg-backdrop ${premount ? "animate-opacity-in" : "animate-opacity-out"}`}
-          aria-hidden="true"
-          role="backdrop" />
-        <div className={`fixed inset-0 md:p-safe flex flex-col`}>
-          {/* <div className="z-10 bg-default"
-            inert={!postmount}>
-            <Topbar />
-          </div> */}
-          <div className={`@container-[size] grow flex flex-col-reverse [scrollbar-gutter:stable] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"}`}
-            data-theme={dark && "dark"}
-            onAnimationEnd={onAnimationEnd}
-            onMouseDown={onClickOutside}
-            onScroll={onScroll}
-            onTouchMove={onTouchStart}
-            onTouchEnd={onTouchEnd}
-            onClick={Events.stopPropagation}>
-            <div className={`grow flex flex-col items-center w-full`}>
-              <div className="h-[50cqh] grow" />
-              <div className={`flex flex-col w-full text-default bg-default rounded-t-3xl`}
-                aria-modal
-                onMouseDown={Events.stopPropagation}>
-                <div className="p-4 flex items-center justify-center">
-                  <div className="w-16 h-2 bg-backdrop rounded-full" />
-                </div>
-                <div className="relative grow flex flex-col basis-[100cqh]">
-                  <div className="grow flex flex-col p-6">
-                    <div className="grow flex flex-col p-safe">
-                      {children}
-                    </div>
-                  </div>
+        <div className={`fixed inset-0 grow flex flex-col-reverse [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"}`}
+          data-theme={dark && "dark"}
+          onAnimationEnd={onAnimationEnd}
+          onMouseDown={onClickOutside}
+          onScroll={onScroll}
+          onTouchMove={onTouchStart}
+          onTouchEnd={onTouchEnd}>
+          <div className="grow flex flex-col">
+            <div className="basis-[50vh] grow" />
+            <div className="flex flex-col bg-default rounded-t-3xl"
+              onMouseDown={Events.stopPropagation}>
+              <div className="p-4 flex items-center justify-center">
+                <div className="w-16 h-2 bg-backdrop rounded-full" />
+              </div>
+              <div className="grow flex flex-col basis-[100vh] p-safe">
+                <div className="bg-black h-[120vh]" >
+
                 </div>
               </div>
             </div>
           </div>
-          {/* <div className="z-10 bg-default"
-            inert={!postmount}>
-            <UserBottomNavigation />
-          </div> */}
         </div>
       </dialog>
     </CloseContext>

@@ -208,13 +208,10 @@ export function Dialog(props: ChildrenProps & DarkProps) {
   return <Portal>
     <Isolate>
       <CloseContext value={hide}>
-        <dialog className={`[--x:${maybeX}px] [--y:${maybeY}px]`}
+        <dialog className={`backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"} [--x:${maybeX}px] [--y:${maybeY}px]`}
           onKeyDown={onEscape}
           onClose={onClose}
           ref={setDialog}>
-          <div className={`fixed inset-0 bg-backdrop ${premount ? "animate-opacity-in" : "animate-opacity-out"}`}
-            aria-hidden="true"
-            role="backdrop" />
           <div className={`fixed inset-0 md:p-safe flex flex-col-reverse [scrollbar-gutter:stable] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xy-in" : "animate-slideup-out md:animate-scale-xy-out"}`}
             data-theme={dark && "dark"}
             onAnimationEnd={onAnimationEnd}
