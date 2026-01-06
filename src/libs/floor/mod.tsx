@@ -223,7 +223,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
       <div className="basis-[50vh] shrink-0" />
       <div className="flex flex-col bg-default text-default rounded-t-3xl"
         onMouseDown={Events.stopPropagation}>
-        <div className="p-4 flex items-center justify-center">
+        <div className="flex items-center justify-center p-4 ">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
         </div>
         <div className="basis-[100vh] flex flex-col p-safe"

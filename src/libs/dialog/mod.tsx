@@ -7,7 +7,6 @@ import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
 import React, { AnimationEvent, KeyboardEvent, MouseEvent, SyntheticEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
-import { Isolate, Portal } from "../portal/mod.tsx"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
 
 React;
@@ -154,9 +153,9 @@ export function Dialog(props: ChildrenProps & DarkProps) {
 
   const onScroll = useCallback((e: UIEvent) => {
     /**
-     * Only on mobile
+     * Only on touch devices
      */
-    if (innerWidth > 768)
+    if (navigator.maxTouchPoints === 0)
       return
 
     /**
@@ -199,48 +198,46 @@ export function Dialog(props: ChildrenProps & DarkProps) {
     return
   }, [hide])
 
+  const [content, setContent] = useState<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (content == null)
+      return
+    /**
+     * Scroll to the content to fit the screen
+     */
+    setTimeout(() => content.scrollIntoView({ behavior: "smooth" }))
+  }, [content])
+
   /**
    * Only unmount when transition is finished
    */
   if (!premount && !postmount)
     return null
 
-  return <Portal>
-    <Isolate>
-      <CloseContext value={hide}>
-        <dialog className={`backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"} [--x:${maybeX}px] [--y:${maybeY}px]`}
-          onKeyDown={onEscape}
-          onClose={onClose}
-          ref={setDialog}>
-          <div className={`fixed inset-0 md:p-safe flex flex-col-reverse [scrollbar-gutter:stable] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xy-in" : "animate-slideup-out md:animate-scale-xy-out"}`}
-            data-theme={dark && "dark"}
-            onAnimationEnd={onAnimationEnd}
-            onMouseDown={onClickOutside}
-            onScroll={onScroll}
-            onTouchMove={onTouchStart}
-            onTouchEnd={onTouchEnd}
-            onClick={Events.stopPropagation}>
-            <div className={`grow flex flex-col items-center w-full md:max-w-3xl md:m-auto`}>
-              <div className="h-[50vh] grow md:h-8" />
-              <div className={`flex flex-col w-full md:w-[max(min(100dvh-4rem-var(--safe-area-inset-top,env(safe-area-inset-top))-var(--safe-area-inset-bottom,env(safe-area-inset-bottom)),48rem),28rem)] text-default bg-default rounded-t-3xl md:rounded-3xl`}
-                aria-modal
-                onMouseDown={Events.stopPropagation}>
-                <div className="md:hidden p-4 flex items-center justify-center">
-                  <div className="w-16 h-2 bg-backdrop rounded-full" />
-                </div>
-                <div className="relative grow flex flex-col basis-[100dvh] md:basis-auto">
-                  <div className="grow flex flex-col p-6">
-                    <div className="grow flex flex-col p-safe md:p-0">
-                      {children}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="hidden md:block md:grow md:h-8" />
-            </div>
-          </div>
-        </dialog>
-      </CloseContext>
-    </Isolate>
-  </Portal>
+  return <CloseContext value={hide}>
+    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent flex flex-col [scrollbar-gutter:stable] [--x:${maybeX}px] [--y:${maybeY}px] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xy-in" : "animate-slideup-out md:animate-scale-xy-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+      data-theme={dark && "dark"}
+      onAnimationEnd={onAnimationEnd}
+      onMouseDown={onClickOutside}
+      onScroll={onScroll}
+      onTouchMove={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onKeyDown={onEscape}
+      onClose={onClose}
+      ref={setDialog}>
+      <div className="basis-[50vh] shrink-0 md:basis-auto md:grow md:shrink" />
+      <div className="flex flex-col md:w-full md:m-auto md:max-w-3xl text-default bg-default rounded-t-3xl md:rounded-3xl"
+        onMouseDown={Events.stopPropagation}>
+        <div className="flex md:hidden items-center justify-center p-4">
+          <div className="w-16 h-2 bg-backdrop rounded-full" />
+        </div>
+        <div className="basis-[100dvh] md:basis-[50dvh] flex flex-col p-safe md:p-0"
+          ref={setContent}>
+          {children}
+        </div>
+      </div>
+      <div className="hidden md:block grow" />
+    </dialog>
+  </CloseContext>
 }
