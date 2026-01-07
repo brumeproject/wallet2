@@ -169,7 +169,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
         <div className="flex md:hidden items-center justify-center p-4">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
         </div>
-        <div className="not-md:basis-[100dvh] md:basis-[50dvh] flex flex-col not-md:p-safe md:p-0"
+        <div className="not-md:basis-[100dvh] md:basis-[50dvh] flex flex-col not-md:p-safe"
           ref={setContent}>
           {children}
         </div>
