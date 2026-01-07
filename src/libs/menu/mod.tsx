@@ -13,8 +13,8 @@ export function Menu(props: ChildrenProps) {
   const close = useCloseContext().getOrThrow()
   const { children } = props
 
-  const x = Number(url.searchParams.get("x")) || innerHeight / 2
-  const y = Number(url.searchParams.get("y")) || innerWidth / 2
+  const x = Number(url.searchParams.get("x"))
+  const y = Number(url.searchParams.get("y"))
 
   const [w, setW] = useState(0)
   const [h, setH] = useState(0)
@@ -33,11 +33,14 @@ export function Menu(props: ChildrenProps) {
 
     dialog.showModal()
 
-    setW(dialog.offsetWidth)
-    setH(dialog.offsetHeight)
+    const w = dialog.offsetWidth
+    const h = dialog.offsetHeight
 
-    setL(((x + dialog.offsetWidth) > innerWidth) ? Math.max(x - dialog.offsetWidth, 0) : x)
-    setT(((y + dialog.offsetHeight) > innerHeight) ? Math.max(y - dialog.offsetHeight, 0) : y)
+    setW(w)
+    setH(h)
+
+    setL(((x + w) > innerWidth) ? Math.max(x - w, 0) : x)
+    setT(((y + h) > innerHeight) ? Math.max(y - h, 0) : y)
   }, [x, y, dialog])
 
   const [premount, setPremount] = useState(true)

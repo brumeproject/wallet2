@@ -16,8 +16,8 @@ export function Dialog(props: ChildrenProps & DarkProps) {
   const close = useCloseContext().getOrThrow()
   const { dark, children } = props
 
-  const x = Number(url.searchParams.get("x")) || innerHeight / 2
-  const y = Number(url.searchParams.get("y")) || innerWidth / 2
+  const x = Number(url.searchParams.get("x"))
+  const y = Number(url.searchParams.get("y"))
 
   const [w, setW] = useState(0)
   const [h, setH] = useState(0)
