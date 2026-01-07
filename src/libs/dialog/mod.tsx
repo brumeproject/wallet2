@@ -19,14 +19,23 @@ export function Dialog(props: ChildrenProps & DarkProps) {
   const x = Number(url.searchParams.get("x")) || innerHeight / 2
   const y = Number(url.searchParams.get("y")) || innerWidth / 2
 
+  const [w, setW] = useState(0)
+  const [h, setH] = useState(0)
+
   const [dialog, setDialog] = useState<HTMLDialogElement>()
 
   /**
-   * Show the dialog when mounted
+   * Compute position and size
    */
   useLayoutEffect(() => {
-    dialog?.showModal()
-  }, [dialog])
+    if (dialog == null)
+      return
+
+    dialog.showModal()
+
+    setW(dialog.offsetWidth)
+    setH(dialog.offsetHeight)
+  }, [x, y, dialog])
 
   const [premount, setPremount] = useState(true)
   const [postmount, setPostmount] = useState(false)
@@ -146,7 +155,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent flex flex-col overscroll-y-none [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xy-in" : "animate-slideup-out md:animate-scale-xy-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent flex flex-col overscroll-y-none [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xywh-in" : "animate-slideup-out md:animate-scale-xywh-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
@@ -154,18 +163,18 @@ export function Dialog(props: ChildrenProps & DarkProps) {
       onScroll={onScroll}
       onClose={onClose}
       ref={setDialog}>
-      <div className="basis-[50vh] shrink-0 md:basis-auto md:grow md:shrink" />
-      <div className="flex flex-col md:w-full md:m-auto md:max-w-3xl text-default bg-default rounded-t-3xl md:rounded-3xl"
+      <div className="not-md:basis-[50vh] not-md:shrink-0 md:grow" />
+      <div className="flex flex-col text-default bg-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl"
         onMouseDown={Events.stopPropagation}>
         <div className="flex md:hidden items-center justify-center p-4">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
         </div>
-        <div className="basis-[100dvh] md:basis-[50dvh] flex flex-col p-safe md:p-0"
+        <div className="not-md:basis-[100dvh] md:basis-[50dvh] flex flex-col not-md:p-safe md:p-0"
           ref={setContent}>
           {children}
         </div>
       </div>
-      <div className="hidden md:block grow" />
+      <div className="not-md:hidden md:grow" />
     </dialog>
   </CloseContext>
 }

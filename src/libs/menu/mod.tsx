@@ -4,31 +4,41 @@ import { usePathContext } from "@hazae41/chemin";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import React, { JSX, KeyboardEvent, MouseEvent, SyntheticEvent, useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { flushSync } from "react-dom";
-import { Events } from "../events/mod.ts";
-import { Nullable } from "../nullable/mod.tsx";
-import { Portal } from "../portal/mod.tsx";
-import { ChildrenProps, DarkProps } from "../props/mod.ts";
+import { ChildrenProps } from "../props/mod.ts";
 
 React;
 
-export function Menu(props: ChildrenProps & DarkProps) {
+export function Menu(props: ChildrenProps) {
   const { url } = usePathContext().getOrThrow()
   const close = useCloseContext().getOrThrow()
-  const { dark, children } = props
+  const { children } = props
 
-  const maybeX = url.searchParams.get("x")
-  const maybeY = url.searchParams.get("y")
+  const x = Number(url.searchParams.get("x")) || innerHeight / 2
+  const y = Number(url.searchParams.get("y")) || innerWidth / 2
 
-  const [dialog, setDialog] = useState<HTMLDialogElement | null>(null)
+  const [w, setW] = useState(0)
+  const [h, setH] = useState(0)
+
+  const [l, setL] = useState(0)
+  const [t, setT] = useState(0)
+
+  const [dialog, setDialog] = useState<HTMLDialogElement>()
 
   /**
-   * Forcefully open HTML dialog on mount
+   * Compute position and size
    */
   useLayoutEffect(() => {
-    if (!document.body.contains(dialog))
+    if (dialog == null)
       return
-    dialog?.showModal()
-  }, [dialog])
+
+    dialog.showModal()
+
+    setW(dialog.offsetWidth)
+    setH(dialog.offsetHeight)
+
+    setL(((x + dialog.offsetWidth) > innerWidth) ? Math.max(x - dialog.offsetWidth, 0) : x)
+    setT(((y + dialog.offsetHeight) > innerHeight) ? Math.max(y - dialog.offsetHeight, 0) : y)
+  }, [x, y, dialog])
 
   const [premount, setPremount] = useState(true)
   const [postmount, setPostmount] = useState(false)
@@ -37,18 +47,18 @@ export function Menu(props: ChildrenProps & DarkProps) {
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    if (force) {
-      close()
-      return
-    }
-
     setPremount(false)
+
+    if (!force)
+      return
+
+    close()
   }, [close])
 
   /**
    * Smoothly close the dialog on escape
    */
-  const onEscape = useCallback((e: KeyboardEvent) => {
+  const onKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key !== "Escape")
       return
 
@@ -60,32 +70,33 @@ export function Menu(props: ChildrenProps & DarkProps) {
   /**
    * Smoothly close the dialog on outside click
    */
-  const onClickOutside = useCallback((e: MouseEvent) => {
-    if (e.clientX > e.currentTarget.clientWidth)
+  const onMouseDown = useCallback((e: MouseEvent) => {
+    if (dialog == null)
+      return
+    if (e.target !== dialog)
       return
 
     e.preventDefault()
 
     hide()
-  }, [hide])
+  }, [dialog, hide])
 
   /**
-   * When the dialog could not be closed smoothly
-   * @example Safari on escape
+   * Force close when dialog is closed (Safari bug)
    */
   const onClose = useCallback((e: SyntheticEvent) => {
     close()
   }, [close])
 
   /**
-   * Sync mounted state with visible state on animation end
+   * Sync visible state with mounted state on animation end
    */
   const onAnimationEnd = useCallback(() => {
     flushSync(() => setPostmount(premount))
   }, [premount])
 
   /**
-   * Unmount this component from parent when both visible and mounted are false
+   * Close when both visible and mounted are false
    */
   useEffect(() => {
     if (premount)
@@ -95,62 +106,22 @@ export function Menu(props: ChildrenProps & DarkProps) {
     close()
   }, [premount, postmount])
 
-  const [menu, setMenu] = useState<Nullable<HTMLElement>>(null)
-
-  const [maybeW, setMaybeW] = useState(0)
-  const [maybeH, setMaybeH] = useState(0)
-
-  const [maybeL, setMaybeL] = useState(0)
-  const [maybeT, setMaybeT] = useState(0)
-
-  useLayoutEffect(() => {
-    if (menu == null)
-      return
-
-    setMaybeW(menu.offsetWidth)
-    setMaybeH(menu.offsetHeight)
-
-    if (maybeX == null)
-      return
-    if (maybeY == null)
-      return
-
-    const x = Number(maybeX)
-    const y = Number(maybeY)
-
-    setMaybeL(((x + menu.offsetWidth) > innerWidth) ? Math.max(x - menu.offsetWidth, 0) : x)
-    setMaybeT(((y + menu.offsetHeight) > innerHeight) ? Math.max(y - menu.offsetHeight, 0) : y)
-  }, [maybeX, maybeY, menu])
-
   /**
    * Only unmount when transition is finished
    */
   if (!premount && !postmount)
     return null
 
-  return <Portal>
-    <CloseContext value={hide}>
-      <dialog className={`[--x:${maybeX}px] [--y:${maybeY}px] [--w:${maybeW}px] [--h:${maybeH}px] [--l:${maybeL}px] [--t:${maybeT}px]`}
-        onKeyDown={onEscape}
-        onClose={onClose}
-        ref={setDialog}>
-        <div className={`fixed inset-0`}
-          data-theme={dark && "dark"}
-          onMouseDown={onClickOutside}
-          onClick={Events.stopPropagation}>
-          <div className={`absolute flex flex-col min-w-[min(calc(100vw-var(--l)),8rem)] max-w-[min(calc(100vw-var(--l)),32rem)] top-0 left-0 [translate:var(--l)_var(--t)] text-default bg-default border border-default-contrast rounded-2xl p-2 ${premount ? "animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
-            ref={setMenu}
-            aria-modal
-            onAnimationEnd={onAnimationEnd}
-            onMouseDown={Events.stopPropagation}>
-            <div className="grow flex flex-col max-h-[200px] overflow-y-auto p-scroll">
-              {children}
-            </div>
-          </div>
-        </div>
-      </dialog>
-    </CloseContext>
-  </Portal>
+  return <CloseContext value={hide}>
+    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default border border-default-contrast rounded-2xl p-2 [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] [--l:${l}px] [--t:${t}px] [translate:var(--l)_var(--t)] ${premount ? "animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
+      onAnimationEnd={onAnimationEnd}
+      onMouseDown={onMouseDown}
+      onKeyDown={onKeyDown}
+      onClose={onClose}
+      ref={setDialog}>
+      {children}
+    </dialog>
+  </CloseContext>
 }
 
 export function GapperAndClickerInMenuAnchor(props: ChildrenProps) {
