@@ -474,7 +474,7 @@ function UserImportDialog() {
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
-    <div className="h-16 grow" />
+    <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       <WideClickableOppositeButton
         disabled={error != null}
@@ -659,7 +659,7 @@ function UserCreateDialog() {
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
-    <div className="h-16 grow" />
+    <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       {"showSaveFilePicker" in window === true &&
         <WideClickableOppositeButton
