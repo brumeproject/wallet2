@@ -41,7 +41,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
   /**
    * Smoothly close the dialog on escape
    */
-  const onEscape = useCallback((e: KeyboardEvent) => {
+  const onKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key !== "Escape")
       return
 
@@ -145,7 +145,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
-      onKeyDown={onEscape}
+      onKeyDown={onKeyDown}
       onScroll={onScroll}
       onClose={onClose}
       ref={setDialog}>
