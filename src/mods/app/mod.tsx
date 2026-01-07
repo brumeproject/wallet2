@@ -413,7 +413,7 @@ function UserImportDialog() {
     return
   }, [name, fileOrFsfh, password])
 
-  return <Fragment>
+  return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
       Import user
     </h1>
@@ -482,7 +482,7 @@ function UserImportDialog() {
         {error != null ? error : "OK"}
       </WideClickableOppositeButton>
     </div>
-  </Fragment>
+  </div>
 }
 
 function UserCreateDialog() {
@@ -627,7 +627,7 @@ function UserCreateDialog() {
     return
   }, [name, password])
 
-  return <Fragment>
+  return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
       Create user
     </h1>
@@ -674,7 +674,7 @@ function UserCreateDialog() {
           {error != null ? error : "Save file"}
         </WideClickableOppositeButton>}
     </div>
-  </Fragment>
+  </div>
 }
 
 function UserItem(props: { user: UserData } & { login(session: SessionData): void }) {
@@ -755,13 +755,15 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
         </Menu>}
       {client && hash.url.pathname === `/${user.uuid}/settings` &&
         <Dialog>
-          <h1 className="text-xl font-medium">
-            {user.name}
-          </h1>
-          <div className="text-default-contrast">
-            {user.uuid}
+          <div className="flex flex-col grow p-6">
+            <h1 className="text-xl font-medium">
+              {user.name}
+            </h1>
+            <div className="text-default-contrast">
+              {user.uuid}
+            </div>
+            <div className="h-4 grow" />
           </div>
-          <div className="h-4 grow" />
         </Dialog>}
     </HashSubpathProvider>
     <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">
