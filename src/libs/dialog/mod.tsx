@@ -172,7 +172,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
         </div>
         <div className="not-md:basis-[100dvh] md:basis-[40dvh] flex flex-col not-md:p-safe"
           ref={setContent}>
-          <div className="bg-white basis-[1200px]" />
+          {children}
         </div>
       </div>
       <div className="md:basis-[20vh] md:grow shrink-0" />
