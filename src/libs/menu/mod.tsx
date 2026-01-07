@@ -2,7 +2,7 @@
 
 import { usePathContext } from "@hazae41/chemin";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
-import React, { JSX, KeyboardEvent, MouseEvent, SyntheticEvent, useCallback, useEffect, useLayoutEffect, useState } from "react";
+import React, { JSX, KeyboardEvent, MouseEvent, useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { ChildrenProps } from "../props/mod.ts";
 
@@ -66,6 +66,7 @@ export function Menu(props: ChildrenProps) {
       return
 
     e.preventDefault()
+    e.stopPropagation()
 
     hide()
   }, [hide])
@@ -79,17 +80,19 @@ export function Menu(props: ChildrenProps) {
     if (e.target !== dialog)
       return
 
+    const { x, y } = dialog.getBoundingClientRect()
+
+    const w = dialog.offsetWidth
+    const h = dialog.offsetHeight
+
+    if (e.clientX > x && e.clientX < x + w && e.clientY > y && e.clientY < y + h)
+      return
+
     e.preventDefault()
+    e.stopPropagation()
 
     hide()
   }, [dialog, hide])
-
-  /**
-   * Force close when dialog is closed (Safari bug)
-   */
-  const onClose = useCallback((e: SyntheticEvent) => {
-    close()
-  }, [close])
 
   /**
    * Sync visible state with mounted state on animation end
@@ -120,7 +123,6 @@ export function Menu(props: ChildrenProps) {
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
-      onClose={onClose}
       ref={setDialog}>
       {children}
     </dialog>

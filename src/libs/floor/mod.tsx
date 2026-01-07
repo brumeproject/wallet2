@@ -3,7 +3,7 @@
 /// <reference lib="dom"/>
 
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
-import React, { AnimationEvent, KeyboardEvent, MouseEvent, SyntheticEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useState } from "react"
+import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
@@ -46,6 +46,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
       return
 
     e.preventDefault()
+    e.stopPropagation()
 
     hide()
   }, [hide])
@@ -54,20 +55,17 @@ export function Floor(props: ChildrenProps & DarkProps) {
    * Smoothly close the dialog on outside click
    */
   const onMouseDown = useCallback((e: MouseEvent) => {
+    /**
+     * Ignore clicks on scrollbar
+     */
     if (e.clientX > e.currentTarget.clientWidth)
       return
 
     e.preventDefault()
+    e.stopPropagation()
 
     hide()
   }, [hide])
-
-  /**
-   * Force close when dialog is closed (Safari bug)
-   */
-  const onClose = useCallback((e: SyntheticEvent) => {
-    close()
-  }, [close])
 
   /**
    * Sync visible state with mounted state on animation end
@@ -147,9 +145,8 @@ export function Floor(props: ChildrenProps & DarkProps) {
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       onScroll={onScroll}
-      onClose={onClose}
       ref={setDialog}>
-      <div className="basis-[50vh] shrink-0" />
+      <div className="basis-[80vh] shrink-0" />
       <div className="flex flex-col bg-default text-default rounded-t-3xl"
         onMouseDown={Events.stopPropagation}>
         <div className="flex items-center justify-center p-4 ">

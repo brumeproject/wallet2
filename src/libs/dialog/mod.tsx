@@ -4,7 +4,7 @@
 
 import { usePathContext } from "@hazae41/chemin"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
-import React, { AnimationEvent, KeyboardEvent, MouseEvent, SyntheticEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useState } from "react"
+import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
@@ -60,6 +60,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
       return
 
     e.preventDefault()
+    e.stopPropagation()
 
     hide()
   }, [hide])
@@ -68,20 +69,17 @@ export function Dialog(props: ChildrenProps & DarkProps) {
    * Smoothly close the dialog on outside click
    */
   const onMouseDown = useCallback((e: MouseEvent) => {
+    /**
+     * Ignore clicks on scrollbar
+     */
     if (e.clientX > e.currentTarget.clientWidth)
       return
 
     e.preventDefault()
+    e.stopPropagation()
 
     hide()
   }, [hide])
-
-  /**
-   * Force close when dialog is closed (Safari bug)
-   */
-  const onClose = useCallback((e: SyntheticEvent) => {
-    close()
-  }, [close])
 
   /**
    * Sync visible state with mounted state on animation end
@@ -129,6 +127,8 @@ export function Dialog(props: ChildrenProps & DarkProps) {
    * Swipe down to close
    */
   const onScroll = useCallback((e: UIEvent) => {
+    if (innerWidth > 768)
+      return
     if (e.currentTarget.scrollTop > 0)
       return
     hide()
@@ -141,6 +141,8 @@ export function Dialog(props: ChildrenProps & DarkProps) {
    */
   useEffect(() => {
     if (content == null)
+      return
+    if (innerWidth > 768)
       return
 
     const timeout = setTimeout(() => content.scrollIntoView({ behavior: "smooth" }))
@@ -161,20 +163,19 @@ export function Dialog(props: ChildrenProps & DarkProps) {
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       onScroll={onScroll}
-      onClose={onClose}
       ref={setDialog}>
-      <div className="not-md:basis-[50vh] not-md:shrink-0 md:grow" />
-      <div className="flex flex-col text-default bg-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl"
+      <div className="not-md:basis-[80vh] md:basis-[20vh] md:grow shrink-0" />
+      <div className="flex flex-col text-default bg-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip"
         onMouseDown={Events.stopPropagation}>
         <div className="flex md:hidden items-center justify-center p-4">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
         </div>
-        <div className="not-md:basis-[100dvh] md:basis-[50dvh] flex flex-col not-md:p-safe"
+        <div className="not-md:basis-[100dvh] md:basis-[40dvh] flex flex-col not-md:p-safe"
           ref={setContent}>
-          {children}
+          <div className="bg-white basis-[1200px]" />
         </div>
       </div>
-      <div className="md:grow" />
+      <div className="md:basis-[20vh] md:grow shrink-0" />
     </dialog>
   </CloseContext>
 }
