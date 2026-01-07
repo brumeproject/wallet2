@@ -155,7 +155,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent flex flex-col overscroll-y-none [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in md:animate-scale-xywh-in" : "animate-slideup-out md:animate-scale-xywh-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent flex flex-col overscroll-y-none [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "not-md:animate-slideup-in md:animate-scale-xywh-in" : "not-md:animate-slideup-out md:animate-scale-xywh-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
@@ -174,7 +174,7 @@ export function Dialog(props: ChildrenProps & DarkProps) {
           {children}
         </div>
       </div>
-      <div className="not-md:hidden md:grow" />
+      <div className="md:grow" />
     </dialog>
   </CloseContext>
 }
