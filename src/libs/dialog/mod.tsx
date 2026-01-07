@@ -164,18 +164,18 @@ export function Dialog(props: ChildrenProps & DarkProps) {
       onKeyDown={onKeyDown}
       onScroll={onScroll}
       ref={setDialog}>
-      <div className="not-md:basis-[100vh] md:basis-[20vh] md:grow shrink-0" />
+      <div className="not-md:basis-[100vh] md:grow shrink-0" />
       <div className="flex flex-col text-default bg-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip shrink-0"
         onMouseDown={Events.stopPropagation}>
         <div className="flex md:hidden items-center justify-center p-4">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
         </div>
-        <div className="not-md:basis-[100dvh] md:basis-[40dvh] flex flex-col not-md:p-safe"
+        <div className="not-md:basis-[100dvh] flex flex-col not-md:p-safe"
           ref={setContent}>
           {children}
         </div>
       </div>
-      <div className="md:basis-[20vh] md:grow shrink-0" />
+      <div className="md:grow shrink-0" />
     </dialog>
   </CloseContext>
 }
