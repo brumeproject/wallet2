@@ -2,7 +2,7 @@
 
 import { usePathContext } from "@hazae41/chemin";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
-import React, { JSX, KeyboardEvent, MouseEvent, SyntheticEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { JSX, KeyboardEvent, MouseEvent, SyntheticEvent, useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { Events } from "../events/mod.ts";
 import { Nullable } from "../nullable/mod.tsx";
@@ -18,19 +18,6 @@ export function Menu(props: ChildrenProps & DarkProps) {
 
   const maybeX = url.searchParams.get("x")
   const maybeY = url.searchParams.get("y")
-
-  const previous = useRef(document.activeElement)
-
-  /**
-   * Restore focus on unmount
-   */
-  useEffect(() => () => {
-    if (previous.current == null)
-      return
-    if (!(previous.current instanceof HTMLElement))
-      return
-    previous.current.focus()
-  }, [])
 
   const [dialog, setDialog] = useState<HTMLDialogElement | null>(null)
 
@@ -106,7 +93,6 @@ export function Menu(props: ChildrenProps & DarkProps) {
     if (postmount)
       return
     close()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [premount, postmount])
 
   const [menu, setMenu] = useState<Nullable<HTMLElement>>(null)

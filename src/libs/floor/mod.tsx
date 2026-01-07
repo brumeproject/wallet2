@@ -3,7 +3,7 @@
 /// <reference lib="dom"/>
 
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
-import React, { AnimationEvent, KeyboardEvent, MouseEvent, SyntheticEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import React, { AnimationEvent, KeyboardEvent, MouseEvent, SyntheticEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
@@ -14,27 +14,12 @@ export function Floor(props: ChildrenProps & DarkProps) {
   const close = useCloseContext().getOrThrow()
   const { dark, children } = props
 
-  const previous = useRef(document.activeElement)
+  const [dialog, setDialog] = useState<HTMLDialogElement>()
 
   /**
-   * Restore focus on unmount
-   */
-  useEffect(() => () => {
-    if (previous.current == null)
-      return
-    if (!(previous.current instanceof HTMLElement))
-      return
-    previous.current.focus()
-  }, [])
-
-  const [dialog, setDialog] = useState<HTMLDialogElement | null>(null)
-
-  /**
-   * Forcefully open HTML dialog on mount
+   * Show the dialog when mounted
    */
   useLayoutEffect(() => {
-    if (!document.body.contains(dialog))
-      return
     dialog?.showModal()
   }, [dialog])
 
@@ -45,12 +30,12 @@ export function Floor(props: ChildrenProps & DarkProps) {
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    if (force) {
-      close()
-      return
-    }
-
     setPremount(false)
+
+    if (!force)
+      return
+
+    close()
   }, [close])
 
   /**
@@ -78,30 +63,21 @@ export function Floor(props: ChildrenProps & DarkProps) {
   }, [hide])
 
   /**
-   * When the dialog could not be closed smoothly
-   * @example Safari on escape
+   * Force close when dialog is closed (Safari bug)
    */
   const onClose = useCallback((e: SyntheticEvent) => {
     close()
   }, [close])
 
   /**
-   * Sync mounted state with visible state on animation end
+   * Sync visible state with mounted state on animation end
    */
   const onAnimationEnd = useCallback((e: AnimationEvent) => {
     flushSync(() => setPostmount(premount))
-
-    /**
-     * Prepare swipe down to close on Android
-     */
-    if (e.currentTarget.scrollTop === 0 && /(android)/i.test(navigator.userAgent)) {
-      e.currentTarget.scrollTop = 1
-      return
-    }
   }, [premount])
 
   /**
-   * Unmount this component from parent when both visible and mounted are false
+   * Close when both visible and mounted are false
    */
   useEffect(() => {
     if (premount)
@@ -112,7 +88,7 @@ export function Floor(props: ChildrenProps & DarkProps) {
   }, [premount, postmount])
 
   /**
-   * Set theme-color based on dark prop
+   * Sync theme-color with dark mode
    */
   useLayoutEffect(() => {
     if (!premount)
@@ -135,72 +111,27 @@ export function Floor(props: ChildrenProps & DarkProps) {
     return () => color.setAttribute("content", original)
   }, [premount, dark])
 
-  const touch = useRef(false)
-
-  const onTouchMove = useCallback(() => {
-    touch.current = true
-  }, [])
-
-  const onTouchEnd = useCallback(() => {
-    touch.current = false
-  }, [])
-
+  /**
+   * Swipe down to close
+   */
   const onScroll = useCallback((e: UIEvent) => {
-    /**
-     * Only on touch devices
-     */
-    if (navigator.maxTouchPoints === 0)
+    if (e.currentTarget.scrollTop > 0)
       return
-
-    /**
-     * Swipe down to close on iOS
-     */
-    if (e.currentTarget.scrollTop < -60) {
-      hide()
-      return
-    }
-
-    /**
-     * Prevent swipe down to close on Android
-     */
-    if (!touch.current && e.currentTarget.scrollTop === 0 && /(android)/i.test(navigator.userAgent)) {
-      e.currentTarget.scrollTop = 1
-      return
-    }
-
-    /**
-     * Swipe down to close on Android
-     */
-    if (touch.current && e.currentTarget.scrollTop === 0 && /(android)/i.test(navigator.userAgent)) {
-      hide()
-      return
-    }
-
-    /**
-     * Prevent overscroll on bottom
-     */
-    if (e.currentTarget.scrollTop > 60) {
-      e.currentTarget.classList.add("overscroll-y-none")
-      return
-    }
-
-    if (e.currentTarget.scrollTop < 60) {
-      e.currentTarget.classList.remove("overscroll-y-none")
-      return
-    }
-
-    return
+    hide()
   }, [hide])
 
-  const [content, setContent] = useState<HTMLDivElement | null>(null)
+  const [content, setContent] = useState<HTMLDivElement>()
 
+  /**
+   * Smoothly scroll to the content to perfectly fit the screen
+   */
   useEffect(() => {
     if (content == null)
       return
-    /**
-     * Scroll to the content to fit the screen
-     */
-    setTimeout(() => content.scrollIntoView({ behavior: "smooth" }))
+
+    const timeout = setTimeout(() => content.scrollIntoView({ behavior: "smooth" }))
+
+    return () => clearTimeout(timeout)
   }, [content])
 
   /**
@@ -210,12 +141,10 @@ export function Floor(props: ChildrenProps & DarkProps) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent flex flex-col [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent flex flex-col overscroll-y-none [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
       onKeyDown={onEscape}
       onScroll={onScroll}
       onClose={onClose}
