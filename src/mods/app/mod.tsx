@@ -762,7 +762,6 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
             <div className="text-default-contrast">
               {user.uuid}
             </div>
-            <div className="h-4 grow" />
           </div>
         </Dialog>}
     </HashSubpathProvider>
