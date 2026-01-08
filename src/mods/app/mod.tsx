@@ -73,11 +73,9 @@ export function App() {
   useEffect(() => {
     const favicon = document.querySelector("link[rel~='icon']")! as HTMLLinkElement
     const appicon = document.querySelector("link[rel='apple-touch-icon']")! as HTMLLinkElement
-    const appname = document.querySelector("meta[name='apple-mobile-web-app-title']")! as HTMLMetaElement
     const manifest = document.querySelector("link[rel='manifest']")! as HTMLLinkElement
 
     document.title = name || "Brume Wallet"
-    appname.content = name || "Wallet"
 
     if (icon == null) {
       favicon.href = "/favicon.ico"
