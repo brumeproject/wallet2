@@ -17,7 +17,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
-import React, { ChangeEvent, DragEvent, Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, DragEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
 
 React;
 
@@ -42,7 +42,7 @@ export function App() {
 
   const [name, setName] = useState<string>("")
 
-  const getName = useCallback(async () => {
+  const getNameOrThrow = useCallback(async () => {
     setName(await store.value.getOrThrow().getOrThrow<string>("name"))
   }, [store])
 
@@ -51,13 +51,13 @@ export function App() {
       return
     if (store.value.isErr())
       return
-    getName().catch(console.error)
+    getNameOrThrow().catch(console.error)
   }, [store])
 
   const [icon, setIcon] = useState<string>()
 
-  const getIcon = useCallback(async () => {
-    setIcon(await store.value.getOrThrow().getOrThrow<Blob>("icon").then(x => x && URL.createObjectURL(x)))
+  const getIconOrThrow = useCallback(async () => {
+    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("icon").then(x => x && URL.createObjectURL(new Blob([x]))))
   }, [store])
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export function App() {
       return
     if (store.value.isErr())
       return
-    getIcon().catch(console.error)
+    getIconOrThrow().catch(console.error)
   }, [store])
 
   useEffect(() => {
@@ -264,10 +264,10 @@ function SettingsButton() {
 function SettingsDialog() {
   const store = useStoreContext().getOrThrow()
 
-  const [$name, $setName] = useState<string>("")
+  const [name, setName] = useState<string>("")
 
   const getNameOrThrow = useCallback(async () => {
-    $setName(await store.value.getOrThrow().getOrThrow<string>("name"))
+    setName(await store.value.getOrThrow().getOrThrow<string>("name"))
   }, [store])
 
   useEffect(() => {
@@ -277,12 +277,6 @@ function SettingsDialog() {
       return
     getNameOrThrow().catch(console.error)
   }, [store])
-
-  const onNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    $setName(e.target.value)
-  }, [])
-
-  const name = useDeferredValue($name)
 
   const setNameOrThrow = useCallback(async (name: string) => {
     if (store == null)
@@ -295,14 +289,14 @@ function SettingsDialog() {
     store.update()
   }, [store])
 
-  useEffect(() => {
-    setNameOrThrow(name).catch(console.error)
-  }, [name])
+  const onNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setNameOrThrow(e.target.value).catch(console.error)
+  }, [])
 
   const [icon, setIcon] = useState<string>()
 
   const getIconOrThrow = useCallback(async () => {
-    setIcon(await store.value.getOrThrow().getOrThrow<Blob>("icon").then(x => x && URL.createObjectURL(x)))
+    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("icon").then(x => x && URL.createObjectURL(new Blob([x]))))
   }, [store])
 
   useEffect(() => {
@@ -319,7 +313,7 @@ function SettingsDialog() {
     if (file == null)
       return
 
-    await store.value.getOrThrow().setOrThrow("icon", file)
+    await store.value.getOrThrow().setOrThrow("icon", await file.bytes())
 
     setIcon(URL.createObjectURL(file))
 
@@ -364,7 +358,7 @@ function SettingsDialog() {
       <div className="h-4" />
       <input className="text-center outline-none"
         placeholder="Wallet"
-        value={$name}
+        value={name}
         onChange={onNameChange} />
     </div>
   </div>
