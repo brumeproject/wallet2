@@ -17,7 +17,7 @@
     "@hazae41/binary": "^2.0.2",
     "@hazae41/chacha20poly1305": "^2.0.1",
     "@hazae41/chacha20poly1305-wasm": "^2.0.0",
-    "@hazae41/chemin": "^2.1.0",
+    "@hazae41/chemin": "^2.1.1",
     "@hazae41/immutable": "^2.0.24",
     "@hazae41/labase": "^1.0.19",
     "@hazae41/react-close-context": "^1.0.3",
