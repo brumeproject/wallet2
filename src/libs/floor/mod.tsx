@@ -3,7 +3,7 @@
 /// <reference lib="dom"/>
 
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
-import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useState } from "react"
+import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
@@ -13,6 +13,19 @@ React;
 export function Floor(props: ChildrenProps & DarkProps) {
   const close = useCloseContext().getOrThrow()
   const { dark, children } = props
+
+  const previous = useRef(document.activeElement)
+
+  /**
+   * Restore focus on unmount
+   */
+  useEffect(() => () => {
+    if (previous.current == null)
+      return
+    if (previous.current instanceof HTMLElement === false)
+      return
+    previous.current.focus()
+  }, [])
 
   const [dialog, setDialog] = useState<HTMLDialogElement>()
 

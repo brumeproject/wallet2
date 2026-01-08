@@ -4,12 +4,12 @@
 import { ClickableOppositeAnchor, GapperAndClickerInAnchor } from "@/libs/anchor/mod.tsx";
 import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
-import { Dialog } from "@/libs/dialog/mod.tsx";
+import { PathDialog } from "@/libs/dialog/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
-import { Menu, WideClickableNakedMenuAnchor } from "@/libs/menu/mod.tsx";
+import { PathMenu, WideClickableNakedMenuAnchor, WideClickableNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { HashSubpathProvider, useCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -39,17 +39,6 @@ export function App() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const LoginButton = useCallback(() => {
-    const coords = useCoords(hash, "/login")
-
-    return <ClickableOppositeAnchor
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      Login
-    </ClickableOppositeAnchor>
-  }, [hash])
-
   const [session, setSession] = useState<SessionData>()
 
   const login = useCallback((session: SessionData) => {
@@ -77,9 +66,9 @@ export function App() {
       </CloseContext.Provider>}
     <HashSubpathProvider>
       {client && hash.url.pathname === "/login" &&
-        <Menu>
+        <PathMenu>
           <LoginMenu login={login} />
-        </Menu>}
+        </PathMenu>}
     </HashSubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
@@ -194,6 +183,20 @@ export function App() {
   </Fragment>
 }
 
+function LoginButton() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useCoords(hash, "/login")
+
+  return <ClickableOppositeAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    Login
+  </ClickableOppositeAnchor>
+}
+
 function LoginMenu(props: { login(session: SessionData): void }) {
   const { login } = props
 
@@ -217,34 +220,20 @@ function LoginMenu(props: { login(session: SessionData): void }) {
     getUsers().then(setUsers).catch(console.error)
   }, [store])
 
-  const UserAddButton = useCallback(() => {
-    const coords = useCoords(hash, "/add")
-
-    return <WideClickableNakedMenuAnchor
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast border-dashed">
-        <Outline.PlusIcon className="size-4" />
-      </div>
-      Add user
-    </WideClickableNakedMenuAnchor>
-  }, [hash])
-
   return <Fragment>
     <HashSubpathProvider>
       {client && hash.url.pathname === "/add" &&
-        <Menu>
+        <PathMenu>
           <UserAddMenu />
-        </Menu>}
+        </PathMenu>}
       {client && hash.url.pathname === "/add/import" &&
-        <Dialog>
+        <PathDialog>
           <UserImportDialog />
-        </Dialog>}
+        </PathDialog>}
       {client && hash.url.pathname === "/add/create" &&
-        <Dialog>
+        <PathDialog>
           <UserCreateDialog />
-        </Dialog>}
+        </PathDialog>}
     </HashSubpathProvider>
     <div className="flex flex-col text-left gap-2">
       {users?.map(user => <Fragment key={user.uuid}>
@@ -255,35 +244,54 @@ function LoginMenu(props: { login(session: SessionData): void }) {
   </Fragment>
 }
 
-function UserAddMenu() {
+function UserAddButton() {
   const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
-  const UserImportButton = useCallback(() => {
-    const coords = useCoords(path, "/add/import")
+  const coords = useCoords(hash, "/add")
 
-    return <WideClickableNakedMenuAnchor
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      Import user
-    </WideClickableNakedMenuAnchor>
-  }, [path])
+  return <WideClickableNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast border-dashed">
+      <Outline.PlusIcon className="size-4" />
+    </div>
+    Add user
+  </WideClickableNakedMenuAnchor>
+}
 
-  const UserCreateButton = useCallback(() => {
-    const coords = useCoords(path, "/add/create")
-
-    return <WideClickableNakedMenuAnchor
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      Create user
-    </WideClickableNakedMenuAnchor>
-  }, [path])
-
+function UserAddMenu() {
   return <div className="flex flex-col text-left gap-2">
     <UserCreateButton />
     <UserImportButton />
   </div>
+}
+
+function UserCreateButton() {
+  const path = usePathContext().getOrThrow()
+
+  const coords = useCoords(path, "/add/create")
+
+  return <WideClickableNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    Create user
+  </WideClickableNakedMenuAnchor>
+}
+
+function UserImportButton() {
+  const path = usePathContext().getOrThrow()
+
+  const coords = useCoords(path, "/add/import")
+
+  return <WideClickableNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    Import user
+  </WideClickableNakedMenuAnchor>
 }
 
 function UserImportDialog() {
@@ -750,11 +758,11 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
   return <Fragment>
     <HashSubpathProvider>
       {client && hash.url.pathname === `/${user.uuid}` &&
-        <Menu>
+        <PathMenu>
           <UserMenu user={user} />
-        </Menu>}
+        </PathMenu>}
       {client && hash.url.pathname === `/${user.uuid}/settings` &&
-        <Dialog>
+        <PathDialog>
           <div className="flex flex-col grow p-6">
             <h1 className="text-xl font-medium">
               {user.name}
@@ -763,7 +771,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
               {user.uuid}
             </div>
           </div>
-        </Dialog>}
+        </PathDialog>}
     </HashSubpathProvider>
     <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">
       {user.fsfh == null &&
@@ -842,11 +850,10 @@ function UserRenameButton(props: { user: UserData }) {
     close()
   }).catch(Errors.display), [store, user, close])
 
-  // TODO use Button
-  return <WideClickableNakedMenuAnchor
+  return <WideClickableNakedMenuButton
     onClick={renameOrAlert}>
     Rename
-  </WideClickableNakedMenuAnchor>
+  </WideClickableNakedMenuButton>
 }
 
 function UserSettingsButton(props: { user: UserData }) {
@@ -885,9 +892,8 @@ function UserRemoveButton(props: { user: UserData }) {
     close()
   }).catch(Errors.display), [store, user, close])
 
-  // TODO use Button
-  return <WideClickableNakedMenuAnchor
+  return <WideClickableNakedMenuButton
     onClick={removeOrAlert}>
     Remove
-  </WideClickableNakedMenuAnchor>
+  </WideClickableNakedMenuButton>
 }

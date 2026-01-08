@@ -4,20 +4,43 @@
 
 import { usePathContext } from "@hazae41/chemin"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
-import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useState } from "react"
+import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
 
 React;
 
-export function Dialog(props: ChildrenProps & DarkProps) {
-  const { url } = usePathContext().getOrThrow()
-  const close = useCloseContext().getOrThrow()
-  const { dark, children } = props
+export function PathDialog(props: ChildrenProps & DarkProps) {
+  const { children, dark } = props
 
-  const x = Number(url.searchParams.get("x"))
-  const y = Number(url.searchParams.get("y"))
+  const path = usePathContext().getOrThrow()
+
+  const x = Number(path.url.searchParams.get("x"))
+  const y = Number(path.url.searchParams.get("y"))
+
+  return <Dialog x={x} y={y}
+    dark={dark}>
+    {children}
+  </Dialog>
+}
+
+export function Dialog(props: ChildrenProps & DarkProps & { x: number; y: number }) {
+  const close = useCloseContext().getOrThrow()
+  const { dark, children, x, y } = props
+
+  const previous = useRef(document.activeElement)
+
+  /**
+   * Restore focus on unmount
+   */
+  useEffect(() => () => {
+    if (previous.current == null)
+      return
+    if (previous.current instanceof HTMLElement === false)
+      return
+    previous.current.focus()
+  }, [])
 
   const [w, setW] = useState(0)
   const [h, setH] = useState(0)
