@@ -10,7 +10,7 @@ import { argon2 } from "@hazae41/argon2";
 import { argon2Wasm } from "@hazae41/argon2-wasm";
 import { chaCha20Poly1305 } from "@hazae41/chacha20poly1305";
 import { chaCha20Poly1305Wasm } from "@hazae41/chacha20poly1305-wasm";
-import { HashPathProvider } from "@hazae41/chemin";
+import { PathProvider, useHashPath } from "@hazae41/chemin";
 import { immutable } from "@hazae41/immutable";
 import { Rewind } from "@hazae41/rewind";
 import React, { ReactNode, useEffect, useState } from "react";
@@ -66,6 +66,8 @@ async function upgrade() {
 }
 
 function Body() {
+  const path = useHashPath()
+
   const [client, setClient] = useState(false)
 
   useEffect(() => {
@@ -90,11 +92,11 @@ function Body() {
   }, [])
 
   return <ClientContext.Provider value={client}>
-    <HashPathProvider>
+    <PathProvider value={path}>
       <StoreProvider>
         <App />
       </StoreProvider>
-    </HashPathProvider>
+    </PathProvider>
   </ClientContext.Provider>
 }
 
