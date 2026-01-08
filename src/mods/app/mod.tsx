@@ -1,5 +1,7 @@
-/// <reference types="@/libs/files/lib.d.ts" />
 // deno-lint-ignore-file no-window
+
+/// <reference types="@/libs/files/lib.d.ts" />
+/// <reference types="@/libs/bytes/lib.d.ts" />
 
 import { ClickableContrastAnchor, ClickableOppositeAnchor, GapperAndClickerInAnchor } from "@/libs/anchor/mod.tsx";
 import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
@@ -57,7 +59,7 @@ export function App() {
   const [icon, setIcon] = useState<string>()
 
   const getIconOrThrow = useCallback(async () => {
-    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("icon").then(x => x && URL.createObjectURL(new Blob([x]))))
+    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("icon").then(x => x && `data:image/png;base64,${x.toBase64()}`))
   }, [store])
 
   useEffect(() => {
@@ -69,28 +71,34 @@ export function App() {
   }, [store])
 
   useEffect(() => {
-    console.log("name", name)
-    console.log("icon", icon)
-
-    const link = document.querySelector("link[rel~='icon']")! as HTMLLinkElement
+    const favicon = document.querySelector("link[rel~='icon']")! as HTMLLinkElement
+    const appicon = document.querySelector("link[rel='apple-touch-icon']")! as HTMLLinkElement
+    const appname = document.querySelector("meta[name='apple-mobile-web-app-title']")! as HTMLMetaElement
     const manifest = document.querySelector("link[rel='manifest']")! as HTMLLinkElement
 
     document.title = name || "Brume Wallet"
+    appname.content = name || "Wallet"
 
-    if (icon == null)
-      link.href = "/favicon.ico"
-
-    if (icon != null)
-      link.href = icon
+    if (icon == null) {
+      favicon.href = "/favicon.ico"
+      appicon.href = "/appicon.png"
+    } else {
+      favicon.href = icon
+      appicon.href = icon
+    }
 
     fetch("/manifest.json").then(async res => {
       const json = await res.json()
 
+      json.start_url = location.origin + "/"
       json.name = name || "Brume Wallet"
       json.short_name = name || "Wallet"
 
       if (icon != null)
         delete json.icons
+
+      if (icon == null)
+        json.icons[0].src = location.origin + "/appicon.png"
 
       manifest.href = `data:application/manifest+json,${encodeURIComponent(JSON.stringify(json))}`
     }).catch(console.error)
@@ -264,7 +272,7 @@ function SettingsButton() {
 function SettingsDialog() {
   const store = useStoreContext().getOrThrow()
 
-  const [name, setName] = useState<string>("")
+  const [name = "", setName] = useState<string>()
 
   const getNameOrThrow = useCallback(async () => {
     setName(await store.value.getOrThrow().getOrThrow<string>("name"))
@@ -278,20 +286,18 @@ function SettingsDialog() {
     getNameOrThrow().catch(console.error)
   }, [store])
 
-  const setNameOrThrow = useCallback(async (name: string) => {
+  const onNameChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
+
     if (store == null)
       return
     if (store.value.isErr())
       return
 
-    await store.value.getOrThrow().setOrThrow("name", name)
+    await store.value.getOrThrow().setOrThrow("name", e.target.value)
 
     store.update()
   }, [store])
-
-  const onNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setNameOrThrow(e.target.value).catch(console.error)
-  }, [])
 
   const [icon, setIcon] = useState<string>()
 
@@ -313,9 +319,11 @@ function SettingsDialog() {
     if (file == null)
       return
 
-    await store.value.getOrThrow().setOrThrow("icon", await file.bytes())
-
     setIcon(URL.createObjectURL(file))
+
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    await store.value.getOrThrow().setOrThrow("icon", data)
 
     store.update()
   }, [store])
