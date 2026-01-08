@@ -159,13 +159,13 @@ export function Floor(props: ChildrenProps & DarkProps) {
       onKeyDown={onKeyDown}
       onScroll={onScroll}
       ref={setDialog}>
-      <div className="basis-[100vh] shrink-0" />
+      <div className="basis-[100dvh] shrink-0" />
       <div className="flex flex-col bg-default text-default rounded-t-3xl shrink-0"
         onMouseDown={Events.stopPropagation}>
         <div className="flex items-center justify-center p-4">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
         </div>
-        <div className="basis-[100vh] flex flex-col p-safe"
+        <div className="basis-[100dvh] flex flex-col p-safe"
           ref={setContent}>
           {children}
         </div>
