@@ -1,7 +1,7 @@
 /// <reference types="@/libs/files/lib.d.ts" />
 // deno-lint-ignore-file no-window
 
-import { ClickableOppositeAnchor, GapperAndClickerInAnchor } from "@/libs/anchor/mod.tsx";
+import { ClickableContrastAnchor, ClickableOppositeAnchor, GapperAndClickerInAnchor } from "@/libs/anchor/mod.tsx";
 import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
 import { PathDialog } from "@/libs/dialog/mod.tsx";
@@ -17,7 +17,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
-import React, { DragEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, DragEvent, Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 
 React;
 
@@ -35,9 +35,64 @@ interface SessionData {
 
 export function App() {
   const client = useClientContext().getOrThrow()
+  const store = useStoreContext().getOrThrow()
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
+
+  const [name, setName] = useState<string>("")
+
+  const getName = useCallback(async () => {
+    setName(await store.value.getOrThrow().getOrThrow<string>("name"))
+  }, [store])
+
+  useEffect(() => {
+    if (store == null)
+      return
+    if (store.value.isErr())
+      return
+    getName().catch(console.error)
+  }, [store])
+
+  const [icon, setIcon] = useState<string>()
+
+  const getIcon = useCallback(async () => {
+    setIcon(await store.value.getOrThrow().getOrThrow<Blob>("icon").then(x => x && URL.createObjectURL(x)))
+  }, [store])
+
+  useEffect(() => {
+    if (store == null)
+      return
+    if (store.value.isErr())
+      return
+    getIcon().catch(console.error)
+  }, [store])
+
+  useEffect(() => {
+    console.log("name", name)
+    console.log("icon", icon)
+
+    const link = document.querySelector("link[rel~='icon']")! as HTMLLinkElement
+    const manifest = document.querySelector("link[rel='manifest']")! as HTMLLinkElement
+
+    document.title = name || "Brume Wallet"
+
+    if (icon == null)
+      link.href = "/favicon.ico"
+    else
+      link.href = icon
+
+    fetch("/manifest.json").then(async res => {
+      const json = await res.json()
+
+      json.name = name || "Brume Wallet"
+      json.short_name = name || "Wallet"
+
+      delete json.icons
+
+      manifest.href = `data:application/manifest+json,${encodeURIComponent(JSON.stringify(json))}`
+    }).catch(console.error)
+  }, [name, icon])
 
   const [session, setSession] = useState<SessionData>()
 
@@ -69,6 +124,10 @@ export function App() {
         <PathMenu>
           <LoginMenu login={login} />
         </PathMenu>}
+      {client && hash.url.pathname === "/settings" &&
+        <PathDialog>
+          <SettingsDialog />
+        </PathDialog>}
     </SubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
@@ -82,7 +141,10 @@ export function App() {
             Meet the only crypto-wallet with maximum security and privacy
           </div>
           <div className="h-16" />
-          <LoginButton />
+          <div className="flex items-center gap-4">
+            <LoginButton />
+            <SettingsButton />
+          </div>
           <div className="h-16" />
           <Outline.ChevronDownIcon className="size-6 text-default-half-contrast" />
           <div className="h-[max(24rem,50dvh)]" />
@@ -181,6 +243,129 @@ export function App() {
       </div>
     </div>
   </Fragment>
+}
+
+function SettingsButton() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/settings")
+
+  return <ClickableContrastAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    Settings
+  </ClickableContrastAnchor>
+}
+
+function SettingsDialog() {
+  const store = useStoreContext().getOrThrow()
+
+  const [$name, $setName] = useState<string>("")
+
+  const getNameOrThrow = useCallback(async () => {
+    $setName(await store.value.getOrThrow().getOrThrow<string>("name"))
+  }, [store])
+
+  useEffect(() => {
+    if (store == null)
+      return
+    if (store.value.isErr())
+      return
+    getNameOrThrow().catch(console.error)
+  }, [store])
+
+  const onNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    $setName(e.target.value)
+  }, [])
+
+  const name = useDeferredValue($name)
+
+  const setNameOrThrow = useCallback(async (name: string) => {
+    if (store == null)
+      return
+    if (store.value.isErr())
+      return
+
+    await store.value.getOrThrow().setOrThrow("name", name)
+
+    store.update()
+  }, [store])
+
+  useEffect(() => {
+    setNameOrThrow(name).catch(console.error)
+  }, [name])
+
+  const [icon, setIcon] = useState<string>()
+
+  const getIconOrThrow = useCallback(async () => {
+    setIcon(await store.value.getOrThrow().getOrThrow<Blob>("icon").then(x => x && URL.createObjectURL(x)))
+  }, [store])
+
+  useEffect(() => {
+    if (store == null)
+      return
+    if (store.value.isErr())
+      return
+    getIconOrThrow().catch(console.error)
+  }, [store])
+
+  const onIconChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.item(0)
+
+    if (file == null)
+      return
+
+    await store.value.getOrThrow().setOrThrow("icon", file)
+
+    setIcon(URL.createObjectURL(file))
+
+    store.update()
+  }, [store])
+
+  const onIconRemove = useCallback(async () => {
+    await store.value.getOrThrow().deleteOrThrow("icon")
+
+    setIcon(undefined)
+
+    store.update()
+  }, [store])
+
+  return <div className="flex flex-col grow p-6">
+    <h1 className="text-xl font-medium">
+      Settings
+    </h1>
+    <div className="h-4" />
+    <div className="font-medium">
+      Custom app display
+    </div>
+    <div className="text-default-contrast">
+      Custom name and icon to hide the app
+    </div>
+    <div className="h-2" />
+    <div className="flex flex-col items-center p-8">
+      {icon == null &&
+        <div className="relative size-24 border border-dashed border-default-contrast flex items-center justify-center rounded-xl">
+          <input className="absolute w-full h-full opacity-0 cursor-pointer rounded-xl"
+            type="file"
+            accept="image/*"
+            onChange={onIconChange} />
+          <Outline.ArrowUpTrayIcon className="size-6 text-default-contrast" />
+        </div>}
+      {icon != null &&
+        <button className="outline-none"
+          type="button"
+          onClick={onIconRemove}>
+          <img className="size-24 rounded-xl bg-opposite" src={icon} />
+        </button>}
+      <div className="h-4" />
+      <input className="text-center outline-none"
+        placeholder="Wallet"
+        value={$name}
+        onChange={onNameChange} />
+    </div>
+  </div>
 }
 
 function LoginButton() {
@@ -298,9 +483,9 @@ function UserImportDialog() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [rawName, setRawName] = useState("")
+  const [$name, $setName] = useState("")
 
-  const name = rawName || "Anon"
+  const name = $name || "Anon"
 
   const [fileOrFsfh, setFileOrFsfh] = useState<File | FileSystemFileHandle>()
 
@@ -436,8 +621,8 @@ function UserImportDialog() {
     <div className="bg-default-contrast po-2 rounded-xl">
       <input className="w-full outline-none"
         placeholder="Anon"
-        value={rawName}
-        onChange={e => setRawName(e.target.value)} />
+        value={$name}
+        onChange={e => $setName(e.target.value)} />
     </div>
     <div className="h-4" />
     <div className="font-medium">
@@ -497,9 +682,9 @@ function UserCreateDialog() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [rawName, setRawName] = useState("")
+  const [$name, $setName] = useState("")
 
-  const name = rawName || "Anon"
+  const name = $name || "Anon"
 
   const [password, setPassword] = useState("")
 
@@ -650,8 +835,8 @@ function UserCreateDialog() {
     <div className="bg-default-contrast po-2 rounded-xl">
       <input className="w-full outline-none"
         placeholder="Anon"
-        value={rawName}
-        onChange={e => setRawName(e.target.value)} />
+        value={$name}
+        onChange={e => $setName(e.target.value)} />
     </div>
     <div className="h-4" />
     <div className="font-medium">

@@ -22,3 +22,15 @@ export function ClickableOppositeAnchor(props: ChildrenProps & JSX.IntrinsicElem
     </GapperAndClickerInAnchor>
   </a>
 }
+
+export function ClickableContrastAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
+  const { children, "aria-disabled": disabled = false, ...rest } = props
+
+  return <a className="group po-2 bg-default-contrast rounded-xl outline-none not-aria-disabled:hover:bg-default-double-contrast focus-visible:outline-default-contrast aria-disabled:opacity-50 transition-opacity"
+    aria-disabled={disabled}
+    {...rest}>
+    <GapperAndClickerInAnchor>
+      {children}
+    </GapperAndClickerInAnchor>
+  </a>
+}
