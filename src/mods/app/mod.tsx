@@ -79,7 +79,8 @@ export function App() {
 
     if (icon == null)
       link.href = "/favicon.ico"
-    else
+
+    if (icon != null)
       link.href = icon
 
     fetch("/manifest.json").then(async res => {
@@ -88,7 +89,8 @@ export function App() {
       json.name = name || "Brume Wallet"
       json.short_name = name || "Wallet"
 
-      delete json.icons
+      if (icon != null)
+        delete json.icons
 
       manifest.href = `data:application/manifest+json,${encodeURIComponent(JSON.stringify(json))}`
     }).catch(console.error)
