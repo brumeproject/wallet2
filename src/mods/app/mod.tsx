@@ -93,7 +93,7 @@ export function App() {
       json.short_name = name || "Wallet"
 
       if (icon != null)
-        delete json.icons
+        json.icons[0].src = icon
 
       if (icon == null)
         json.icons[0].src = location.origin + "/appicon.png"
