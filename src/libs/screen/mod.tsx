@@ -10,7 +10,12 @@ import { ChildrenProps, DarkProps } from "../props/mod.ts"
 
 React;
 
-export function Floor(props: ChildrenProps & DarkProps) {
+/**
+ * Dialog that always fills the screen
+ * @param props 
+ * @returns 
+ */
+export function Screen(props: ChildrenProps & DarkProps) {
   const close = useCloseContext().getOrThrow()
   const { dark, children } = props
 

@@ -21,6 +21,11 @@ export function PathMenu(props: ChildrenProps) {
   </Menu>
 }
 
+/**
+ * Dialog positioned at some coordinates
+ * @param props 
+ * @returns 
+ */
 export function Menu(props: ChildrenProps & { x: number; y: number }) {
   const close = useCloseContext().getOrThrow()
   const { children, x, y } = props

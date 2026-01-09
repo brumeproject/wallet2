@@ -9,10 +9,10 @@ import { useClientContext } from "@/libs/client/mod.tsx";
 import { PathDialog } from "@/libs/dialog/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
-import { Floor } from "@/libs/floor/mod.tsx";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { PathMenu, WideClickableNakedMenuAnchor, WideClickableNakedMenuButton } from "@/libs/menu/mod.tsx";
+import { Screen } from "@/libs/screen/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -115,7 +115,7 @@ export function App() {
   return <Fragment>
     <CloseContext.Provider value={logout}>
       {client && session != null &&
-        <Floor>
+        <Screen>
           <div className="grow flex flex-col text-center items-center justify-center">
             <h1 className="text-5xl md:text-6xl font-medium">
               Welcome back, {session.user.name}
@@ -125,7 +125,7 @@ export function App() {
               You have $244.4B in your wallet
             </div>
           </div>
-        </Floor>}
+        </Screen>}
     </CloseContext.Provider>
     <SubpathProvider value={hash}>
       {client && hash.url.pathname === "/login" &&

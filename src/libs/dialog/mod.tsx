@@ -25,6 +25,11 @@ export function PathDialog(props: ChildrenProps & DarkProps) {
   </Dialog>
 }
 
+/**
+ * Dialog that depends on screen size
+ * @param props 
+ * @returns 
+ */
 export function Dialog(props: ChildrenProps & DarkProps & { x: number; y: number }) {
   const close = useCloseContext().getOrThrow()
   const { dark, children, x, y } = props
