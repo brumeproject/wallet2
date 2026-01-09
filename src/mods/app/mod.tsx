@@ -210,7 +210,7 @@ export function App() {
           </h1>
           <div className="h-4" />
           <div className="text-center text-default-contrast text-xl md:text-2xl">
-            Network traffic is routed through the Tor darknet with a different circuit for each identity
+            Traffic is sent through Tor with a different circuit for each identity
           </div>
           <div className="h-16" />
           <div className="flex flex-wrap flex-col md:flex-row items-center text-center gap-4">
