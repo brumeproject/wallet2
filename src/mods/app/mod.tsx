@@ -157,6 +157,35 @@ export function App() {
           <Outline.ChevronDownIcon className="size-6 text-default-half-contrast" />
           <div className="h-[max(24rem,50dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
+            Your everything manager
+          </h1>
+          <div className="h-4" />
+          <div className="text-center text-default-contrast text-xl md:text-2xl">
+            Manage all your sensitive data in one secure and private place
+          </div>
+          <div className="h-16" />
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Cryptos
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              NFTs
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Passwords
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Credit cards
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Notes
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Files
+            </div>
+          </div>
+          <div className="h-[max(24rem,50dvh)]" />
+          <h1 className="text-center text-5xl md:text-6xl font-medium">
             Military-grade encryption
           </h1>
           <div className="h-4" />
@@ -208,6 +237,15 @@ export function App() {
           <div className="h-4" />
           <div className="text-center text-default-contrast text-xl md:text-2xl">
             Most of our code is made in-house to prevent supply-chain attacks
+          </div>
+          <div className="h-16" />
+          <div className="flex flex-col items-start w-full gap-4">
+            <div className="bg-default-contrast w-full p-4 rounded-xl">
+              Other wallets have around 1000 external dependencies
+            </div>
+            <div className="bg-opposite text-opposite p-4 rounded-xl">
+              We have 3
+            </div>
           </div>
           <div className="h-[max(24rem,50dvh)]" />
           <a className="text-center hover:underline"
