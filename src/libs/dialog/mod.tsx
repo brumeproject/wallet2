@@ -11,7 +11,7 @@ import { ChildrenProps, DarkProps } from "../props/mod.ts"
 
 React;
 
-export function PathDialog(props: ChildrenProps & DarkProps) {
+export function PathWindow(props: ChildrenProps & DarkProps) {
   const { children, dark } = props
 
   const path = usePathContext().getOrThrow()
@@ -19,10 +19,10 @@ export function PathDialog(props: ChildrenProps & DarkProps) {
   const x = Number(path.url.searchParams.get("x"))
   const y = Number(path.url.searchParams.get("y"))
 
-  return <Dialog x={x} y={y}
+  return <Window x={x} y={y}
     dark={dark}>
     {children}
-  </Dialog>
+  </Window>
 }
 
 /**
@@ -30,7 +30,7 @@ export function PathDialog(props: ChildrenProps & DarkProps) {
  * @param props 
  * @returns 
  */
-export function Dialog(props: ChildrenProps & DarkProps & { x: number; y: number }) {
+export function Window(props: ChildrenProps & DarkProps & { x: number; y: number }) {
   const close = useCloseContext().getOrThrow()
   const { dark, children, x, y } = props
 

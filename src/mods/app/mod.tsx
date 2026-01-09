@@ -6,7 +6,7 @@
 import { ClickableContrastAnchor, ClickableOppositeAnchor, GapperAndClickerInAnchor } from "@/libs/anchor/mod.tsx";
 import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
-import { PathDialog } from "@/libs/dialog/mod.tsx";
+import { PathWindow } from "@/libs/dialog/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -133,9 +133,9 @@ export function App() {
           <LoginMenu login={login} />
         </PathMenu>}
       {client && hash.url.pathname === "/settings" &&
-        <PathDialog>
-          <SettingsDialog />
-        </PathDialog>}
+        <PathWindow>
+          <SettingsWindow />
+        </PathWindow>}
     </SubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
@@ -267,7 +267,7 @@ function SettingsButton() {
   </ClickableContrastAnchor>
 }
 
-function SettingsDialog() {
+function SettingsWindow() {
   const store = useStoreContext().getOrThrow()
 
   const [name = "", setName] = useState<string>()
@@ -414,13 +414,13 @@ function LoginMenu(props: { login(session: SessionData): void }) {
           <UserAddMenu />
         </PathMenu>}
       {client && hash.url.pathname === "/add/import" &&
-        <PathDialog>
-          <UserImportDialog />
-        </PathDialog>}
+        <PathWindow>
+          <UserImportWindow />
+        </PathWindow>}
       {client && hash.url.pathname === "/add/create" &&
-        <PathDialog>
-          <UserCreateDialog />
-        </PathDialog>}
+        <PathWindow>
+          <UserCreateWindow />
+        </PathWindow>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       {users?.map(user => <Fragment key={user.uuid}>
@@ -481,7 +481,7 @@ function UserImportButton() {
   </WideClickableNakedMenuAnchor>
 }
 
-function UserImportDialog() {
+function UserImportWindow() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
@@ -680,7 +680,7 @@ function UserImportDialog() {
   </div>
 }
 
-function UserCreateDialog() {
+function UserCreateWindow() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
@@ -949,16 +949,9 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
           <UserMenu user={user} />
         </PathMenu>}
       {client && hash.url.pathname === `/${user.uuid}/settings` &&
-        <PathDialog>
-          <div className="flex flex-col grow p-6">
-            <h1 className="text-xl font-medium">
-              {user.name}
-            </h1>
-            <div className="text-default-contrast">
-              {user.uuid}
-            </div>
-          </div>
-        </PathDialog>}
+        <PathWindow>
+          <UserSettingsWindow user={user} />
+        </PathWindow>}
     </SubpathProvider>
     <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">
       {user.fsfh == null &&
@@ -1056,6 +1049,19 @@ function UserSettingsButton(props: { user: UserData }) {
     onKeyDown={coords.onKeyDown}>
     Settings
   </WideClickableNakedMenuAnchor>
+}
+
+function UserSettingsWindow(props: { user: UserData }) {
+  const { user } = props
+
+  return <div className="flex flex-col grow p-6">
+    <h1 className="text-xl font-medium">
+      {user.name}
+    </h1>
+    <div className="text-default-contrast">
+      {user.uuid}
+    </div>
+  </div>
 }
 
 function UserRemoveButton(props: { user: UserData }) {
