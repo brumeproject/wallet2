@@ -26,7 +26,7 @@
     "@hazae41/rewind": "^2.3.12",
     "@hazae41/serac": "^1.0.6",
     "@hazae41/symbol-dispose-polyfill": "^1.1.2",
-    "@hazae41/webauthnstorage": "^1.0.2",
+    "@hazae41/webauthnstorage": "^1.0.3",
     "@heroicons/react": "^2.2.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
