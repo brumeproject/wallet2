@@ -116,15 +116,7 @@ export function App() {
     <CloseContext.Provider value={logout}>
       {client && session != null &&
         <Screen>
-          <div className="grow flex flex-col text-center items-center justify-center">
-            <h1 className="text-5xl md:text-6xl font-medium">
-              Welcome back, {session.user.name}
-            </h1>
-            <div className="h-4" />
-            <div className="text-center text-default-contrast text-xl md:text-2xl">
-              You have $244.4B in your wallet
-            </div>
-          </div>
+          <SessionScreen session={session} />
         </Screen>}
     </CloseContext.Provider>
     <SubpathProvider value={hash}>
@@ -291,6 +283,24 @@ export function App() {
   </Fragment>
 }
 
+function SessionScreen(props: { session: SessionData }) {
+  const { session } = props
+
+  const count = useMemo(() => {
+    return session.kdbx.inner.content.value.getRootOrThrow().getDirectGroupByIndexOrThrow(0).getDirectEntries().reduce(n => n + 1, 0)
+  }, [session])
+
+  return <div className="grow flex flex-col text-center items-center justify-center">
+    <h1 className="text-5xl md:text-6xl font-medium">
+      Welcome back, {session.user.name}
+    </h1>
+    <div className="h-4" />
+    <div className="text-center text-default-contrast text-xl md:text-2xl">
+      You have {count} accounts in your wallet
+    </div>
+  </div>
+}
+
 function SettingsButton() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -453,7 +463,10 @@ function LoginMenu(props: { login(session: SessionData): void }) {
         </PathMenu>}
       {client && hash.url.pathname === "/add/import" &&
         <PathWindow>
-          <UserImportWindow />
+          {"showOpenFilePicker" in window === true &&
+            <UserImportFsfhWindow />}
+          {"showOpenFilePicker" in window === false &&
+            <UserImportFileWindow />}
         </PathWindow>}
       {client && hash.url.pathname === "/add/create" &&
         <PathWindow>
@@ -519,7 +532,7 @@ function UserImportButton() {
   </WideClickableNakedMenuAnchor>
 }
 
-function UserImportWindow() {
+function UserImportFileWindow() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
@@ -527,7 +540,137 @@ function UserImportWindow() {
 
   const name = $name || "Anon"
 
-  const [fileOrFsfh, setFileOrFsfh] = useState<File | FileSystemFileHandle>()
+  const [file, setFile] = useState<File>()
+
+  const [password, setPassword] = useState("")
+
+  const loadOrAlert = useCallback(() => Promise.try(async () => {
+    if (file == null)
+      return
+
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+
+    await encrypted.decryptOrThrow(composite)
+
+    if (!confirm("Do you want to create a passkey?")) {
+      const uuid = crypto.randomUUID()
+
+      const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+      const fresh = [...stale, { uuid, name } satisfies UserData]
+
+      await store.value.getOrThrow().setOrThrow("users", fresh)
+
+      store.update()
+
+      close()
+
+      return
+    }
+
+    const uuid = crypto.randomUUID()
+
+    const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+
+    const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+    const fresh = [...stale, { uuid, name, pass } satisfies UserData]
+
+    await store.value.getOrThrow().setOrThrow("users", fresh)
+
+    store.update()
+
+    close()
+  }).catch(Errors.display), [store, name, file, password, close])
+
+  const error = useMemo(() => {
+    if (!name.length)
+      return "Name is required"
+    if (file == null)
+      return "File is required"
+    if (!password.length)
+      return "Password is required"
+    return
+  }, [name, file, password])
+
+  return <div className="flex flex-col grow p-6">
+    <h1 className="text-xl font-medium">
+      Import user
+    </h1>
+    <div className="h-4" />
+    <div className="font-medium">
+      Name
+    </div>
+    <div className="text-default-contrast">
+      Will be used locally for display purposes
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl">
+      <input className="w-full outline-none"
+        placeholder="Anon"
+        value={$name}
+        onChange={e => $setName(e.target.value)} />
+    </div>
+    <div className="h-4" />
+    <div className="font-medium">
+      File
+    </div>
+    <div className="text-default-contrast">
+      Your existing KDBX file
+    </div>
+    <div className="h-2" />
+    <div className="relative">
+      <input className="absolute w-full h-full opacity-0 cursor-pointer"
+        type="file"
+        accept="application/octet-stream,.kdbx"
+        onChange={e => setFile(e.target.files.item(0))} />
+      {file != null &&
+        <div className="bg-default-contrast po-2 rounded-xl">
+          {file.name}
+        </div>}
+      {file == null &&
+        <div className="bg-default-contrast po-2 rounded-xl">
+          Pick or drop file here
+        </div>}
+    </div>
+    <div className="h-4" />
+    <div className="font-medium">
+      Password
+    </div>
+    <div className="text-default-contrast">
+      Your existing password
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl">
+      <input className="w-full outline-none"
+        type="password"
+        value={password}
+        onChange={e => setPassword(e.target.value)} />
+    </div>
+    <div className="h-8 grow" />
+    <div className="flex items-center flex-wrap-reverse gap-2">
+      {file != null &&
+        <WideClickableOppositeButton
+          disabled={error != null}
+          onClick={loadOrAlert}>
+          {error != null ? error : "Open file"}
+        </WideClickableOppositeButton>}
+    </div>
+  </div>
+}
+
+function UserImportFsfhWindow() {
+  const close = useCloseContext().getOrThrow()
+  const store = useStoreContext().getOrThrow()
+
+  const [$name, $setName] = useState("")
+
+  const name = $name || "Anon"
+
+  const [fsfh, setFsfh] = useState<FileSystemFileHandle>()
 
   const [password, setPassword] = useState("")
 
@@ -539,8 +682,8 @@ function UserImportWindow() {
     if (fsfh.kind !== "file")
       return
 
-    setFileOrFsfh(fsfh)
-  }).catch(Errors.display), [store, name, fileOrFsfh, password, close])
+    setFsfh(fsfh)
+  }).catch(Errors.display), [])
 
   const dropOrAlert = useCallback((e: DragEvent<HTMLButtonElement>) => Promise.try(async () => {
     e.preventDefault()
@@ -552,99 +695,58 @@ function UserImportWindow() {
     if (fsfh.kind !== "file")
       return
 
-    setFileOrFsfh(fsfh)
+    setFsfh(fsfh)
   }).catch(Errors.display), [])
 
-  const submitOrAlert = useCallback(() => Promise.try(async () => {
-    if (fileOrFsfh instanceof FileSystemFileHandle) {
-      const fsfh = fileOrFsfh
-      const file = await fsfh.getFile()
-      const data = new Uint8Array(await file.arrayBuffer())
+  const openOrAlert = useCallback(() => Promise.try(async () => {
+    const file = await fsfh.getFile()
+    const data = new Uint8Array(await file.arrayBuffer())
 
-      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-      const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
 
-      await encrypted.decryptOrThrow(composite)
+    await encrypted.decryptOrThrow(composite)
 
-      if (!confirm("Do you want to create a passkey?")) {
-        const uuid = crypto.randomUUID()
-
-        const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-        const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
-
-        await store.value.getOrThrow().setOrThrow("users", fresh)
-
-        store.update()
-
-        close()
-
-        return
-      }
-
+    if (!confirm("Do you want to create a passkey?")) {
       const uuid = crypto.randomUUID()
-
-      const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
 
       const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-      const fresh = [...stale, { uuid, name, fsfh, pass } satisfies UserData]
+      const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
 
       await store.value.getOrThrow().setOrThrow("users", fresh)
 
       store.update()
 
       close()
-    } else {
-      const file = fileOrFsfh
-      const data = new Uint8Array(await file.arrayBuffer())
 
-      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-      const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
-
-      await encrypted.decryptOrThrow(composite)
-
-      if (!confirm("Do you want to create a passkey?")) {
-        const uuid = crypto.randomUUID()
-
-        const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-        const fresh = [...stale, { uuid, name } satisfies UserData]
-
-        await store.value.getOrThrow().setOrThrow("users", fresh)
-
-        store.update()
-
-        close()
-
-        return
-      }
-
-      const uuid = crypto.randomUUID()
-
-      const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
-
-      const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-      const fresh = [...stale, { uuid, name, pass } satisfies UserData]
-
-      await store.value.getOrThrow().setOrThrow("users", fresh)
-
-      store.update()
-
-      close()
+      return
     }
-  }).catch(Errors.display), [store, name, fileOrFsfh, password, close])
+
+    const uuid = crypto.randomUUID()
+
+    const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+
+    const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
+
+    const fresh = [...stale, { uuid, name, fsfh, pass } satisfies UserData]
+
+    await store.value.getOrThrow().setOrThrow("users", fresh)
+
+    store.update()
+
+    close()
+  }).catch(Errors.display), [store, name, fsfh, password, close])
 
   const error = useMemo(() => {
     if (!name.length)
       return "Name is required"
-    if (fileOrFsfh == null)
+    if (fsfh == null)
       return "File is required"
     if (!password.length)
       return "Password is required"
     return
-  }, [name, fileOrFsfh, password])
+  }, [name, fsfh, password])
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
@@ -679,18 +781,9 @@ function UserImportWindow() {
           onClick={pickOrAlert}
           onDragOver={Events.preventDefault}
           onDrop={dropOrAlert} />}
-      {"showOpenFilePicker" in window === false &&
-        <input className="absolute w-full h-full opacity-0 cursor-pointer"
-          type="file"
-          accept="application/octet-stream,.kdbx"
-          onChange={e => setFileOrFsfh(e.target.files.item(0))} />}
-      {fileOrFsfh != null &&
+      {fsfh != null &&
         <div className="bg-default-contrast po-2 rounded-xl">
-          {fileOrFsfh.name}
-        </div>}
-      {fileOrFsfh == null &&
-        <div className="bg-default-contrast po-2 rounded-xl">
-          Pick or drop file here
+          {fsfh.name}
         </div>}
     </div>
     <div className="h-4" />
@@ -709,11 +802,12 @@ function UserImportWindow() {
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
-      <WideClickableOppositeButton
-        disabled={error != null}
-        onClick={submitOrAlert}>
-        {error != null ? error : "OK"}
-      </WideClickableOppositeButton>
+      {fsfh != null &&
+        <WideClickableOppositeButton
+          disabled={error != null}
+          onClick={openOrAlert}>
+          {error != null ? error : "Open file"}
+        </WideClickableOppositeButton>}
     </div>
   </div>
 }
