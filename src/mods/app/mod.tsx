@@ -355,7 +355,7 @@ function SessionScreen(props: { session: SessionData }) {
             <Outline.PlusIcon className="size-5" />
           </div>
         </button>
-        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-2">
+        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
           <Outline.MagnifyingGlassIcon className="size-5" />
           <input className="w-full outline-none"
             placeholder="Search"
@@ -462,7 +462,7 @@ function SettingsWindow() {
     <div className="h-2" />
     <div className="flex flex-col items-center p-8">
       {icon == null &&
-        <div className="relative size-24 border border-dashed border-default-contrast flex items-center justify-center rounded-xl">
+        <div className="relative size-24 border border-dashed border-default-contrast flex items-center justify-center rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
           <input className="absolute w-full h-full opacity-0 cursor-pointer rounded-xl"
             type="file"
             accept="image/*"
@@ -470,13 +470,13 @@ function SettingsWindow() {
           <Outline.ArrowUpTrayIcon className="size-6 text-default-contrast" />
         </div>}
       {icon != null &&
-        <button className="outline-none"
+        <button className="focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
           type="button"
           onClick={onIconRemove}>
           <img className="size-24 rounded-xl bg-opposite" src={icon} />
         </button>}
       <div className="h-4" />
-      <input className="text-center outline-none"
+      <input className="text-center bg-default-contrast po-2 rounded-xl focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
         placeholder="Wallet"
         value={name}
         onChange={onNameChange} />
@@ -540,8 +540,8 @@ function LoginMenu(props: { login(session: SessionData): void }) {
         </PathWindow>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
-      {users?.map(user => <Fragment key={user.uuid}>
-        <UserItem user={user} login={login} />
+      {users?.map((user, index) => <Fragment key={user.uuid}>
+        <UserItem autofocus={index === 0} user={user} login={login} />
       </Fragment>)}
       <UserAddButton />
     </div>
@@ -1070,8 +1070,8 @@ function UserCreateWindow() {
   </div>
 }
 
-function UserItem(props: { user: UserData } & { login(session: SessionData): void }) {
-  const { user, login } = props
+function UserItem(props: { autofocus?: boolean } & { user: UserData } & { login(session: SessionData): void }) {
+  const { autofocus, user, login } = props
 
   const client = useClientContext().getOrThrow()
 
@@ -1151,15 +1151,17 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
           <UserSettingsWindow user={user} />
         </PathWindow>}
     </SubpathProvider>
-    <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus-visible]:bg-default-contrast transition-opacity">
+    <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus]:bg-default-contrast transition-opacity">
       {user.fsfh == null &&
         <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"
           accept="application/octet-stream,.kdbx"
-          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])} />}
+          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])}
+          autoFocus={autofocus} />}
       {user.fsfh != null &&
         <button className="absolute w-full h-full opacity-0 cursor-pointer"
           type="button"
+          autoFocus={autofocus}
           onClick={() => openOrAlert(user, user.fsfh)} />}
       <div className="po-2 flex items-center justify-start">
         <div className="grow flex items-center justify-start gap-4 whitespace-nowrap aria-disabled:opacity-50 transition-opacity">
@@ -1185,7 +1187,7 @@ function UserMenuButton(props: { user: UserData }) {
 
   const coords = useAnchorWithCoords(hash, `/${user.uuid}`)
 
-  return <a className="z-10 hover:bg-default-contrast focus-visible:bg-default-contrast rounded-full p-1 cursor-pointer transition-opacity"
+  return <a className="z-10 hover:bg-default-contrast focus:bg-default-contrast rounded-full p-1 cursor-pointer transition-opacity"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>

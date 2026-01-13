@@ -14,7 +14,7 @@ export function GapperAndClickerInButton(props: ChildrenProps) {
 export function WideClickableOppositeButton(props: ChildrenProps & JSX.IntrinsicElements["button"]) {
   const { children, ...rest } = props
 
-  return <button className="flex-1 group po-2 bg-opposite text-opposite rounded-xl outline-none whitespace-nowrap enabled:hover:bg-opposite-double-contrast focus-visible:outline-opposite disabled:opacity-50 transition-opacity"
+  return <button className="flex-1 group po-2 bg-opposite text-opposite rounded-xl enabled:hover:bg-opposite-double-contrast focus:outline-2 focus:outline-offset-2 focus:outline-opposite disabled:opacity-50 transition-opacity"
     {...rest}>
     <GapperAndClickerInButton>
       {children}
@@ -25,7 +25,7 @@ export function WideClickableOppositeButton(props: ChildrenProps & JSX.Intrinsic
 export function WideClickableContrastButton(props: ChildrenProps & JSX.IntrinsicElements["button"]) {
   const { children, ...rest } = props
 
-  return <button className="flex-1 group po-2 bg-default-contrast rounded-xl outline-none whitespace-nowrap enabled:hover:bg-default-double-contrast focus-visible:outline-default-contrast disabled:opacity-50 transition-opacity"
+  return <button className="flex-1 group po-2 bg-default-contrast rounded-xl enabled:hover:bg-default-double-contrast focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast disabled:opacity-50 transition-opacity"
     {...rest}>
     <GapperAndClickerInButton>
       {children}
@@ -36,7 +36,7 @@ export function WideClickableContrastButton(props: ChildrenProps & JSX.Intrinsic
 export function ClickableOppositeButton(props: ChildrenProps & JSX.IntrinsicElements["button"]) {
   const { children, ...rest } = props
 
-  return <button className="group po-2 bg-opposite text-opposite rounded-xl outline-none enabled:hover:bg-opposite-double-contrast focus-visible:outline-opposite disabled:opacity-50 transition-opacity"
+  return <button className="group po-2 bg-opposite text-opposite rounded-xl enabled:hover:bg-opposite-double-contrast focus:outline-2 focus:outline-offset-2 focus:outline-opposite disabled:opacity-50 transition-opacity"
     {...rest}>
     <GapperAndClickerInButton>
       {children}

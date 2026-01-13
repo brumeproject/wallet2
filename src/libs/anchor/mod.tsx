@@ -14,7 +14,7 @@ export function GapperAndClickerInAnchor(props: ChildrenProps) {
 export function ClickableOppositeAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
   const { children, "aria-disabled": disabled = false, ...rest } = props
 
-  return <a className="group po-2 bg-opposite text-opposite rounded-xl outline-none not-aria-disabled:hover:bg-opposite-double-contrast focus-visible:outline-opposite aria-disabled:opacity-50 transition-opacity"
+  return <a className="group po-2 bg-opposite text-opposite rounded-xl not-aria-disabled:hover:bg-opposite-double-contrast focus:outline-2 focus:outline-offset-2 focus:outline-opposite aria-disabled:opacity-50 transition-opacity"
     aria-disabled={disabled}
     {...rest}>
     <GapperAndClickerInAnchor>
@@ -26,7 +26,7 @@ export function ClickableOppositeAnchor(props: ChildrenProps & JSX.IntrinsicElem
 export function ClickableContrastAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
   const { children, "aria-disabled": disabled = false, ...rest } = props
 
-  return <a className="group po-2 bg-default-contrast rounded-xl outline-none not-aria-disabled:hover:bg-default-double-contrast focus-visible:outline-default-contrast aria-disabled:opacity-50 transition-opacity"
+  return <a className="group po-2 bg-default-contrast rounded-xl not-aria-disabled:hover:bg-default-double-contrast focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-disabled:opacity-50 transition-opacity"
     aria-disabled={disabled}
     {...rest}>
     <GapperAndClickerInAnchor>
