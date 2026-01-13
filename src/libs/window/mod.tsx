@@ -44,7 +44,10 @@ export function Window(props: ChildrenProps & DarkProps & { x: number; y: number
       return
     if (previous.current instanceof HTMLElement === false)
       return
-    previous.current.focus()
+
+    const element = previous.current
+
+    setTimeout(() => element.focus(), 2)
   }, [])
 
   const [w, setW] = useState(0)
@@ -116,6 +119,10 @@ export function Window(props: ChildrenProps & DarkProps & { x: number; y: number
     flushSync(() => setPostmount(premount))
   }, [premount])
 
+  const onClose = useCallback(() => {
+    hide()
+  }, [hide])
+
   /**
    * Close when both visible and mounted are false
    */
@@ -185,7 +192,7 @@ export function Window(props: ChildrenProps & DarkProps & { x: number; y: number
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent outline-none flex flex-col overscroll-y-none [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "not-md:animate-slideup-in md:animate-scale-xywh-in" : "not-md:animate-slideup-out md:animate-scale-xywh-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent focus:outline-none flex flex-col overscroll-y-none [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "not-md:animate-slideup-in md:animate-scale-xywh-in" : "not-md:animate-slideup-out md:animate-scale-xywh-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
@@ -200,6 +207,7 @@ export function Window(props: ChildrenProps & DarkProps & { x: number; y: number
         </div>
         <div className="not-md:basis-[100dvh] flex flex-col not-md:p-safe"
           ref={setContent}>
+          <button type="button" autoFocus />
           {children}
         </div>
       </div>

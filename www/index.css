@@ -6,7 +6,3 @@
   --safe-area-inset-right: 32px;
   --safe-area-inset-bottom: 32px;
 } */
-
-::selection {
-  @apply bg-default-double-contrast;
-}

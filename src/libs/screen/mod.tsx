@@ -29,7 +29,10 @@ export function Screen(props: ChildrenProps & DarkProps) {
       return
     if (previous.current instanceof HTMLElement === false)
       return
-    previous.current.focus()
+
+    const element = previous.current
+
+    setTimeout(() => element.focus(), 2)
   }, [])
 
   const [dialog, setDialog] = useState<HTMLDialogElement>()
@@ -38,7 +41,15 @@ export function Screen(props: ChildrenProps & DarkProps) {
    * Show the dialog when mounted
    */
   useLayoutEffect(() => {
-    dialog?.showModal()
+    if (dialog == null)
+      return
+
+    dialog.showModal()
+
+    if (document.activeElement instanceof HTMLElement === false)
+      return
+
+    document.activeElement.blur()
   }, [dialog])
 
   const [premount, setPremount] = useState(true)
@@ -157,7 +168,7 @@ export function Screen(props: ChildrenProps & DarkProps) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent outline-none flex flex-col overscroll-y-none [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent focus:outline-none flex flex-col overscroll-y-none [scrollbar-gutter:stable] ${premount && postmount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "animate-slideup-in" : "animate-slideup-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
@@ -172,6 +183,7 @@ export function Screen(props: ChildrenProps & DarkProps) {
         </div>
         <div className="basis-[100dvh] flex flex-col p-safe"
           ref={setContent}>
+          <button type="button" autoFocus />
           {children}
         </div>
       </div>

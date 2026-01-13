@@ -6,7 +6,6 @@
 import { ClickableContrastAnchor, ClickableOppositeAnchor, GapperAndClickerInAnchor } from "@/libs/anchor/mod.tsx";
 import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
-import { PathWindow } from "@/libs/dialog/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -14,6 +13,7 @@ import { Lang } from "@/libs/lang/mod.ts";
 import { PathMenu, WideClickableNakedMenuAnchor, WideClickableNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { Screen } from "@/libs/screen/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
+import { PathWindow } from "@/libs/window/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
@@ -133,7 +133,7 @@ export function App() {
     </SubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
-        <div className="p-8 flex flex-col items-center w-full max-w-[1000px] m-auto">
+        <div className="p-6 flex flex-col items-center w-full max-w-[1000px] m-auto">
           <div className="h-[max(12rem,25dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
             The secure and private wallet
@@ -242,7 +242,7 @@ export function App() {
             </div>
           </div>
           <div className="h-[max(24rem,50dvh)]" />
-          <a className="text-center hover:underline"
+          <a className="text-center hover:underline focus:underline focus:outline-none"
             href="https://brume.tech"
             target="_blank noreferrer">
             {Lang.match({
@@ -296,7 +296,7 @@ function SessionScreen(props: { session: SessionData }) {
 
   const [search, setSearch] = useSearchState(path, "search")
 
-  return <div className="grow flex flex-col">
+  return <div className="grow flex flex-col p-6">
     {search === "" &&
       <div className="grow flex flex-col text-center items-center justify-center">
         <h1 className="text-5xl md:text-6xl font-medium">
@@ -304,64 +304,94 @@ function SessionScreen(props: { session: SessionData }) {
         </h1>
         <div className="h-4" />
         <div className="text-center text-default-contrast text-xl md:text-2xl">
-          You have {count} accounts in your wallet
+          You have 128 accounts in your wallet
         </div>
       </div>}
     {search !== "" &&
-      <div className="grow flex flex-col text-center items-center justify-center">
-        <div className="bg-default-contrast p-4 rounded-xl">
-          <div className="">
-
+      <div className="grow flex flex-col overflow-y-auto gap-4">
+        <div className="flex flex-col bg-default-contrast p-4 rounded-xl">
+          <div className="font-medium">
+            My Main Tokens
+          </div>
+          <div className="h-2" />
+          <div className="flex flex-wrap items-center gap-2">
+            <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+              type="button"
+              onClick={() => setSearch("ethereum")}>
+              <Outline.CubeTransparentIcon className="size-5" />
+              Ethereum
+            </button>
+            <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+              type="button"
+              onClick={() => setSearch("ledger")}>
+              <Outline.LockClosedIcon className="size-5" />
+              Ledger
+            </button>
           </div>
         </div>
       </div>}
-    <div className="p-4">
-      <div className="flex flex-wrap items-center p-2 gap-2">
-        <button className="bg-default-contrast rounded-xl po-1"
-          type="button"
-          onClick={() => setSearch("*")}>
-          All
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1"
-          type="button"
-          onClick={() => setSearch("password")}>
-          Password
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1"
-          type="button"
-          onClick={() => setSearch("ethereum")}>
-          Ethereum
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1"
-          type="button"
-          onClick={() => setSearch("bitcoin")}>
-          Bitcoin
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1"
-          type="button"
-          onClick={() => setSearch("card")}>
-          Card
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1"
-          type="button"
-          onClick={() => setSearch("seed")}>
-          Seed
-        </button>
-      </div>
-      <div className="flex items-center p-2 gap-2">
-        <button className="bg-opposite text-opposite rounded-xl p-2"
-          type="button">
-          <div className="p-0.5">
-            <Outline.PlusIcon className="size-5" />
-          </div>
-        </button>
-        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-          <Outline.MagnifyingGlassIcon className="size-5" />
-          <input className="w-full outline-none"
-            placeholder="Search"
-            onChange={e => setSearch(e.target.value)}
-            value={search} />
-        </div>
+    <div className="flex flex-wrap items-center p-2 gap-2">
+      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        type="button"
+        onClick={() => setSearch("*")}>
+        <Outline.GlobeAltIcon className="size-5" />
+        All
+      </button>
+      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        type="button"
+        onClick={() => setSearch("password")}>
+        <Outline.LockClosedIcon className="size-5" />
+        Password
+      </button>
+      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        type="button"
+        onClick={() => setSearch("ethereum")}>
+        <Outline.CubeTransparentIcon className="size-5" />
+        Ethereum
+      </button>
+      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        type="button"
+        onClick={() => setSearch("bitcoin")}>
+        <Outline.BanknotesIcon className="size-5" />
+        Bitcoin
+      </button>
+      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        type="button"
+        onClick={() => setSearch("ledger")}>
+        <Outline.LockClosedIcon className="size-5" />
+        Ledger
+      </button>
+      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        type="button"
+        onClick={() => setSearch("card")}>
+        <Outline.CreditCardIcon className="size-5" />
+        Card
+      </button>
+      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        type="button"
+        onClick={() => setSearch("seed")}>
+        <Outline.KeyIcon className="size-5" />
+        Seed
+      </button>
+      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        type="button"
+        onClick={() => setSearch("trash")}>
+        <Outline.TrashIcon className="size-5" />
+        Trash
+      </button>
+    </div>
+    <div className="flex items-center p-2 gap-2">
+      <button className="bg-opposite text-opposite rounded-xl p-2 focus:outline-2 focus:outline-offset-2 focus:outline-opposite"
+        type="button">
+        <Outline.PlusIcon className="size-5" />
+      </button>
+      <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.MagnifyingGlassIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          placeholder="Search"
+          onChange={e => setSearch(e.target.value)}
+          ref={e => void setTimeout(() => e.focus(), 1)}
+          value={search} />
       </div>
     </div>
   </div>
@@ -540,10 +570,9 @@ function LoginMenu(props: { login(session: SessionData): void }) {
         </PathWindow>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
-      {users?.map((user, index) =>
+      {users?.map(user =>
         <Fragment key={user.uuid}>
           <UserItem
-            autofocus={index === 0}
             login={login}
             user={user} />
         </Fragment>)}
@@ -679,7 +708,7 @@ function UserImportFileWindow() {
     </div>
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
-      <input className="w-full outline-none"
+      <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
@@ -715,19 +744,18 @@ function UserImportFileWindow() {
     </div>
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
-      <input className="w-full outline-none"
+      <input className="w-full focus:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
-      {file != null &&
-        <WideClickableOppositeButton
-          disabled={error != null}
-          onClick={loadOrAlert}>
-          {error != null ? error : "Open file"}
-        </WideClickableOppositeButton>}
+      <WideClickableOppositeButton
+        disabled={error != null}
+        onClick={loadOrAlert}>
+        {error != null ? error : "Open file"}
+      </WideClickableOppositeButton>
     </div>
   </div>
 }
@@ -831,7 +859,7 @@ function UserImportFsfhWindow() {
     </div>
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
-      <input className="w-full outline-none"
+      <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
@@ -855,6 +883,10 @@ function UserImportFsfhWindow() {
         <div className="bg-default-contrast po-2 rounded-xl">
           {fsfh.name}
         </div>}
+      {fsfh == null &&
+        <div className="bg-default-contrast po-2 rounded-xl">
+          Pick or drop file here
+        </div>}
     </div>
     <div className="h-4" />
     <div className="font-medium">
@@ -865,19 +897,18 @@ function UserImportFsfhWindow() {
     </div>
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
-      <input className="w-full outline-none"
+      <input className="w-full focus:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
-      {fsfh != null &&
-        <WideClickableOppositeButton
-          disabled={error != null}
-          onClick={openOrAlert}>
-          {error != null ? error : "Open file"}
-        </WideClickableOppositeButton>}
+      <WideClickableOppositeButton
+        disabled={error != null}
+        onClick={openOrAlert}>
+        {error != null ? error : "Open file"}
+      </WideClickableOppositeButton>
     </div>
   </div>
 }
@@ -1037,7 +1068,7 @@ function UserCreateWindow() {
     </div>
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
-      <input className="w-full outline-none"
+      <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
@@ -1051,7 +1082,7 @@ function UserCreateWindow() {
     </div>
     <div className="h-2" />
     <div className="bg-default-contrast po-2 rounded-xl">
-      <input className="w-full outline-none"
+      <input className="w-full focus:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
@@ -1074,8 +1105,8 @@ function UserCreateWindow() {
   </div>
 }
 
-function UserItem(props: { autofocus?: boolean } & { user: UserData } & { login(session: SessionData): void }) {
-  const { autofocus, user, login } = props
+function UserItem(props: { user: UserData } & { login(session: SessionData): void }) {
+  const { user, login } = props
 
   const client = useClientContext().getOrThrow()
 
@@ -1160,12 +1191,10 @@ function UserItem(props: { autofocus?: boolean } & { user: UserData } & { login(
         <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"
           accept="application/octet-stream,.kdbx"
-          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])}
-          autoFocus={autofocus} />}
+          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])} />}
       {user.fsfh != null &&
         <button className="absolute w-full h-full opacity-0 cursor-pointer"
           type="button"
-          autoFocus={autofocus}
           onClick={() => openOrAlert(user, user.fsfh)} />}
       <div className="po-2 flex items-center justify-start">
         <div className="grow flex items-center justify-start gap-4 whitespace-nowrap aria-disabled:opacity-50 transition-opacity">
@@ -1191,7 +1220,7 @@ function UserMenuButton(props: { user: UserData }) {
 
   const coords = useAnchorWithCoords(hash, `/${user.uuid}`)
 
-  return <a className="z-10 hover:bg-default-contrast focus:bg-default-contrast rounded-full p-1 cursor-pointer transition-opacity"
+  return <a className="z-10 hover:bg-default-contrast focus:bg-default-contrast focus:outline-none rounded-full p-1 cursor-pointer transition-opacity"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>

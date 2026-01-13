@@ -40,7 +40,10 @@ export function Menu(props: ChildrenProps & { x: number; y: number }) {
       return
     if (previous.current instanceof HTMLElement === false)
       return
-    previous.current.focus()
+
+    const element = previous.current
+
+    setTimeout(() => element.focus(), 2)
   }, [])
 
   const [w, setW] = useState(0)
@@ -146,11 +149,12 @@ export function Menu(props: ChildrenProps & { x: number; y: number }) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default outline-none border border-default-contrast rounded-2xl p-2 [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] [--l:${l}px] [--t:${t}px] [translate:var(--l)_var(--t)] ${premount ? "animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
+    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default focus:outline-none border border-default-contrast rounded-2xl p-2 [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] [--l:${l}px] [--t:${t}px] [translate:var(--l)_var(--t)] ${premount ? "animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       ref={setDialog}>
+      <button type="button" autoFocus />
       {children}
     </dialog>
   </CloseContext>
@@ -175,7 +179,7 @@ export function GapperAndClickerInMenuButton(props: ChildrenProps) {
 export function WideClickableNakedMenuAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
   const { children, "aria-disabled": disabled = false, ...rest } = props
 
-  return <a className="group flex-1 po-2 rounded-xl outline-none whitespace-nowrap not-aria-disabled:hover:bg-default-contrast focus:bg-default-contrast aria-disabled:opacity-50 transition-opacity"
+  return <a className="group flex-1 po-2 rounded-xl focus:outline-none whitespace-nowrap not-aria-disabled:hover:bg-default-contrast focus:bg-default-contrast aria-disabled:opacity-50 transition-opacity"
     aria-disabled={disabled}
     {...rest}>
     <GapperAndClickerInMenuAnchor>
@@ -187,7 +191,7 @@ export function WideClickableNakedMenuAnchor(props: ChildrenProps & JSX.Intrinsi
 export function WideClickableNakedMenuButton(props: ChildrenProps & JSX.IntrinsicElements["button"] & { ["data-value"]?: string } & { ["aria-selected"]?: boolean }) {
   const { children, ...rest } = props
 
-  return <button className="group flex-1 po-2 rounded-xl outline-none whitespace-nowrap enabled:hover:bg-default-contrast focus:bg-default-contrast aria-selected:bg-default-contrast disabled:opacity-50 transition-opacity"
+  return <button className="group flex-1 po-2 rounded-xl focus:outline-none whitespace-nowrap enabled:hover:bg-default-contrast focus:bg-default-contrast aria-selected:bg-default-contrast disabled:opacity-50 transition-opacity"
     {...rest}>
     <GapperAndClickerInMenuButton>
       {children}
