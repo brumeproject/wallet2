@@ -540,9 +540,13 @@ function LoginMenu(props: { login(session: SessionData): void }) {
         </PathWindow>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
-      {users?.map((user, index) => <Fragment key={user.uuid}>
-        <UserItem autofocus={index === 0} user={user} login={login} />
-      </Fragment>)}
+      {users?.map((user, index) =>
+        <Fragment key={user.uuid}>
+          <UserItem
+            autofocus={index === 0}
+            login={login}
+            user={user} />
+        </Fragment>)}
       <UserAddButton />
     </div>
   </Fragment>
