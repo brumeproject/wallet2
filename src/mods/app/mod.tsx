@@ -70,37 +70,39 @@ export function App() {
     getIconOrThrow().catch(console.error)
   }, [store])
 
-  useEffect(() => {
-    const favicon = document.querySelector("link[rel~='icon']")! as HTMLLinkElement
-    const appicon = document.querySelector("link[rel='apple-touch-icon']")! as HTMLLinkElement
-    const manifest = document.querySelector("link[rel='manifest']")! as HTMLLinkElement
+  const loadOrThrow = useCallback(async () => {
+    const $favicon = document.querySelector("link[rel~='icon']")! as HTMLLinkElement
+    const $appicon = document.querySelector("link[rel='apple-touch-icon']")! as HTMLLinkElement
+    const $manifest = document.querySelector("link[rel='manifest']")! as HTMLLinkElement
 
     document.title = name || "Brume Wallet"
 
     if (icon == null) {
-      favicon.href = "/favicon.ico"
-      appicon.href = "/appicon.png"
+      $favicon.href = "/favicon.ico"
+      $appicon.href = "/appicon.png"
     } else {
-      favicon.href = icon
-      appicon.href = icon
+      $favicon.href = icon
+      $appicon.href = icon
     }
 
-    fetch("/manifest.json").then(async res => {
-      const json = await res.json()
+    const manifest = await fetch("/manifest.json").then(res => res.json())
 
-      json.start_url = location.origin + "/"
-      json.name = name || "Brume Wallet"
-      json.short_name = name || "Wallet"
+    manifest.start_url = location.origin + "/"
+    manifest.name = name || "Brume Wallet"
+    manifest.short_name = name || "Wallet"
 
-      if (icon != null)
-        json.icons[0].src = icon
+    if (icon != null)
+      manifest.icons[0].src = icon
 
-      if (icon == null)
-        json.icons[0].src = location.origin + "/appicon.png"
+    if (icon == null)
+      manifest.icons[0].src = location.origin + "/appicon.png"
 
-      manifest.href = `data:application/manifest+json,${encodeURIComponent(JSON.stringify(json))}`
-    }).catch(console.error)
+    $manifest.href = `data:application/manifest+json,${encodeURIComponent(JSON.stringify(manifest))}`
   }, [name, icon])
+
+  useEffect(() => {
+    loadOrThrow().catch(console.error)
+  }, [loadOrThrow])
 
   const [session, setSession] = useState<SessionData>()
 
