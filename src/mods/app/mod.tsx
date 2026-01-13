@@ -15,7 +15,7 @@ import { PathMenu, WideClickableNakedMenuAnchor, WideClickableNakedMenuButton } 
 import { Screen } from "@/libs/screen/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
-import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
+import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
@@ -288,17 +288,81 @@ export function App() {
 function SessionScreen(props: { session: SessionData }) {
   const { session } = props
 
+  const path = usePathContext().getOrThrow()
+
   const count = useMemo(() => {
     return session.kdbx.inner.content.value.getRootOrThrow().getDirectGroupByIndexOrThrow(0).getDirectEntries().reduce(n => n + 1, 0)
   }, [session])
 
-  return <div className="grow flex flex-col text-center items-center justify-center">
-    <h1 className="text-5xl md:text-6xl font-medium">
-      Welcome back, {session.user.name}
-    </h1>
-    <div className="h-4" />
-    <div className="text-center text-default-contrast text-xl md:text-2xl">
-      You have {count} accounts in your wallet
+  const [search, setSearch] = useSearchState(path, "search")
+
+  return <div className="grow flex flex-col">
+    {search === "" &&
+      <div className="grow flex flex-col text-center items-center justify-center">
+        <h1 className="text-5xl md:text-6xl font-medium">
+          Welcome back, {session.user.name}
+        </h1>
+        <div className="h-4" />
+        <div className="text-center text-default-contrast text-xl md:text-2xl">
+          You have {count} accounts in your wallet
+        </div>
+      </div>}
+    {search !== "" &&
+      <div className="grow flex flex-col text-center items-center justify-center">
+        <div className="bg-default-contrast p-4 rounded-xl">
+          <div className="">
+
+          </div>
+        </div>
+      </div>}
+    <div className="p-4">
+      <div className="flex flex-wrap items-center p-2 gap-2">
+        <button className="bg-default-contrast rounded-xl po-1"
+          type="button"
+          onClick={() => setSearch("*")}>
+          All
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1"
+          type="button"
+          onClick={() => setSearch("password")}>
+          Password
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1"
+          type="button"
+          onClick={() => setSearch("ethereum")}>
+          Ethereum
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1"
+          type="button"
+          onClick={() => setSearch("bitcoin")}>
+          Bitcoin
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1"
+          type="button"
+          onClick={() => setSearch("card")}>
+          Card
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1"
+          type="button"
+          onClick={() => setSearch("seed")}>
+          Seed
+        </button>
+      </div>
+      <div className="flex items-center p-2 gap-2">
+        <button className="bg-opposite text-opposite rounded-xl p-2"
+          type="button">
+          <div className="p-0.5">
+            <Outline.PlusIcon className="size-5" />
+          </div>
+        </button>
+        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-2">
+          <Outline.MagnifyingGlassIcon className="size-5" />
+          <input className="w-full outline-none"
+            placeholder="Search"
+            onChange={e => setSearch(e.target.value)}
+            value={search} />
+        </div>
+      </div>
     </div>
   </div>
 }
