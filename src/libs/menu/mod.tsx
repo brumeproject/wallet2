@@ -179,7 +179,7 @@ export function GapperAndClickerInMenuButton(props: ChildrenProps) {
 export function WideClickableNakedMenuAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
   const { children, "aria-disabled": disabled = false, ...rest } = props
 
-  return <a className="group flex-1 po-2 rounded-xl focus:outline-none whitespace-nowrap not-aria-disabled:hover:bg-default-contrast focus:bg-default-contrast aria-disabled:opacity-50 transition-opacity"
+  return <a className="group flex-1 po-2 rounded-xl focus:outline-none whitespace-nowrap not-aria-disabled:hover:bg-default-double-contrast focus:bg-default-double-contrast aria-disabled:opacity-50 transition-opacity"
     aria-disabled={disabled}
     {...rest}>
     <GapperAndClickerInMenuAnchor>
@@ -188,10 +188,10 @@ export function WideClickableNakedMenuAnchor(props: ChildrenProps & JSX.Intrinsi
   </a>
 }
 
-export function WideClickableNakedMenuButton(props: ChildrenProps & JSX.IntrinsicElements["button"] & { ["data-value"]?: string } & { ["aria-selected"]?: boolean }) {
+export function WideClickableNakedMenuButton(props: ChildrenProps & JSX.IntrinsicElements["button"]) {
   const { children, ...rest } = props
 
-  return <button className="group flex-1 po-2 rounded-xl focus:outline-none whitespace-nowrap enabled:hover:bg-default-contrast focus:bg-default-contrast aria-selected:bg-default-contrast disabled:opacity-50 transition-opacity"
+  return <button className="group flex-1 po-2 rounded-xl focus:outline-none whitespace-nowrap enabled:hover:bg-default-double-contrast focus:bg-default-double-contrast disabled:opacity-50 transition-opacity"
     {...rest}>
     <GapperAndClickerInMenuButton>
       {children}

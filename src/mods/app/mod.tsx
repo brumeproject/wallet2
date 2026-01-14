@@ -394,7 +394,7 @@ function SessionScreen(props: { session: SessionData }) {
       </div>
       <div className="flex items-center p-2 gap-2">
         <SessionMoreButton />
-        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
           <Outline.MagnifyingGlassIcon className="size-5" />
           <input className="w-full focus:outline-none"
             placeholder="Search"
@@ -447,8 +447,11 @@ function SessionPasswordAddButton() {
 
 function SessionPasswordAddWindow() {
   const [name = "", setName] = useState<string>()
+
   const [password = "", setPassword] = useState<string>()
   const [username = "", setUsername] = useState<string>()
+
+  const [masked, setMasked] = useState<boolean>(true)
 
   const error = useMemo(() => {
     if (!name.length)
@@ -467,10 +470,11 @@ function SessionPasswordAddWindow() {
       Title
     </div>
     <div className="text-default-contrast">
-      Required
+      A name to identify this account
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <Outline.TagIcon className="size-5" />
       <input className="w-full focus:outline-none"
         placeholder="My Account"
         onChange={e => setName(e.target.value)}
@@ -481,25 +485,38 @@ function SessionPasswordAddWindow() {
       Password
     </div>
     <div className="text-default-contrast">
-      Required
+      Your password for this account
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <Outline.KeyIcon className="size-5" />
       <input className="w-full focus:outline-none"
-        type="password"
+        type={masked ? "password" : "text"}
         placeholder="••••••••"
         onChange={e => setPassword(e.target.value)}
         value={password} />
+      <div className="flex items-center gap-2">
+        <button className="rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          type="button"
+          onClick={() => setMasked(!masked)}>
+          {masked ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+        </button>
+        <button className="rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          type="button">
+          <Outline.SparklesIcon className="size-5" />
+        </button>
+      </div>
     </div>
     <div className="h-4" />
     <div className="font-medium">
       Username
     </div>
     <div className="text-default-contrast">
-      Optional
+      Your username or email for this account
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <Outline.AtSymbolIcon className="size-5" />
       <input className="w-full focus:outline-none"
         placeholder="john.doe@mail.com"
         onChange={e => setUsername(e.target.value)}
@@ -855,7 +872,7 @@ function UserImportFileWindow() {
       Will be used locally for display purposes
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
@@ -891,7 +908,7 @@ function UserImportFileWindow() {
       Your existing password
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         type="password"
         value={password}
@@ -1006,7 +1023,7 @@ function UserImportFsfhWindow() {
       Will be used locally for display purposes
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
@@ -1044,7 +1061,7 @@ function UserImportFsfhWindow() {
       Your existing password
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         type="password"
         value={password}
@@ -1215,7 +1232,7 @@ function UserCreateWindow() {
       Will be used locally for display purposes
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
@@ -1229,7 +1246,7 @@ function UserCreateWindow() {
       At least 3 characters
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         type="password"
         value={password}
@@ -1334,7 +1351,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
           <UserSettingsWindow user={user} />
         </PathWindow>}
     </SubpathProvider>
-    <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-contrast has-[>:first-child:focus]:bg-default-contrast transition-opacity">
+    <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-double-contrast has-[>:first-child:focus]:bg-default-double-contrast transition-opacity">
       {user.fsfh == null &&
         <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"
@@ -1368,7 +1385,7 @@ function UserMenuButton(props: { user: UserData }) {
 
   const coords = useAnchorWithCoords(hash, `/${user.uuid}`)
 
-  return <a className="z-10 rounded-full p-1 hover:bg-default-contrast focus:bg-default-contrast focus:outline-none transition-opacity"
+  return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
