@@ -4,7 +4,7 @@
 /// <reference types="@/libs/bytes/lib.d.ts" />
 
 import { ClickableContrastAnchor, ClickableOppositeAnchor, GapperAndClickerInAnchor } from "@/libs/anchor/mod.tsx";
-import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
+import { ClickableOppositeButton, WideClickableOppositeButton } from "@/libs/button/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
@@ -158,7 +158,7 @@ export function App() {
             Manage all your sensitive data in one secure and private place
           </div>
           <div className="h-16" />
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap flex-col md:flex-row items-center text-center gap-4">
             <div className="p-4 bg-default-contrast rounded-xl">
               Cryptos
             </div>
@@ -289,6 +289,7 @@ function SessionScreen(props: { session: SessionData }) {
   const { session } = props
 
   const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
   const count = useMemo(() => {
     return session.kdbx.inner.content.value.getRootOrThrow().getDirectGroupByIndexOrThrow(0).getDirectEntries().reduce(n => n + 1, 0)
@@ -296,104 +297,138 @@ function SessionScreen(props: { session: SessionData }) {
 
   const [search, setSearch] = useSearchState(path, "search")
 
-  return <div className="grow flex flex-col p-6">
-    {search === "" &&
-      <div className="grow flex flex-col text-center items-center justify-center">
-        <h1 className="text-5xl md:text-6xl font-medium">
-          Welcome back, {session.user.name}
-        </h1>
-        <div className="h-4" />
-        <div className="text-center text-default-contrast text-xl md:text-2xl">
-          You have 128 accounts in your wallet
-        </div>
-      </div>}
-    {search !== "" &&
-      <div className="grow flex flex-col overflow-y-auto gap-4">
-        <div className="flex flex-col bg-default-contrast p-4 rounded-xl">
-          <div className="font-medium">
-            My Main Tokens
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/menu" &&
+        <PathMenu>
+          <SessionMoreMenu />
+        </PathMenu>}
+    </SubpathProvider>
+    <div className="grow flex flex-col p-6">
+      {!search &&
+        <div className="grow flex flex-col text-center items-center justify-center">
+          <h1 className="text-5xl md:text-6xl font-medium">
+            Welcome back, {session.user.name}
+          </h1>
+          <div className="h-4" />
+          <div className="text-center text-default-contrast text-xl md:text-2xl">
+            You have {count} accounts in your wallet
           </div>
-          <div className="h-2" />
-          <div className="flex flex-wrap items-center gap-2">
-            <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-              type="button"
-              onClick={() => setSearch("ethereum")}>
-              <Outline.CubeTransparentIcon className="size-5" />
-              Ethereum
-            </button>
-            <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-              type="button"
-              onClick={() => setSearch("ledger")}>
-              <Outline.LockClosedIcon className="size-5" />
-              Ledger
-            </button>
+          <div className="h-16" />
+          <ClickableOppositeButton>
+            <Outline.PlusIcon className="size-5" />
+            Add account
+          </ClickableOppositeButton>
+        </div>}
+      {search &&
+        <div className="grow flex flex-col overflow-y-auto gap-4">
+          <div className="flex flex-col bg-default-contrast p-4 rounded-xl">
+            <div className="font-medium">
+              My Main Tokens
+            </div>
+            <div className="h-2" />
+            <div className="flex flex-wrap items-center gap-2">
+              <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                type="button"
+                onClick={() => setSearch("ethereum")}>
+                <Outline.CubeTransparentIcon className="size-5" />
+                Ethereum
+              </button>
+              <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                type="button"
+                onClick={() => setSearch("hardware")}>
+                <Outline.SwatchIcon className="size-5" />
+                Hardware
+              </button>
+            </div>
           </div>
+        </div>}
+      <div className="flex flex-wrap items-center p-2 gap-2">
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("password")}>
+          <Outline.LockClosedIcon className="size-5" />
+          Passwords
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("ethereum")}>
+          <Outline.CubeTransparentIcon className="size-5" />
+          Ethereum
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("bitcoin")}>
+          <Outline.BanknotesIcon className="size-5" />
+          Bitcoin
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("hardware")}>
+          <Outline.SwatchIcon className="size-5" />
+          Hardware
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("card")}>
+          <Outline.CreditCardIcon className="size-5" />
+          Cards
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("seed")}>
+          <Outline.KeyIcon className="size-5" />
+          Seeds
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("trash")}>
+          <Outline.TrashIcon className="size-5" />
+          Trash
+        </button>
+      </div>
+      <div className="flex items-center p-2 gap-2">
+        <SessionMoreButton />
+        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+          <Outline.MagnifyingGlassIcon className="size-5" />
+          <input className="w-full focus:outline-none"
+            placeholder="Search"
+            onChange={e => setSearch(e.target.value)}
+            ref={e => void setTimeout(() => e.focus(), 1)}
+            value={search} />
         </div>
-      </div>}
-    <div className="flex flex-wrap items-center p-2 gap-2">
-      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-        type="button"
-        onClick={() => setSearch("*")}>
-        <Outline.GlobeAltIcon className="size-5" />
-        All
-      </button>
-      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-        type="button"
-        onClick={() => setSearch("password")}>
-        <Outline.LockClosedIcon className="size-5" />
-        Password
-      </button>
-      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-        type="button"
-        onClick={() => setSearch("ethereum")}>
-        <Outline.CubeTransparentIcon className="size-5" />
-        Ethereum
-      </button>
-      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-        type="button"
-        onClick={() => setSearch("bitcoin")}>
-        <Outline.BanknotesIcon className="size-5" />
-        Bitcoin
-      </button>
-      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-        type="button"
-        onClick={() => setSearch("ledger")}>
-        <Outline.LockClosedIcon className="size-5" />
-        Ledger
-      </button>
-      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-        type="button"
-        onClick={() => setSearch("card")}>
-        <Outline.CreditCardIcon className="size-5" />
-        Card
-      </button>
-      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-        type="button"
-        onClick={() => setSearch("seed")}>
-        <Outline.KeyIcon className="size-5" />
-        Seed
-      </button>
-      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-        type="button"
-        onClick={() => setSearch("trash")}>
-        <Outline.TrashIcon className="size-5" />
-        Trash
-      </button>
-    </div>
-    <div className="flex items-center p-2 gap-2">
-      <button className="bg-opposite text-opposite rounded-xl p-2 focus:outline-2 focus:outline-offset-2 focus:outline-opposite"
-        type="button">
-        <Outline.PlusIcon className="size-5" />
-      </button>
-      <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-        <Outline.MagnifyingGlassIcon className="size-5" />
-        <input className="w-full focus:outline-none"
-          placeholder="Search"
-          onChange={e => setSearch(e.target.value)}
-          ref={e => void setTimeout(() => e.focus(), 1)}
-          value={search} />
       </div>
     </div>
+  </Fragment>
+}
+
+function SessionMoreButton() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/menu")
+
+  return <a className="group p-2 bg-opposite text-opposite rounded-xl not-aria-disabled:hover:bg-opposite-double-contrast focus:outline-2 focus:outline-offset-2 focus:outline-opposite aria-disabled:opacity-50 transition-opacity"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <GapperAndClickerInAnchor>
+      <Outline.EllipsisVerticalIcon className="size-5" />
+    </GapperAndClickerInAnchor>
+  </a>
+}
+
+function SessionMoreMenu() {
+  return <div className="flex flex-col text-left gap-2">
+    <WideClickableNakedMenuButton>
+      Badges
+    </WideClickableNakedMenuButton>
+    <WideClickableNakedMenuButton>
+      Sessions
+    </WideClickableNakedMenuButton>
+    <WideClickableNakedMenuButton>
+      Settings
+    </WideClickableNakedMenuButton>
   </div>
 }
 
@@ -1220,7 +1255,7 @@ function UserMenuButton(props: { user: UserData }) {
 
   const coords = useAnchorWithCoords(hash, `/${user.uuid}`)
 
-  return <a className="z-10 hover:bg-default-contrast focus:bg-default-contrast focus:outline-none rounded-full p-1 cursor-pointer transition-opacity"
+  return <a className="z-10 rounded-full p-1 hover:bg-default-contrast focus:bg-default-contrast focus:outline-none transition-opacity"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
