@@ -4,7 +4,7 @@
 /// <reference types="@/libs/bytes/lib.d.ts" />
 
 import { ClickableContrastAnchor, ClickableOppositeAnchor, GapperAndClickerInAnchor } from "@/libs/anchor/mod.tsx";
-import { ClickableOppositeButton, WideClickableOppositeButton } from "@/libs/button/mod.tsx";
+import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
@@ -303,6 +303,14 @@ function SessionScreen(props: { session: SessionData }) {
         <PathMenu>
           <SessionMoreMenu />
         </PathMenu>}
+      {hash.url.pathname === "/add" &&
+        <PathMenu>
+          <SessionAccountAddMenu />
+        </PathMenu>}
+      {hash.url.pathname === "/add/password" &&
+        <PathWindow>
+          <SessionPasswordAddWindow />
+        </PathWindow>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6">
       {!search &&
@@ -315,10 +323,7 @@ function SessionScreen(props: { session: SessionData }) {
             You have {count} accounts in your wallet
           </div>
           <div className="h-16" />
-          <ClickableOppositeButton>
-            <Outline.PlusIcon className="size-5" />
-            Add account
-          </ClickableOppositeButton>
+          <SessionAccountAddButton />
         </div>}
       {search &&
         <div className="grow flex flex-col overflow-y-auto gap-4">
@@ -400,6 +405,114 @@ function SessionScreen(props: { session: SessionData }) {
       </div>
     </div>
   </Fragment>
+}
+
+function SessionAccountAddButton() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/add")
+
+  return <ClickableOppositeAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <Outline.PlusIcon className="size-5" />
+    Add
+  </ClickableOppositeAnchor>
+}
+
+function SessionAccountAddMenu() {
+  return <div className="flex flex-col text-left gap-2">
+    <SessionPasswordAddButton />
+    <WideClickableNakedMenuAnchor
+      aria-disabled>
+      Ethereum
+    </WideClickableNakedMenuAnchor>
+  </div>
+}
+
+function SessionPasswordAddButton() {
+  const path = usePathContext().getOrThrow()
+
+  const coords = useAnchorWithCoords(path, "/add/password")
+
+  return <WideClickableNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    Password
+  </WideClickableNakedMenuAnchor>
+}
+
+function SessionPasswordAddWindow() {
+  const [name = "", setName] = useState<string>()
+  const [password = "", setPassword] = useState<string>()
+  const [username = "", setUsername] = useState<string>()
+
+  const error = useMemo(() => {
+    if (!name.length)
+      return "Title is required"
+    if (!password.length)
+      return "Password is required"
+    return
+  }, [name, password])
+
+  return <div className="flex flex-col grow p-6">
+    <h1 className="text-xl font-medium">
+      Add account
+    </h1>
+    <div className="h-4" />
+    <div className="font-medium">
+      Title
+    </div>
+    <div className="text-default-contrast">
+      Required
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <input className="w-full focus:outline-none"
+        placeholder="My Account"
+        onChange={e => setName(e.target.value)}
+        value={name} />
+    </div>
+    <div className="h-4" />
+    <div className="font-medium">
+      Password
+    </div>
+    <div className="text-default-contrast">
+      Required
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <input className="w-full focus:outline-none"
+        type="password"
+        placeholder="••••••••"
+        onChange={e => setPassword(e.target.value)}
+        value={password} />
+    </div>
+    <div className="h-4" />
+    <div className="font-medium">
+      Username
+    </div>
+    <div className="text-default-contrast">
+      Optional
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <input className="w-full focus:outline-none"
+        placeholder="john.doe@mail.com"
+        onChange={e => setUsername(e.target.value)}
+        value={username} />
+    </div>
+    <div className="h-8 grow" />
+    <div className="flex items-center flex-wrap-reverse gap-2">
+      <WideClickableOppositeButton
+        disabled={error != null}>
+        {error != null ? error : "Save file"}
+      </WideClickableOppositeButton>
+    </div>
+  </div>
 }
 
 function SessionMoreButton() {
@@ -742,7 +855,7 @@ function UserImportFileWindow() {
       Will be used locally for display purposes
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
@@ -778,7 +891,7 @@ function UserImportFileWindow() {
       Your existing password
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         type="password"
         value={password}
@@ -893,7 +1006,7 @@ function UserImportFsfhWindow() {
       Will be used locally for display purposes
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
@@ -931,7 +1044,7 @@ function UserImportFsfhWindow() {
       Your existing password
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         type="password"
         value={password}
@@ -1102,7 +1215,7 @@ function UserCreateWindow() {
       Will be used locally for display purposes
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
@@ -1116,7 +1229,7 @@ function UserCreateWindow() {
       At least 3 characters
     </div>
     <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl">
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         type="password"
         value={password}
