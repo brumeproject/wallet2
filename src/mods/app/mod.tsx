@@ -499,7 +499,7 @@ function SessionPasswordAddWindow() {
         <button className="rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
           type="button"
           onClick={() => setMasked(!masked)}>
-          {masked ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+          {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
         </button>
         <button className="rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
           type="button">
