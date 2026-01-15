@@ -7,6 +7,7 @@ import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
 import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
+import { Nullable } from "../nullable/mod.tsx"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
 
 React;
@@ -53,7 +54,7 @@ export function Window(props: ChildrenProps & DarkProps & { x: number; y: number
   const [w, setW] = useState(0)
   const [h, setH] = useState(0)
 
-  const [dialog, setDialog] = useState<HTMLDialogElement>()
+  const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
 
   /**
    * Compute position and size
@@ -169,7 +170,7 @@ export function Window(props: ChildrenProps & DarkProps & { x: number; y: number
     hide()
   }, [hide])
 
-  const [content, setContent] = useState<HTMLDivElement>()
+  const [content, setContent] = useState<Nullable<HTMLDivElement>>()
 
   /**
    * Smoothly scroll to the content to perfectly fit the screen

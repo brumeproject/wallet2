@@ -4,6 +4,7 @@ import { usePathContext } from "@hazae41/chemin";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import React, { JSX, KeyboardEvent, MouseEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import { Nullable } from "../nullable/mod.tsx";
 import { ChildrenProps } from "../props/mod.ts";
 
 React;
@@ -52,7 +53,7 @@ export function Menu(props: ChildrenProps & { x: number; y: number }) {
   const [l, setL] = useState(0)
   const [t, setT] = useState(0)
 
-  const [dialog, setDialog] = useState<HTMLDialogElement>()
+  const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
 
   /**
    * Compute position and size

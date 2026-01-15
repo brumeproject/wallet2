@@ -18,8 +18,11 @@ import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
+import { Result } from "@hazae41/result-and-option";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { ChangeEvent, DragEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Nullable } from "../../libs/nullable/mod.tsx";
+import { Totp } from "../../libs/totp/mod.ts";
 
 React;
 
@@ -42,7 +45,7 @@ export function App() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const [name, setName] = useState<string>("")
+  const [name = "", setName] = useState<Nullable<string>>()
 
   const getNameOrThrow = useCallback(async () => {
     setName(await store.value.getOrThrow().getOrThrow<string>("name"))
@@ -56,7 +59,7 @@ export function App() {
     getNameOrThrow().catch(console.error)
   }, [store])
 
-  const [icon, setIcon] = useState<string>()
+  const [icon, setIcon] = useState<Nullable<string>>()
 
   const getIconOrThrow = useCallback(async () => {
     setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("icon").then(x => x && `data:image/png;base64,${x.toBase64()}`))
@@ -399,7 +402,7 @@ function SessionScreen(props: { session: SessionData }) {
           <input className="w-full focus:outline-none"
             placeholder="Search"
             onChange={e => setSearch(e.target.value)}
-            ref={e => void setTimeout(() => e.focus(), 1)}
+            ref={e => void setTimeout(() => e?.focus(), 1)}
             value={search} />
         </div>
       </div>
@@ -448,12 +451,35 @@ function SessionPasswordAddButton() {
 function SessionPasswordAddWindow() {
   const [name = "", setName] = useState<string>()
 
-  const [password = "", setPassword] = useState<string>()
   const [username = "", setUsername] = useState<string>()
+  const [password = "", setPassword] = useState<string>()
+  const [totpseed = "", setTotpseed] = useState<string>()
+
+  const totp = useMemo(() => {
+    if (!totpseed.length)
+      return
+
+    const generator = Result.runAndWrapSync(() => {
+      return Totp.parseOrThrow(totpseed)
+    }).getOrNull()
+
+    return generator
+  }, [totpseed])
+
+  const [totpcode, setTotpcode] = useState<Nullable<string>>()
+
+  useEffect(() => {
+    if (totp == null)
+      return
+
+    const interval = setInterval(async () => {
+      setTotpcode(await totp.generate())
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [totp])
 
   const [masked, setMasked] = useState<boolean>(true)
-
-  const [otp = "", setOtp] = useState<string>()
 
   const error = useMemo(() => {
     if (!name.length)
@@ -540,8 +566,8 @@ function SessionPasswordAddWindow() {
       <input className="w-full focus:outline-none"
         type={masked ? "password" : "text"}
         placeholder={masked ? "••••••••••••••••••••••••••••••••" : "MQCHJLS6FJXT2BGQJ6QMG3WCAVUC2HJZ"}
-        onChange={e => setOtp(e.target.value)}
-        value={otp} />
+        onChange={e => setTotpseed(e.target.value)}
+        value={totpseed} />
       <div className="flex items-center gap-2">
         <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
           type="button"
@@ -557,6 +583,11 @@ function SessionPasswordAddWindow() {
         </a>
       </div>
     </div>
+    <div className="h-2" />
+    {totp != null &&
+      <div className="p-8 rounded-xl bg-default-contrast flex items-center justify-center text-6xl font-mono tracking-widest">
+        {totpcode}
+      </div>}
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       <WideOppositeButton
@@ -614,7 +645,7 @@ function SettingsButton() {
 function SettingsWindow() {
   const store = useStoreContext().getOrThrow()
 
-  const [name = "", setName] = useState<string>()
+  const [name = "", setName] = useState<Nullable<string>>()
 
   const getNameOrThrow = useCallback(async () => {
     setName(await store.value.getOrThrow().getOrThrow<string>("name"))
@@ -641,7 +672,7 @@ function SettingsWindow() {
     store.update()
   }, [store])
 
-  const [icon, setIcon] = useState<string>()
+  const [icon, setIcon] = useState<Nullable<string>>()
 
   const getIconOrThrow = useCallback(async () => {
     setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("icon").then(x => x && URL.createObjectURL(new Blob([x]))))
@@ -708,7 +739,7 @@ function SettingsWindow() {
       <div className="h-4" />
       <input className="text-center bg-default-contrast po-2 rounded-xl focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
         placeholder="Wallet"
-        value={name}
+        value={name || ""}
         onChange={onNameChange} />
     </div>
   </div>
@@ -839,7 +870,7 @@ function UserImportFileWindow() {
 
   const name = $name || "Anon"
 
-  const [file, setFile] = useState<File>()
+  const [file, setFile] = useState<Nullable<File>>()
 
   const [password, setPassword] = useState("")
 
@@ -925,7 +956,7 @@ function UserImportFileWindow() {
       <input className="absolute w-full h-full opacity-0 cursor-pointer"
         type="file"
         accept="application/octet-stream,.kdbx"
-        onChange={e => setFile(e.target.files.item(0))} />
+        onChange={e => setFile(e.target.files?.item(0))} />
       {file != null &&
         <div className="bg-default-contrast po-2 rounded-xl">
           {file.name}
@@ -973,7 +1004,7 @@ function UserImportFsfhWindow() {
   const [password, setPassword] = useState("")
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
-    const [fsfh] = await window.showOpenFilePicker({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+    const [fsfh] = await window.showOpenFilePicker!({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     if (fsfh == null)
       return
@@ -988,7 +1019,7 @@ function UserImportFsfhWindow() {
 
     const [item] = e.dataTransfer.items as unknown as Iterable<DataTransferItem>
 
-    const fsfh = await item.getAsFileSystemHandle()
+    const fsfh = await item.getAsFileSystemHandle!()
 
     if (fsfh.kind !== "file")
       return
@@ -997,6 +1028,9 @@ function UserImportFsfhWindow() {
   }).catch(Errors.display), [])
 
   const openOrAlert = useCallback(() => Promise.try(async () => {
+    if (fsfh == null)
+      return
+
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
@@ -1190,7 +1224,7 @@ function UserCreateWindow() {
   }, [innerizeOrThrow, outerizeOrThrow])
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
-    const fsfh = await window.showSaveFilePicker({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+    const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     const database = await encryptOrThrow()
 
@@ -1313,7 +1347,10 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const loadOrAlert = useCallback((user: UserData, file: File) => Promise.try(async () => {
+  const loadOrAlert = useCallback((user: UserData, file?: File) => Promise.try(async () => {
+    if (file == null)
+      return
+
     const data = new Uint8Array(await file.arrayBuffer())
 
     if (user.pass != null && confirm("Use passkey to login?")) {
@@ -1332,6 +1369,9 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
 
     const password = prompt("Enter your password")
 
+    if (password == null)
+      return
+
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
     const decrypted = await encrypted.decryptOrThrow(composite)
@@ -1341,7 +1381,10 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
     login({ user, kdbx: decrypted })
   }).catch(Errors.display), [login])
 
-  const openOrAlert = useCallback((user: UserData, fsfh: FileSystemFileHandle) => Promise.try(async () => {
+  const openOrAlert = useCallback((user: UserData, fsfh?: FileSystemFileHandle) => Promise.try(async () => {
+    if (fsfh == null)
+      return
+
     await fsfh.requestPermission({ mode: "readwrite" })
 
     const file = await fsfh.getFile()

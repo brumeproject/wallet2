@@ -1,9 +1,31 @@
 // deno-lint-ignore-file no-namespace
 
+import { Result } from "@hazae41/result-and-option";
+import { base32 } from "@scure/base";
+
 export namespace Totp {
 
-  export function from(text: string) {
+  export function parseOrThrow(text: string) {
+    const url = Result.runAndWrapSync(() => new URL(text)).getOrNull()
 
+    if (url == null)
+      return new Sha1Totp(base32.decode(text).slice())
+
+    if (url.protocol !== "otpauth:")
+      throw new Error("Invalid protocol")
+
+    const secret = url.searchParams.get("secret")
+    const digits = url.searchParams.get("digits")
+    const period = url.searchParams.get("period")
+
+    if (secret == null)
+      throw new Error("Missing secret")
+    if (digits == null)
+      throw new Error("Missing digits")
+    if (period == null)
+      throw new Error("Missing period")
+
+    return new Sha1Totp(base32.decode(secret).slice(), Number(digits), Number(period))
   }
 
 }

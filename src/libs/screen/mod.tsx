@@ -6,6 +6,7 @@ import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
 import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { Events } from "../events/mod.ts"
+import { Nullable } from "../nullable/mod.tsx"
 import { ChildrenProps, DarkProps } from "../props/mod.ts"
 
 React;
@@ -35,7 +36,7 @@ export function Screen(props: ChildrenProps & DarkProps) {
     setTimeout(() => element.focus(), 2)
   }, [])
 
-  const [dialog, setDialog] = useState<HTMLDialogElement>()
+  const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
 
   /**
    * Show the dialog when mounted
@@ -147,7 +148,7 @@ export function Screen(props: ChildrenProps & DarkProps) {
     hide()
   }, [hide])
 
-  const [content, setContent] = useState<HTMLDivElement>()
+  const [content, setContent] = useState<Nullable<HTMLDivElement>>()
 
   /**
    * Smoothly scroll to the content to perfectly fit the screen
