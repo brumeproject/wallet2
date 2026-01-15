@@ -14,10 +14,10 @@ export interface StoreHandle {
 
 }
 
-const AppDatabaseContext = createContext<Nullable<StoreHandle>>(null);
+const StoreContext = createContext<Nullable<StoreHandle>>(null);
 
 export function useStoreContext() {
-  return Option.wrap(useContext(AppDatabaseContext))
+  return Option.wrap(useContext(StoreContext))
 }
 
 export function StoreProvider(props: ChildrenProps) {
@@ -43,7 +43,7 @@ export function StoreProvider(props: ChildrenProps) {
     return { value, update }
   }, [value, update, counter])
 
-  return <AppDatabaseContext.Provider value={handle}>
+  return <StoreContext.Provider value={handle}>
     {children}
-  </AppDatabaseContext.Provider>
+  </StoreContext.Provider>
 }

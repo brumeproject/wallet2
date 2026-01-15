@@ -22,21 +22,10 @@ import { Result } from "@hazae41/result-and-option";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { ChangeEvent, DragEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Nullable } from "../../libs/nullable/mod.tsx";
+import { SessionData, SessionProvider, UserData, useSessionContext } from "../../libs/session/mod.tsx";
 import { Totp } from "../../libs/totp/mod.ts";
 
 React;
-
-interface UserData {
-  readonly uuid: string
-  readonly name: string
-  readonly fsfh?: FileSystemFileHandle
-  readonly pass?: Uint8Array<ArrayBuffer>
-}
-
-interface SessionData {
-  readonly user: UserData
-  readonly kdbx: KDBX.Database.Decrypted
-}
 
 export function App() {
   const client = useClientContext().getOrThrow()
@@ -121,7 +110,9 @@ export function App() {
     <CloseContext.Provider value={logout}>
       {client && session != null &&
         <Screen>
-          <SessionScreen session={session} />
+          <SessionProvider value={session}>
+            <SessionScreen />
+          </SessionProvider>
         </Screen>}
     </CloseContext.Provider>
     <SubpathProvider value={hash}>
@@ -288,14 +279,14 @@ export function App() {
   </Fragment>
 }
 
-function SessionScreen(props: { session: SessionData }) {
-  const { session } = props
-
+function SessionScreen() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
+  const session = useSessionContext().getOrThrow()
+
   const count = useMemo(() => {
-    return session.kdbx.inner.content.value.getRootOrThrow().getDirectGroupByIndexOrThrow(0).getDirectEntries().reduce(n => n + 1, 0)
+    return session.value.kdbx.inner.content.value.getRootOrThrow().getDirectGroupByIndexOrThrow(0).getDirectEntries().reduce(n => n + 1, 0)
   }, [session])
 
   const [search, setSearch] = useSearchState(path, "search")
@@ -319,7 +310,7 @@ function SessionScreen(props: { session: SessionData }) {
       {!search &&
         <div className="grow flex flex-col text-center items-center justify-center">
           <h1 className="text-5xl md:text-6xl font-medium">
-            Welcome back, {session.user.name}
+            Welcome back, {session.value.user.name}
           </h1>
           <div className="h-4" />
           <div className="text-center text-default-contrast text-xl md:text-2xl">
@@ -449,7 +440,15 @@ function SessionPasswordAddButton() {
 }
 
 function SessionPasswordAddWindow() {
-  const [name = "", setName] = useState<string>()
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const close = useCloseContext().getOrThrow()
+  const store = useStoreContext().getOrThrow()
+
+  const session = useSessionContext().getOrThrow()
+
+  const [title = "", setTitle] = useState<string>()
 
   const [username = "", setUsername] = useState<string>()
   const [password = "", setPassword] = useState<string>()
@@ -481,121 +480,246 @@ function SessionPasswordAddWindow() {
 
   const [masked, setMasked] = useState<boolean>(true)
 
+  const encryptOrThrow = useCallback(async () => {
+    const kdbx = session.value.kdbx
+
+    const file = kdbx.inner.content.value
+
+    const $entry = new KDBX.Inner.KeePassFile.Entry(file.document.createElement("Entry"))
+
+    const $uuid = new KDBX.Inner.Data.AsUuid(file.document.createElement("UUID"))
+
+    $uuid.setOrThrow(crypto.randomUUID())
+
+    $entry.element.appendChild($uuid.element)
+
+    const $times = new KDBX.Inner.KeePassFile.Times(file.document.createElement("Times"))
+
+    const $lastModificationTime = new KDBX.Inner.Data.AsDate(file.document.createElement("LastModificationTime"))
+    const $creationTime = new KDBX.Inner.Data.AsDate(file.document.createElement("CreationTime"))
+    const $lastAccessTime = new KDBX.Inner.Data.AsDate(file.document.createElement("LastAccessTime"))
+    const $expires = new KDBX.Inner.Data.AsBoolean(file.document.createElement("Expires"))
+    const $usageCount = new KDBX.Inner.Data.AsInteger(file.document.createElement("UsageCount"))
+    const $locationChanged = new KDBX.Inner.Data.AsDate(file.document.createElement("LocationChanged"))
+
+    $lastModificationTime.setOrThrow(new Date())
+    $creationTime.setOrThrow(new Date())
+    $lastAccessTime.setOrThrow(new Date())
+    $expires.set(false)
+    $usageCount.setOrThrow(0)
+    $locationChanged.setOrThrow(new Date())
+
+    $times.element.appendChild($creationTime.element)
+    $times.element.appendChild($lastAccessTime.element)
+    $times.element.appendChild($expires.element)
+    $times.element.appendChild($usageCount.element)
+    $times.element.appendChild($locationChanged.element)
+    $times.element.appendChild($lastModificationTime.element)
+
+    $entry.element.appendChild($times.element)
+
+    $entry.createStringOrThrow("Title", title)
+    $entry.createStringOrThrow("UserName", username)
+    $entry.createStringOrThrow("Password", password, true)
+
+    if (totp != null)
+      $entry.createStringOrThrow("otp", totp.url.toString(), true)
+
+    const $group = file.getRootOrThrow().getDirectGroupByIndexOrThrow(0).element
+
+    $group.appendChild($entry.element)
+
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
+  }, [session, title, username, password, totpseed])
+
+  const writeOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = session.value.user.fsfh
+
+    if (fsfh == null)
+      return
+
+    const content = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    session.update()
+
+    close()
+  }).catch(Errors.display), [store, encryptOrThrow, close])
+
+  const saveOrAlert = useCallback(() => Promise.try(async () => {
+    const content = await encryptOrThrow()
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    session.update()
+
+    close()
+  }).catch(Errors.display), [store, encryptOrThrow, close])
+
   const error = useMemo(() => {
-    if (!name.length)
+    if (!title.length)
       return "Title is required"
     if (!password.length)
       return "Password is required"
     return
-  }, [name, password])
+  }, [title, password])
 
-  return <div className="flex flex-col grow p-6">
-    <h1 className="text-xl font-medium">
-      Add password
-    </h1>
-    <div className="h-4" />
-    <div className="font-medium">
-      Title
-    </div>
-    <div className="text-default-contrast">
-      A name to identify this account
-    </div>
-    <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <Outline.TagIcon className="size-5" />
-      <input className="w-full focus:outline-none"
-        placeholder="My Account"
-        onChange={e => setName(e.target.value)}
-        value={name} />
-    </div>
-    <div className="h-4" />
-    <div className="font-medium">
-      Username
-    </div>
-    <div className="text-default-contrast">
-      Your username or email for this account
-    </div>
-    <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <Outline.AtSymbolIcon className="size-5" />
-      <input className="w-full focus:outline-none"
-        placeholder="john.doe@mail.com"
-        onChange={e => setUsername(e.target.value)}
-        value={username} />
-    </div>
-    <div className="h-4" />
-    <div className="font-medium">
-      Password
-    </div>
-    <div className="text-default-contrast">
-      Your password for this account
-    </div>
-    <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <Outline.KeyIcon className="size-5" />
-      <input className="w-full focus:outline-none"
-        type={masked ? "password" : "text"}
-        placeholder={masked ? "••••••••••••••••••••••••" : "u#fH@WMNn3BY7LFzaR$B4GBM"}
-        onChange={e => setPassword(e.target.value)}
-        value={password} />
-      <div className="flex items-center gap-2">
-        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
-          type="button"
-          onClick={() => setMasked(!masked)}>
-          <InButton>
-            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-          </InButton>
-        </button>
-        <a className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity">
-          <InAnchor>
-            <Outline.SparklesIcon className="size-5" />
-          </InAnchor>
-        </a>
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/password" &&
+        <PathMenu>
+          <div className="flex flex-col text-left gap-2">
+
+          </div>
+        </PathMenu>}
+      {hash.url.pathname === "/password/alphanumeric" &&
+        <PathMenu>
+          <div className="flex flex-col text-left gap-2">
+
+          </div>
+        </PathMenu>}
+      {hash.url.pathname === "/password/correcthorse" &&
+        <PathMenu>
+
+        </PathMenu>}
+    </SubpathProvider>
+    <div className="flex flex-col grow p-6">
+      <h1 className="text-xl font-medium">
+        Add password
+      </h1>
+      <div className="h-4" />
+      <div className="font-medium">
+        Title
+      </div>
+      <div className="text-default-contrast">
+        A name to identify this account
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.TagIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          placeholder="My Account"
+          onChange={e => setTitle(e.target.value)}
+          value={title} />
+      </div>
+      <div className="h-4" />
+      <div className="font-medium">
+        Username
+      </div>
+      <div className="text-default-contrast">
+        Your username or email for this account
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.AtSymbolIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          placeholder="john.doe@mail.com"
+          onChange={e => setUsername(e.target.value)}
+          value={username} />
+      </div>
+      <div className="h-4" />
+      <div className="font-medium">
+        Password
+      </div>
+      <div className="text-default-contrast">
+        Your password for this account
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.KeyIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          type={masked ? "password" : "text"}
+          placeholder={masked ? "••••••••••••••••••••••••" : "u#fH@WMNn3BY7LFzaR$B4GBM"}
+          onChange={e => setPassword(e.target.value)}
+          value={password} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+            type="button"
+            onClick={() => setMasked(!masked)}>
+            <InButton>
+              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+            </InButton>
+          </button>
+          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity">
+            <InAnchor>
+              <Outline.SparklesIcon className="size-5" />
+            </InAnchor>
+          </a>
+        </div>
+      </div>
+      <div className="h-4" />
+      <div className="font-medium">
+        One-time passcode
+      </div>
+      <div className="text-default-contrast">
+        Your TOTP seed for this account
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.HashtagIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          type={masked ? "password" : "text"}
+          placeholder={masked ? "••••••••••••••••••••••••••••••••" : "MQCHJLS6FJXT2BGQJ6QMG3WCAVUC2HJZ"}
+          onChange={e => setTotpseed(e.target.value)}
+          value={totpseed} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+            type="button"
+            onClick={() => setMasked(!masked)}>
+            <InButton>
+              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+            </InButton>
+          </button>
+          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity">
+            <InAnchor>
+              <Outline.QrCodeIcon className="size-5" />
+            </InAnchor>
+          </a>
+        </div>
+      </div>
+      <div className="h-2" />
+      {totpcode &&
+        <div className="p-8 rounded-xl bg-default-contrast flex items-center justify-center text-6xl font-mono tracking-widest">
+          {totpcode}
+        </div>}
+      <div className="h-8 grow" />
+      <div className="flex items-center flex-wrap-reverse gap-2">
+        {session.value.user.fsfh != null &&
+          <WideOppositeButton
+            disabled={error != null}
+            onClick={writeOrAlert}>
+            {error != null ? error : "Save file"}
+          </WideOppositeButton>}
+        {session.value.user.fsfh == null &&
+          <WideOppositeButton
+            disabled={error != null}
+            onClick={saveOrAlert}>
+            {error != null ? error : "Save file"}
+          </WideOppositeButton>}
       </div>
     </div>
-    <div className="h-4" />
-    <div className="font-medium">
-      One-time passcode
-    </div>
-    <div className="text-default-contrast">
-      Your OTP seed for this account
-    </div>
-    <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <Outline.HashtagIcon className="size-5" />
-      <input className="w-full focus:outline-none"
-        type={masked ? "password" : "text"}
-        placeholder={masked ? "••••••••••••••••••••••••••••••••" : "MQCHJLS6FJXT2BGQJ6QMG3WCAVUC2HJZ"}
-        onChange={e => setTotpseed(e.target.value)}
-        value={totpseed} />
-      <div className="flex items-center gap-2">
-        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
-          type="button"
-          onClick={() => setMasked(!masked)}>
-          <InButton>
-            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-          </InButton>
-        </button>
-        <a className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity">
-          <InAnchor>
-            <Outline.QrCodeIcon className="size-5" />
-          </InAnchor>
-        </a>
-      </div>
-    </div>
-    <div className="h-2" />
-    {totp != null &&
-      <div className="p-8 rounded-xl bg-default-contrast flex items-center justify-center text-6xl font-mono tracking-widest">
-        {totpcode}
-      </div>}
-    <div className="h-8 grow" />
-    <div className="flex items-center flex-wrap-reverse gap-2">
-      <WideOppositeButton
-        disabled={error != null}>
-        {error != null ? error : "Save file"}
-      </WideOppositeButton>
-    </div>
-  </div>
+  </Fragment>
 }
 
 function SessionMoreButton() {
@@ -1220,16 +1344,16 @@ function UserCreateWindow() {
     const decrypted = new KDBX.Database.Decrypted(outer, inner)
     const encrypted = await decrypted.encryptOrThrow()
 
-    return encrypted
+    return Writable.writeToBytesOrThrow(encrypted)
   }, [innerizeOrThrow, outerizeOrThrow])
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
-    const database = await encryptOrThrow()
+    const content = await encryptOrThrow()
 
     const writable = await fsfh.createWritable()
-    await writable.write(Writable.writeToBytesOrThrow(database))
+    await writable.write(content)
     await writable.close()
 
     const uuid = crypto.randomUUID()
@@ -1246,9 +1370,9 @@ function UserCreateWindow() {
   }).catch(Errors.display), [store, encryptOrThrow, close])
 
   const saveOrAlert = useCallback(() => Promise.try(async () => {
-    const database = await encryptOrThrow()
+    const content = await encryptOrThrow()
 
-    const file = new File([Writable.writeToBytesOrThrow(database)], "wallet.kdbx", { type: "application/kdbx" })
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
     if (/iPad|iPhone|iPod/.test(navigator.platform)) {
       await navigator.share({ files: [file] })

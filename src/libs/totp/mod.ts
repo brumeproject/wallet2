@@ -38,6 +38,16 @@ export class Sha1Totp {
     readonly period: number = 30,
   ) { }
 
+  get url() {
+    const url = new URL("otpauth://totp/")
+
+    url.searchParams.set("secret", base32.encode(this.secret))
+    url.searchParams.set("digits", this.digits.toString())
+    url.searchParams.set("period", this.period.toString())
+
+    return url
+  }
+
   async generate() {
     const hmac = await crypto.subtle.importKey("raw", this.secret, { name: "HMAC", hash: "SHA-1" }, false, ["sign"])
 
