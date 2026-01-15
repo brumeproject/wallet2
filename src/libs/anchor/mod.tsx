@@ -3,7 +3,7 @@ import { ChildrenProps } from "../props/mod.ts";
 
 React;
 
-export function GapperAndClickerInAnchor(props: ChildrenProps) {
+export function InAnchor(props: ChildrenProps) {
   const { children } = props
 
   return <div className="h-full w-full flex justify-center items-center gap-2 group-not-aria-disabled:group-active:scale-90 transition-transform">
@@ -11,26 +11,26 @@ export function GapperAndClickerInAnchor(props: ChildrenProps) {
   </div>
 }
 
-export function ClickableOppositeAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
+export function OppositeAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
   const { children, "aria-disabled": disabled = false, ...rest } = props
 
   return <a className="group po-2 bg-opposite text-opposite rounded-xl not-aria-disabled:hover:bg-opposite-double-contrast focus:outline-2 focus:outline-offset-2 focus:outline-opposite aria-disabled:opacity-50 transition-opacity"
     aria-disabled={disabled}
     {...rest}>
-    <GapperAndClickerInAnchor>
+    <InAnchor>
       {children}
-    </GapperAndClickerInAnchor>
+    </InAnchor>
   </a>
 }
 
-export function ClickableContrastAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
+export function ContrastAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
   const { children, "aria-disabled": disabled = false, ...rest } = props
 
   return <a className="group po-2 bg-default-contrast rounded-xl not-aria-disabled:hover:bg-default-double-contrast focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-disabled:opacity-50 transition-opacity"
     aria-disabled={disabled}
     {...rest}>
-    <GapperAndClickerInAnchor>
+    <InAnchor>
       {children}
-    </GapperAndClickerInAnchor>
+    </InAnchor>
   </a>
 }

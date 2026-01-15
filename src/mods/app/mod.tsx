@@ -3,14 +3,14 @@
 /// <reference types="@/libs/files/lib.d.ts" />
 /// <reference types="@/libs/bytes/lib.d.ts" />
 
-import { ClickableContrastAnchor, ClickableOppositeAnchor, GapperAndClickerInAnchor } from "@/libs/anchor/mod.tsx";
-import { WideClickableOppositeButton } from "@/libs/button/mod.tsx";
+import { ContrastAnchor, InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
+import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
-import { PathMenu, WideClickableNakedMenuAnchor, WideClickableNakedMenuButton } from "@/libs/menu/mod.tsx";
+import { PathMenu, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { Screen } from "@/libs/screen/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { PathWindow } from "@/libs/window/mod.tsx";
@@ -413,22 +413,22 @@ function SessionAccountAddButton() {
 
   const coords = useAnchorWithCoords(hash, "/add")
 
-  return <ClickableOppositeAnchor
+  return <OppositeAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.PlusIcon className="size-5" />
     Add
-  </ClickableOppositeAnchor>
+  </OppositeAnchor>
 }
 
 function SessionAccountAddMenu() {
   return <div className="flex flex-col text-left gap-2">
     <SessionPasswordAddButton />
-    <WideClickableNakedMenuAnchor
+    <WideNakedMenuAnchor
       aria-disabled>
       Ethereum
-    </WideClickableNakedMenuAnchor>
+    </WideNakedMenuAnchor>
   </div>
 }
 
@@ -437,12 +437,12 @@ function SessionPasswordAddButton() {
 
   const coords = useAnchorWithCoords(path, "/add/password")
 
-  return <WideClickableNakedMenuAnchor
+  return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     Password
-  </WideClickableNakedMenuAnchor>
+  </WideNakedMenuAnchor>
 }
 
 function SessionPasswordAddWindow() {
@@ -452,6 +452,8 @@ function SessionPasswordAddWindow() {
   const [username = "", setUsername] = useState<string>()
 
   const [masked, setMasked] = useState<boolean>(true)
+
+  const [otp = "", setOtp] = useState<string>()
 
   const error = useMemo(() => {
     if (!name.length)
@@ -463,7 +465,7 @@ function SessionPasswordAddWindow() {
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
-      Add account
+      Add password
     </h1>
     <div className="h-4" />
     <div className="font-medium">
@@ -482,33 +484,6 @@ function SessionPasswordAddWindow() {
     </div>
     <div className="h-4" />
     <div className="font-medium">
-      Password
-    </div>
-    <div className="text-default-contrast">
-      Your password for this account
-    </div>
-    <div className="h-2" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <Outline.KeyIcon className="size-5" />
-      <input className="w-full focus:outline-none"
-        type={masked ? "password" : "text"}
-        placeholder="••••••••"
-        onChange={e => setPassword(e.target.value)}
-        value={password} />
-      <div className="flex items-center gap-2">
-        <button className="rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
-          type="button"
-          onClick={() => setMasked(!masked)}>
-          {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-        </button>
-        <button className="rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
-          type="button">
-          <Outline.SparklesIcon className="size-5" />
-        </button>
-      </div>
-    </div>
-    <div className="h-4" />
-    <div className="font-medium">
       Username
     </div>
     <div className="text-default-contrast">
@@ -522,12 +497,72 @@ function SessionPasswordAddWindow() {
         onChange={e => setUsername(e.target.value)}
         value={username} />
     </div>
+    <div className="h-4" />
+    <div className="font-medium">
+      Password
+    </div>
+    <div className="text-default-contrast">
+      Your password for this account
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <Outline.KeyIcon className="size-5" />
+      <input className="w-full focus:outline-none"
+        type={masked ? "password" : "text"}
+        placeholder={masked ? "••••••••••••••••••••••••" : "u#fH@WMNn3BY7LFzaR$B4GBM"}
+        onChange={e => setPassword(e.target.value)}
+        value={password} />
+      <div className="flex items-center gap-2">
+        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          type="button"
+          onClick={() => setMasked(!masked)}>
+          <InButton>
+            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+          </InButton>
+        </button>
+        <a className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity">
+          <InAnchor>
+            <Outline.SparklesIcon className="size-5" />
+          </InAnchor>
+        </a>
+      </div>
+    </div>
+    <div className="h-4" />
+    <div className="font-medium">
+      One-time passcode
+    </div>
+    <div className="text-default-contrast">
+      Your OTP seed for this account
+    </div>
+    <div className="h-2" />
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <Outline.HashtagIcon className="size-5" />
+      <input className="w-full focus:outline-none"
+        type={masked ? "password" : "text"}
+        placeholder={masked ? "••••••••••••••••••••••••••••••••" : "MQCHJLS6FJXT2BGQJ6QMG3WCAVUC2HJZ"}
+        onChange={e => setOtp(e.target.value)}
+        value={otp} />
+      <div className="flex items-center gap-2">
+        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          type="button"
+          onClick={() => setMasked(!masked)}>
+          <InButton>
+            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+          </InButton>
+        </button>
+        <a className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity">
+          <InAnchor>
+            <Outline.QrCodeIcon className="size-5" />
+          </InAnchor>
+        </a>
+      </div>
+    </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
-      <WideClickableOppositeButton
+      <WideOppositeButton
         disabled={error != null}>
         {error != null ? error : "Save file"}
-      </WideClickableOppositeButton>
+      </WideOppositeButton>
     </div>
   </div>
 }
@@ -542,23 +577,23 @@ function SessionMoreButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <GapperAndClickerInAnchor>
+    <InAnchor>
       <Outline.EllipsisVerticalIcon className="size-5" />
-    </GapperAndClickerInAnchor>
+    </InAnchor>
   </a>
 }
 
 function SessionMoreMenu() {
   return <div className="flex flex-col text-left gap-2">
-    <WideClickableNakedMenuButton>
+    <WideNakedMenuButton>
       Badges
-    </WideClickableNakedMenuButton>
-    <WideClickableNakedMenuButton>
+    </WideNakedMenuButton>
+    <WideNakedMenuButton>
       Sessions
-    </WideClickableNakedMenuButton>
-    <WideClickableNakedMenuButton>
+    </WideNakedMenuButton>
+    <WideNakedMenuButton>
       Settings
-    </WideClickableNakedMenuButton>
+    </WideNakedMenuButton>
   </div>
 }
 
@@ -568,12 +603,12 @@ function SettingsButton() {
 
   const coords = useAnchorWithCoords(hash, "/settings")
 
-  return <ClickableContrastAnchor
+  return <ContrastAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     Settings
-  </ClickableContrastAnchor>
+  </ContrastAnchor>
 }
 
 function SettingsWindow() {
@@ -685,12 +720,12 @@ function LoginButton() {
 
   const coords = useAnchorWithCoords(hash, "/login")
 
-  return <ClickableOppositeAnchor
+  return <OppositeAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     Login
-  </ClickableOppositeAnchor>
+  </OppositeAnchor>
 }
 
 function LoginMenu(props: { login(session: SessionData): void }) {
@@ -752,7 +787,7 @@ function UserAddButton() {
 
   const coords = useAnchorWithCoords(hash, "/add")
 
-  return <WideClickableNakedMenuAnchor
+  return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -760,7 +795,7 @@ function UserAddButton() {
       <Outline.PlusIcon className="size-4" />
     </div>
     Add user
-  </WideClickableNakedMenuAnchor>
+  </WideNakedMenuAnchor>
 }
 
 function UserAddMenu() {
@@ -775,12 +810,12 @@ function UserCreateButton() {
 
   const coords = useAnchorWithCoords(path, "/add/create")
 
-  return <WideClickableNakedMenuAnchor
+  return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     Create user
-  </WideClickableNakedMenuAnchor>
+  </WideNakedMenuAnchor>
 }
 
 function UserImportButton() {
@@ -788,12 +823,12 @@ function UserImportButton() {
 
   const coords = useAnchorWithCoords(path, "/add/import")
 
-  return <WideClickableNakedMenuAnchor
+  return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     Import user
-  </WideClickableNakedMenuAnchor>
+  </WideNakedMenuAnchor>
 }
 
 function UserImportFileWindow() {
@@ -916,11 +951,11 @@ function UserImportFileWindow() {
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
-      <WideClickableOppositeButton
+      <WideOppositeButton
         disabled={error != null}
         onClick={loadOrAlert}>
         {error != null ? error : "Open file"}
-      </WideClickableOppositeButton>
+      </WideOppositeButton>
     </div>
   </div>
 }
@@ -1069,11 +1104,11 @@ function UserImportFsfhWindow() {
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
-      <WideClickableOppositeButton
+      <WideOppositeButton
         disabled={error != null}
         onClick={openOrAlert}>
         {error != null ? error : "Open file"}
-      </WideClickableOppositeButton>
+      </WideOppositeButton>
     </div>
   </div>
 }
@@ -1255,17 +1290,17 @@ function UserCreateWindow() {
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       {"showSaveFilePicker" in window === true &&
-        <WideClickableOppositeButton
+        <WideOppositeButton
           disabled={error != null}
           onClick={pickOrAlert}>
           {error != null ? error : "Save file"}
-        </WideClickableOppositeButton>}
+        </WideOppositeButton>}
       {"showSaveFilePicker" in window === false &&
-        <WideClickableOppositeButton
+        <WideOppositeButton
           disabled={error != null}
           onClick={saveOrAlert}>
           {error != null ? error : "Save file"}
-        </WideClickableOppositeButton>}
+        </WideOppositeButton>}
     </div>
   </div>
 }
@@ -1389,9 +1424,9 @@ function UserMenuButton(props: { user: UserData }) {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <GapperAndClickerInAnchor>
+    <InAnchor>
       <Outline.EllipsisVerticalIcon className="size-6" />
-    </GapperAndClickerInAnchor>
+    </InAnchor>
   </a>
 }
 
@@ -1428,10 +1463,10 @@ function UserRenameButton(props: { user: UserData }) {
     close()
   }).catch(Errors.display), [store, user, close])
 
-  return <WideClickableNakedMenuButton
+  return <WideNakedMenuButton
     onClick={renameOrAlert}>
     Rename
-  </WideClickableNakedMenuButton>
+  </WideNakedMenuButton>
 }
 
 function UserSettingsButton(props: { user: UserData }) {
@@ -1441,12 +1476,12 @@ function UserSettingsButton(props: { user: UserData }) {
 
   const coords = useAnchorWithCoords(path, `/${user.uuid}/settings`)
 
-  return <WideClickableNakedMenuAnchor
+  return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     Settings
-  </WideClickableNakedMenuAnchor>
+  </WideNakedMenuAnchor>
 }
 
 function UserSettingsWindow(props: { user: UserData }) {
@@ -1483,8 +1518,8 @@ function UserRemoveButton(props: { user: UserData }) {
     close()
   }).catch(Errors.display), [store, user, close])
 
-  return <WideClickableNakedMenuButton
+  return <WideNakedMenuButton
     onClick={removeOrAlert}>
     Remove
-  </WideClickableNakedMenuButton>
+  </WideNakedMenuButton>
 }

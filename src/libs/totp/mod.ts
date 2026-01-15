@@ -1,3 +1,13 @@
+// deno-lint-ignore-file no-namespace
+
+export namespace Totp {
+
+  export function from(text: string) {
+
+  }
+
+}
+
 export class Sha1Totp {
 
   constructor(
