@@ -333,7 +333,7 @@ function SessionScreen() {
             {[...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => dsearch === "*" || $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get().toLowerCase().includes(dsearch.toLowerCase())).map(($entry, index) =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
                 <div className="flex flex-col bg-default-contrast p-4 rounded-xl">
-                  <div className="font-medium">
+                  <div className="font-medium text-xl">
                     {$entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get() || "Untitled"}
                   </div>
                   <div className="h-2" />
@@ -344,7 +344,7 @@ function SessionScreen() {
                   <div className="text-default-contrast">
                     {$entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get() || "(empty)"}
                   </div>
-                  <div className="h-2" />
+                  <div className="h-4" />
                   <div className="flex flex-wrap items-center gap-2">
                     <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
                       type="button"
@@ -358,7 +358,7 @@ function SessionScreen() {
           </div>
         </div>}
       <div className="h-4" />
-      <div className="flex flex-wrap items-center p-2 gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
           type="button"
           onClick={() => setSearch("password")}>
@@ -402,7 +402,8 @@ function SessionScreen() {
           Trash
         </button>
       </div>
-      <div className="flex items-center p-2 gap-2">
+      <div className="h-4" />
+      <div className="flex items-center gap-2">
         <SessionMoreButton />
         <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
           <Outline.MagnifyingGlassIcon className="size-5" />
