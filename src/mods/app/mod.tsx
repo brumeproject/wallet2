@@ -20,7 +20,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import { Result } from "@hazae41/result-and-option";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
-import React, { ChangeEvent, DragEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, DragEvent, Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Nullable } from "../../libs/nullable/mod.tsx";
 import { SessionData, SessionProvider, UserData, useSessionContext } from "../../libs/session/mod.tsx";
 import { Totp } from "../../libs/totp/mod.ts";
@@ -291,6 +291,8 @@ function SessionScreen() {
 
   const [search, setSearch] = useSearchState(path, "search")
 
+  const dsearch = useDeferredValue(search)
+
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/menu" &&
@@ -306,8 +308,8 @@ function SessionScreen() {
           <SessionPasswordAddWindow />
         </PathWindow>}
     </SubpathProvider>
-    <div className="grow flex flex-col p-6">
-      <div className="grow flex flex-col basis-[100cqh] shrink-0">
+    <div className="grow flex flex-col p-6 overflow-y-auto">
+      {!dsearch &&
         <div className="grow flex flex-col text-center items-center justify-center">
           <h1 className="text-5xl md:text-6xl font-medium">
             Welcome back, {session.value.user.name}
@@ -317,89 +319,99 @@ function SessionScreen() {
             You have {count} accounts in your wallet
           </div>
           <div className="h-16" />
-          <SessionAccountAddButton />
-        </div>
-        <div className="flex flex-wrap items-center p-2 gap-2">
-          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-            type="button"
-            onClick={() => setSearch("password")}>
-            <Outline.LockClosedIcon className="size-5" />
-            Passwords
-          </button>
-          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-            type="button"
-            onClick={() => setSearch("ethereum")}>
-            <Outline.CubeTransparentIcon className="size-5" />
-            Ethereum
-          </button>
-          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-            type="button"
-            onClick={() => setSearch("bitcoin")}>
-            <Outline.BanknotesIcon className="size-5" />
-            Bitcoin
-          </button>
-          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-            type="button"
-            onClick={() => setSearch("hardware")}>
-            <Outline.SwatchIcon className="size-5" />
-            Hardware
-          </button>
-          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-            type="button"
-            onClick={() => setSearch("card")}>
-            <Outline.CreditCardIcon className="size-5" />
-            Cards
-          </button>
-          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-            type="button"
-            onClick={() => setSearch("seed")}>
-            <Outline.KeyIcon className="size-5" />
-            Seeds
-          </button>
-          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-            type="button"
-            onClick={() => setSearch("trash")}>
-            <Outline.TrashIcon className="size-5" />
-            Trash
-          </button>
-        </div>
-        <div className="flex items-center p-2 gap-2">
-          <SessionMoreButton />
-          <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-            <Outline.MagnifyingGlassIcon className="size-5" />
-            <input className="w-full focus:outline-none"
-              placeholder="Search"
-              onChange={e => setSearch(e.target.value)}
-              ref={e => void setTimeout(() => e?.focus(), 1)}
-              value={search} />
+          <div className="flex items-center gap-4">
+            <SessionAccountAddButton />
+            <ContrastAnchor onClick={() => setSearch("*")}>
+              <Outline.EyeIcon className="size-5" />
+              See all
+            </ContrastAnchor>
           </div>
-        </div>
-      </div>
+        </div>}
+      {dsearch &&
+        <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-2">
+          <div className="grow grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 auto-rows-min overflow-y-scroll overscroll-y-none gap-4 py-1 px-2">
+            {[...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => dsearch === "*" || $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get().toLowerCase().includes(dsearch.toLowerCase())).map(($entry, index) =>
+              <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
+                <div className="flex flex-col bg-default-contrast p-4 rounded-xl">
+                  <div className="font-medium">
+                    {$entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get() || "Untitled"}
+                  </div>
+                  <div className="h-2" />
+                  <div className="text-default-contrast">
+                    {$entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get() || "(empty)"}
+                  </div>
+                  <div className="h-2" />
+                  <div className="text-default-contrast">
+                    {$entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get() || "(empty)"}
+                  </div>
+                  <div className="h-2" />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                      type="button"
+                      onClick={() => setSearch("password")}>
+                      <Outline.LockClosedIcon className="size-5" />
+                      Password
+                    </button>
+                  </div>
+                </div>
+              </Fragment>)}
+          </div>
+        </div>}
       <div className="h-4" />
-      <div className="grow flex flex-col gap-4">
-        {[...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => !search || $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get().toLowerCase().includes(search.toLowerCase())).map(($entry, index) =>
-          <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-            <div className="flex flex-col bg-default-contrast p-4 rounded-xl">
-              <div className="font-medium">
-                {$entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get() || "Untitled"}
-              </div>
-              <div className="h-2" />
-              <div className="flex flex-wrap items-center gap-2">
-                <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-                  type="button"
-                  onClick={() => setSearch("ethereum")}>
-                  <Outline.CubeTransparentIcon className="size-5" />
-                  Ethereum
-                </button>
-                <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-                  type="button"
-                  onClick={() => setSearch("hardware")}>
-                  <Outline.SwatchIcon className="size-5" />
-                  Hardware
-                </button>
-              </div>
-            </div>
-          </Fragment>)}
+      <div className="flex flex-wrap items-center p-2 gap-2">
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("password")}>
+          <Outline.LockClosedIcon className="size-5" />
+          Passwords
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("ethereum")}>
+          <Outline.CubeTransparentIcon className="size-5" />
+          Ethereum
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("bitcoin")}>
+          <Outline.BanknotesIcon className="size-5" />
+          Bitcoin
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("hardware")}>
+          <Outline.SwatchIcon className="size-5" />
+          Hardware
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("card")}>
+          <Outline.CreditCardIcon className="size-5" />
+          Cards
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("seed")}>
+          <Outline.KeyIcon className="size-5" />
+          Seeds
+        </button>
+        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+          type="button"
+          onClick={() => setSearch("trash")}>
+          <Outline.TrashIcon className="size-5" />
+          Trash
+        </button>
+      </div>
+      <div className="flex items-center p-2 gap-2">
+        <SessionMoreButton />
+        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+          <Outline.MagnifyingGlassIcon className="size-5" />
+          <input className="w-full focus:outline-none"
+            placeholder="Search"
+            onChange={e => setSearch(e.target.value)}
+            ref={e => void setTimeout(() => e?.focus(), 1)}
+            value={search} />
+        </div>
       </div>
     </div>
   </Fragment>

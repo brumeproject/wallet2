@@ -182,7 +182,7 @@ export function Screen(props: ChildrenProps & DarkProps) {
         <div className="flex items-center justify-center p-4">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
         </div>
-        <div className="basis-[100dvh] flex flex-col p-safe @container"
+        <div className="basis-[100dvh] flex flex-col p-safe overflow-y-auto"
           ref={setContent}>
           <button type="button" autoFocus />
           {children}
