@@ -286,7 +286,7 @@ function SessionScreen() {
   const session = useSessionContext().getOrThrow()
 
   const count = useMemo(() => {
-    return session.value.kdbx.inner.content.value.getRootOrThrow().getDirectGroupByIndexOrThrow(0).getDirectEntries().reduce(n => n + 1, 0)
+    return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).reduce(n => n + 1, 0)
   }, [session])
 
   const [search, setSearch] = useSearchState(path, "search")
@@ -307,7 +307,7 @@ function SessionScreen() {
         </PathWindow>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6">
-      {!search &&
+      <div className="grow flex flex-col basis-[100cqh] shrink-0">
         <div className="grow flex flex-col text-center items-center justify-center">
           <h1 className="text-5xl md:text-6xl font-medium">
             Welcome back, {session.value.user.name}
@@ -318,84 +318,88 @@ function SessionScreen() {
           </div>
           <div className="h-16" />
           <SessionAccountAddButton />
-        </div>}
-      {search &&
-        <div className="grow flex flex-col overflow-y-auto gap-4">
-          <div className="flex flex-col bg-default-contrast p-4 rounded-xl">
-            <div className="font-medium">
-              My Main Tokens
-            </div>
-            <div className="h-2" />
-            <div className="flex flex-wrap items-center gap-2">
-              <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-                type="button"
-                onClick={() => setSearch("ethereum")}>
-                <Outline.CubeTransparentIcon className="size-5" />
-                Ethereum
-              </button>
-              <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-                type="button"
-                onClick={() => setSearch("hardware")}>
-                <Outline.SwatchIcon className="size-5" />
-                Hardware
-              </button>
-            </div>
-          </div>
-        </div>}
-      <div className="flex flex-wrap items-center p-2 gap-2">
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-          type="button"
-          onClick={() => setSearch("password")}>
-          <Outline.LockClosedIcon className="size-5" />
-          Passwords
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-          type="button"
-          onClick={() => setSearch("ethereum")}>
-          <Outline.CubeTransparentIcon className="size-5" />
-          Ethereum
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-          type="button"
-          onClick={() => setSearch("bitcoin")}>
-          <Outline.BanknotesIcon className="size-5" />
-          Bitcoin
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-          type="button"
-          onClick={() => setSearch("hardware")}>
-          <Outline.SwatchIcon className="size-5" />
-          Hardware
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-          type="button"
-          onClick={() => setSearch("card")}>
-          <Outline.CreditCardIcon className="size-5" />
-          Cards
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-          type="button"
-          onClick={() => setSearch("seed")}>
-          <Outline.KeyIcon className="size-5" />
-          Seeds
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-          type="button"
-          onClick={() => setSearch("trash")}>
-          <Outline.TrashIcon className="size-5" />
-          Trash
-        </button>
-      </div>
-      <div className="flex items-center p-2 gap-2">
-        <SessionMoreButton />
-        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-          <Outline.MagnifyingGlassIcon className="size-5" />
-          <input className="w-full focus:outline-none"
-            placeholder="Search"
-            onChange={e => setSearch(e.target.value)}
-            ref={e => void setTimeout(() => e?.focus(), 1)}
-            value={search} />
         </div>
+        <div className="flex flex-wrap items-center p-2 gap-2">
+          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+            type="button"
+            onClick={() => setSearch("password")}>
+            <Outline.LockClosedIcon className="size-5" />
+            Passwords
+          </button>
+          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+            type="button"
+            onClick={() => setSearch("ethereum")}>
+            <Outline.CubeTransparentIcon className="size-5" />
+            Ethereum
+          </button>
+          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+            type="button"
+            onClick={() => setSearch("bitcoin")}>
+            <Outline.BanknotesIcon className="size-5" />
+            Bitcoin
+          </button>
+          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+            type="button"
+            onClick={() => setSearch("hardware")}>
+            <Outline.SwatchIcon className="size-5" />
+            Hardware
+          </button>
+          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+            type="button"
+            onClick={() => setSearch("card")}>
+            <Outline.CreditCardIcon className="size-5" />
+            Cards
+          </button>
+          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+            type="button"
+            onClick={() => setSearch("seed")}>
+            <Outline.KeyIcon className="size-5" />
+            Seeds
+          </button>
+          <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+            type="button"
+            onClick={() => setSearch("trash")}>
+            <Outline.TrashIcon className="size-5" />
+            Trash
+          </button>
+        </div>
+        <div className="flex items-center p-2 gap-2">
+          <SessionMoreButton />
+          <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+            <Outline.MagnifyingGlassIcon className="size-5" />
+            <input className="w-full focus:outline-none"
+              placeholder="Search"
+              onChange={e => setSearch(e.target.value)}
+              ref={e => void setTimeout(() => e?.focus(), 1)}
+              value={search} />
+          </div>
+        </div>
+      </div>
+      <div className="h-4" />
+      <div className="grow flex flex-col gap-4">
+        {[...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => !search || $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get().toLowerCase().includes(search.toLowerCase())).map(($entry, index) =>
+          <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
+            <div className="flex flex-col bg-default-contrast p-4 rounded-xl">
+              <div className="font-medium">
+                {$entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get() || "Untitled"}
+              </div>
+              <div className="h-2" />
+              <div className="flex flex-wrap items-center gap-2">
+                <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                  type="button"
+                  onClick={() => setSearch("ethereum")}>
+                  <Outline.CubeTransparentIcon className="size-5" />
+                  Ethereum
+                </button>
+                <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                  type="button"
+                  onClick={() => setSearch("hardware")}>
+                  <Outline.SwatchIcon className="size-5" />
+                  Hardware
+                </button>
+              </div>
+            </div>
+          </Fragment>)}
       </div>
     </div>
   </Fragment>
@@ -483,40 +487,11 @@ function SessionPasswordAddWindow() {
   const encryptOrThrow = useCallback(async () => {
     const kdbx = session.value.kdbx
 
-    const file = kdbx.inner.content.value
+    const $file = kdbx.inner.content.value
+    const $root = $file.getRootOrThrow()
 
-    const $entry = new KDBX.Inner.KeePassFile.Entry(file.document.createElement("Entry"))
-
-    const $uuid = new KDBX.Inner.Data.AsUuid(file.document.createElement("UUID"))
-
-    $uuid.setOrThrow(crypto.randomUUID())
-
-    $entry.element.appendChild($uuid.element)
-
-    const $times = new KDBX.Inner.KeePassFile.Times(file.document.createElement("Times"))
-
-    const $lastModificationTime = new KDBX.Inner.Data.AsDate(file.document.createElement("LastModificationTime"))
-    const $creationTime = new KDBX.Inner.Data.AsDate(file.document.createElement("CreationTime"))
-    const $lastAccessTime = new KDBX.Inner.Data.AsDate(file.document.createElement("LastAccessTime"))
-    const $expires = new KDBX.Inner.Data.AsBoolean(file.document.createElement("Expires"))
-    const $usageCount = new KDBX.Inner.Data.AsInteger(file.document.createElement("UsageCount"))
-    const $locationChanged = new KDBX.Inner.Data.AsDate(file.document.createElement("LocationChanged"))
-
-    $lastModificationTime.setOrThrow(new Date())
-    $creationTime.setOrThrow(new Date())
-    $lastAccessTime.setOrThrow(new Date())
-    $expires.set(false)
-    $usageCount.setOrThrow(0)
-    $locationChanged.setOrThrow(new Date())
-
-    $times.element.appendChild($creationTime.element)
-    $times.element.appendChild($lastAccessTime.element)
-    $times.element.appendChild($expires.element)
-    $times.element.appendChild($usageCount.element)
-    $times.element.appendChild($locationChanged.element)
-    $times.element.appendChild($lastModificationTime.element)
-
-    $entry.element.appendChild($times.element)
+    const $group = $root.getDirectGroupByIndexOrThrow(0)
+    const $entry = $file.createEntryOrThrow()
 
     $entry.createStringOrThrow("Title", title)
     $entry.createStringOrThrow("UserName", username)
@@ -525,9 +500,7 @@ function SessionPasswordAddWindow() {
     if (totp != null)
       $entry.createStringOrThrow("otp", totp.url.toString(), true)
 
-    const $group = file.getRootOrThrow().getDirectGroupByIndexOrThrow(0).element
-
-    $group.appendChild($entry.element)
+    $group.element.appendChild($entry.element)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
   }, [session, title, username, password, totpseed])
