@@ -120,10 +120,6 @@ export function Window(props: ChildrenProps & DarkProps & { x: number; y: number
     flushSync(() => setPostmount(premount))
   }, [premount])
 
-  const onClose = useCallback(() => {
-    hide()
-  }, [hide])
-
   /**
    * Close when both visible and mounted are false
    */
@@ -193,7 +189,7 @@ export function Window(props: ChildrenProps & DarkProps & { x: number; y: number
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent focus:outline-none flex flex-col overscroll-y-none [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] ${postmount && premount ? "overflow-y-scroll" : "overflow-y-hidden"} ${premount ? "not-md:animate-slideup-in md:animate-scale-xywh-in" : "not-md:animate-slideup-out md:animate-scale-xywh-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent focus:outline-none flex flex-col overflow-y-scroll ${postmount && premount ? "" : "md:overflow-y-hidden"} overscroll-y-none scrollbar-default-opaque md:scrollbar-default-transparent [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] ${premount ? "not-md:animate-slideup-in md:animate-scale-xywh-in" : "not-md:animate-slideup-out md:animate-scale-xywh-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
