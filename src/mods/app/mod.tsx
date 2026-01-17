@@ -329,7 +329,7 @@ function SessionScreen() {
         </div>}
       {dsearch &&
         <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
-          <div className="grow grid grid-cols-[repeat(auto-fill,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
+          <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
             {[...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => dsearch === "*" || $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get().toLowerCase().includes(dsearch.toLowerCase())).map(($entry, index, array) =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
                 <div className="aspect-video flex flex-col text-default data-[color=0]:bg-white/90 data-[color=0]:dark:bg-black/90 data-[color=1]:bg-red-500/90 data-[color=2]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
