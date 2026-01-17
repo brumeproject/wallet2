@@ -328,23 +328,20 @@ function SessionScreen() {
           </div>
         </div>}
       {dsearch &&
-        <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-2">
-          <div className="grow grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 auto-rows-min overflow-y-scroll overscroll-y-none gap-4 py-1 px-2">
-            {[...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => dsearch === "*" || $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get().toLowerCase().includes(dsearch.toLowerCase())).map(($entry, index) =>
+        <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
+          <div className="grow grid grid-cols-[repeat(auto-fill,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
+            {[...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => dsearch === "*" || $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get().toLowerCase().includes(dsearch.toLowerCase())).map(($entry, index, array) =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                <div className="flex flex-col bg-default-contrast p-4 rounded-xl">
+                <div className="aspect-video flex flex-col bg-default text-default data-[color=0]:bg-red-500/80 data-[color=1]:bg-blue-500/80 data-[color=2]:bg-green-500/80 p-4 rounded-xl"
+                  data-theme="dark">
                   <div className="font-medium text-xl">
                     {$entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get() || "Untitled"}
                   </div>
                   <div className="h-2" />
-                  <div className="text-default-contrast">
-                    {$entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get() || "(empty)"}
+                  <div className="text-default-half-contrast">
+                    {$entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()}
                   </div>
-                  <div className="h-2" />
-                  <div className="text-default-contrast">
-                    {$entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get() || "(empty)"}
-                  </div>
-                  <div className="h-4" />
+                  <div className="h-4 grow" />
                   <div className="flex flex-wrap items-center gap-2">
                     <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
                       type="button"
@@ -376,12 +373,6 @@ function SessionScreen() {
           onClick={() => setSearch("bitcoin")}>
           <Outline.BanknotesIcon className="size-5" />
           Bitcoin
-        </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-          type="button"
-          onClick={() => setSearch("hardware")}>
-          <Outline.SwatchIcon className="size-5" />
-          Hardware
         </button>
         <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
           type="button"
