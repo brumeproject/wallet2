@@ -208,7 +208,7 @@ export function App() {
             <div className="text-default-contrast whitespace-pre rotate-90 md:rotate-0">
               {`<--->`}
             </div>
-            <div className="p-4 bg-opposite text-opposite selection:text-default selection:bg-default rounded-xl">
+            <div className="p-4 bg-opposite text-opposite selection-opposite rounded-xl">
               Tor darknet
             </div>
             <div className="text-default-contrast whitespace-pre rotate-90 md:rotate-0">
@@ -231,7 +231,7 @@ export function App() {
             <div className="bg-default-contrast w-full p-4 rounded-xl">
               Other wallets have around 1000 external dependencies
             </div>
-            <div className="bg-opposite text-opposite selection:text-default selection:bg-default p-4 rounded-xl">
+            <div className="bg-opposite text-opposite selection-opposite p-4 rounded-xl">
               We have 3
             </div>
           </div>
@@ -332,7 +332,7 @@ function SessionScreen() {
           <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
             {[...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => dsearch === "*" || $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get().toLowerCase().includes(dsearch.toLowerCase())).map(($entry, index, array) =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                <div className="aspect-video flex flex-col bg-default text-default selection:text-opposite selection:bg-opposite data-[color=1]:bg-red-500/90 data-[color=2]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
+                <div className="aspect-video flex flex-col bg-default text-default selection-default data-[color=1]:bg-red-500/90 data-[color=2]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
                   data-theme={index % 4 === 0 ? "opposite" : "dark"}
                   data-color={index % 4}>
                   <div className="font-medium text-xl text-wrap wrap-anywhere">

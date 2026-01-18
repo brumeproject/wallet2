@@ -177,7 +177,7 @@ export function Screen(props: ChildrenProps & DarkProps) {
       onScroll={onScroll}
       ref={setDialog}>
       <div className="basis-[100dvh] shrink-0" />
-      <div className="flex flex-col bg-default text-default selection:text-opposite selection:bg-opposite rounded-t-3xl shrink-0"
+      <div className="flex flex-col bg-default text-default selection-default rounded-t-3xl shrink-0"
         onMouseDown={Events.stopPropagation}>
         <div className="flex items-center justify-center p-4">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
