@@ -344,12 +344,20 @@ function SessionScreen() {
                   </div>
                   <div className="h-4 grow" />
                   <div className="flex flex-wrap items-center gap-2">
-                    <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-                      type="button"
-                      onClick={() => setSearch("password")}>
-                      <Outline.LockClosedIcon className="size-5" />
-                      Password
-                    </button>
+                    {$entry.getDirectStringByKeyOrNull("CardNumber") == null &&
+                      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                        type="button"
+                        onClick={() => setSearch("password")}>
+                        <Outline.LanguageIcon className="size-5" />
+                        Password
+                      </button>}
+                    {$entry.getDirectStringByKeyOrNull("CardNumber") != null &&
+                      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                        type="button"
+                        onClick={() => setSearch("card")}>
+                        <Outline.CreditCardIcon className="size-5" />
+                        Card
+                      </button>}
                   </div>
                 </div>
               </Fragment>)}
@@ -360,7 +368,7 @@ function SessionScreen() {
         <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
           type="button"
           onClick={() => setSearch("password")}>
-          <Outline.LockClosedIcon className="size-5" />
+          <Outline.LanguageIcon className="size-5" />
           Passwords
         </button>
         <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
@@ -384,7 +392,7 @@ function SessionScreen() {
         <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
           type="button"
           onClick={() => setSearch("seed")}>
-          <Outline.KeyIcon className="size-5" />
+          <Outline.SparklesIcon className="size-5" />
           Seeds
         </button>
         <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
@@ -625,7 +633,7 @@ function SessionPasswordAddWindow() {
       </div>
       <div className="h-2" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-        <Outline.KeyIcon className="size-5" />
+        <Outline.LanguageIcon className="size-5" />
         <input className="w-full focus:outline-none"
           type={masked ? "password" : "text"}
           placeholder={masked ? "••••••••••••••••••••••••" : "u#fH@WMNn3BY7LFzaR$B4GBM"}
