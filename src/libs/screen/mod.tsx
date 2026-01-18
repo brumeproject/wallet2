@@ -169,7 +169,7 @@ export function Screen(props: ChildrenProps & DarkProps) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent focus:outline-none flex flex-col overflow-y-scroll overscroll-y-none scrollbar-default-opaque [scrollbar-gutter:stable] ${premount ? "animate-slideup-in" : "animate-slideup-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent focus:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] ${premount ? "animate-slideup-in" : "animate-opacity-out"} backdrop:bg-backdrop ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
