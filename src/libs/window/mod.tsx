@@ -197,7 +197,7 @@ export function Window(props: ChildrenProps & DarkProps & { x: number; y: number
       onScroll={onScroll}
       ref={setDialog}>
       <div className="not-md:basis-[100dvh] md:grow shrink-0" />
-      <div className="flex flex-col text-default bg-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip shrink-0"
+      <div className="flex flex-col text-default bg-default selection:text-opposite selection:bg-opposite md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip shrink-0"
         onMouseDown={Events.stopPropagation}>
         <div className="flex md:hidden items-center justify-center p-4">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
