@@ -335,29 +335,47 @@ function SessionScreen() {
                 <div className="aspect-video flex flex-col bg-default text-default data-[color=1]:bg-red-500/90 data-[color=2]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
                   data-theme={index % 4 === 0 ? "opposite" : "dark"}
                   data-color={index % 4}>
-                  <div className="font-medium text-xl">
+                  <div className="font-medium text-xl text-wrap wrap-anywhere">
                     {$entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get() || "Untitled"}
                   </div>
                   <div className="h-2" />
-                  <div className="text-default-half-contrast">
-                    {$entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()}
+                  <div className="text-default-half-contrast text-wrap wrap-anywhere">
+                    {(() => {
+                      if ($entry.getDirectStringByKeyOrNull("CardNumber") != null)
+                        return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+
+                      if ($entry.getDirectStringByKeyOrNull("EthereumAddress") != null)
+                        return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
+
+                      return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+                    })()}
                   </div>
                   <div className="h-4 grow" />
                   <div className="flex flex-wrap items-center gap-2">
-                    {$entry.getDirectStringByKeyOrNull("CardNumber") == null &&
-                      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                    {(() => {
+                      if ($entry.getDirectStringByKeyOrNull("CardNumber") != null)
+                        return <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                          type="button"
+                          onClick={() => setSearch("card")}>
+                          <Outline.CreditCardIcon className="size-5" />
+                          Card
+                        </button>
+
+                      if ($entry.getDirectStringByKeyOrNull("EthereumAddress") != null)
+                        return <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+                          type="button"
+                          onClick={() => setSearch("ethereum")}>
+                          <Outline.CubeIcon className="size-5" />
+                          Ethereum
+                        </button>
+
+                      return <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
                         type="button"
                         onClick={() => setSearch("password")}>
                         <Outline.LanguageIcon className="size-5" />
                         Password
-                      </button>}
-                    {$entry.getDirectStringByKeyOrNull("CardNumber") != null &&
-                      <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-                        type="button"
-                        onClick={() => setSearch("card")}>
-                        <Outline.CreditCardIcon className="size-5" />
-                        Card
-                      </button>}
+                      </button>
+                    })()}
                   </div>
                 </div>
               </Fragment>)}
@@ -374,7 +392,7 @@ function SessionScreen() {
         <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
           type="button"
           onClick={() => setSearch("ethereum")}>
-          <Outline.CubeTransparentIcon className="size-5" />
+          <Outline.CubeIcon className="size-5" />
           Ethereum
         </button>
         <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
