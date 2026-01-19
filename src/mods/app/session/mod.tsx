@@ -56,15 +56,21 @@ export function SessionProvider(props: ChildrenProps & { value: SessionData }) {
   </SessionContext.Provider>
 }
 
-function getEntryType($entry: KDBX.Inner.KeePassFile.Entry): "password" | "ethereum" | "bitcoin" | "card" | "seed" {
+function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
   if ($entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
     return "card"
 
   if ($entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get())
     return "ethereum"
 
+  if ($entry.getDirectStringByKeyOrNull("SolanaAddress")?.getValueOrThrow().get())
+    return "solana"
+
   if ($entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get())
     return "bitcoin"
+
+  if ($entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get())
+    return "monero"
 
   if ($entry.getDirectStringByKeyOrNull("Seed")?.getValueOrThrow().get())
     return "seed"
@@ -207,10 +213,22 @@ export function SessionScreen() {
                           Ethereum
                         </div>
 
+                      if (type === "solana")
+                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                          <Outline.CubeIcon className="size-5" />
+                          Solana
+                        </div>
+
                       if (type === "bitcoin")
                         return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                           <Outline.BanknotesIcon className="size-5" />
                           Bitcoin
+                        </div>
+
+                      if (type === "monero")
+                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                          <Outline.BanknotesIcon className="size-5" />
+                          Monero
                         </div>
 
                       if (type === "seed")
@@ -250,10 +268,24 @@ export function SessionScreen() {
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
           type="button"
+          aria-selected={filter === "solana"}
+          onClick={() => filter === "solana" ? setFilter(undefined) : setFilter("solana")}>
+          <Outline.CubeIcon className="size-5" />
+          Solana
+        </button>
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+          type="button"
           aria-selected={filter === "bitcoin"}
           onClick={() => filter === "bitcoin" ? setFilter(undefined) : setFilter("bitcoin")}>
           <Outline.BanknotesIcon className="size-5" />
           Bitcoin
+        </button>
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+          type="button"
+          aria-selected={filter === "monero"}
+          onClick={() => filter === "monero" ? setFilter(undefined) : setFilter("monero")}>
+          <Outline.BanknotesIcon className="size-5" />
+          Monero
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
           type="button"
@@ -304,21 +336,41 @@ function SessionAccountAddButton() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.PlusIcon className="size-5" />
-    Add
+    Add account
   </OppositeAnchor>
 }
 
 function SessionAccountAddMenu() {
   return <div className="flex flex-col text-left gap-2">
-    <SessionPasswordAddButton />
+    <SessionPasswordAddAnchor />
+    <WideNakedMenuAnchor
+      aria-disabled>
+      Card
+    </WideNakedMenuAnchor>
+    <WideNakedMenuAnchor
+      aria-disabled>
+      Seed
+    </WideNakedMenuAnchor>
     <WideNakedMenuAnchor
       aria-disabled>
       Ethereum
     </WideNakedMenuAnchor>
+    <WideNakedMenuAnchor
+      aria-disabled>
+      Solana
+    </WideNakedMenuAnchor>
+    <WideNakedMenuAnchor
+      aria-disabled>
+      Bitcoin
+    </WideNakedMenuAnchor>
+    <WideNakedMenuAnchor
+      aria-disabled>
+      Monero
+    </WideNakedMenuAnchor>
   </div>
 }
 
-function SessionPasswordAddButton() {
+function SessionPasswordAddAnchor() {
   const path = usePathContext().getOrThrow()
 
   const coords = useAnchorWithCoords(path, "/add/password")
@@ -624,10 +676,10 @@ function SessionMoreButton() {
 function SessionMoreMenu() {
   return <div className="flex flex-col text-left gap-2">
     <WideNakedMenuButton>
-      Sessions
+      Add account
     </WideNakedMenuButton>
     <WideNakedMenuButton>
-      Settings
+      Connections
     </WideNakedMenuButton>
   </div>
 }
