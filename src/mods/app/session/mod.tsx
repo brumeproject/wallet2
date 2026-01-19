@@ -157,11 +157,11 @@ export function SessionScreen() {
             You have {entries.length} accounts in your wallet
           </div>
           <div className="h-16" />
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center gap-4">
             <SessionAccountAddButton />
             <ContrastAnchor onClick={() => setDisplay(true)}>
               <Outline.EyeIcon className="size-5" />
-              See all
+              See accounts
             </ContrastAnchor>
           </div>
         </div>}
@@ -674,12 +674,41 @@ function SessionMoreButton() {
 }
 
 function SessionMoreMenu() {
-  return <div className="flex flex-col text-left gap-2">
-    <WideNakedMenuButton>
-      Add account
-    </WideNakedMenuButton>
-    <WideNakedMenuButton>
-      Connections
-    </WideNakedMenuButton>
-  </div>
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/add" &&
+        <PathMenu>
+          <SessionAccountAddMenu />
+        </PathMenu>}
+      {hash.url.pathname === "/add/password" &&
+        <PathWindow>
+          <SessionPasswordAddWindow />
+        </PathWindow>}
+    </SubpathProvider>
+    <div className="flex flex-col text-left gap-2">
+      <SessionMoreMenuAccountAddButton />
+      <WideNakedMenuButton>
+        <Outline.GlobeAltIcon className="size-5" />
+        Connections
+      </WideNakedMenuButton>
+    </div>
+  </Fragment>
+}
+
+function SessionMoreMenuAccountAddButton() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/add")
+
+  return <WideNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <Outline.PlusIcon className="size-5" />
+    Add account
+  </WideNakedMenuAnchor>
 }
