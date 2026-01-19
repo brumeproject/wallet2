@@ -61,10 +61,6 @@ export function SessionScreen() {
 
   const session = useSessionContext().getOrThrow()
 
-  const count = useMemo(() => {
-    return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).reduce(n => n + 1, 0)
-  }, [session])
-
   const [display, setDisplay] = useState(false)
 
   const [search, setSearch] = useSearchState(path, "search")
@@ -88,7 +84,13 @@ export function SessionScreen() {
     const elements = [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")]
     const currents = elements.filter(e => !e.closest("History"))
 
-    return currents.map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => {
+    const entries = currents.map(e => new KDBX.Inner.KeePassFile.Entry(e))
+
+    return entries
+  }, [session])
+
+  const visibles = useMemo(() => {
+    return entries.filter($entry => {
       if (filter == null)
         return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
 
@@ -112,7 +114,7 @@ export function SessionScreen() {
 
       return false
     })
-  }, [session, filter, dsearch])
+  }, [entries, filter, dsearch])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -137,7 +139,7 @@ export function SessionScreen() {
           </h1>
           <div className="h-4" />
           <div className="text-center text-default-contrast text-xl md:text-2xl">
-            You have {count} accounts in your wallet
+            You have {entries.length} accounts in your wallet
           </div>
           <div className="h-16" />
           <div className="flex items-center gap-4">
@@ -151,7 +153,7 @@ export function SessionScreen() {
       {display &&
         <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
           <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
-            {entries.map($entry =>
+            {visibles.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
                 <div className="aspect-video flex flex-col bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
                   data-theme={$entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get() == null ? "opposite" : "dark"}
