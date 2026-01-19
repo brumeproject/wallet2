@@ -14,6 +14,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Option, Result } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useAutoFocus } from "../../../libs/focus/mod.ts";
 import { UserData } from "../user/mod.tsx";
 
 React;
@@ -67,6 +68,10 @@ export function SessionScreen() {
   const [filter, setFilter] = useSearchState(path, "filter")
 
   const dsearch = useDeferredValue(search)
+
+  useEffect(() => () => {
+    console.log("SessionScreen unmounted")
+  }, [])
 
   useMemo(() => {
     if (!filter)
@@ -201,7 +206,7 @@ export function SessionScreen() {
               </Fragment>)}
           </div>
         </div>}
-      <div className="h-4" />
+      <div className="h-4 shrink-0" />
       <div className="flex flex-wrap items-center gap-2">
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
           type="button"
@@ -246,7 +251,7 @@ export function SessionScreen() {
           Trash
         </button>
       </div>
-      <div className="h-4" />
+      <div className="h-4 shrink-0" />
       <div className="flex items-center gap-2">
         <SessionMoreButton />
         <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
@@ -254,7 +259,7 @@ export function SessionScreen() {
           <input className="w-full focus:outline-none"
             placeholder="Search"
             onChange={e => setSearch(e.target.value)}
-            ref={e => void setTimeout(() => e?.focus(), 1)}
+            ref={useAutoFocus()}
             value={search} />
         </div>
       </div>
