@@ -289,9 +289,54 @@ function SessionScreen() {
     return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).reduce(n => n + 1, 0)
   }, [session])
 
+  const [display, setDisplay] = useState(false)
+
   const [search, setSearch] = useSearchState(path, "search")
+  const [filter, setFilter] = useSearchState(path, "filter")
 
   const dsearch = useDeferredValue(search)
+
+  useMemo(() => {
+    if (!filter)
+      return
+    setDisplay(true)
+  }, [filter])
+
+  useMemo(() => {
+    if (!dsearch)
+      return
+    setDisplay(true)
+  }, [dsearch])
+
+  const entries = useMemo(() => {
+    const elements = [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")]
+    const currents = elements.filter(e => !e.closest("History"))
+
+    return currents.map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => {
+      if (filter == null)
+        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
+
+      if (filter === "password" && $entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get())
+        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
+
+      if (filter === "ethereum" && $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get())
+        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
+
+      if (filter === "bitcoin" && $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get())
+        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
+
+      if (filter === "card" && $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
+        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
+
+      if (filter === "seed" && $entry.getDirectStringByKeyOrNull("Seed")?.getValueOrThrow().get())
+        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
+
+      // if (filter === "trash" && $entry.getParentGroupOrThrow().isDeleted())
+      //   return true
+
+      return false
+    })
+  }, [session, filter, dsearch])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -309,7 +354,7 @@ function SessionScreen() {
         </PathWindow>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
-      {!dsearch &&
+      {!display &&
         <div className="grow flex flex-col text-center items-center justify-center">
           <h1 className="text-5xl md:text-6xl font-medium">
             Welcome back, {session.value.user.name}
@@ -321,31 +366,34 @@ function SessionScreen() {
           <div className="h-16" />
           <div className="flex items-center gap-4">
             <SessionAccountAddButton />
-            <ContrastAnchor onClick={() => setSearch("*")}>
+            <ContrastAnchor onClick={() => setDisplay(true)}>
               <Outline.EyeIcon className="size-5" />
               See all
             </ContrastAnchor>
           </div>
         </div>}
-      {dsearch &&
+      {display &&
         <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
           <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
-            {[...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter($entry => dsearch === "*" || $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get().toLowerCase().includes(dsearch.toLowerCase())).map(($entry, index, array) =>
+            {entries.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                <div className="aspect-video flex flex-col bg-default text-default selection-default data-[color=1]:bg-red-500/90 data-[color=2]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
-                  data-theme={index % 4 === 0 ? "opposite" : "dark"}
-                  data-color={index % 4}>
+                <div className="aspect-video flex flex-col bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
+                  data-theme={$entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get() == null ? "opposite" : "dark"}
+                  data-color={$entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get()}>
                   <div className="font-medium text-xl text-wrap wrap-anywhere">
                     {$entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get() || "Untitled"}
                   </div>
                   <div className="h-2" />
                   <div className="text-default-half-contrast text-wrap wrap-anywhere">
                     {(() => {
-                      if ($entry.getDirectStringByKeyOrNull("CardNumber") != null)
+                      if ($entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
                         return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
-                      if ($entry.getDirectStringByKeyOrNull("EthereumAddress") != null)
+                      if ($entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get())
                         return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
+
+                      if ($entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get())
+                        return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
 
                       return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
                     })()}
@@ -354,27 +402,21 @@ function SessionScreen() {
                   <div className="flex flex-wrap items-center gap-2">
                     {(() => {
                       if ($entry.getDirectStringByKeyOrNull("CardNumber") != null)
-                        return <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-                          type="button"
-                          onClick={() => setSearch("card")}>
+                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                           <Outline.CreditCardIcon className="size-5" />
                           Card
-                        </button>
+                        </div>
 
                       if ($entry.getDirectStringByKeyOrNull("EthereumAddress") != null)
-                        return <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-                          type="button"
-                          onClick={() => setSearch("ethereum")}>
+                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                           <Outline.CubeIcon className="size-5" />
                           Ethereum
-                        </button>
+                        </div>
 
-                      return <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
-                        type="button"
-                        onClick={() => setSearch("password")}>
+                      return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                         <Outline.LanguageIcon className="size-5" />
                         Password
-                      </button>
+                      </div>
                     })()}
                   </div>
                 </div>
@@ -383,39 +425,45 @@ function SessionScreen() {
         </div>}
       <div className="h-4" />
       <div className="flex flex-wrap items-center gap-2">
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
           type="button"
-          onClick={() => setSearch("password")}>
+          aria-selected={filter === "password"}
+          onClick={() => filter === "password" ? setFilter(undefined) : setFilter("password")}>
           <Outline.LanguageIcon className="size-5" />
           Passwords
         </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
           type="button"
-          onClick={() => setSearch("ethereum")}>
+          aria-selected={filter === "ethereum"}
+          onClick={() => filter === "ethereum" ? setFilter(undefined) : setFilter("ethereum")}>
           <Outline.CubeIcon className="size-5" />
           Ethereum
         </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
           type="button"
-          onClick={() => setSearch("bitcoin")}>
+          aria-selected={filter === "bitcoin"}
+          onClick={() => filter === "bitcoin" ? setFilter(undefined) : setFilter("bitcoin")}>
           <Outline.BanknotesIcon className="size-5" />
           Bitcoin
         </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
           type="button"
-          onClick={() => setSearch("card")}>
+          aria-selected={filter === "card"}
+          onClick={() => filter === "card" ? setFilter(undefined) : setFilter("card")}>
           <Outline.CreditCardIcon className="size-5" />
           Cards
         </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
           type="button"
-          onClick={() => setSearch("seed")}>
+          aria-selected={filter === "seed"}
+          onClick={() => filter === "seed" ? setFilter(undefined) : setFilter("seed")}>
           <Outline.SparklesIcon className="size-5" />
           Seeds
         </button>
-        <button className="bg-default-contrast rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
           type="button"
-          onClick={() => setSearch("trash")}>
+          aria-selected={filter === "trash"}
+          onClick={() => filter === "trash" ? setFilter(undefined) : setFilter("trash")}>
           <Outline.TrashIcon className="size-5" />
           Trash
         </button>
