@@ -37,6 +37,7 @@ export function LoginButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
+    <Outline.LockClosedIcon className="size-5" />
     Login
   </OppositeAnchor>
 }
@@ -127,6 +128,7 @@ function UserCreateButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
+    <Outline.SparklesIcon className="size-5" />
     Create user
   </WideNakedMenuAnchor>
 }
@@ -140,6 +142,7 @@ function UserImportButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
+    <Outline.PaperClipIcon className="size-5" />
     Import user
   </WideNakedMenuAnchor>
 }
@@ -790,6 +793,7 @@ function UserRenameButton(props: { user: UserData }) {
 
   return <WideNakedMenuButton
     onClick={renameOrAlert}>
+    <Outline.LanguageIcon className="size-5" />
     Rename
   </WideNakedMenuButton>
 }
@@ -805,6 +809,7 @@ function UserSettingsButton(props: { user: UserData }) {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
+    <Outline.CogIcon className="size-5" />
     Settings
   </WideNakedMenuAnchor>
 }
@@ -845,6 +850,7 @@ function UserRemoveButton(props: { user: UserData }) {
 
   return <WideNakedMenuButton
     onClick={removeOrAlert}>
+    <Outline.TrashIcon className="size-5" />
     Remove
   </WideNakedMenuButton>
 }
