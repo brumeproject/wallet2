@@ -22,10 +22,10 @@ export function App() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const [name = "", setName] = useState<Nullable<string>>()
+  const [appname = "", setAppName] = useState<Nullable<string>>()
 
   const getNameOrThrow = useCallback(async () => {
-    setName(await store.value.getOrThrow().getOrThrow<string>("name"))
+    setAppName(await store.value.getOrThrow().getOrThrow<string>("appname"))
   }, [store])
 
   useEffect(() => {
@@ -36,10 +36,10 @@ export function App() {
     getNameOrThrow().catch(console.error)
   }, [store])
 
-  const [icon, setIcon] = useState<Nullable<string>>()
+  const [appicon, setAppIcon] = useState<Nullable<string>>()
 
-  const getIconOrThrow = useCallback(async () => {
-    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("icon").then(x => x && `data:image/png;base64,${x.toBase64()}`))
+  const getAppIconOrThrow = useCallback(async () => {
+    setAppIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("appicon").then(x => x && `data:image/png;base64,${x.toBase64()}`))
   }, [store])
 
   useEffect(() => {
@@ -47,42 +47,42 @@ export function App() {
       return
     if (store.value.isErr())
       return
-    getIconOrThrow().catch(console.error)
+    getAppIconOrThrow().catch(console.error)
   }, [store])
 
-  const loadOrThrow = useCallback(async () => {
+  const maskOrThrow = useCallback(async () => {
     const $favicon = document.querySelector("link[rel~='icon']")! as HTMLLinkElement
     const $appicon = document.querySelector("link[rel='apple-touch-icon']")! as HTMLLinkElement
     const $manifest = document.querySelector("link[rel='manifest']")! as HTMLLinkElement
 
-    document.title = name || "Brume Wallet"
+    document.title = appname || "Brume Wallet"
 
-    if (icon == null) {
+    if (appicon == null) {
       $favicon.href = "/favicon.ico"
       $appicon.href = "/appicon.png"
     } else {
-      $favicon.href = icon
-      $appicon.href = icon
+      $favicon.href = appicon
+      $appicon.href = appicon
     }
 
     const manifest = await fetch("/manifest.json").then(res => res.json())
 
     manifest.start_url = location.origin + "/"
-    manifest.name = name || "Brume Wallet"
-    manifest.short_name = name || "Wallet"
+    manifest.name = appname || "Brume Wallet"
+    manifest.short_name = appname || "Wallet"
 
-    if (icon != null)
-      manifest.icons[0].src = icon
+    if (appicon != null)
+      manifest.icons[0].src = appicon
 
-    if (icon == null)
+    if (appicon == null)
       manifest.icons[0].src = location.origin + "/appicon.png"
 
     $manifest.href = `data:application/manifest+json,${encodeURIComponent(JSON.stringify(manifest))}`
-  }, [name, icon])
+  }, [appname, appicon])
 
   useEffect(() => {
-    loadOrThrow().catch(console.error)
-  }, [loadOrThrow])
+    maskOrThrow().catch(console.error)
+  }, [maskOrThrow])
 
   const [session, setSession] = useState<SessionData>()
 
@@ -286,10 +286,10 @@ function SettingsButton() {
 function SettingsWindow() {
   const store = useStoreContext().getOrThrow()
 
-  const [name = "", setName] = useState<Nullable<string>>()
+  const [appname = "", setAppName] = useState<Nullable<string>>()
 
   const getNameOrThrow = useCallback(async () => {
-    setName(await store.value.getOrThrow().getOrThrow<string>("name"))
+    setAppName(await store.value.getOrThrow().getOrThrow<string>("appname"))
   }, [store])
 
   useEffect(() => {
@@ -301,22 +301,22 @@ function SettingsWindow() {
   }, [store])
 
   const onNameChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value)
+    setAppName(e.target.value)
 
     if (store == null)
       return
     if (store.value.isErr())
       return
 
-    await store.value.getOrThrow().setOrThrow("name", e.target.value)
+    await store.value.getOrThrow().setOrThrow("appname", e.target.value)
 
     store.update()
   }, [store])
 
-  const [icon, setIcon] = useState<Nullable<string>>()
+  const [appicon, setAppIcon] = useState<Nullable<string>>()
 
-  const getIconOrThrow = useCallback(async () => {
-    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("icon").then(x => x && URL.createObjectURL(new Blob([x]))))
+  const getAppIconOrThrow = useCallback(async () => {
+    setAppIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("appicon").then(x => x && URL.createObjectURL(new Blob([x]))))
   }, [store])
 
   useEffect(() => {
@@ -324,7 +324,7 @@ function SettingsWindow() {
       return
     if (store.value.isErr())
       return
-    getIconOrThrow().catch(console.error)
+    getAppIconOrThrow().catch(console.error)
   }, [store])
 
   const onIconChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
@@ -333,19 +333,19 @@ function SettingsWindow() {
     if (file == null)
       return
 
-    setIcon(URL.createObjectURL(file))
+    setAppIcon(URL.createObjectURL(file))
 
     const data = new Uint8Array(await file.arrayBuffer())
 
-    await store.value.getOrThrow().setOrThrow("icon", data)
+    await store.value.getOrThrow().setOrThrow("appicon", data)
 
     store.update()
   }, [store])
 
   const onIconRemove = useCallback(async () => {
-    await store.value.getOrThrow().deleteOrThrow("icon")
+    await store.value.getOrThrow().deleteOrThrow("appicon")
 
-    setIcon(undefined)
+    setAppIcon(undefined)
 
     store.update()
   }, [store])
@@ -363,7 +363,7 @@ function SettingsWindow() {
     </div>
     <div className="h-2" />
     <div className="flex flex-col items-center p-8">
-      {icon == null &&
+      {appicon == null &&
         <div className="relative size-24 border border-dashed border-default-contrast flex items-center justify-center rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
           <input className="absolute w-full h-full opacity-0 cursor-pointer rounded-xl"
             type="file"
@@ -371,16 +371,16 @@ function SettingsWindow() {
             onChange={onIconChange} />
           <Outline.ArrowUpTrayIcon className="size-6 text-default-contrast" />
         </div>}
-      {icon != null &&
+      {appicon != null &&
         <button className="focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
           type="button"
           onClick={onIconRemove}>
-          <img className="size-24 rounded-xl bg-opposite" src={icon} />
+          <img className="size-24 rounded-xl bg-opposite" src={appicon} />
         </button>}
       <div className="h-4" />
       <input className="text-center bg-default-contrast po-2 rounded-xl focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
         placeholder="Wallet"
-        value={name || ""}
+        value={appname || ""}
         onChange={onNameChange} />
     </div>
   </div>
