@@ -22,7 +22,7 @@ export function App() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const [appname = "", setAppName] = useState<Nullable<string>>()
+  const [appname, setAppName] = useState<Nullable<string>>()
 
   const getNameOrThrow = useCallback(async () => {
     setAppName(await store.value.getOrThrow().getOrThrow<string>("appname"))
@@ -286,7 +286,7 @@ function SettingsButton() {
 function SettingsWindow() {
   const store = useStoreContext().getOrThrow()
 
-  const [appname = "", setAppName] = useState<Nullable<string>>()
+  const [appname, setAppName] = useState<Nullable<string>>()
 
   const getNameOrThrow = useCallback(async () => {
     setAppName(await store.value.getOrThrow().getOrThrow<string>("appname"))

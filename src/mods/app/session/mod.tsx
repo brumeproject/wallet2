@@ -56,6 +56,22 @@ export function SessionProvider(props: ChildrenProps & { value: SessionData }) {
   </SessionContext.Provider>
 }
 
+function getEntryType($entry: KDBX.Inner.KeePassFile.Entry): "password" | "ethereum" | "bitcoin" | "card" | "seed" {
+  if ($entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
+    return "card"
+
+  if ($entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get())
+    return "ethereum"
+
+  if ($entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get())
+    return "bitcoin"
+
+  if ($entry.getDirectStringByKeyOrNull("Seed")?.getValueOrThrow().get())
+    return "seed"
+
+  return "password"
+}
+
 export function SessionScreen() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -99,19 +115,7 @@ export function SessionScreen() {
       if (filter == null)
         return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
 
-      if (filter === "password" && $entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get())
-        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
-
-      if (filter === "ethereum" && $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get())
-        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
-
-      if (filter === "bitcoin" && $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get())
-        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
-
-      if (filter === "card" && $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
-        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
-
-      if (filter === "seed" && $entry.getDirectStringByKeyOrNull("Seed")?.getValueOrThrow().get())
+      if (filter === getEntryType($entry))
         return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
 
       // if (filter === "trash" && $entry.getParentGroupOrThrow().isDeleted())
@@ -160,7 +164,7 @@ export function SessionScreen() {
           <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
             {visibles.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                <div className="aspect-video flex flex-col bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
+                <div className="w-80 aspect-video flex flex-col bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
                   data-theme={$entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get() == null ? "opposite" : "dark"}
                   data-color={$entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get()}>
                   <div className="font-medium text-xl text-wrap wrap-anywhere">
@@ -169,37 +173,59 @@ export function SessionScreen() {
                   <div className="h-2" />
                   <div className="text-default-half-contrast text-wrap wrap-anywhere">
                     {(() => {
-                      if ($entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
+                      const type = getEntryType($entry)
+
+                      if (type === "card")
                         return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
-                      if ($entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get())
+                      if (type === "ethereum")
                         return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
 
-                      if ($entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get())
+                      if (type === "bitcoin")
                         return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
 
-                      return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+                      if (type === "password")
+                        return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+
+                      return null
                     })()}
                   </div>
                   <div className="h-4 grow" />
                   <div className="flex flex-wrap items-center gap-2">
                     {(() => {
-                      if ($entry.getDirectStringByKeyOrNull("CardNumber") != null)
+                      const type = getEntryType($entry)
+
+                      if (type === "card")
                         return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                           <Outline.CreditCardIcon className="size-5" />
                           Card
                         </div>
 
-                      if ($entry.getDirectStringByKeyOrNull("EthereumAddress") != null)
+                      if (type === "ethereum")
                         return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                           <Outline.CubeIcon className="size-5" />
                           Ethereum
                         </div>
 
-                      return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                        <Outline.LanguageIcon className="size-5" />
-                        Password
-                      </div>
+                      if (type === "bitcoin")
+                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                          <Outline.BanknotesIcon className="size-5" />
+                          Bitcoin
+                        </div>
+
+                      if (type === "seed")
+                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                          <Outline.SparklesIcon className="size-5" />
+                          Seed
+                        </div>
+
+                      if (type === "password")
+                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                          <Outline.LanguageIcon className="size-5" />
+                          Password
+                        </div>
+
+                      return null
                     })()}
                   </div>
                 </div>
@@ -314,11 +340,12 @@ function SessionPasswordAddWindow() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [title = "", setTitle] = useState<string>()
+  const [title, setTitle] = useState("")
+  const [color, setColor] = useState<Nullable<string>>()
 
-  const [username = "", setUsername] = useState<string>()
-  const [password = "", setPassword] = useState<string>()
-  const [totpseed = "", setTotpseed] = useState<string>()
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [totpseed, setTotpseed] = useState("")
 
   const totp = useMemo(() => {
     if (!totpseed.length)
@@ -444,6 +471,27 @@ function SessionPasswordAddWindow() {
         Add password
       </h1>
       <div className="h-4" />
+      <div className="flex items-center justify-center py-4">
+        <div className="w-80 aspect-video flex flex-col bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
+          data-theme={color == null ? "opposite" : "dark"}
+          data-color={color}>
+          <div className="font-medium text-xl text-wrap wrap-anywhere">
+            {title || "Untitled"}
+          </div>
+          <div className="h-2" />
+          <div className="text-default-half-contrast text-wrap wrap-anywhere">
+            {username}
+          </div>
+          <div className="h-4 grow" />
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.LanguageIcon className="size-5" />
+              Password
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="h-4 grow" />
       <div className="font-medium">
         Title
       </div>
