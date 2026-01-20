@@ -7,13 +7,13 @@ import { Nullable } from "@/libs/nullable/mod.tsx";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Totp } from "@/libs/totp/mod.ts";
-import { PathWindow } from "@/libs/window/mod.tsx";
+import { PathWindow, Window } from "@/libs/window/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { useCloseContext } from "@hazae41/react-close-context";
+import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import { Option, Result } from "@hazae41/result-and-option";
-import React, { createContext, Fragment, useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from "react";
+import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { useAutoFocus } from "../../../libs/focus/mod.ts";
 import { UserData } from "../user/mod.tsx";
@@ -179,7 +179,7 @@ export function SessionScreen() {
           <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
             {visibles.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                <SessionAccountCard $entry={$entry} />
+                <SessionAccountCardInGrid $entry={$entry} />
               </Fragment>)}
           </div>
         </div>}
@@ -258,6 +258,111 @@ export function SessionScreen() {
   </Fragment>
 }
 
+function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+  const { $entry } = props
+
+  const [opened, setOpened] = useState<{ x: number, y: number }>()
+
+  const open = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    const x = e.clientX
+    const y = e.clientY
+
+    setOpened({ x, y })
+  }, [])
+
+  const close = useCallback(() => {
+    setOpened(undefined)
+  }, [])
+
+  return <Fragment>
+    <CloseContext.Provider value={close}>
+      {opened &&
+        <Window x={opened.x} y={opened.y} >
+          <SessionPasswordAccountWindow $entry={$entry} />
+        </Window>}
+    </CloseContext.Provider>
+    <button className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90"
+      type="button"
+      data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
+      data-color={getEntryColor($entry)}
+      onClick={open}>
+      <div className="font-medium text-xl text-wrap wrap-anywhere">
+        {getEntryTitle($entry) || "Untitled"}
+      </div>
+      <div className="h-2" />
+      <div className="text-default-half-contrast text-wrap wrap-anywhere">
+        {(() => {
+          const type = getEntryType($entry)
+
+          if (type === "card")
+            return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+
+          if (type === "ethereum")
+            return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
+
+          if (type === "bitcoin")
+            return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
+
+          if (type === "password")
+            return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+
+          return null
+        })()}
+      </div>
+      <div className="h-4 grow" />
+      <div className="flex flex-wrap items-center gap-2">
+        {(() => {
+          const type = getEntryType($entry)
+
+          if (type === "card")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.CreditCardIcon className="size-5" />
+              Card
+            </div>
+
+          if (type === "ethereum")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.CubeIcon className="size-5" />
+              Ethereum
+            </div>
+
+          if (type === "solana")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.CubeIcon className="size-5" />
+              Solana
+            </div>
+
+          if (type === "bitcoin")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.BanknotesIcon className="size-5" />
+              Bitcoin
+            </div>
+
+          if (type === "monero")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.BanknotesIcon className="size-5" />
+              Monero
+            </div>
+
+          if (type === "seed")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.SparklesIcon className="size-5" />
+              Seed
+            </div>
+
+          if (type === "password")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.LanguageIcon className="size-5" />
+              Password
+            </div>
+
+          return null
+        })()}
+      </div>
+    </button>
+  </Fragment>
+}
+
 function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
@@ -268,7 +373,7 @@ function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
     flushSync(() => setFlipped(flipping))
   }, [flipping])
 
-  const onClick = useCallback(() => {
+  const onClick = useCallback((e: MouseEvent<HTMLDivElement>) => {
     setFlipping(f => !f)
   }, [])
 
@@ -281,7 +386,7 @@ function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
       data-color={getEntryColor($entry)}
       onAnimationEnd={onAnimationEnd}
       onClick={onClick}>
-      <div className="absolute h-full w-full p-4 flex flex-col backface-hidden">
+      <div className="absolute h-full w-full p-4 flex flex-col select-none backface-hidden">
         <div className="font-medium text-xl text-wrap wrap-anywhere">
           {getEntryTitle($entry) || "Untitled"}
         </div>
@@ -356,72 +461,30 @@ function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
           })()}
         </div>
       </div>
-      <div className="absolute h-full w-full p-4 flex flex-col backface-hidden rotate-y-180">
-        {(() => {
-          const type = getEntryType($entry)
-
-          if (type === "password")
-            return <div className="text-wrap wrap-anywhere">
-              {$entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get()}
-            </div>
-
-          if (type === "card")
-            return <Fragment>
-              <div className="flex items-center gap-2">
-                <div className="text-default-contrast">
-                  EXP
-                </div>
-                <div className="">
-                  {$entry.getDirectStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get().replaceAll(" ", "")}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="text-default-contrast">
-                  CVV
-                </div>
-                <div className="">
-                  {$entry.getDirectStringByKeyOrNull("CVV")?.getValueOrThrow().get()}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="text-default-contrast">
-                  PIN
-                </div>
-                <div className="">
-                  {$entry.getDirectStringByKeyOrNull("PIN")?.getValueOrThrow().get()}
-                </div>
-              </div>
-            </Fragment>
-
-          if (type === "ethereum")
-            return <div className="text-wrap wrap-anywhere">
-              {$entry.getDirectStringByKeyOrNull("EthereumPrivateKey")?.getValueOrThrow().get()}
-            </div>
-
-          if (type === "solana")
-            return <div className="text-wrap wrap-anywhere">
-              {$entry.getDirectStringByKeyOrNull("SolanaPrivateKey")?.getValueOrThrow().get()}
-            </div>
-
-          if (type === "bitcoin")
-            return <div className="text-wrap wrap-anywhere">
-              {$entry.getDirectStringByKeyOrNull("BitcoinPrivateKey")?.getValueOrThrow().get()}
-            </div>
-
-          if (type === "monero")
-            return <div className="text-wrap wrap-anywhere">
-              {$entry.getDirectStringByKeyOrNull("MoneroPrivateKey")?.getValueOrThrow().get()}
-            </div>
-
-          if (type === "seed")
-            return <div className="text-wrap wrap-anywhere">
-              {$entry.getDirectStringByKeyOrNull("Seed")?.getValueOrThrow().get()}
-            </div>
-
-          return null
-        })()}
+      <div className="absolute h-full w-full p-4 flex flex-col select-none backface-hidden rotate-y-180">
+        <div className="grow flex items-center justify-center text-wrap wrap-anywhere whitespace-pre-wrap text-default-half-contrast">
+          {"Vires in numeris"}
+        </div>
       </div>
     </div>
+  </div>
+}
+
+function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+  const { $entry } = props
+
+  return <div className="flex flex-col grow p-6">
+    <h1 className="text-xl font-medium">
+      {getEntryTitle($entry) || "Untitled"}
+    </h1>
+    <div className="text-default-contrast">
+      {$entry.getUuidOrThrow().getOrThrow().slice(0, 8).toUpperCase()}
+    </div>
+    <div className="h-4" />
+    <div className="flex items-center justify-center py-4">
+      <SessionAccountCard $entry={$entry} />
+    </div>
+    <div className="h-4 grow" />
   </div>
 }
 
@@ -738,7 +801,7 @@ function SessionPasswordAddWindow() {
         <div className="p-8 rounded-xl bg-default-contrast flex items-center justify-center text-6xl font-mono tracking-widest">
           {totpcode}
         </div>}
-      <div className="h-8 grow" />
+      <div className="h-8" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         {session.value.user.fsfh != null &&
           <WideOppositeButton
