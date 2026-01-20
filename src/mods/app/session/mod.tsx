@@ -14,6 +14,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Option, Result } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { flushSync } from "react-dom";
 import { useAutoFocus } from "../../../libs/focus/mod.ts";
 import { UserData } from "../user/mod.tsx";
 
@@ -76,6 +77,14 @@ function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
     return "seed"
 
   return "password"
+}
+
+function getEntryColor($entry: KDBX.Inner.KeePassFile.Entry) {
+  return $entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get()
+}
+
+function getEntryTitle($entry: KDBX.Inner.KeePassFile.Entry) {
+  return $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get()
 }
 
 export function SessionScreen() {
@@ -170,83 +179,7 @@ export function SessionScreen() {
           <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
             {visibles.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                <div className="w-80 aspect-video flex flex-col bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
-                  data-theme={$entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get() == null ? "opposite" : "dark"}
-                  data-color={$entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get()}>
-                  <div className="font-medium text-xl text-wrap wrap-anywhere">
-                    {$entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get() || "Untitled"}
-                  </div>
-                  <div className="h-2" />
-                  <div className="text-default-half-contrast text-wrap wrap-anywhere">
-                    {(() => {
-                      const type = getEntryType($entry)
-
-                      if (type === "card")
-                        return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
-
-                      if (type === "ethereum")
-                        return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
-
-                      if (type === "bitcoin")
-                        return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
-
-                      if (type === "password")
-                        return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
-
-                      return null
-                    })()}
-                  </div>
-                  <div className="h-4 grow" />
-                  <div className="flex flex-wrap items-center gap-2">
-                    {(() => {
-                      const type = getEntryType($entry)
-
-                      if (type === "card")
-                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                          <Outline.CreditCardIcon className="size-5" />
-                          Card
-                        </div>
-
-                      if (type === "ethereum")
-                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                          <Outline.CubeIcon className="size-5" />
-                          Ethereum
-                        </div>
-
-                      if (type === "solana")
-                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                          <Outline.CubeIcon className="size-5" />
-                          Solana
-                        </div>
-
-                      if (type === "bitcoin")
-                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                          <Outline.BanknotesIcon className="size-5" />
-                          Bitcoin
-                        </div>
-
-                      if (type === "monero")
-                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                          <Outline.BanknotesIcon className="size-5" />
-                          Monero
-                        </div>
-
-                      if (type === "seed")
-                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                          <Outline.SparklesIcon className="size-5" />
-                          Seed
-                        </div>
-
-                      if (type === "password")
-                        return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                          <Outline.LanguageIcon className="size-5" />
-                          Password
-                        </div>
-
-                      return null
-                    })()}
-                  </div>
-                </div>
+                <SessionAccountCard $entry={$entry} />
               </Fragment>)}
           </div>
         </div>}
@@ -323,6 +256,173 @@ export function SessionScreen() {
       </div>
     </div>
   </Fragment>
+}
+
+function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+  const { $entry } = props
+
+  const [flipping, setFlipping] = useState(false)
+  const [flipped, setFlipped] = useState(false)
+
+  const onAnimationEnd = useCallback(() => {
+    flushSync(() => setFlipped(flipping))
+  }, [flipping])
+
+  const onClick = useCallback(() => {
+    setFlipping(f => !f)
+  }, [])
+
+  return <div className="w-[320px] aspect-video perspective-[640px]">
+    <div className="h-full w-full data-[flip=true]:animate-flip-in data-[unflip=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90"
+      data-flip={flipping && !flipped}
+      data-unflip={!flipping && flipped}
+      data-flipped={flipping && flipped}
+      data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
+      data-color={getEntryColor($entry)}
+      onAnimationEnd={onAnimationEnd}
+      onClick={onClick}>
+      <div className="absolute h-full w-full p-4 flex flex-col backface-hidden">
+        <div className="font-medium text-xl text-wrap wrap-anywhere">
+          {getEntryTitle($entry) || "Untitled"}
+        </div>
+        <div className="h-2" />
+        <div className="text-default-half-contrast text-wrap wrap-anywhere">
+          {(() => {
+            const type = getEntryType($entry)
+
+            if (type === "card")
+              return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+
+            if (type === "ethereum")
+              return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
+
+            if (type === "bitcoin")
+              return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
+
+            if (type === "password")
+              return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+
+            return null
+          })()}
+        </div>
+        <div className="h-4 grow" />
+        <div className="flex flex-wrap items-center gap-2">
+          {(() => {
+            const type = getEntryType($entry)
+
+            if (type === "card")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.CreditCardIcon className="size-5" />
+                Card
+              </div>
+
+            if (type === "ethereum")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.CubeIcon className="size-5" />
+                Ethereum
+              </div>
+
+            if (type === "solana")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.CubeIcon className="size-5" />
+                Solana
+              </div>
+
+            if (type === "bitcoin")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.BanknotesIcon className="size-5" />
+                Bitcoin
+              </div>
+
+            if (type === "monero")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.BanknotesIcon className="size-5" />
+                Monero
+              </div>
+
+            if (type === "seed")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.SparklesIcon className="size-5" />
+                Seed
+              </div>
+
+            if (type === "password")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.LanguageIcon className="size-5" />
+                Password
+              </div>
+
+            return null
+          })()}
+        </div>
+      </div>
+      <div className="absolute h-full w-full p-4 flex flex-col backface-hidden rotate-y-180">
+        {(() => {
+          const type = getEntryType($entry)
+
+          if (type === "password")
+            return <div className="text-wrap wrap-anywhere">
+              {$entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get()}
+            </div>
+
+          if (type === "card")
+            return <Fragment>
+              <div className="flex items-center gap-2">
+                <div className="text-default-contrast">
+                  EXP
+                </div>
+                <div className="">
+                  {$entry.getDirectStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get().replaceAll(" ", "")}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="text-default-contrast">
+                  CVV
+                </div>
+                <div className="">
+                  {$entry.getDirectStringByKeyOrNull("CVV")?.getValueOrThrow().get()}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="text-default-contrast">
+                  PIN
+                </div>
+                <div className="">
+                  {$entry.getDirectStringByKeyOrNull("PIN")?.getValueOrThrow().get()}
+                </div>
+              </div>
+            </Fragment>
+
+          if (type === "ethereum")
+            return <div className="text-wrap wrap-anywhere">
+              {$entry.getDirectStringByKeyOrNull("EthereumPrivateKey")?.getValueOrThrow().get()}
+            </div>
+
+          if (type === "solana")
+            return <div className="text-wrap wrap-anywhere">
+              {$entry.getDirectStringByKeyOrNull("SolanaPrivateKey")?.getValueOrThrow().get()}
+            </div>
+
+          if (type === "bitcoin")
+            return <div className="text-wrap wrap-anywhere">
+              {$entry.getDirectStringByKeyOrNull("BitcoinPrivateKey")?.getValueOrThrow().get()}
+            </div>
+
+          if (type === "monero")
+            return <div className="text-wrap wrap-anywhere">
+              {$entry.getDirectStringByKeyOrNull("MoneroPrivateKey")?.getValueOrThrow().get()}
+            </div>
+
+          if (type === "seed")
+            return <div className="text-wrap wrap-anywhere">
+              {$entry.getDirectStringByKeyOrNull("Seed")?.getValueOrThrow().get()}
+            </div>
+
+          return null
+        })()}
+      </div>
+    </div>
+  </div>
 }
 
 function SessionAccountAddButton() {
