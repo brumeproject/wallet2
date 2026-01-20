@@ -461,9 +461,16 @@ function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
           })()}
         </div>
       </div>
-      <div className="absolute h-full w-full p-4 flex flex-col select-none backface-hidden rotate-y-180">
-        <div className="grow flex items-center justify-center text-wrap wrap-anywhere whitespace-pre-wrap text-default-half-contrast">
-          {"Vires in numeris"}
+      <div className="absolute h-full w-full p-4 flex items-center justify-center select-none backface-hidden rotate-y-180">
+        <div className="font-mono text-default-half-contrast whitespace-pre-wrap">
+          {`
+00100010 01010110 01101001
+01110010 01100101 01110011
+00100000 01101001 01101110
+00100000 01101110 01110101
+01101101 01100101 01110010
+01101001 01110011 00100010
+        `.trim()}
         </div>
       </div>
     </div>
