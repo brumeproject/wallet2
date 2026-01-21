@@ -278,7 +278,14 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     <CloseContext.Provider value={close}>
       {opened &&
         <Window x={opened.x} y={opened.y} >
-          <SessionPasswordAccountWindow $entry={$entry} />
+          {(() => {
+            const type = getEntryType($entry)
+
+            if (type === "password")
+              return <SessionPasswordAccountWindow $entry={$entry} />
+
+            return null
+          })()}
         </Window>}
     </CloseContext.Provider>
     <button className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90"
@@ -480,6 +487,52 @@ function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
 function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
+  const [masked, setMasked] = useState(true)
+
+  const password = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const totpseed = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("otp")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const totp = useMemo(() => {
+    if (totpseed == null)
+      return
+    if (!totpseed.length)
+      return
+
+    const generator = Result.runAndWrapSync(() => {
+      return Totp.parseOrThrow(totpseed)
+    }).getOrNull()
+
+    return generator
+  }, [totpseed])
+
+  const [totpcode, setTotpcode] = useState<Nullable<string>>()
+
+  useEffect(() => {
+    if (totp == null)
+      return
+
+    const interval = setInterval(async () => {
+      setTotpcode(await totp.generate())
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [totp])
+
+  const [totpcopy, setTotpCopy] = useState(false)
+
+  const copyTotpOrAlert = useCallback(() => Promise.try(async () => {
+    if (totpcode == null)
+      return
+    await navigator.clipboard.writeText(totpcode)
+    setTimeout(() => setTotpCopy(false), 1000)
+    setTotpCopy(true)
+  }).catch(Errors.display), [totpcode])
+
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
       {getEntryTitle($entry) || "Untitled"}
@@ -492,6 +545,52 @@ function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.En
       <SessionAccountCard $entry={$entry} />
     </div>
     <div className="h-4 grow" />
+    {password != null && <Fragment>
+      <div className="font-medium">
+        Password
+      </div>
+      <div className="text-default-contrast">
+        Your password for this account
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.LanguageIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          readOnly
+          onFocus={e => e.currentTarget.select()}
+          type={masked ? "password" : "text"}
+          value={password} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+            type="button"
+            onClick={() => setMasked(!masked)}>
+            <InButton>
+              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+            </InButton>
+          </button>
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+            type="button">
+            <InButton>
+              <Outline.DocumentDuplicateIcon className="size-5" />
+            </InButton>
+          </button>
+        </div>
+      </div>
+    </Fragment>}
+    {totpseed != null && <Fragment>
+      <div className="h-4" />
+      <div className="font-medium">
+        One-time passcode
+      </div>
+      <div className="text-default-contrast">
+        Your second-factor time-based one-time passcode for this account
+      </div>
+      <div className="h-2" />
+      <input className="p-8 rounded-xl bg-default-contrast text-center focus:outline-none text-6xl font-mono tracking-widest"
+        readOnly
+        onClick={copyTotpOrAlert}
+        value={totpcode ? (totpcopy ? "COPIED" : totpcode) : "------"} />
+    </Fragment>}
   </div>
 }
 
@@ -565,6 +664,8 @@ function SessionPasswordAddWindow() {
   const [title, setTitle] = useState("")
   const [color, setColor] = useState<Nullable<string>>()
 
+  const [masked, setMasked] = useState<boolean>(true)
+
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [totpseed, setTotpseed] = useState("")
@@ -593,7 +694,15 @@ function SessionPasswordAddWindow() {
     return () => clearInterval(interval)
   }, [totp])
 
-  const [masked, setMasked] = useState<boolean>(true)
+  const [totpcopy, setTotpCopy] = useState(false)
+
+  const copyTotpOrAlert = useCallback(() => Promise.try(async () => {
+    if (totpcode == null)
+      return
+    await navigator.clipboard.writeText(totpcode)
+    setTimeout(() => setTotpCopy(false), 1000)
+    setTotpCopy(true)
+  }).catch(Errors.display), [totpcode])
 
   const encryptOrThrow = useCallback(async () => {
     const kdbx = session.value.kdbx
@@ -778,7 +887,7 @@ function SessionPasswordAddWindow() {
         One-time passcode
       </div>
       <div className="text-default-contrast">
-        Your TOTP seed for this account
+        Your second-factor time-based one-time passcode seed for this account
       </div>
       <div className="h-2" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
@@ -804,10 +913,10 @@ function SessionPasswordAddWindow() {
         </div>
       </div>
       <div className="h-2" />
-      {totpcode &&
-        <div className="p-8 rounded-xl bg-default-contrast flex items-center justify-center text-6xl font-mono tracking-widest">
-          {totpcode}
-        </div>}
+      <input className="p-8 rounded-xl bg-default-contrast text-center focus:outline-none text-6xl font-mono tracking-widest"
+        readOnly
+        onClick={copyTotpOrAlert}
+        value={totpcode ? (totpcopy ? "COPIED" : totpcode) : "------"} />
       <div className="h-8" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         {session.value.user.fsfh != null &&
