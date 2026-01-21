@@ -1,0 +1,31 @@
+import * as KDBX from "@hazae41/kdbx";
+
+export function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
+  if ($entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
+    return "card"
+
+  if ($entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get())
+    return "ethereum"
+
+  if ($entry.getDirectStringByKeyOrNull("SolanaAddress")?.getValueOrThrow().get())
+    return "solana"
+
+  if ($entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get())
+    return "bitcoin"
+
+  if ($entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get())
+    return "monero"
+
+  if ($entry.getDirectStringByKeyOrNull("Seed")?.getValueOrThrow().get())
+    return "seed"
+
+  return "password"
+}
+
+export function getEntryColor($entry: KDBX.Inner.KeePassFile.Entry) {
+  return $entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get()
+}
+
+export function getEntryTitle($entry: KDBX.Inner.KeePassFile.Entry) {
+  return $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get()
+}
