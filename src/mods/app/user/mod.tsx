@@ -215,57 +215,57 @@ function UserImportFileWindow() {
     <h1 className="text-xl font-medium">
       Import user
     </h1>
-    <div className="h-4" />
+    <div className="h-6" />
     <div className="font-medium">
       Name
     </div>
     <div className="text-default-contrast">
       Will be used locally for display purposes
     </div>
-    <div className="h-2" />
+    <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
     </div>
-    <div className="h-4" />
+    <div className="h-6" />
     <div className="font-medium">
       File
     </div>
     <div className="text-default-contrast">
       Your existing KDBX file
     </div>
-    <div className="h-2" />
-    <div className="relative">
+    <div className="h-4" />
+    <div className="relative bg-default-contrast rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="absolute w-full h-full opacity-0 cursor-pointer"
         type="file"
         accept="application/octet-stream,.kdbx"
         onChange={e => setFile(e.target.files?.item(0))} />
       {file != null &&
-        <div className="bg-default-contrast po-2 rounded-xl">
+        <div className="po-2">
           {file.name}
         </div>}
       {file == null &&
-        <div className="bg-default-contrast po-2 rounded-xl">
+        <div className="po-2">
           Pick or drop file here
         </div>}
     </div>
-    <div className="h-4" />
+    <div className="h-6" />
     <div className="font-medium">
       Password
     </div>
     <div className="text-default-contrast">
       Your existing password
     </div>
-    <div className="h-2" />
+    <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
-    <div className="h-4 grow" />
+    <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       <WideOppositeButton
         disabled={error != null}
@@ -369,29 +369,29 @@ function UserImportFsfhWindow() {
     <h1 className="text-xl font-medium">
       Import user
     </h1>
-    <div className="h-4" />
+    <div className="h-6" />
     <div className="font-medium">
       Name
     </div>
     <div className="text-default-contrast">
       Will be used locally for display purposes
     </div>
-    <div className="h-2" />
+    <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
     </div>
-    <div className="h-4" />
+    <div className="h-6" />
     <div className="font-medium">
       File
     </div>
     <div className="text-default-contrast">
       Your existing KDBX file
     </div>
-    <div className="h-2" />
-    <div className="relative">
+    <div className="h-4" />
+    <div className="relative bg-default-contrast rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       {"showOpenFilePicker" in window === true &&
         <button className="absolute w-full h-full opacity-0 cursor-pointer"
           type="button"
@@ -399,29 +399,29 @@ function UserImportFsfhWindow() {
           onDragOver={Events.preventDefault}
           onDrop={dropOrAlert} />}
       {fsfh != null &&
-        <div className="bg-default-contrast po-2 rounded-xl">
+        <div className="po-2">
           {fsfh.name}
         </div>}
       {fsfh == null &&
-        <div className="bg-default-contrast po-2 rounded-xl">
+        <div className="po-2">
           Pick or drop file here
         </div>}
     </div>
-    <div className="h-4" />
+    <div className="h-6" />
     <div className="font-medium">
       Password
     </div>
     <div className="text-default-contrast">
       Your existing password
     </div>
-    <div className="h-2" />
+    <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
-    <div className="h-4 grow" />
+    <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       <WideOppositeButton
         disabled={error != null}
@@ -578,35 +578,35 @@ function UserCreateWindow() {
     <h1 className="text-xl font-medium">
       Create user
     </h1>
-    <div className="h-4" />
+    <div className="h-6" />
     <div className="font-medium">
       Name
     </div>
     <div className="text-default-contrast">
       Will be used locally for display purposes
     </div>
-    <div className="h-2" />
+    <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
     </div>
-    <div className="h-4" />
+    <div className="h-6" />
     <div className="font-medium">
       Password
     </div>
     <div className="text-default-contrast">
       At least 3 characters
     </div>
-    <div className="h-2" />
+    <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
       <input className="w-full focus:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
-    <div className="h-4 grow" />
+    <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       {"showSaveFilePicker" in window === true &&
         <WideOppositeButton
@@ -714,7 +714,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
           <UserSettingsWindow user={user} />
         </PathWindow>}
     </SubpathProvider>
-    <div className="relative group flex-1 rounded-xl has-[>:first-child:not([aria-disabled='true'])]:hover:bg-default-double-contrast has-[>:first-child:focus]:bg-default-double-contrast transition-opacity">
+    <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast focus-within:bg-default-double-contrast transition-opacity">
       {user.fsfh == null &&
         <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"

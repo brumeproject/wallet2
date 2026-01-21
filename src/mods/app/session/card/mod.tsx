@@ -56,20 +56,20 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
     <div className="text-default-contrast">
       {$entry.getUuidOrThrow().getOrThrow().slice(0, 8).toUpperCase()}
     </div>
-    <div className="h-4" />
-    <div className="flex items-center justify-center py-4">
+    <div className="h-6" />
+    <div className="flex items-center justify-center">
       <SessionAccountCard $entry={$entry} />
     </div>
     <div className="grow" />
     {num != null && <Fragment>
-      <div className="h-4" />
+      <div className="h-6" />
       <div className="font-medium">
         Number
       </div>
       <div className="text-default-contrast">
         Your card number
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
         <Outline.HashtagIcon className="size-5" />
         <input className="w-full focus:outline-none"
@@ -88,14 +88,14 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
       </div>
     </Fragment>}
     {hol != null && <Fragment>
-      <div className="h-4" />
+      <div className="h-6" />
       <div className="font-medium">
         Holder
       </div>
       <div className="text-default-contrast">
         Your card holder name
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
         <Outline.LanguageIcon className="size-5" />
         <input className="w-full focus:outline-none"
@@ -114,14 +114,14 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
       </div>
     </Fragment>}
     {exp != null && <Fragment>
-      <div className="h-4" />
+      <div className="h-6" />
       <div className="font-medium">
         Expiry
       </div>
       <div className="text-default-contrast">
         Your card expiry date
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
         <Outline.CalendarIcon className="size-5" />
         <input className="w-full focus:outline-none"
@@ -140,14 +140,14 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
       </div>
     </Fragment>}
     {cvv != null && <Fragment>
-      <div className="h-4" />
+      <div className="h-6" />
       <div className="font-medium">
         CVV
       </div>
       <div className="text-default-contrast">
         Your card verification value
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
         <Outline.CalendarIcon className="size-5" />
         <input className="w-full focus:outline-none"
@@ -174,14 +174,14 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
       </div>
     </Fragment>}
     {pin != null && <Fragment>
-      <div className="h-4" />
+      <div className="h-6" />
       <div className="font-medium">
         PIN
       </div>
       <div className="text-default-contrast">
         Your card personal identification number
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
         <Outline.CalendarIcon className="size-5" />
         <input className="w-full focus:outline-none"
@@ -364,15 +364,15 @@ export function SessionCardAddWindow() {
       <h1 className="text-xl font-medium">
         Add password
       </h1>
-      <div className="h-4" />
-      <div className="flex items-center justify-center py-4">
+      <div className="h-6" />
+      <div className="flex items-center justify-center">
         <div className="w-80 aspect-video flex flex-col bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
           data-theme={color == null ? "opposite" : "dark"}
           data-color={color}>
           <div className="font-medium text-xl text-wrap wrap-anywhere">
             {title || "Untitled"}
           </div>
-          <div className="h-2" />
+          <div className="h-4" />
           <div className="text-default-half-contrast text-wrap wrap-anywhere">
             {username}
           </div>
@@ -385,14 +385,14 @@ export function SessionCardAddWindow() {
           </div>
         </div>
       </div>
-      <div className="h-4 grow" />
+      <div className="h-6 grow" />
       <div className="font-medium">
         Title
       </div>
       <div className="text-default-contrast">
         A name to identify this account
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
         <Outline.TagIcon className="size-5" />
         <input className="w-full focus:outline-none"
@@ -400,14 +400,14 @@ export function SessionCardAddWindow() {
           onChange={e => setTitle(e.target.value)}
           value={title} />
       </div>
-      <div className="h-4" />
+      <div className="h-6" />
       <div className="font-medium">
         Username
       </div>
       <div className="text-default-contrast">
         Your username or email
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
         <Outline.AtSymbolIcon className="size-5" />
         <input className="w-full focus:outline-none"
@@ -415,14 +415,14 @@ export function SessionCardAddWindow() {
           onChange={e => setUsername(e.target.value)}
           value={username} />
       </div>
-      <div className="h-4" />
+      <div className="h-6" />
       <div className="font-medium">
         Password
       </div>
       <div className="text-default-contrast">
         Your password
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
         <Outline.LanguageIcon className="size-5" />
         <input className="w-full focus:outline-none"
@@ -445,14 +445,14 @@ export function SessionCardAddWindow() {
           </a>
         </div>
       </div>
-      <div className="h-4" />
+      <div className="h-6" />
       <div className="font-medium">
         One-time passcode
       </div>
       <div className="text-default-contrast">
         Your time-based one-time passcode seed
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
         <Outline.HashtagIcon className="size-5" />
         <input className="w-full focus:outline-none"
@@ -475,12 +475,12 @@ export function SessionCardAddWindow() {
           </a>
         </div>
       </div>
-      <div className="h-2" />
+      <div className="h-4" />
       <input className="p-8 rounded-xl bg-default-contrast text-center focus:outline-none text-6xl font-mono tracking-widest"
         readOnly
         onClick={copyTheTotpcode.copyOrAlert}
         value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
-      <div className="h-4" />
+      <div className="h-8" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         {session.value.user.fsfh != null &&
           <WideOppositeButton

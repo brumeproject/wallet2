@@ -355,14 +355,14 @@ function SettingsWindow() {
     <h1 className="text-xl font-medium">
       Settings
     </h1>
-    <div className="h-4" />
+    <div className="h-6" />
     <div className="font-medium">
       Custom app display
     </div>
     <div className="text-default-contrast">
       Custom name and icon to hide the app
     </div>
-    <div className="h-2" />
+    <div className="h-4" />
     <div className="flex flex-col items-center p-8">
       {appicon == null &&
         <div className="relative size-24 border border-dashed border-default-contrast flex items-center justify-center rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
