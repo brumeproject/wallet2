@@ -13,6 +13,7 @@ import { Option } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { UserData } from "../user/mod.tsx";
+import { SessionCardAccountWindow, SessionCardAddAnchor, SessionCardAddWindow } from "./card/mod.tsx";
 import { SessionPasswordAccountWindow, SessionPasswordAddAnchor, SessionPasswordAddWindow } from "./password/mod.tsx";
 
 React;
@@ -251,6 +252,9 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             if (type === "password")
               return <SessionPasswordAccountWindow $entry={$entry} />
 
+            if (type === "card")
+              return <SessionCardAccountWindow $entry={$entry} />
+
             return null
           })()}
         </Window>}
@@ -469,10 +473,7 @@ function SessionAccountAddButton() {
 function SessionAccountAddMenu() {
   return <div className="flex flex-col text-left gap-2">
     <SessionPasswordAddAnchor />
-    <WideNakedMenuAnchor
-      aria-disabled>
-      Card
-    </WideNakedMenuAnchor>
+    <SessionCardAddAnchor />
     <WideNakedMenuAnchor
       aria-disabled>
       Seed
@@ -525,6 +526,10 @@ function SessionMoreMenu() {
       {hash.url.pathname === "/add/password" &&
         <PathWindow>
           <SessionPasswordAddWindow />
+        </PathWindow>}
+      {hash.url.pathname === "/add/card" &&
+        <PathWindow>
+          <SessionCardAddWindow />
         </PathWindow>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">

@@ -18,52 +18,36 @@ import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
 
-export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const [masked, setMasked] = useState(true)
 
-  const username = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+  const num = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
   }, [$entry])
 
-  const password = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get()
+  const hol = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("CardHolder")?.getValueOrThrow().get()
   }, [$entry])
 
-  const totpseed = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("otp")?.getValueOrThrow().get()
+  const exp = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get()
   }, [$entry])
 
-  const totp = useMemo(() => {
-    if (totpseed == null)
-      return
-    if (!totpseed.length)
-      return
+  const cvv = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("CVV")?.getValueOrThrow().get()
+  }, [$entry])
 
-    const generator = Result.runAndWrapSync(() => {
-      return Totp.parseOrThrow(totpseed)
-    }).getOrNull()
+  const pin = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("PIN")?.getValueOrThrow().get()
+  }, [$entry])
 
-    return generator
-  }, [totpseed])
-
-  const [totpcode, setTotpcode] = useState<Nullable<string>>()
-
-  useEffect(() => {
-    if (totp == null)
-      return
-
-    const interval = setInterval(async () => {
-      setTotpcode(await totp.generate())
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [totp])
-
-  const copyTheUsername = useCopy(username)
-  const copyThePassword = useCopy(password)
-  const copyTheTotpcode = useCopy(totpcode)
+  const copyTheNum = useCopy(num)
+  const copyTheHol = useCopy(hol)
+  const copyTheExp = useCopy(exp)
+  const copyTheCvv = useCopy(cvv)
+  const copyThePin = useCopy(pin)
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
@@ -77,39 +61,39 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
       <SessionAccountCard $entry={$entry} />
     </div>
     <div className="grow" />
-    {username != null && <Fragment>
+    {num != null && <Fragment>
       <div className="h-4" />
       <div className="font-medium">
-        Username
+        Number
       </div>
       <div className="text-default-contrast">
-        Your username or email
+        Your card number
       </div>
       <div className="h-2" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-        <Outline.AtSymbolIcon className="size-5" />
+        <Outline.HashtagIcon className="size-5" />
         <input className="w-full focus:outline-none"
           readOnly
           onFocus={e => e.currentTarget.select()}
-          value={username} />
+          value={num} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
             type="button"
-            onClick={copyTheUsername.copyOrAlert}>
+            onClick={copyTheNum.copyOrAlert}>
             <InButton>
-              {copyTheUsername.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              {copyTheNum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
             </InButton>
           </button>
         </div>
       </div>
     </Fragment>}
-    {password != null && <Fragment>
+    {hol != null && <Fragment>
       <div className="h-4" />
       <div className="font-medium">
-        Password
+        Holder
       </div>
       <div className="text-default-contrast">
-        Your password
+        Your card holder name
       </div>
       <div className="h-2" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
@@ -117,8 +101,60 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
         <input className="w-full focus:outline-none"
           readOnly
           onFocus={e => e.currentTarget.select()}
+          value={hol} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+            type="button"
+            onClick={copyTheHol.copyOrAlert}>
+            <InButton>
+              {copyTheHol.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            </InButton>
+          </button>
+        </div>
+      </div>
+    </Fragment>}
+    {exp != null && <Fragment>
+      <div className="h-4" />
+      <div className="font-medium">
+        Expiry
+      </div>
+      <div className="text-default-contrast">
+        Your card expiry date
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.CalendarIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          readOnly
+          onFocus={e => e.currentTarget.select()}
+          value={exp} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+            type="button"
+            onClick={copyTheExp.copyOrAlert}>
+            <InButton>
+              {copyTheExp.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            </InButton>
+          </button>
+        </div>
+      </div>
+    </Fragment>}
+    {cvv != null && <Fragment>
+      <div className="h-4" />
+      <div className="font-medium">
+        CVV
+      </div>
+      <div className="text-default-contrast">
+        Your card verification value
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.CalendarIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          readOnly
           type={masked ? "password" : "text"}
-          value={password} />
+          onFocus={e => e.currentTarget.select()}
+          value={cvv} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
             type="button"
@@ -129,45 +165,65 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
           </button>
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
             type="button"
-            onClick={copyThePassword.copyOrAlert}>
+            onClick={copyTheCvv.copyOrAlert}>
             <InButton>
-              {copyThePassword.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              {copyTheCvv.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
             </InButton>
           </button>
         </div>
       </div>
     </Fragment>}
-    {totpseed != null && <Fragment>
+    {pin != null && <Fragment>
       <div className="h-4" />
       <div className="font-medium">
-        One-time passcode
+        PIN
       </div>
       <div className="text-default-contrast">
-        Your time-based one-time passcode
+        Your card personal identification number
       </div>
       <div className="h-2" />
-      <input className="p-8 rounded-xl bg-default-contrast text-center focus:outline-none text-6xl font-mono tracking-widest"
-        readOnly
-        onClick={copyTheTotpcode.copyOrAlert}
-        value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.CalendarIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          readOnly
+          type={masked ? "password" : "text"}
+          onFocus={e => e.currentTarget.select()}
+          value={pin} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+            type="button"
+            onClick={() => setMasked(!masked)}>
+            <InButton>
+              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+            </InButton>
+          </button>
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+            type="button"
+            onClick={copyThePin.copyOrAlert}>
+            <InButton>
+              {copyThePin.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            </InButton>
+          </button>
+        </div>
+      </div>
     </Fragment>}
   </div>
 }
 
-export function SessionPasswordAddAnchor() {
+export function SessionCardAddAnchor() {
   const path = usePathContext().getOrThrow()
 
-  const coords = useAnchorWithCoords(path, "/add/password")
+  const coords = useAnchorWithCoords(path, "/add/card")
 
   return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    Password
+    Card
   </WideNakedMenuAnchor>
 }
 
-export function SessionPasswordAddWindow() {
+export function SessionCardAddWindow() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -394,7 +450,7 @@ export function SessionPasswordAddWindow() {
         One-time passcode
       </div>
       <div className="text-default-contrast">
-        Your time-based one-time passcode
+        Your time-based one-time passcode seed
       </div>
       <div className="h-2" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
