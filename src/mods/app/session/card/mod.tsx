@@ -61,7 +61,7 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
       <SessionAccountCard $entry={$entry} />
     </div>
     <div className="grow" />
-    {num != null && <Fragment>
+    {num && <Fragment>
       <div className="h-6" />
       <div className="font-medium">
         Number
@@ -87,7 +87,7 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         </div>
       </div>
     </Fragment>}
-    {hol != null && <Fragment>
+    {hol && <Fragment>
       <div className="h-6" />
       <div className="font-medium">
         Holder
@@ -113,7 +113,7 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         </div>
       </div>
     </Fragment>}
-    {exp != null && <Fragment>
+    {exp && <Fragment>
       <div className="h-6" />
       <div className="font-medium">
         Expiry
@@ -139,7 +139,7 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         </div>
       </div>
     </Fragment>}
-    {cvv != null && <Fragment>
+    {cvv && <Fragment>
       <div className="h-6" />
       <div className="font-medium">
         CVV
@@ -173,7 +173,7 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         </div>
       </div>
     </Fragment>}
-    {pin != null && <Fragment>
+    {pin && <Fragment>
       <div className="h-6" />
       <div className="font-medium">
         PIN

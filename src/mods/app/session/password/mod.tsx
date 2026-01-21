@@ -61,6 +61,10 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
     return () => clearInterval(interval)
   }, [totp])
 
+  const notes = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("Notes")?.getValueOrThrow().get()
+  }, [$entry])
+
   const copyTheUsername = useCopy(username)
   const copyThePassword = useCopy(password)
   const copyTheTotpcode = useCopy(totpcode)
@@ -77,7 +81,7 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
       <SessionAccountCard $entry={$entry} />
     </div>
     <div className="grow" />
-    {username != null && <Fragment>
+    {username && <Fragment>
       <div className="h-6" />
       <div className="font-medium">
         Username
@@ -103,7 +107,7 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
         </div>
       </div>
     </Fragment>}
-    {password != null && <Fragment>
+    {password && <Fragment>
       <div className="h-6" />
       <div className="font-medium">
         Password
@@ -137,7 +141,7 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
         </div>
       </div>
     </Fragment>}
-    {totpseed != null && <Fragment>
+    {totpseed && <Fragment>
       <div className="h-6" />
       <div className="font-medium">
         One-time passcode
@@ -150,6 +154,22 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
         readOnly
         onClick={copyTheTotpcode.copyOrAlert}
         value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
+    </Fragment>}
+    {notes && <Fragment>
+      <div className="h-6" />
+      <div className="font-medium">
+        Notes
+      </div>
+      <div className="text-default-contrast">
+        Any additional information
+      </div>
+      <div className="h-4" />
+      <div className="bg-default-contrast po-2 rounded-xl gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <textarea className="w-full resize-none focus:outline-none"
+          readOnly
+          rows={6}
+          value={notes} />
+      </div>
     </Fragment>}
   </div>
 }
