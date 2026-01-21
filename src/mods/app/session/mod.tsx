@@ -15,6 +15,7 @@ import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import { Option, Result } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
+import { useCopy } from "../../../libs/copy/mod.ts";
 import { useAutoFocus } from "../../../libs/focus/mod.ts";
 import { UserData } from "../user/mod.tsx";
 
@@ -482,20 +483,6 @@ function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
       </div>
     </div>
   </div>
-}
-
-function useCopy(value: Nullable<string>) {
-  const [copied, setCopied] = useState(false)
-
-  const copyOrAlert = useCallback(() => Promise.try(async () => {
-    if (value == null)
-      return
-    await navigator.clipboard.writeText(value)
-    setTimeout(() => setCopied(false), 300)
-    setCopied(true)
-  }).catch(Errors.display), [value])
-
-  return { copied, copyOrAlert }
 }
 
 function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
