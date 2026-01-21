@@ -265,7 +265,7 @@ function UserImportFileWindow() {
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
-    <div className="h-8 grow" />
+    <div className="h-4 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       <WideOppositeButton
         disabled={error != null}
@@ -421,7 +421,7 @@ function UserImportFsfhWindow() {
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
-    <div className="h-8 grow" />
+    <div className="h-4 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       <WideOppositeButton
         disabled={error != null}
@@ -606,7 +606,7 @@ function UserCreateWindow() {
         value={password}
         onChange={e => setPassword(e.target.value)} />
     </div>
-    <div className="h-8 grow" />
+    <div className="h-4 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
       {"showSaveFilePicker" in window === true &&
         <WideOppositeButton

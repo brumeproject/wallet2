@@ -484,10 +484,28 @@ function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   </div>
 }
 
+function useCopy(value: Nullable<string>) {
+  const [copied, setCopied] = useState(false)
+
+  const copyOrAlert = useCallback(() => Promise.try(async () => {
+    if (value == null)
+      return
+    await navigator.clipboard.writeText(value)
+    setTimeout(() => setCopied(false), 300)
+    setCopied(true)
+  }).catch(Errors.display), [value])
+
+  return { copied, copyOrAlert }
+}
+
 function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const [masked, setMasked] = useState(true)
+
+  const username = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+  }, [$entry])
 
   const password = useMemo(() => {
     return $entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get()
@@ -523,15 +541,9 @@ function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.En
     return () => clearInterval(interval)
   }, [totp])
 
-  const [totpcopy, setTotpCopy] = useState(false)
-
-  const copyTotpOrAlert = useCallback(() => Promise.try(async () => {
-    if (totpcode == null)
-      return
-    await navigator.clipboard.writeText(totpcode)
-    setTimeout(() => setTotpCopy(false), 1000)
-    setTotpCopy(true)
-  }).catch(Errors.display), [totpcode])
+  const copyTheUsername = useCopy(username)
+  const copyThePassword = useCopy(password)
+  const copyTheTotpcode = useCopy(totpcode)
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
@@ -545,6 +557,32 @@ function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.En
       <SessionAccountCard $entry={$entry} />
     </div>
     <div className="h-4 grow" />
+    {username != null && <Fragment>
+      <div className="font-medium">
+        Username
+      </div>
+      <div className="text-default-contrast">
+        Your username or email for this account
+      </div>
+      <div className="h-2" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <Outline.AtSymbolIcon className="size-5" />
+        <input className="w-full focus:outline-none"
+          readOnly
+          onFocus={e => e.currentTarget.select()}
+          value={username} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+            type="button"
+            onClick={copyTheUsername.copyOrAlert}>
+            <InButton>
+              {copyTheUsername.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            </InButton>
+          </button>
+        </div>
+      </div>
+      <div className="h-4" />
+    </Fragment>}
     {password != null && <Fragment>
       <div className="font-medium">
         Password
@@ -569,9 +607,10 @@ function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.En
             </InButton>
           </button>
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
-            type="button">
+            type="button"
+            onClick={copyThePassword.copyOrAlert}>
             <InButton>
-              <Outline.DocumentDuplicateIcon className="size-5" />
+              {copyThePassword.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -588,8 +627,8 @@ function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.En
       <div className="h-2" />
       <input className="p-8 rounded-xl bg-default-contrast text-center focus:outline-none text-6xl font-mono tracking-widest"
         readOnly
-        onClick={copyTotpOrAlert}
-        value={totpcode ? (totpcopy ? "COPIED" : totpcode) : "------"} />
+        onClick={copyTheTotpcode.copyOrAlert}
+        value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
     </Fragment>}
   </div>
 }
@@ -694,15 +733,7 @@ function SessionPasswordAddWindow() {
     return () => clearInterval(interval)
   }, [totp])
 
-  const [totpcopy, setTotpCopy] = useState(false)
-
-  const copyTotpOrAlert = useCallback(() => Promise.try(async () => {
-    if (totpcode == null)
-      return
-    await navigator.clipboard.writeText(totpcode)
-    setTimeout(() => setTotpCopy(false), 1000)
-    setTotpCopy(true)
-  }).catch(Errors.display), [totpcode])
+  const copyTheTotpcode = useCopy(totpcode)
 
   const encryptOrThrow = useCallback(async () => {
     const kdbx = session.value.kdbx
@@ -915,9 +946,9 @@ function SessionPasswordAddWindow() {
       <div className="h-2" />
       <input className="p-8 rounded-xl bg-default-contrast text-center focus:outline-none text-6xl font-mono tracking-widest"
         readOnly
-        onClick={copyTotpOrAlert}
-        value={totpcode ? (totpcopy ? "COPIED" : totpcode) : "------"} />
-      <div className="h-8" />
+        onClick={copyTheTotpcode.copyOrAlert}
+        value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
+      <div className="h-4" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         {session.value.user.fsfh != null &&
           <WideOppositeButton
