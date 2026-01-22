@@ -234,6 +234,7 @@ export function SessionScreen() {
   </Fragment>
 }
 
+// TODO anchorize, fix focus outline on color
 function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
@@ -267,7 +268,7 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           })()}
         </Window>}
     </CloseContext.Provider>
-    <button className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none cursor-pointer data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90"
+    <button className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none cursor-pointer data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 focus:outline-2 focus:outline-offset-2 focus:outline-default transition-opacity"
       type="button"
       data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
       data-color={getEntryColor($entry)}
