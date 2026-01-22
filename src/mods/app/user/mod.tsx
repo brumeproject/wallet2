@@ -1,8 +1,7 @@
 // deno-lint-ignore-file no-window
 
 import { InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
-import { WideOppositeButton } from "@/libs/button/mod.tsx";
-import { useClientContext } from "@/libs/client/mod.tsx";
+import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -15,7 +14,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
-import React, { DragEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, { DragEvent, Fragment, KeyboardEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { SessionData } from "../session/mod.tsx";
 
 React;
@@ -45,7 +44,6 @@ export function LoginButton() {
 export function LoginMenu(props: { login(session: SessionData): void }) {
   const { login } = props
 
-  const client = useClientContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
   const path = usePathContext().getOrThrow()
@@ -67,18 +65,18 @@ export function LoginMenu(props: { login(session: SessionData): void }) {
 
   return <Fragment>
     <SubpathProvider value={hash}>
-      {client && hash.url.pathname === "/add" &&
+      {hash.url.pathname === "/add" &&
         <PathMenu>
           <UserAddMenu />
         </PathMenu>}
-      {client && hash.url.pathname === "/add/import" &&
+      {hash.url.pathname === "/add/import" &&
         <PathWindow>
           {"showOpenFilePicker" in window === true &&
             <UserImportFsfhWindow />}
           {"showOpenFilePicker" in window === false &&
             <UserImportFileWindow />}
         </PathWindow>}
-      {client && hash.url.pathname === "/add/create" &&
+      {hash.url.pathname === "/add/create" &&
         <PathWindow>
           <UserCreateWindow />
         </PathWindow>}
@@ -621,89 +619,22 @@ function UserCreateWindow() {
 function UserItem(props: { user: UserData } & { login(session: SessionData): void }) {
   const { user, login } = props
 
-  const client = useClientContext().getOrThrow()
-
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const loadOrAlert = useCallback((user: UserData, file?: File) => Promise.try(async () => {
-    if (file == null)
-      return
-
-    const data = new Uint8Array(await file.arrayBuffer())
-
-    if (user.pass != null && confirm("Use passkey to login?")) {
-      const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
-
-      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-      const composite = new KDBX.CompositeKey(new Unknown(stored))
-      const decrypted = await encrypted.decryptOrThrow(composite)
-
-      console.log(decrypted.inner.content.value.document)
-
-      login({ user, kdbx: decrypted })
-
-      return
-    }
-
-    const password = prompt("Enter your password")
-
-    if (password == null)
-      return
-
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, kdbx: decrypted })
-  }).catch(Errors.display), [login])
-
-  const openOrAlert = useCallback((user: UserData, fsfh?: Nullable<FileSystemFileHandle>) => Promise.try(async () => {
-    if (fsfh == null)
-      return
-
-    await fsfh.requestPermission({ mode: "readwrite" })
-
-    const file = await fsfh.getFile()
-    const data = new Uint8Array(await file.arrayBuffer())
-
-    if (user.pass != null && confirm("Use passkey to login?")) {
-      const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
-
-      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-      const composite = new KDBX.CompositeKey(new Unknown(stored))
-      const decrypted = await encrypted.decryptOrThrow(composite)
-
-      console.log(decrypted.inner.content.value.document)
-
-      login({ user, kdbx: decrypted })
-
-      return
-    }
-
-    const password = prompt("Enter your password")
-
-    if (password == null)
-      return
-
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, kdbx: decrypted })
-  }).catch(Errors.display), [login])
+  const coords = useAnchorWithCoords(hash, `/${user.uuid}`)
 
   return <Fragment>
     <SubpathProvider value={hash}>
-      {client && hash.url.pathname === `/${user.uuid}` &&
+      {hash.url.pathname === `/${user.uuid}` &&
+        <PathWindow>
+          <UserLoginWindow user={user} login={login} />
+        </PathWindow>}
+      {hash.url.pathname === `/${user.uuid}/menu` &&
         <PathMenu>
           <UserMenu user={user} />
         </PathMenu>}
-      {client && hash.url.pathname === `/${user.uuid}/reimport` &&
+      {hash.url.pathname === `/${user.uuid}/reimport` &&
         <PathWindow>
           {"showOpenFilePicker" in window === true &&
             <UserReimportFsfhWindow user={user} />}
@@ -711,8 +642,12 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
             <UserReimportFileWindow user={user} />}
         </PathWindow>}
     </SubpathProvider>
-    <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast transition-opacity">
-      {user.fsfh == null &&
+    <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast transition-all">
+      <a className="absolute w-full h-full opacity-0 cursor-pointer"
+        href={coords.url.hash}
+        onClick={coords.onClick}
+        onKeyDown={coords.onKeyDown} />
+      {/* {user.fsfh == null &&
         <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"
           accept="application/octet-stream,.kdbx"
@@ -720,9 +655,9 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
       {user.fsfh != null &&
         <button className="absolute w-full h-full opacity-0 cursor-pointer"
           type="button"
-          onClick={() => openOrAlert(user, user.fsfh)} />}
+          onClick={() => openOrAlert(user, user.fsfh)} />} */}
       <div className="po-2 flex items-center justify-start">
-        <div className="grow flex items-center justify-start gap-4 whitespace-nowrap aria-disabled:opacity-50 transition-opacity">
+        <div className="flex items-center gap-4">
           <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
             {user.name.slice(0, 1).toUpperCase()}
           </div>
@@ -737,15 +672,142 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
   </Fragment>
 }
 
+function UserLoginWindow(props: { user: UserData } & { login(session: SessionData): void }) {
+  const { user, login } = props
+
+  const close = useCloseContext().getOrThrow()
+
+  const [password, setPassword] = useState("")
+
+  const [masked, setMasked] = useState(true)
+
+  const loadOrAlert = useCallback((user: UserData, file?: File) => Promise.try(async () => {
+    if (file == null)
+      return
+    if (!password)
+      return
+
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    login({ user, kdbx: decrypted })
+
+    close()
+  }).catch(Errors.display), [user, login, password, close])
+
+  const openOrAlert = useCallback((user: UserData, fsfh?: Nullable<FileSystemFileHandle>) => Promise.try(async () => {
+    if (fsfh == null)
+      return
+    if (!password)
+      return
+
+    await fsfh.requestPermission({ mode: "readwrite" })
+
+    const file = await fsfh.getFile()
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    login({ user, kdbx: decrypted })
+
+    close()
+  }).catch(Errors.display), [user, login, password, close])
+
+  const openFromPassOrAlert = useCallback((user: UserData, fsfh?: Nullable<FileSystemFileHandle>) => Promise.try(async () => {
+    if (fsfh == null)
+      return
+    if (!password)
+      return
+
+    await fsfh.requestPermission({ mode: "readwrite" })
+
+    const file = await fsfh.getFile()
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    login({ user, kdbx: decrypted })
+
+    close()
+  }).catch(Errors.display), [user, login, password, close])
+
+  const [picker, setPicker] = useState<Nullable<HTMLInputElement>>()
+
+  const onKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter")
+      return
+
+    if (user.fsfh == null)
+      return void picker?.click()
+
+    openOrAlert(user, user.fsfh)
+  }, [user, openOrAlert, picker])
+
+  return <div className="flex flex-col items-center justify-center grow p-6">
+    <div className="grow flex flex-col items-center py-24">
+      <div className="rounded-full size-16 text-4xl flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
+        {user.name.slice(0, 1).toUpperCase()}
+      </div>
+      <div className="h-4" />
+      <h1 className="text-xl font-medium">
+        {user.name}
+      </h1>
+      <div className="h-6" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <input className="focus-visible:outline-none"
+          type={masked ? "password" : "text"}
+          placeholder="Your password"
+          value={password}
+          onChange={e => setPassword(e.currentTarget.value)}
+          onKeyDown={onKeyDown} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            type="button"
+            onClick={() => setMasked(!masked)}>
+            <InButton>
+              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+            </InButton>
+          </button>
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            type="button">
+            <InButton>
+              <Outline.FingerPrintIcon className="size-5" />
+            </InButton>
+          </button>
+        </div>
+      </div>
+      {user.fsfh == null &&
+        <input className="h-0 opacity-0"
+          type="file"
+          accept="application/octet-stream,.kdbx"
+          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])}
+          ref={setPicker} />}
+    </div>
+  </div>
+}
+
 function UserMenuButton(props: { user: UserData }) {
   const { user } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, `/${user.uuid}`)
+  const coords = useAnchorWithCoords(hash, `/${user.uuid}/menu`)
 
-  return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+  return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>

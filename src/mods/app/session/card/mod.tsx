@@ -73,7 +73,7 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
           onFocus={e => e.currentTarget.select()}
           value={num} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={copyTheNum.copyOrAlert}>
             <InButton>
@@ -99,7 +99,7 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
           onFocus={e => e.currentTarget.select()}
           value={hol} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={copyTheHol.copyOrAlert}>
             <InButton>
@@ -125,7 +125,7 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
           onFocus={e => e.currentTarget.select()}
           value={exp} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={copyTheExp.copyOrAlert}>
             <InButton>
@@ -152,14 +152,14 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
           onFocus={e => e.currentTarget.select()}
           value={cvv} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={copyTheCvv.copyOrAlert}>
             <InButton>
@@ -186,14 +186,14 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
           onFocus={e => e.currentTarget.select()}
           value={pin} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={copyThePin.copyOrAlert}>
             <InButton>

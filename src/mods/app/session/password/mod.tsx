@@ -97,7 +97,7 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
           onFocus={e => e.currentTarget.select()}
           value={username} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={copyTheUsername.copyOrAlert}>
             <InButton>
@@ -124,14 +124,14 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
           type={masked ? "password" : "text"}
           value={password} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={copyThePassword.copyOrAlert}>
             <InButton>
@@ -404,14 +404,14 @@ export function SessionPasswordAddWindow() {
           onChange={e => setPassword(e.target.value)}
           value={password} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity">
+          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all">
             <InAnchor>
               <Outline.SparklesIcon className="size-5" />
             </InAnchor>
@@ -434,14 +434,14 @@ export function SessionPasswordAddWindow() {
           onChange={e => setTotpseed(e.target.value)}
           value={totpseed} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity">
+          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all">
             <InAnchor>
               <Outline.QrCodeIcon className="size-5" />
             </InAnchor>

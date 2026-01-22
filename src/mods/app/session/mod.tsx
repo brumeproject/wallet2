@@ -246,7 +246,7 @@ function SessionAccountAddButtonInGrid() {
 
   const coords = useAnchorWithCoords(hash, "/add")
 
-  return <a className="group w-[320px] aspect-video p-4 rounded-xl border-2 border-dashed border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-opacity"
+  return <a className="group w-[320px] aspect-video p-4 rounded-xl border-2 border-dashed border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-all"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -285,10 +285,10 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           })()}
         </PathWindow>}
     </SubpathProvider>
-    <a className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default focus-visible:data-[color=red]:outline-red-500/90 focus-visible:data-[color=blue]:outline-blue-500/90 focus-visible:data-[color=3]:outline-green-500/90 transition-opacity"
+    <a className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default focus-visible:data-[color=red]:outline-red-500/90 focus-visible:data-[color=blue]:outline-blue-500/90 focus-visible:data-[color=3]:outline-green-500/90 transition-all"
       data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
       data-color={getEntryColor($entry)}
-      href={coords.url.href}
+      href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
       <div className="font-medium text-xl text-wrap wrap-anywhere">
@@ -530,7 +530,7 @@ function SessionMoreButton() {
 
   const coords = useAnchorWithCoords(hash, "/menu")
 
-  return <a className="group p-2 bg-opposite text-opposite rounded-xl not-aria-disabled:hover:bg-opposite-double-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-opposite aria-disabled:opacity-50 transition-opacity"
+  return <a className="group p-2 bg-opposite text-opposite rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-opposite transition-all"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>

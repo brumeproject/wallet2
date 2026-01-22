@@ -267,8 +267,6 @@ export function App() {
   </Fragment>
 }
 
-
-
 function SettingsButton() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
