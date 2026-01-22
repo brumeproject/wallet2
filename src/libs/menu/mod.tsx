@@ -150,7 +150,7 @@ export function Menu(props: ChildrenProps & { x: number; y: number }) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus:outline-none border border-default-contrast rounded-2xl p-2 [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] [--l:${l}px] [--t:${t}px] [translate:var(--l)_var(--t)] ${premount ? "animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
+    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus:outline-none border border-default-contrast rounded-xl p-2 [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] [--l:${l}px] [--t:${t}px] [translate:var(--l)_var(--t)] ${premount ? "animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}

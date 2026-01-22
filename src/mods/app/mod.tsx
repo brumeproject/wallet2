@@ -363,7 +363,7 @@ function SettingsWindow() {
       Custom name and icon to hide the app
     </div>
     <div className="h-4" />
-    <div className="flex flex-col items-center p-8">
+    <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
       {appicon == null &&
         <div className="relative size-24 border border-dashed border-default-contrast flex items-center justify-center rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
           <input className="absolute w-full h-full opacity-0 cursor-pointer rounded-xl"
