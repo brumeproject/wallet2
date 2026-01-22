@@ -814,9 +814,7 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
       return
     }
 
-    const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
-
-    await openOrAlert2(stored)
+    await openOrAlert2(await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 })
   }, [user, openOrAlert2, picker2])
 
   return <div className="flex flex-col items-center justify-center grow p-6">
