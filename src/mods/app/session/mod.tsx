@@ -159,7 +159,9 @@ export function SessionScreen() {
                 <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
                   <SessionAccountCardInGrid $entry={$entry} />
                 </Fragment>)}
-              <SessionAccountAddButtonInGrid />
+              {filter !== "trash" && <Fragment>
+                <SessionAccountAddButtonInGrid />
+              </Fragment>}
             </div>
           </div>
         </div>}
