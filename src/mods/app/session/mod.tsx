@@ -5,10 +5,10 @@ import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
 import { PathMenu, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.tsx";
 import { ChildrenProps } from "@/libs/props/mod.ts";
-import { PathWindow, Window } from "@/libs/window/mod.tsx";
+import { PathWindow } from "@/libs/window/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
+import { useCloseContext } from "@hazae41/react-close-context";
 import { Option } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
@@ -234,27 +234,22 @@ export function SessionScreen() {
   </Fragment>
 }
 
-// TODO anchorize, fix focus outline on color
 function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
-  const [opened, setOpened] = useState<{ x: number, y: number }>()
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
-  const open = useCallback((e: MouseEvent<HTMLButtonElement>) => {
-    const x = e.clientX
-    const y = e.clientY
+  const uuid = useMemo(() => {
+    return $entry.getUuidOrThrow().getOrThrow()
+  }, [$entry])
 
-    setOpened({ x, y })
-  }, [])
-
-  const close = useCallback(() => {
-    setOpened(undefined)
-  }, [])
+  const coords = useAnchorWithCoords(hash, `/account/${uuid}`)
 
   return <Fragment>
-    <CloseContext.Provider value={close}>
-      {opened &&
-        <Window x={opened.x} y={opened.y} >
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === `/account/${uuid}` &&
+        <PathWindow>
           {(() => {
             const type = getEntryType($entry)
 
@@ -266,13 +261,14 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
             return null
           })()}
-        </Window>}
-    </CloseContext.Provider>
-    <button className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none cursor-pointer data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 focus:outline-2 focus:outline-offset-2 focus:outline-default transition-opacity"
-      type="button"
+        </PathWindow>}
+    </SubpathProvider>
+    <a className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 focus:outline-2 focus:outline-offset-2 focus:outline-default focus:data-[color=red]:outline-red-500/90 focus:data-[color=blue]:outline-blue-500/90 focus:data-[color=3]:outline-green-500/90 transition-opacity"
       data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
       data-color={getEntryColor($entry)}
-      onClick={open}>
+      href={coords.url.href}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}>
       <div className="font-medium text-xl text-wrap wrap-anywhere">
         {getEntryTitle($entry) || "Untitled"}
       </div>
@@ -346,7 +342,7 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           return null
         })()}
       </div>
-    </button>
+    </a>
   </Fragment>
 }
 
