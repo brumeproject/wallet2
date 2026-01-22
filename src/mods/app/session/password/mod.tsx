@@ -339,7 +339,7 @@ export function SessionPasswordAddWindow() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <div className="w-80 aspect-video flex flex-col bg-default text-default selection-default data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
+        <div className="w-80 aspect-video flex flex-col bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
           data-theme={color == null ? "opposite" : "dark"}
           data-color={color}>
           <div className="font-medium text-xl text-wrap wrap-anywhere">
