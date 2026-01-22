@@ -8,12 +8,12 @@ import { ChildrenProps } from "@/libs/props/mod.ts";
 import { PathWindow, Window } from "@/libs/window/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { CloseContext } from "@hazae41/react-close-context";
+import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import { Option } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { UserData } from "../user/mod.tsx";
-import { SessionCardAccountWindow, SessionCardAddAnchor, SessionCardAddWindow } from "./card/mod.tsx";
+import { SessionCardAccountWindow, SessionCardAddAnchor } from "./card/mod.tsx";
 import { SessionPasswordAccountWindow, SessionPasswordAddAnchor, SessionPasswordAddWindow } from "./password/mod.tsx";
 
 React;
@@ -56,6 +56,8 @@ export function SessionProvider(props: ChildrenProps & { value: SessionData }) {
 }
 
 export function SessionScreen() {
+  const close = useCloseContext().getOrThrow()
+
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -108,11 +110,15 @@ export function SessionScreen() {
     })
   }, [entries, filter, dsearch])
 
+  const logout = useCallback(() => {
+    close()
+  }, [close])
+
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/menu" &&
         <PathMenu>
-          <SessionMoreMenu />
+          <SessionMoreMenu logout={logout} />
         </PathMenu>}
       {hash.url.pathname === "/add" &&
         <PathMenu>
@@ -513,7 +519,9 @@ function SessionMoreButton() {
   </a>
 }
 
-function SessionMoreMenu() {
+function SessionMoreMenu(props: { logout(): void }) {
+  const { logout } = props
+
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -527,16 +535,21 @@ function SessionMoreMenu() {
         <PathWindow>
           <SessionPasswordAddWindow />
         </PathWindow>}
-      {hash.url.pathname === "/add/card" &&
+      {/* {hash.url.pathname === "/add/card" &&
         <PathWindow>
           <SessionCardAddWindow />
-        </PathWindow>}
+        </PathWindow>} */}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <SessionMoreMenuAccountAddButton />
       <WideNakedMenuButton>
         <Outline.GlobeAltIcon className="size-5" />
         Connections
+      </WideNakedMenuButton>
+      <WideNakedMenuButton
+        onClick={logout}>
+        <Outline.LockClosedIcon className="size-5" />
+        Logout
       </WideNakedMenuButton>
     </div>
   </Fragment>
