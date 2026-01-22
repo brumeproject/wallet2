@@ -817,55 +817,53 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
     await openOrAlert2(await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 })
   }, [user, openOrAlert2, picker2])
 
-  return <div className="flex flex-col items-center justify-center grow p-6">
-    <div className="grow flex flex-col items-center py-24">
-      <div className="rounded-full size-16 text-4xl flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
-        {user.name.slice(0, 1).toUpperCase()}
-      </div>
-      <div className="h-4" />
-      <h1 className="text-xl font-medium">
-        {user.name}
-      </h1>
-      <div className="h-6" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <input className="focus-visible:outline-none"
-          type={masked ? "password" : "text"}
-          placeholder="Your password"
-          value={password}
-          onChange={e => setPassword(e.currentTarget.value)}
-          onKeyDown={onKeyDown}
-          ref={useAutoFocus()} />
-        <div className="flex items-center gap-2">
+  return <div className="flex flex-col items-center justify-center grow p-6 py-24">
+    <div className="rounded-full size-16 text-4xl flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
+      {user.name.slice(0, 1).toUpperCase()}
+    </div>
+    <div className="h-4" />
+    <h1 className="text-xl font-medium">
+      {user.name}
+    </h1>
+    <div className="h-6" />
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="focus-visible:outline-none"
+        type={masked ? "password" : "text"}
+        placeholder="Your password"
+        value={password}
+        onChange={e => setPassword(e.currentTarget.value)}
+        onKeyDown={onKeyDown}
+        ref={useAutoFocus()} />
+      <div className="flex items-center gap-2">
+        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          type="button"
+          onClick={() => setMasked(!masked)}>
+          <InButton>
+            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+          </InButton>
+        </button>
+        {user.pass != null &&
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={onPassClick}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              <Outline.FingerPrintIcon className="size-5" />
             </InButton>
-          </button>
-          {user.pass != null &&
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-              type="button"
-              onClick={onPassClick}>
-              <InButton>
-                <Outline.FingerPrintIcon className="size-5" />
-              </InButton>
-            </button>}
-        </div>
+          </button>}
       </div>
-      {user.fsfh == null &&
-        <input className="h-0 opacity-0"
-          type="file"
-          accept="application/octet-stream,.kdbx"
-          onChange={e => setFile1(e.currentTarget.files?.[0])}
-          ref={setPicker1} />}
-      {user.fsfh == null &&
-        <input className="h-0 opacity-0"
-          type="file"
-          accept="application/octet-stream,.kdbx"
-          onChange={e => setFile2(e.currentTarget.files?.[0])}
-          ref={setPicker2} />}
     </div>
+    {user.fsfh == null &&
+      <input className="h-0 opacity-0"
+        type="file"
+        accept="application/octet-stream,.kdbx"
+        onChange={e => setFile1(e.currentTarget.files?.[0])}
+        ref={setPicker1} />}
+    {user.fsfh == null &&
+      <input className="h-0 opacity-0"
+        type="file"
+        accept="application/octet-stream,.kdbx"
+        onChange={e => setFile2(e.currentTarget.files?.[0])}
+        ref={setPicker2} />}
   </div>
 }
 
