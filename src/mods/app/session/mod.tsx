@@ -10,7 +10,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, u
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Option } from "@hazae41/result-and-option";
-import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from "react";
+import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { UserData } from "../user/mod.tsx";
 import { SessionCardAccountWindow, SessionCardAddAnchor } from "./card/mod.tsx";
@@ -69,10 +69,6 @@ export function SessionScreen() {
   const [filter, setFilter] = useSearchState(path, "filter")
 
   const dsearch = useDeferredValue(search)
-
-  useEffect(() => () => {
-    console.log("SessionScreen unmounted")
-  }, [])
 
   useMemo(() => {
     if (!filter)
