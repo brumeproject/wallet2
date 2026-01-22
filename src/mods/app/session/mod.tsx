@@ -246,7 +246,7 @@ function SessionAccountAddButtonInGrid() {
 
   const coords = useAnchorWithCoords(hash, "/add")
 
-  return <a className="group w-[320px] aspect-video p-4 rounded-xl border-2 border-dashed border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-all"
+  return <a className="group w-[320px] aspect-video rounded-xl border-2 border-dashed border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-all"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>

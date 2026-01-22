@@ -15,6 +15,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { DragEvent, Fragment, KeyboardEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useAutoFocus } from "../../../libs/focus/mod.ts";
 import { SessionData } from "../session/mod.tsx";
 
 React;
@@ -681,7 +682,7 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
 
   const [masked, setMasked] = useState(true)
 
-  const loadOrAlert = useCallback((user: UserData, file?: File) => Promise.try(async () => {
+  const loadOrAlert = useCallback((file?: File) => Promise.try(async () => {
     if (file == null)
       return
     if (!password)
@@ -700,15 +701,15 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
     close()
   }).catch(Errors.display), [user, login, password, close])
 
-  const openOrAlert = useCallback((user: UserData, fsfh?: Nullable<FileSystemFileHandle>) => Promise.try(async () => {
-    if (fsfh == null)
+  const openOrAlert = useCallback(() => Promise.try(async () => {
+    if (user.fsfh == null)
       return
     if (!password)
       return
 
-    await fsfh.requestPermission({ mode: "readwrite" })
+    await user.fsfh.requestPermission({ mode: "readwrite" })
 
-    const file = await fsfh.getFile()
+    const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
@@ -722,19 +723,18 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
     close()
   }).catch(Errors.display), [user, login, password, close])
 
-  const openFromPassOrAlert = useCallback((user: UserData, fsfh?: Nullable<FileSystemFileHandle>) => Promise.try(async () => {
-    if (fsfh == null)
+  const loadFromPassOrAlert = useCallback((file?: File) => Promise.try(async () => {
+    if (file == null)
       return
-    if (!password)
+    if (user.pass == null)
       return
 
-    await fsfh.requestPermission({ mode: "readwrite" })
+    const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
 
-    const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const composite = new KDBX.CompositeKey(new Unknown(stored))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
     console.log(decrypted.inner.content.value.document)
@@ -742,19 +742,44 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
     login({ user, kdbx: decrypted })
 
     close()
-  }).catch(Errors.display), [user, login, password, close])
+  }).catch(Errors.display), [user, login, close])
 
-  const [picker, setPicker] = useState<Nullable<HTMLInputElement>>()
+  const openFromPassOrAlert = useCallback((user: UserData) => Promise.try(async () => {
+    if (user.pass == null)
+      return
+    if (user.fsfh == null)
+      return
+
+    const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
+
+    await user.fsfh.requestPermission({ mode: "readwrite" })
+
+    const file = await user.fsfh.getFile()
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = new KDBX.CompositeKey(new Unknown(stored))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    login({ user, kdbx: decrypted })
+
+    close()
+  }).catch(Errors.display), [user, login, close])
+
+  const [picker1, setPicker1] = useState<Nullable<HTMLInputElement>>()
+  const [picker2, setPicker2] = useState<Nullable<HTMLInputElement>>()
 
   const onKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter")
       return
 
     if (user.fsfh == null)
-      return void picker?.click()
+      return void picker1?.click()
 
-    openOrAlert(user, user.fsfh)
-  }, [user, openOrAlert, picker])
+    openOrAlert()
+  }, [user, openOrAlert, picker1])
 
   return <div className="flex flex-col items-center justify-center grow p-6">
     <div className="grow flex flex-col items-center py-24">
@@ -772,7 +797,8 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
           placeholder="Your password"
           value={password}
           onChange={e => setPassword(e.currentTarget.value)}
-          onKeyDown={onKeyDown} />
+          onKeyDown={onKeyDown}
+          ref={useAutoFocus()} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
@@ -781,20 +807,36 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button">
-            <InButton>
-              <Outline.FingerPrintIcon className="size-5" />
-            </InButton>
-          </button>
+          {user.pass != null && user.fsfh != null &&
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={() => openFromPassOrAlert(user)}>
+              <InButton>
+                <Outline.FingerPrintIcon className="size-5" />
+              </InButton>
+            </button>}
+          {user.pass != null && user.fsfh == null &&
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={() => picker2?.click()}>
+              <InButton>
+                <Outline.FingerPrintIcon className="size-5" />
+              </InButton>
+            </button>}
         </div>
       </div>
       {user.fsfh == null &&
         <input className="h-0 opacity-0"
           type="file"
           accept="application/octet-stream,.kdbx"
-          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])}
-          ref={setPicker} />}
+          onChange={e => loadOrAlert(e.currentTarget.files?.[0])}
+          ref={setPicker1} />}
+      {user.fsfh == null &&
+        <input className="h-0 opacity-0"
+          type="file"
+          accept="application/octet-stream,.kdbx"
+          onChange={e => loadFromPassOrAlert(e.currentTarget.files?.[0])}
+          ref={setPicker2} />}
     </div>
   </div>
 }
