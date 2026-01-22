@@ -682,104 +682,142 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
 
   const [masked, setMasked] = useState(true)
 
-  const loadOrAlert = useCallback((file?: File) => Promise.try(async () => {
-    if (file == null)
-      return
-    if (!password)
-      return
-
-    const data = new Uint8Array(await file.arrayBuffer())
-
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, kdbx: decrypted })
-
-    close()
-  }).catch(Errors.display), [user, login, password, close])
-
-  const openOrAlert = useCallback(() => Promise.try(async () => {
-    if (user.fsfh == null)
-      return
-    if (!password)
-      return
-
-    await user.fsfh.requestPermission({ mode: "readwrite" })
-
-    const file = await user.fsfh.getFile()
-    const data = new Uint8Array(await file.arrayBuffer())
-
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, kdbx: decrypted })
-
-    close()
-  }).catch(Errors.display), [user, login, password, close])
-
-  const loadFromPassOrAlert = useCallback((file?: File) => Promise.try(async () => {
-    if (file == null)
-      return
-    if (user.pass == null)
-      return
-
-    const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
-
-    const data = new Uint8Array(await file.arrayBuffer())
-
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = new KDBX.CompositeKey(new Unknown(stored))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, kdbx: decrypted })
-
-    close()
-  }).catch(Errors.display), [user, login, close])
-
-  const openFromPassOrAlert = useCallback((user: UserData) => Promise.try(async () => {
-    if (user.pass == null)
-      return
-    if (user.fsfh == null)
-      return
-
-    const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
-
-    await user.fsfh.requestPermission({ mode: "readwrite" })
-
-    const file = await user.fsfh.getFile()
-    const data = new Uint8Array(await file.arrayBuffer())
-
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = new KDBX.CompositeKey(new Unknown(stored))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, kdbx: decrypted })
-
-    close()
-  }).catch(Errors.display), [user, login, close])
+  const [stored, setStored] = useState<Nullable<Uint8Array<ArrayBuffer> & { length: 32 }>>()
 
   const [picker1, setPicker1] = useState<Nullable<HTMLInputElement>>()
   const [picker2, setPicker2] = useState<Nullable<HTMLInputElement>>()
 
-  const onKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
+  const [file1, setFile1] = useState<Nullable<File>>()
+  const [file2, setFile2] = useState<Nullable<File>>()
+
+  const loadOrAlert1 = useCallback(() => Promise.try(async () => {
+    if (file1 == null)
+      return
+    if (!password)
+      return
+
+    const data = new Uint8Array(await file1.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    login({ user, kdbx: decrypted })
+
+    close()
+  }).catch(Errors.display), [user, login, file1, password, close])
+
+  const loadOrAlert2 = useCallback(() => Promise.try(async () => {
+    if (file2 == null)
+      return
+    if (stored == null)
+      return
+
+    const data = new Uint8Array(await file2.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = new KDBX.CompositeKey(new Unknown(stored))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    login({ user, kdbx: decrypted })
+
+    close()
+  }).catch(Errors.display), [user, login, file2, stored, close])
+
+  useEffect(() => {
+    if (file1 == null)
+      return
+    if (!password)
+      return
+    loadOrAlert1().catch(console.error)
+  }, [file1, password, loadOrAlert1])
+
+  useEffect(() => {
+    if (file2 == null)
+      return
+    if (stored == null)
+      return
+    loadOrAlert2().catch(console.error)
+  }, [file2, stored, loadOrAlert2])
+
+  const openOrAlert1 = useCallback(() => Promise.try(async () => {
+    if (user.fsfh == null)
+      return
+    if (!password)
+      return
+
+    await user.fsfh.requestPermission({ mode: "readwrite" })
+
+    const file = await user.fsfh.getFile()
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    login({ user, kdbx: decrypted })
+
+    close()
+  }).catch(Errors.display), [user, login, password, close])
+
+  const openOrAlert2 = useCallback((stored: Uint8Array<ArrayBuffer> & { length: 32 }) => Promise.try(async () => {
+    if (user.pass == null)
+      return
+    if (user.fsfh == null)
+      return
+    if (stored == null)
+      return
+
+    await user.fsfh.requestPermission({ mode: "readwrite" })
+
+    const file = await user.fsfh.getFile()
+    const data = new Uint8Array(await file.arrayBuffer())
+
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const composite = new KDBX.CompositeKey(new Unknown(stored))
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    console.log(decrypted.inner.content.value.document)
+
+    login({ user, kdbx: decrypted })
+
+    close()
+  }).catch(Errors.display), [user, login, stored, close])
+
+  const onKeyDown = useCallback(async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter")
       return
 
-    if (user.fsfh == null)
-      return void picker1?.click()
+    if (user.fsfh == null) {
+      picker1!.click()
+      return
+    }
 
-    openOrAlert()
-  }, [user, openOrAlert, picker1])
+    await openOrAlert1()
+  }, [user, openOrAlert1, picker1])
+
+  const onPassClick = useCallback(async () => {
+    if (user.pass == null)
+      return
+
+    if (user.fsfh == null) {
+      picker2!.click()
+
+      setStored(await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 })
+
+      return
+    }
+
+    const stored = await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 }
+
+    await openOrAlert2(stored)
+  }, [user, openOrAlert2, picker2])
 
   return <div className="flex flex-col items-center justify-center grow p-6">
     <div className="grow flex flex-col items-center py-24">
@@ -807,18 +845,10 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          {user.pass != null && user.fsfh != null &&
+          {user.pass != null &&
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
               type="button"
-              onClick={() => openFromPassOrAlert(user)}>
-              <InButton>
-                <Outline.FingerPrintIcon className="size-5" />
-              </InButton>
-            </button>}
-          {user.pass != null && user.fsfh == null &&
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-              type="button"
-              onClick={() => picker2?.click()}>
+              onClick={onPassClick}>
               <InButton>
                 <Outline.FingerPrintIcon className="size-5" />
               </InButton>
@@ -829,13 +859,13 @@ function UserLoginWindow(props: { user: UserData } & { login(session: SessionDat
         <input className="h-0 opacity-0"
           type="file"
           accept="application/octet-stream,.kdbx"
-          onChange={e => loadOrAlert(e.currentTarget.files?.[0])}
+          onChange={e => setFile1(e.currentTarget.files?.[0])}
           ref={setPicker1} />}
       {user.fsfh == null &&
         <input className="h-0 opacity-0"
           type="file"
           accept="application/octet-stream,.kdbx"
-          onChange={e => loadFromPassOrAlert(e.currentTarget.files?.[0])}
+          onChange={e => setFile2(e.currentTarget.files?.[0])}
           ref={setPicker2} />}
     </div>
   </div>
