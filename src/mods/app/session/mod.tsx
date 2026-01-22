@@ -150,11 +150,13 @@ export function SessionScreen() {
         </div>}
       {display &&
         <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
-          <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-baseline overflow-y-scroll overscroll-y-none gap-4 py-1 px-3">
-            {visibles.map($entry =>
-              <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                <SessionAccountCardInGrid $entry={$entry} />
-              </Fragment>)}
+          <div className="grow flex flex-col overflow-y-auto overscroll-y-none py-1 px-3">
+            <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-center gap-4">
+              {visibles.map($entry =>
+                <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
+                  <SessionAccountCardInGrid $entry={$entry} />
+                </Fragment>)}
+            </div>
           </div>
         </div>}
       <div className="h-4 shrink-0" />
