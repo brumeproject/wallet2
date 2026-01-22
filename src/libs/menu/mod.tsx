@@ -150,7 +150,7 @@ export function Menu(props: ChildrenProps & { x: number; y: number }) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus:outline-none border border-default-contrast rounded-xl p-2 [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] [--l:${l}px] [--t:${t}px] [translate:var(--l)_var(--t)] ${premount ? "animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
+    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] [--l:${l}px] [--t:${t}px] [translate:var(--l)_var(--t)] ${premount ? "animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
@@ -180,7 +180,7 @@ export function InMenuButton(props: ChildrenProps) {
 export function WideNakedMenuAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
   const { children, "aria-disabled": disabled = false, ...rest } = props
 
-  return <a className="group flex-1 po-2 rounded-xl focus:outline-none whitespace-nowrap not-aria-disabled:hover:bg-default-double-contrast focus:bg-default-double-contrast aria-disabled:opacity-50 transition-opacity"
+  return <a className="group flex-1 po-2 rounded-xl focus-visible:outline-none whitespace-nowrap not-aria-disabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast aria-disabled:opacity-50 transition-opacity"
     aria-disabled={disabled}
     {...rest}>
     <InMenuAnchor>
@@ -192,7 +192,7 @@ export function WideNakedMenuAnchor(props: ChildrenProps & JSX.IntrinsicElements
 export function WideNakedMenuButton(props: ChildrenProps & JSX.IntrinsicElements["button"]) {
   const { children, ...rest } = props
 
-  return <button className="group flex-1 po-2 rounded-xl focus:outline-none whitespace-nowrap enabled:hover:bg-default-double-contrast focus:bg-default-double-contrast disabled:opacity-50 transition-opacity"
+  return <button className="group flex-1 po-2 rounded-xl focus-visible:outline-none whitespace-nowrap enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast disabled:opacity-50 transition-opacity"
     {...rest}>
     <InMenuButton>
       {children}

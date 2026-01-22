@@ -66,14 +66,14 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         Your card number
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.HashtagIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           readOnly
           onFocus={e => e.currentTarget.select()}
           value={num} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={copyTheNum.copyOrAlert}>
             <InButton>
@@ -92,14 +92,14 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         Your card holder name
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.LanguageIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           readOnly
           onFocus={e => e.currentTarget.select()}
           value={hol} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={copyTheHol.copyOrAlert}>
             <InButton>
@@ -118,14 +118,14 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         Your card expiry date
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.CalendarIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           readOnly
           onFocus={e => e.currentTarget.select()}
           value={exp} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={copyTheExp.copyOrAlert}>
             <InButton>
@@ -144,22 +144,22 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         Your card verification value
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.CalendarIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           readOnly
           type={masked ? "password" : "text"}
           onFocus={e => e.currentTarget.select()}
           value={cvv} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={copyTheCvv.copyOrAlert}>
             <InButton>
@@ -178,22 +178,22 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         Your card personal identification number
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.CalendarIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           readOnly
           type={masked ? "password" : "text"}
           onFocus={e => e.currentTarget.select()}
           value={pin} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={copyThePin.copyOrAlert}>
             <InButton>
@@ -212,8 +212,8 @@ export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile
         Any additional information
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-        <textarea className="w-full resize-none focus:outline-none"
+      <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <textarea className="w-full resize-none focus-visible:outline-none"
           readOnly
           rows={6}
           value={notes} />

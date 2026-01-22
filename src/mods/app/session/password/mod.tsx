@@ -90,14 +90,14 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
         Your username or email
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.AtSymbolIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           readOnly
           onFocus={e => e.currentTarget.select()}
           value={username} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={copyTheUsername.copyOrAlert}>
             <InButton>
@@ -116,22 +116,22 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
         Your password
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.LanguageIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           readOnly
           onFocus={e => e.currentTarget.select()}
           type={masked ? "password" : "text"}
           value={password} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={copyThePassword.copyOrAlert}>
             <InButton>
@@ -150,7 +150,7 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
         Your time-based one-time passcode
       </div>
       <div className="h-4" />
-      <input className="p-8 rounded-xl bg-default-contrast text-center focus:outline-none text-6xl font-mono tracking-widest"
+      <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
         readOnly
         onClick={copyTheTotpcode.copyOrAlert}
         value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
@@ -164,8 +164,8 @@ export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePass
         Any additional information
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-        <textarea className="w-full resize-none focus:outline-none"
+      <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <textarea className="w-full resize-none focus-visible:outline-none"
           readOnly
           rows={6}
           value={notes} />
@@ -366,9 +366,9 @@ export function SessionPasswordAddWindow() {
         A name to identify this account
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.TagIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           placeholder="My Account"
           onChange={e => setTitle(e.target.value)}
           value={title} />
@@ -381,9 +381,9 @@ export function SessionPasswordAddWindow() {
         Your username or email
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.AtSymbolIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           placeholder="john.doe@mail.com"
           onChange={e => setUsername(e.target.value)}
           value={username} />
@@ -396,22 +396,22 @@ export function SessionPasswordAddWindow() {
         Your password
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.LanguageIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           type={masked ? "password" : "text"}
           placeholder={masked ? "••••••••••••••••••••••••" : "u#fH@WMNn3BY7LFzaR$B4GBM"}
           onChange={e => setPassword(e.target.value)}
           value={password} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity">
+          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity">
             <InAnchor>
               <Outline.SparklesIcon className="size-5" />
             </InAnchor>
@@ -426,22 +426,22 @@ export function SessionPasswordAddWindow() {
         Your time-based one-time passcode
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <Outline.HashtagIcon className="size-5" />
-        <input className="w-full focus:outline-none"
+        <input className="w-full focus-visible:outline-none"
           type={masked ? "password" : "text"}
           placeholder={masked ? "••••••••••••••••••••••••••••••••" : "MQCHJLS6FJXT2BGQJ6QMG3WCAVUC2HJZ"}
           onChange={e => setTotpseed(e.target.value)}
           value={totpseed} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity">
+          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity">
             <InAnchor>
               <Outline.QrCodeIcon className="size-5" />
             </InAnchor>
@@ -449,7 +449,7 @@ export function SessionPasswordAddWindow() {
         </div>
       </div>
       <div className="h-4" />
-      <input className="p-8 rounded-xl bg-default-contrast text-center focus:outline-none text-6xl font-mono tracking-widest"
+      <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
         readOnly
         onClick={copyTheTotpcode.copyOrAlert}
         value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
@@ -461,8 +461,8 @@ export function SessionPasswordAddWindow() {
         Any additional information
       </div>
       <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-        <textarea className="w-full resize-none focus:outline-none"
+      <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <textarea className="w-full resize-none focus-visible:outline-none"
           rows={6}
           placeholder="I use this account for..."
           onChange={e => setNotes(e.target.value)}

@@ -96,6 +96,9 @@ export function SessionScreen() {
   }, [session])
 
   const visibles = useMemo(() => {
+    if (!filter && !dsearch)
+      return entries
+
     return entries.filter($entry => {
       if (filter == null)
         return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
@@ -156,61 +159,62 @@ export function SessionScreen() {
                 <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
                   <SessionAccountCardInGrid $entry={$entry} />
                 </Fragment>)}
+              <SessionAccountAddButtonInGrid />
             </div>
           </div>
         </div>}
       <div className="h-4 shrink-0" />
       <div className="flex flex-wrap items-center gap-2">
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "password"}
           onClick={() => filter === "password" ? setFilter(undefined) : setFilter("password")}>
           <Outline.LanguageIcon className="size-5" />
           Passwords
         </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "ethereum"}
           onClick={() => filter === "ethereum" ? setFilter(undefined) : setFilter("ethereum")}>
           <Outline.CubeIcon className="size-5" />
           Ethereum
         </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "solana"}
           onClick={() => filter === "solana" ? setFilter(undefined) : setFilter("solana")}>
           <Outline.CubeIcon className="size-5" />
           Solana
         </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "bitcoin"}
           onClick={() => filter === "bitcoin" ? setFilter(undefined) : setFilter("bitcoin")}>
           <Outline.BanknotesIcon className="size-5" />
           Bitcoin
         </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "monero"}
           onClick={() => filter === "monero" ? setFilter(undefined) : setFilter("monero")}>
           <Outline.BanknotesIcon className="size-5" />
           Monero
         </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "card"}
           onClick={() => filter === "card" ? setFilter(undefined) : setFilter("card")}>
           <Outline.CreditCardIcon className="size-5" />
           Cards
         </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "seed"}
           onClick={() => filter === "seed" ? setFilter(undefined) : setFilter("seed")}>
           <Outline.SparklesIcon className="size-5" />
           Seeds
         </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast aria-selected:focus:outline-opposite"
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "trash"}
           onClick={() => filter === "trash" ? setFilter(undefined) : setFilter("trash")}>
@@ -221,9 +225,9 @@ export function SessionScreen() {
       <div className="h-4 shrink-0" />
       <div className="flex items-center gap-2">
         <SessionMoreButton />
-        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <Outline.MagnifyingGlassIcon className="size-5" />
-          <input className="w-full focus:outline-none"
+          <input className="w-full focus-visible:outline-none"
             placeholder="Search"
             onChange={e => setSearch(e.target.value)}
             ref={useAutoFocus()}
@@ -232,6 +236,22 @@ export function SessionScreen() {
       </div>
     </div>
   </Fragment>
+}
+
+function SessionAccountAddButtonInGrid() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/add")
+
+  return <a className="group w-[320px] aspect-video p-4 rounded-xl border-2 border-dashed border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-opacity"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <InAnchor>
+      <Outline.PlusIcon className="size-8" />
+    </InAnchor>
+  </a>
 }
 
 function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
@@ -263,7 +283,7 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           })()}
         </PathWindow>}
     </SubpathProvider>
-    <a className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 focus:outline-2 focus:outline-offset-2 focus:outline-default focus:data-[color=red]:outline-red-500/90 focus:data-[color=blue]:outline-blue-500/90 focus:data-[color=3]:outline-green-500/90 transition-opacity"
+    <a className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default focus-visible:data-[color=red]:outline-red-500/90 focus-visible:data-[color=blue]:outline-blue-500/90 focus-visible:data-[color=3]:outline-green-500/90 transition-opacity"
       data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
       data-color={getEntryColor($entry)}
       href={coords.url.href}
@@ -508,7 +528,7 @@ function SessionMoreButton() {
 
   const coords = useAnchorWithCoords(hash, "/menu")
 
-  return <a className="group p-2 bg-opposite text-opposite rounded-xl not-aria-disabled:hover:bg-opposite-double-contrast focus:outline-2 focus:outline-offset-2 focus:outline-opposite aria-disabled:opacity-50 transition-opacity"
+  return <a className="group p-2 bg-opposite text-opposite rounded-xl not-aria-disabled:hover:bg-opposite-double-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-opposite aria-disabled:opacity-50 transition-opacity"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -540,7 +560,6 @@ function SessionMoreMenu(props: { logout(): void }) {
         </PathWindow>} */}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
-      <SessionMoreMenuAccountAddButton />
       <WideNakedMenuButton>
         <Outline.GlobeAltIcon className="size-5" />
         Connections
@@ -552,19 +571,4 @@ function SessionMoreMenu(props: { logout(): void }) {
       </WideNakedMenuButton>
     </div>
   </Fragment>
-}
-
-function SessionMoreMenuAccountAddButton() {
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const coords = useAnchorWithCoords(hash, "/add")
-
-  return <WideNakedMenuAnchor
-    href={coords.url.hash}
-    onClick={coords.onClick}
-    onKeyDown={coords.onKeyDown}>
-    <Outline.PlusIcon className="size-5" />
-    Add account
-  </WideNakedMenuAnchor>
 }

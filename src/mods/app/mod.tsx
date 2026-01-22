@@ -224,7 +224,7 @@ export function App() {
             </div>
           </div>
           <div className="h-[max(24rem,50dvh)]" />
-          <a className="text-center hover:underline focus:underline focus:outline-none"
+          <a className="text-center hover:underline focus-visible:underline focus-visible:outline-none"
             href="https://brume.tech"
             target="_blank noreferrer">
             {Lang.match({
@@ -365,7 +365,7 @@ function SettingsWindow() {
     <div className="h-4" />
     <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
       {appicon == null &&
-        <div className="relative size-24 border border-dashed border-default-contrast flex items-center justify-center rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+        <div className="relative size-24 border-2 border-dashed border-default-contrast flex items-center justify-center rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="absolute w-full h-full opacity-0 cursor-pointer rounded-xl"
             type="file"
             accept="image/*"
@@ -373,13 +373,13 @@ function SettingsWindow() {
           <Outline.ArrowUpTrayIcon className="size-6 text-default-contrast" />
         </div>}
       {appicon != null &&
-        <button className="focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+        <button className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
           type="button"
           onClick={onIconRemove}>
           <img className="size-24 rounded-xl bg-opposite" src={appicon} />
         </button>}
       <div className="h-4" />
-      <input className="text-center bg-default-contrast po-2 rounded-xl focus:outline-2 focus:outline-offset-2 focus:outline-default-contrast"
+      <input className="text-center bg-default-contrast po-2 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
         placeholder="Wallet"
         value={appname || ""}
         onChange={onNameChange} />

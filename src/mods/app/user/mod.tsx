@@ -105,7 +105,7 @@ function UserAddButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast border-dashed">
+    <div className="rounded-full size-7 flex justify-center items-center border-2 border-dashed border-default-contrast">
       <Outline.PlusIcon className="size-4" />
     </div>
     Add user
@@ -221,8 +221,8 @@ function UserImportFileWindow() {
       Will be used locally for display purposes
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
@@ -235,7 +235,7 @@ function UserImportFileWindow() {
       Your existing KDBX file
     </div>
     <div className="h-4" />
-    <div className="relative bg-default-contrast rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="absolute w-full h-full opacity-0 cursor-pointer"
         type="file"
         accept="application/octet-stream,.kdbx"
@@ -257,8 +257,8 @@ function UserImportFileWindow() {
       Your existing password
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
@@ -373,8 +373,8 @@ function UserImportFsfhWindow() {
       Will be used locally for display purposes
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
@@ -387,7 +387,7 @@ function UserImportFsfhWindow() {
       Your existing KDBX file
     </div>
     <div className="h-4" />
-    <div className="relative bg-default-contrast rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       {"showOpenFilePicker" in window === true &&
         <button className="absolute w-full h-full opacity-0 cursor-pointer"
           type="button"
@@ -411,8 +411,8 @@ function UserImportFsfhWindow() {
       Your existing password
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
@@ -580,8 +580,8 @@ function UserCreateWindow() {
       Will be used locally for display purposes
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
@@ -594,8 +594,8 @@ function UserCreateWindow() {
       At least 3 characters
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
@@ -711,7 +711,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
             <UserReimportFileWindow user={user} />}
         </PathWindow>}
     </SubpathProvider>
-    <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast focus-within:bg-default-double-contrast transition-opacity">
+    <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast transition-opacity">
       {user.fsfh == null &&
         <input className="absolute w-full h-full opacity-0 cursor-pointer"
           type="file"
@@ -745,7 +745,7 @@ function UserMenuButton(props: { user: UserData }) {
 
   const coords = useAnchorWithCoords(hash, `/${user.uuid}`)
 
-  return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus:bg-default-double-contrast focus:outline-none transition-opacity"
+  return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-opacity"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -856,8 +856,8 @@ function UserReimportFileWindow(props: { user: UserData }) {
       Will be used locally for display purposes
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
@@ -870,7 +870,7 @@ function UserReimportFileWindow(props: { user: UserData }) {
       Your existing KDBX file
     </div>
     <div className="h-4" />
-    <div className="relative bg-default-contrast rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="absolute w-full h-full opacity-0 cursor-pointer"
         type="file"
         accept="application/octet-stream,.kdbx"
@@ -892,8 +892,8 @@ function UserReimportFileWindow(props: { user: UserData }) {
       Your existing password
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
@@ -1010,8 +1010,8 @@ function UserReimportFsfhWindow(props: { user: UserData }) {
       Will be used locally for display purposes
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
         value={$name}
         onChange={e => $setName(e.target.value)} />
@@ -1024,7 +1024,7 @@ function UserReimportFsfhWindow(props: { user: UserData }) {
       Your existing KDBX file
     </div>
     <div className="h-4" />
-    <div className="relative bg-default-contrast rounded-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
+    <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       {"showOpenFilePicker" in window === true &&
         <button className="absolute w-full h-full opacity-0 cursor-pointer"
           type="button"
@@ -1048,8 +1048,8 @@ function UserReimportFsfhWindow(props: { user: UserData }) {
       Your existing password
     </div>
     <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-default-contrast">
-      <input className="w-full focus:outline-none"
+    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+      <input className="w-full focus-visible:outline-none"
         type="password"
         value={password}
         onChange={e => setPassword(e.target.value)} />
