@@ -10,7 +10,7 @@ import { SessionAccountCard } from "../mod.tsx";
 
 React;
 
-export function SessionCardAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const [masked, setMasked] = useState(true)

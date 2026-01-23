@@ -18,7 +18,7 @@ import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
 
-export function SessionPasswordAccountWindow(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const [masked, setMasked] = useState(true)
@@ -187,7 +187,7 @@ export function SessionPasswordAddAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function SessionPasswordAddWindow() {
+export function SessionPasswordAddPage() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 

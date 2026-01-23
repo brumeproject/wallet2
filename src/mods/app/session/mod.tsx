@@ -13,8 +13,8 @@ import { Option } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { UserData } from "../user/mod.tsx";
-import { SessionCardAccountWindow, SessionCardAddAnchor } from "./card/mod.tsx";
-import { SessionPasswordAccountWindow, SessionPasswordAddAnchor, SessionPasswordAddWindow } from "./password/mod.tsx";
+import { SessionCardAccountPage, SessionCardAddAnchor } from "./card/mod.tsx";
+import { SessionPasswordAccountPage, SessionPasswordAddAnchor, SessionPasswordAddPage } from "./password/mod.tsx";
 
 React;
 
@@ -55,7 +55,7 @@ export function SessionProvider(props: ChildrenProps & { value: SessionData }) {
   </SessionContext.Provider>
 }
 
-export function SessionScreen() {
+export function SessionPage() {
   const close = useCloseContext().getOrThrow()
 
   const path = usePathContext().getOrThrow()
@@ -125,7 +125,7 @@ export function SessionScreen() {
         </PathPaper>}
       {hash.url.pathname === "/add/password" &&
         <PathBoard>
-          <SessionPasswordAddWindow />
+          <SessionPasswordAddPage />
         </PathBoard>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
@@ -272,10 +272,10 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             const type = getEntryType($entry)
 
             if (type === "password")
-              return <SessionPasswordAccountWindow $entry={$entry} />
+              return <SessionPasswordAccountPage $entry={$entry} />
 
             if (type === "card")
-              return <SessionCardAccountWindow $entry={$entry} />
+              return <SessionCardAccountPage $entry={$entry} />
 
             return null
           })()}
@@ -550,12 +550,12 @@ function SessionMoreMenu(props: { logout(): void }) {
         </PathPaper>}
       {hash.url.pathname === "/add/password" &&
         <PathBoard>
-          <SessionPasswordAddWindow />
+          <SessionPasswordAddPage />
         </PathBoard>}
       {/* {hash.url.pathname === "/add/card" &&
-        <PathWindow>
-          <SessionCardAddWindow />
-        </PathWindow>} */}
+        <PathPage>
+          <SessionCardAddPage />
+        </PathPage>} */}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <WideNakedMenuButton>

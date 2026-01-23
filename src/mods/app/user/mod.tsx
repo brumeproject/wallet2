@@ -73,13 +73,13 @@ export function LoginMenu(props: { login(session: SessionData): void }) {
       {hash.url.pathname === "/add/import" &&
         <PathBoard>
           {"showOpenFilePicker" in window === true &&
-            <UserImportFsfhWindow />}
+            <UserImportFsfhPage />}
           {"showOpenFilePicker" in window === false &&
-            <UserImportFileWindow />}
+            <UserImportFilePage />}
         </PathBoard>}
       {hash.url.pathname === "/add/create" &&
         <PathBoard>
-          <UserCreateWindow />
+          <UserCreatePage />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
@@ -146,7 +146,7 @@ function UserImportButton() {
   </WideNakedMenuAnchor>
 }
 
-function UserImportFileWindow() {
+function UserImportFilePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
@@ -273,7 +273,7 @@ function UserImportFileWindow() {
   </div>
 }
 
-function UserImportFsfhWindow() {
+function UserImportFsfhPage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
@@ -427,7 +427,7 @@ function UserImportFsfhWindow() {
   </div>
 }
 
-function UserCreateWindow() {
+function UserCreatePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
@@ -629,7 +629,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
     <SubpathProvider value={hash}>
       {hash.url.pathname === `/${user.uuid}` &&
         <PathBoard>
-          <UserLoginWindow user={user} login={login} />
+          <UserLoginPage user={user} login={login} />
         </PathBoard>}
       {hash.url.pathname === `/${user.uuid}/menu` &&
         <PathPaper>
@@ -638,9 +638,9 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
       {hash.url.pathname === `/${user.uuid}/reimport` &&
         <PathBoard>
           {"showOpenFilePicker" in window === true &&
-            <UserReimportFsfhWindow user={user} />}
+            <UserReimportFsfhPage user={user} />}
           {"showOpenFilePicker" in window === false &&
-            <UserReimportFileWindow user={user} />}
+            <UserReimportFilePage user={user} />}
         </PathBoard>}
     </SubpathProvider>
     <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast transition-all">
@@ -673,7 +673,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
   </Fragment>
 }
 
-function UserLoginWindow(props: { user: UserData } & { login(session: SessionData): void }) {
+function UserLoginPage(props: { user: UserData } & { login(session: SessionData): void }) {
   const { user, login } = props
 
   const close = useCloseContext().getOrThrow()
@@ -910,7 +910,7 @@ function UserReimportButton(props: { user: UserData }) {
   </WideNakedMenuAnchor>
 }
 
-function UserReimportFileWindow(props: { user: UserData }) {
+function UserReimportFilePage(props: { user: UserData }) {
   const { user } = props
 
   const close = useCloseContext().getOrThrow()
@@ -1039,7 +1039,7 @@ function UserReimportFileWindow(props: { user: UserData }) {
   </div>
 }
 
-function UserReimportFsfhWindow(props: { user: UserData }) {
+function UserReimportFsfhPage(props: { user: UserData }) {
   const { user } = props
 
   const close = useCloseContext().getOrThrow()

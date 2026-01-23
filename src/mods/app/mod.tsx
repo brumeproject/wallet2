@@ -10,7 +10,7 @@ import { Wall } from "@/libs/wall/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { CloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useEffect, useState } from "react";
-import { SessionData, SessionProvider, SessionScreen } from "./session/mod.tsx";
+import { SessionData, SessionPage, SessionProvider } from "./session/mod.tsx";
 import { LoginButton, LoginMenu } from "./user/mod.tsx";
 
 React;
@@ -99,7 +99,7 @@ export function App() {
       {client && session != null &&
         <Wall>
           <SessionProvider value={session}>
-            <SessionScreen />
+            <SessionPage />
           </SessionProvider>
         </Wall>}
     </CloseContext.Provider>
@@ -110,7 +110,7 @@ export function App() {
         </PathPaper>}
       {client && hash.url.pathname === "/settings" &&
         <PathBoard>
-          <SettingsWindow />
+          <SettingsPage />
         </PathBoard>}
     </SubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
@@ -282,7 +282,7 @@ function SettingsButton() {
   </ContrastAnchor>
 }
 
-function SettingsWindow() {
+function SettingsPage() {
   const store = useStoreContext().getOrThrow()
 
   const [appname, setAppName] = useState<Nullable<string>>()
