@@ -9,7 +9,7 @@ import { ChildrenProps } from "../props/mod.ts";
 
 React;
 
-export function PathMenu(props: ChildrenProps) {
+export function PathPaper(props: ChildrenProps) {
   const { children } = props
 
   const path = usePathContext().getOrThrow()
@@ -17,9 +17,9 @@ export function PathMenu(props: ChildrenProps) {
   const x = Number(path.url.searchParams.get("x"))
   const y = Number(path.url.searchParams.get("y"))
 
-  return <Menu x={x} y={y}>
+  return <Paper x={x} y={y}>
     {children}
-  </Menu>
+  </Paper>
 }
 
 /**
@@ -27,7 +27,7 @@ export function PathMenu(props: ChildrenProps) {
  * @param props 
  * @returns 
  */
-export function Menu(props: ChildrenProps & { x: number; y: number }) {
+export function Paper(props: ChildrenProps & { x: number; y: number }) {
   const close = useCloseContext().getOrThrow()
   const { children, x, y } = props
 

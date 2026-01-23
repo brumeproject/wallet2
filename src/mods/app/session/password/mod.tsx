@@ -4,8 +4,8 @@ import { useCopy } from "@/libs/copy/mod.ts";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
-import { PathMenu, WideNakedMenuAnchor } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.tsx";
+import { PathPaper, WideNakedMenuAnchor } from "@/libs/paper/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Totp } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
@@ -317,21 +317,21 @@ export function SessionPasswordAddWindow() {
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/password" &&
-        <PathMenu>
+        <PathPaper>
           <div className="flex flex-col text-left gap-2">
 
           </div>
-        </PathMenu>}
+        </PathPaper>}
       {hash.url.pathname === "/password/alphanumeric" &&
-        <PathMenu>
+        <PathPaper>
           <div className="flex flex-col text-left gap-2">
 
           </div>
-        </PathMenu>}
+        </PathPaper>}
       {hash.url.pathname === "/password/correcthorse" &&
-        <PathMenu>
+        <PathPaper>
 
-        </PathMenu>}
+        </PathPaper>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">

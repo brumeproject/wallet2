@@ -2,7 +2,7 @@ import { InButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
-import { WideNakedMenuAnchor } from "@/libs/menu/mod.tsx";
+import { WideNakedMenuAnchor } from "@/libs/paper/mod.tsx";
 import { useAnchorWithCoords, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import React, { Fragment, useMemo, useState } from "react";

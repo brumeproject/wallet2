@@ -1,11 +1,11 @@
 import { ContrastAnchor, InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
+import { PathBoard } from "@/libs/board/mod.tsx";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
-import { PathMenu, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.tsx";
+import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/paper/mod.tsx";
 import { ChildrenProps } from "@/libs/props/mod.ts";
-import { PathWindow } from "@/libs/window/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
@@ -116,17 +116,17 @@ export function SessionScreen() {
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/menu" &&
-        <PathMenu>
+        <PathPaper>
           <SessionMoreMenu logout={logout} />
-        </PathMenu>}
+        </PathPaper>}
       {hash.url.pathname === "/add" &&
-        <PathMenu>
+        <PathPaper>
           <SessionAccountAddMenu />
-        </PathMenu>}
+        </PathPaper>}
       {hash.url.pathname === "/add/password" &&
-        <PathWindow>
+        <PathBoard>
           <SessionPasswordAddWindow />
-        </PathWindow>}
+        </PathBoard>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
       {!display &&
@@ -267,7 +267,7 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === `/account/${uuid}` &&
-        <PathWindow>
+        <PathBoard>
           {(() => {
             const type = getEntryType($entry)
 
@@ -279,7 +279,7 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
             return null
           })()}
-        </PathWindow>}
+        </PathBoard>}
     </SubpathProvider>
     <a className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default focus-visible:data-[color=red]:outline-red-500/90 focus-visible:data-[color=blue]:outline-blue-500/90 focus-visible:data-[color=3]:outline-green-500/90 transition-all"
       data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
@@ -545,13 +545,13 @@ function SessionMoreMenu(props: { logout(): void }) {
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/add" &&
-        <PathMenu>
+        <PathPaper>
           <SessionAccountAddMenu />
-        </PathMenu>}
+        </PathPaper>}
       {hash.url.pathname === "/add/password" &&
-        <PathWindow>
+        <PathBoard>
           <SessionPasswordAddWindow />
-        </PathWindow>}
+        </PathBoard>}
       {/* {hash.url.pathname === "/add/card" &&
         <PathWindow>
           <SessionCardAddWindow />

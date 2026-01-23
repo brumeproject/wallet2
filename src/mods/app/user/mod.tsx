@@ -1,14 +1,14 @@
 // deno-lint-ignore-file no-window
 
 import { InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
+import { PathBoard } from "@/libs/board/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { PathMenu, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.tsx";
+import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/paper/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
-import { PathWindow } from "@/libs/window/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
@@ -67,20 +67,20 @@ export function LoginMenu(props: { login(session: SessionData): void }) {
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/add" &&
-        <PathMenu>
+        <PathPaper>
           <UserAddMenu />
-        </PathMenu>}
+        </PathPaper>}
       {hash.url.pathname === "/add/import" &&
-        <PathWindow>
+        <PathBoard>
           {"showOpenFilePicker" in window === true &&
             <UserImportFsfhWindow />}
           {"showOpenFilePicker" in window === false &&
             <UserImportFileWindow />}
-        </PathWindow>}
+        </PathBoard>}
       {hash.url.pathname === "/add/create" &&
-        <PathWindow>
+        <PathBoard>
           <UserCreateWindow />
-        </PathWindow>}
+        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       {users?.map(user =>
@@ -628,20 +628,20 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === `/${user.uuid}` &&
-        <PathWindow>
+        <PathBoard>
           <UserLoginWindow user={user} login={login} />
-        </PathWindow>}
+        </PathBoard>}
       {hash.url.pathname === `/${user.uuid}/menu` &&
-        <PathMenu>
+        <PathPaper>
           <UserMenu user={user} />
-        </PathMenu>}
+        </PathPaper>}
       {hash.url.pathname === `/${user.uuid}/reimport` &&
-        <PathWindow>
+        <PathBoard>
           {"showOpenFilePicker" in window === true &&
             <UserReimportFsfhWindow user={user} />}
           {"showOpenFilePicker" in window === false &&
             <UserReimportFileWindow user={user} />}
-        </PathWindow>}
+        </PathBoard>}
     </SubpathProvider>
     <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast transition-all">
       <a className="absolute w-full h-full opacity-0 cursor-pointer"

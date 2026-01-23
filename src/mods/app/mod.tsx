@@ -1,12 +1,12 @@
 import { ContrastAnchor } from "@/libs/anchor/mod.tsx";
+import { PathBoard } from "@/libs/board/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
-import { PathMenu } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.tsx";
-import { Screen } from "@/libs/screen/mod.tsx";
+import { PathPaper } from "@/libs/paper/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
-import { PathWindow } from "@/libs/window/mod.tsx";
+import { Wall } from "@/libs/wall/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { CloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useEffect, useState } from "react";
@@ -97,21 +97,21 @@ export function App() {
   return <Fragment>
     <CloseContext.Provider value={logout}>
       {client && session != null &&
-        <Screen>
+        <Wall>
           <SessionProvider value={session}>
             <SessionScreen />
           </SessionProvider>
-        </Screen>}
+        </Wall>}
     </CloseContext.Provider>
     <SubpathProvider value={hash}>
       {client && hash.url.pathname === "/login" &&
-        <PathMenu>
+        <PathPaper>
           <LoginMenu login={login} />
-        </PathMenu>}
+        </PathPaper>}
       {client && hash.url.pathname === "/settings" &&
-        <PathWindow>
+        <PathBoard>
           <SettingsWindow />
-        </PathWindow>}
+        </PathBoard>}
     </SubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
