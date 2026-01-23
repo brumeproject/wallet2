@@ -1,13 +1,13 @@
 // deno-lint-ignore-file no-window
 
 import { InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
-import { PathBoard } from "@/libs/board/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { PathBoard } from "@/libs/dialog/board/mod.tsx";
+import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
-import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/paper/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";

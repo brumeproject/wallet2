@@ -1,10 +1,10 @@
 import { ContrastAnchor, InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
-import { PathBoard } from "@/libs/board/mod.tsx";
+import { PathBoard } from "@/libs/dialog/board/mod.tsx";
+import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
-import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/paper/mod.tsx";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";

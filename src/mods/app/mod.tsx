@@ -1,12 +1,12 @@
 import { ContrastAnchor } from "@/libs/anchor/mod.tsx";
-import { PathBoard } from "@/libs/board/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
+import { PathBoard } from "@/libs/dialog/board/mod.tsx";
+import { PathPaper } from "@/libs/dialog/paper/mod.tsx";
+import { Wall } from "@/libs/dialog/wall/mod.tsx";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
-import { PathPaper } from "@/libs/paper/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
-import { Wall } from "@/libs/wall/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { CloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useEffect, useState } from "react";

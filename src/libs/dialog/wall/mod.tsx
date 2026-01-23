@@ -2,38 +2,23 @@
 
 /// <reference lib="dom"/>
 
-import { usePathContext } from "@hazae41/chemin"
+import { Events } from "@/libs/events/mod.ts"
+import { Nullable } from "@/libs/nullable/mod.tsx"
+import { ChildrenProps, DarkProps } from "@/libs/props/mod.ts"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
 import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
-import { Events } from "../events/mod.ts"
-import { Nullable } from "../nullable/mod.tsx"
-import { ChildrenProps, DarkProps } from "../props/mod.ts"
 
 React;
 
-export function PathBoard(props: ChildrenProps & DarkProps) {
-  const { children, dark } = props
-
-  const path = usePathContext().getOrThrow()
-
-  const x = Number(path.url.searchParams.get("x"))
-  const y = Number(path.url.searchParams.get("y"))
-
-  return <Board x={x} y={y}
-    dark={dark}>
-    {children}
-  </Board>
-}
-
 /**
- * Dialog that depends on screen size
+ * Dialog that always fills the screen
  * @param props 
  * @returns 
  */
-export function Board(props: ChildrenProps & DarkProps & { x: number; y: number }) {
+export function Wall(props: ChildrenProps & DarkProps) {
   const close = useCloseContext().getOrThrow()
-  const { dark, children, x, y } = props
+  const { dark, children } = props
 
   const previous = useRef(document.activeElement)
 
@@ -51,13 +36,10 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
     setTimeout(() => element.focus(), 2)
   }, [])
 
-  const [w, setW] = useState(0)
-  const [h, setH] = useState(0)
-
   const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
 
   /**
-   * Compute position and size
+   * Show the dialog when mounted
    */
   useLayoutEffect(() => {
     if (dialog == null)
@@ -65,9 +47,11 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
 
     dialog.showModal()
 
-    setW(dialog.offsetWidth)
-    setH(dialog.offsetHeight)
-  }, [x, y, dialog])
+    if (document.activeElement instanceof HTMLElement === false)
+      return
+
+    document.activeElement.blur()
+  }, [dialog])
 
   const [premount, setPremount] = useState(true)
   const [postmount, setPostmount] = useState(false)
@@ -159,8 +143,6 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
    * Swipe down to close
    */
   const onScroll = useCallback((e: UIEvent) => {
-    if (innerWidth > 768)
-      return
     if (e.currentTarget.scrollTop > 0)
       return
     hide()
@@ -173,8 +155,6 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
    */
   useEffect(() => {
     if (content == null)
-      return
-    if (innerWidth > 768)
       return
 
     const timeout = setTimeout(() => content.scrollIntoView({ behavior: "smooth" }))
@@ -189,26 +169,25 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll ${postmount && premount ? "" : "md:overflow-y-hidden"} overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] ${premount ? "not-md:animate-slideup-in md:animate-scale-xywh-in" : "not-md:animate-opacity-out md:animate-scale-xywh-out"} ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] ${premount ? "animate-slideup-in" : "animate-opacity-out"} ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       onScroll={onScroll}
       ref={setDialog}>
-      <div className="not-md:basis-[100dvh] md:basis-[10dvh] md:grow shrink-0" />
-      <div className="flex flex-col text-default bg-default selection-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip shrink-0"
+      <div className="basis-[100dvh] shrink-0" />
+      <div className="flex flex-col bg-default text-default selection-default rounded-t-3xl shrink-0"
         onMouseDown={Events.stopPropagation}>
-        <div className="flex md:hidden items-center justify-center p-4">
+        <div className="flex items-center justify-center p-4">
           <div className="w-16 h-2 bg-backdrop rounded-full" />
         </div>
-        <div className="not-md:basis-[100dvh] flex flex-col not-md:p-safe"
+        <div className="basis-[100dvh] flex flex-col p-safe overflow-y-auto"
           ref={setContent}>
           <button type="button" autoFocus />
           {children}
         </div>
       </div>
-      <div className="md:basis-[10dvh] md:grow shrink-0" />
     </dialog>
   </CloseContext>
 }
