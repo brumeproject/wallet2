@@ -34,7 +34,7 @@ export function LoginButton() {
   const coords = useAnchorWithCoords(hash, "/login")
 
   return <OppositeAnchor
-    href={coords.url.hash}
+    href={coords.url?.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.LockClosedIcon className="size-5" />
@@ -101,7 +101,7 @@ function UserAddButton() {
   const coords = useAnchorWithCoords(hash, "/add")
 
   return <WideNakedMenuAnchor
-    href={coords.url.hash}
+    href={coords.url?.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <div className="rounded-full size-7 flex justify-center items-center border-2 border-dashed border-default-contrast">
@@ -124,7 +124,7 @@ function UserCreateButton() {
   const coords = useAnchorWithCoords(path, "/add/create")
 
   return <WideNakedMenuAnchor
-    href={coords.url.hash}
+    href={coords.url?.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.SparklesIcon className="size-5" />
@@ -138,7 +138,7 @@ function UserImportButton() {
   const coords = useAnchorWithCoords(path, "/add/import")
 
   return <WideNakedMenuAnchor
-    href={coords.url.hash}
+    href={coords.url?.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.PaperClipIcon className="size-5" />
@@ -645,7 +645,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
     </SubpathProvider>
     <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast transition-all">
       <a className="absolute w-full h-full opacity-0 cursor-pointer"
-        href={coords.url.hash}
+        href={coords.url?.hash}
         onClick={coords.onClick}
         onKeyDown={coords.onKeyDown} />
       {/* {user.fsfh == null &&
@@ -876,7 +876,7 @@ function UserMenuButton(props: { user: UserData }) {
   const coords = useAnchorWithCoords(hash, `/${user.uuid}/menu`)
 
   return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-    href={coords.url.hash}
+    href={coords.url?.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <InAnchor>
@@ -902,7 +902,7 @@ function UserReimportButton(props: { user: UserData }) {
   const coords = useAnchorWithCoords(path, `/${user.uuid}/reimport`)
 
   return <WideNakedMenuAnchor
-    href={coords.url.hash}
+    href={coords.url?.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.CogIcon className="size-5" />

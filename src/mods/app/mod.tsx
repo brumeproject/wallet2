@@ -274,7 +274,7 @@ function SettingsButton() {
   const coords = useAnchorWithCoords(hash, "/settings")
 
   return <ContrastAnchor
-    href={coords.url.hash}
+    href={coords.url?.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.CogIcon className="size-5" />

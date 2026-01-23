@@ -228,7 +228,7 @@ export function SessionCardAddAnchor() {
   const coords = useAnchorWithCoords(path, "/add/card")
 
   return <WideNakedMenuAnchor
-    href={coords.url.hash}
+    href={coords.url?.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     Card
