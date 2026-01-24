@@ -377,75 +377,81 @@ function UserImportFsfhPage() {
     <h1 className="text-xl font-medium">
       Import user
     </h1>
-    <div className="h-6" />
-    <div className="font-medium">
-      Name
-    </div>
-    <div className="text-default-contrast">
-      Will be used locally for display purposes
-    </div>
-    <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-      <input className="w-full focus-visible:outline-none"
-        placeholder="Anon"
-        value={rawname}
-        onChange={e => setRawName(e.target.value)} />
-    </div>
-    <div className="h-6" />
-    <div className="font-medium">
-      File
-    </div>
-    <div className="text-default-contrast">
-      Your existing KDBX file
-    </div>
-    <div className="h-4" />
-    <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-      {"showOpenFilePicker" in window === true &&
-        <button className="absolute w-full h-full opacity-0 cursor-pointer"
-          type="button"
-          onClick={pickOrAlert}
-          onDragOver={Events.preventDefault}
-          onDrop={dropOrAlert} />}
-      {fsfh != null &&
-        <div className="po-2">
-          {fsfh.name}
-        </div>}
-      {fsfh == null &&
-        <div className="po-2">
-          Pick or drop file here
-        </div>}
-    </div>
-    <div className="h-6" />
-    <div className="font-medium">
-      Password
-    </div>
-    <div className="text-default-contrast">
-      Your existing password
-    </div>
-    <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-      <input className="w-full focus-visible:outline-none"
-        type={masked ? "password" : "text"}
-        value={password}
-        onChange={e => setPassword(e.target.value)} />
-      <div className="flex items-center gap-2">
-        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-          type="button"
-          onClick={() => setMasked(!masked)}>
-          <InButton>
-            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-          </InButton>
-        </button>
+    <form className="grow flex flex-col">
+      <div className="h-6" />
+      <div className="font-medium">
+        Name
       </div>
-    </div>
-    <div className="h-8 grow" />
-    <div className="flex items-center flex-wrap-reverse gap-2">
-      <WideOppositeButton
-        disabled={error != null}
-        onClick={openOrAlert}>
-        {error != null ? error : "Open file"}
-      </WideOppositeButton>
-    </div>
+      <div className="text-default-contrast">
+        Will be used locally for display purposes
+      </div>
+      <div className="h-4" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <input className="w-full focus-visible:outline-none"
+          name="name"
+          autoComplete="username"
+          placeholder="Anon"
+          value={rawname}
+          onChange={e => setRawName(e.target.value)} />
+      </div>
+      <div className="h-6" />
+      <div className="font-medium">
+        File
+      </div>
+      <div className="text-default-contrast">
+        Your existing KDBX file
+      </div>
+      <div className="h-4" />
+      <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        {"showOpenFilePicker" in window === true &&
+          <button className="absolute w-full h-full opacity-0 cursor-pointer"
+            type="button"
+            onClick={pickOrAlert}
+            onDragOver={Events.preventDefault}
+            onDrop={dropOrAlert} />}
+        {fsfh != null &&
+          <div className="po-2">
+            {fsfh.name}
+          </div>}
+        {fsfh == null &&
+          <div className="po-2">
+            Pick or drop file here
+          </div>}
+      </div>
+      <div className="h-6" />
+      <div className="font-medium">
+        Password
+      </div>
+      <div className="text-default-contrast">
+        Your existing password
+      </div>
+      <div className="h-4" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <input className="w-full focus-visible:outline-none"
+          name="password"
+          autoComplete="current-password"
+          type={masked ? "password" : "text"}
+          value={password}
+          onChange={e => setPassword(e.target.value)} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            type="button"
+            onClick={() => setMasked(!masked)}>
+            <InButton>
+              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+            </InButton>
+          </button>
+        </div>
+      </div>
+      <div className="h-8 grow" />
+      <div className="flex items-center flex-wrap-reverse gap-2">
+        <WideOppositeButton
+          disabled={error != null}
+          onClick={openOrAlert}>
+          {error != null ? error : "Open file"}
+        </WideOppositeButton>
+      </div>
+    </form>
   </div>
 }
 
