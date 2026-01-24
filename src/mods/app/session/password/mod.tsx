@@ -180,7 +180,7 @@ export function SessionPasswordAddAnchor() {
   const coords = useAnchorWithCoords(path, "/add/password")
 
   return <WideNakedMenuAnchor
-    href={coords.url?.hash}
+    href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     Password
