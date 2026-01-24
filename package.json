@@ -17,7 +17,7 @@
     "@hazae41/binary": "^2.0.2",
     "@hazae41/chacha20poly1305": "^2.0.1",
     "@hazae41/chacha20poly1305-wasm": "^2.0.0",
-    "@hazae41/chemin": "^2.1.5",
+    "@hazae41/chemin": "^2.1.6",
     "@hazae41/immutable": "^2.0.24",
     "@hazae41/jsonrpc": "^1.1.11",
     "@hazae41/labase": "^1.0.28",
