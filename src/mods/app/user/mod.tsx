@@ -863,7 +863,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="focus-visible:outline-none"
           name="password"
-          autoComplete="off"
+          autoComplete="current-password"
           type={masked ? "password" : "text"}
           placeholder="Password"
           value={password}
