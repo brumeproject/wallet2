@@ -859,44 +859,51 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
       {user.name}
     </h1>
     <div className="h-6" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-      <input className="focus-visible:outline-none"
-        type={masked ? "password" : "text"}
-        placeholder="Password"
-        value={password}
-        onChange={e => setPassword(e.currentTarget.value)}
-        onKeyDown={onKeyDown}
-        ref={useAutoFocus()} />
-      <div className="flex items-center gap-2">
-        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-          type="button"
-          onClick={() => setMasked(!masked)}>
-          <InButton>
-            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-          </InButton>
-        </button>
-        {user.pass != null &&
+    <form className="grow flex flex-col items-center">
+      <input className="h-0 opacity-0"
+        name="username"
+        autoComplete="off" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <input className="focus-visible:outline-none"
+          name="password"
+          autoComplete="current-password"
+          type={masked ? "password" : "text"}
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.currentTarget.value)}
+          onKeyDown={onKeyDown}
+          ref={useAutoFocus()} />
+        <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
-            onClick={onPassClick}>
+            onClick={() => setMasked(!masked)}>
             <InButton>
-              <Outline.FingerPrintIcon className="size-5" />
+              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
-          </button>}
+          </button>
+          {user.pass != null &&
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={onPassClick}>
+              <InButton>
+                <Outline.FingerPrintIcon className="size-5" />
+              </InButton>
+            </button>}
+        </div>
       </div>
-    </div>
-    {user.fsfh == null &&
-      <input className="h-0 opacity-0"
-        type="file"
-        accept="application/octet-stream,.kdbx"
-        onChange={e => setFile1(e.currentTarget.files?.[0])}
-        ref={setPicker1} />}
-    {user.fsfh == null &&
-      <input className="h-0 opacity-0"
-        type="file"
-        accept="application/octet-stream,.kdbx"
-        onChange={e => setFile2(e.currentTarget.files?.[0])}
-        ref={setPicker2} />}
+      {user.fsfh == null &&
+        <input className="h-0 opacity-0"
+          type="file"
+          accept="application/octet-stream,.kdbx"
+          onChange={e => setFile1(e.currentTarget.files?.[0])}
+          ref={setPicker1} />}
+      {user.fsfh == null &&
+        <input className="h-0 opacity-0"
+          type="file"
+          accept="application/octet-stream,.kdbx"
+          onChange={e => setFile2(e.currentTarget.files?.[0])}
+          ref={setPicker2} />}
+    </form>
   </div>
 }
 
