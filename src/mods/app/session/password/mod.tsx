@@ -344,7 +344,7 @@ export function SessionPasswordAddPage() {
           data-theme={color == null ? "opposite" : "dark"}
           data-color={color}>
           <div className="font-medium text-xl text-wrap wrap-anywhere">
-            {title || "Untitled"}
+            {title}
           </div>
           <div className="h-4" />
           <div className="text-default-half-contrast text-wrap wrap-anywhere">
