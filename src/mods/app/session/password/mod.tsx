@@ -401,7 +401,6 @@ export function SessionPasswordAddPage() {
         <Outline.LanguageIcon className="size-5" />
         <input className="w-full focus-visible:outline-none"
           type={masked ? "password" : "text"}
-          placeholder={masked ? "••••••••••••••••••••••••" : "u#fH@WMNn3BY7LFzaR$B4GBM"}
           onChange={e => setPassword(e.target.value)}
           value={password} />
         <div className="flex items-center gap-2">
@@ -431,7 +430,6 @@ export function SessionPasswordAddPage() {
         <Outline.HashtagIcon className="size-5" />
         <input className="w-full focus-visible:outline-none"
           type={masked ? "password" : "text"}
-          placeholder={masked ? "••••••••••••••••••••••••••••••••" : "MQCHJLS6FJXT2BGQJ6QMG3WCAVUC2HJZ"}
           onChange={e => setTotpseed(e.target.value)}
           value={totpseed} />
         <div className="flex items-center gap-2">

@@ -862,7 +862,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="focus-visible:outline-none"
         type={masked ? "password" : "text"}
-        placeholder="Your password"
+        placeholder="Password"
         value={password}
         onChange={e => setPassword(e.currentTarget.value)}
         onKeyDown={onKeyDown}
