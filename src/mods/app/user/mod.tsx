@@ -158,6 +158,8 @@ function UserImportFilePage() {
 
   const [password, setPassword] = useState("")
 
+  const [masked, setMasked] = useState(true)
+
   const loadOrAlert = useCallback(() => Promise.try(async () => {
     if (file == null)
       return
@@ -258,9 +260,18 @@ function UserImportFilePage() {
     <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
-        type="password"
+        type={masked ? "password" : "text"}
         value={password}
         onChange={e => setPassword(e.target.value)} />
+      <div className="flex items-center gap-2">
+        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          type="button"
+          onClick={() => setMasked(!masked)}>
+          <InButton>
+            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+          </InButton>
+        </button>
+      </div>
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
@@ -284,6 +295,8 @@ function UserImportFsfhPage() {
   const [fsfh, setFsfh] = useState<FileSystemFileHandle>()
 
   const [password, setPassword] = useState("")
+
+  const [masked, setMasked] = useState(true)
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker!({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
@@ -412,9 +425,18 @@ function UserImportFsfhPage() {
     <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
-        type="password"
+        type={masked ? "password" : "text"}
         value={password}
         onChange={e => setPassword(e.target.value)} />
+      <div className="flex items-center gap-2">
+        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          type="button"
+          onClick={() => setMasked(!masked)}>
+          <InButton>
+            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+          </InButton>
+        </button>
+      </div>
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
@@ -436,6 +458,8 @@ function UserCreatePage() {
   const name = rawname || "Anon"
 
   const [password, setPassword] = useState("")
+
+  const [masked, setMasked] = useState(true)
 
   const xml = useMemo(() => `
     <KeePassFile>
@@ -595,9 +619,18 @@ function UserCreatePage() {
     <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
-        type="password"
+        type={masked ? "password" : "text"}
         value={password}
         onChange={e => setPassword(e.target.value)} />
+      <div className="flex items-center gap-2">
+        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          type="button"
+          onClick={() => setMasked(!masked)}>
+          <InButton>
+            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+          </InButton>
+        </button>
+      </div>
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
@@ -924,6 +957,8 @@ function UserReimportFilePage(props: { user: UserData }) {
 
   const [password, setPassword] = useState("")
 
+  const [masked, setMasked] = useState(true)
+
   const loadOrAlert = useCallback(() => Promise.try(async () => {
     if (file == null)
       return
@@ -1024,9 +1059,18 @@ function UserReimportFilePage(props: { user: UserData }) {
     <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
-        type="password"
+        type={masked ? "password" : "text"}
         value={password}
         onChange={e => setPassword(e.target.value)} />
+      <div className="flex items-center gap-2">
+        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          type="button"
+          onClick={() => setMasked(!masked)}>
+          <InButton>
+            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+          </InButton>
+        </button>
+      </div>
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
@@ -1052,6 +1096,8 @@ function UserReimportFsfhPage(props: { user: UserData }) {
   const [fsfh, setFsfh] = useState<Nullable<FileSystemFileHandle>>(user.fsfh)
 
   const [password, setPassword] = useState("")
+
+  const [masked, setMasked] = useState(true)
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker!({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
@@ -1180,9 +1226,18 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     <div className="h-4" />
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
-        type="password"
+        type={masked ? "password" : "text"}
         value={password}
         onChange={e => setPassword(e.target.value)} />
+      <div className="flex items-center gap-2">
+        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          type="button"
+          onClick={() => setMasked(!masked)}>
+          <InButton>
+            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+          </InButton>
+        </button>
+      </div>
     </div>
     <div className="h-8 grow" />
     <div className="flex items-center flex-wrap-reverse gap-2">
