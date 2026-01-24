@@ -860,12 +860,9 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     </h1>
     <div className="h-6" />
     <form className="grow flex flex-col items-center">
-      <input className="hidden"
-        name="password"
-        type="password" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="focus-visible:outline-none"
-          name="your-password"
+          name="password"
           autoComplete="off"
           type={masked ? "password" : "text"}
           placeholder="Password"
