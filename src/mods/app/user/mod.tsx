@@ -150,9 +150,9 @@ function UserImportFilePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [$name, $setName] = useState("")
+  const [rawname, setRawName] = useState("")
 
-  const name = $name || "Anon"
+  const name = rawname || "Anon"
 
   const [file, setFile] = useState<Nullable<File>>()
 
@@ -223,8 +223,8 @@ function UserImportFilePage() {
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
-        value={$name}
-        onChange={e => $setName(e.target.value)} />
+        value={rawname}
+        onChange={e => setRawName(e.target.value)} />
     </div>
     <div className="h-6" />
     <div className="font-medium">
@@ -277,9 +277,9 @@ function UserImportFsfhPage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [$name, $setName] = useState("")
+  const [rawname, setRawName] = useState("")
 
-  const name = $name || "Anon"
+  const name = rawname || "Anon"
 
   const [fsfh, setFsfh] = useState<FileSystemFileHandle>()
 
@@ -375,8 +375,8 @@ function UserImportFsfhPage() {
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
-        value={$name}
-        onChange={e => $setName(e.target.value)} />
+        value={rawname}
+        onChange={e => setRawName(e.target.value)} />
     </div>
     <div className="h-6" />
     <div className="font-medium">
@@ -431,9 +431,9 @@ function UserCreatePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [$name, $setName] = useState("")
+  const [rawname, setRawName] = useState("")
 
-  const name = $name || "Anon"
+  const name = rawname || "Anon"
 
   const [password, setPassword] = useState("")
 
@@ -582,8 +582,8 @@ function UserCreatePage() {
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
-        value={$name}
-        onChange={e => $setName(e.target.value)} />
+        value={rawname}
+        onChange={e => setRawName(e.target.value)} />
     </div>
     <div className="h-6" />
     <div className="font-medium">
@@ -916,9 +916,9 @@ function UserReimportFilePage(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [$name, $setName] = useState(user.name)
+  const [rawname, setRawName] = useState(user.name)
 
-  const name = $name || "Anon"
+  const name = rawname || "Anon"
 
   const [file, setFile] = useState<Nullable<File>>()
 
@@ -989,8 +989,8 @@ function UserReimportFilePage(props: { user: UserData }) {
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
-        value={$name}
-        onChange={e => $setName(e.target.value)} />
+        value={rawname}
+        onChange={e => setRawName(e.target.value)} />
     </div>
     <div className="h-6" />
     <div className="font-medium">
@@ -1045,9 +1045,9 @@ function UserReimportFsfhPage(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [$name, $setName] = useState(user.name)
+  const [rawname, setRawName] = useState(user.name)
 
-  const name = $name || "Anon"
+  const name = rawname || "Anon"
 
   const [fsfh, setFsfh] = useState<Nullable<FileSystemFileHandle>>(user.fsfh)
 
@@ -1143,8 +1143,8 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
       <input className="w-full focus-visible:outline-none"
         placeholder="Anon"
-        value={$name}
-        onChange={e => $setName(e.target.value)} />
+        value={rawname}
+        onChange={e => setRawName(e.target.value)} />
     </div>
     <div className="h-6" />
     <div className="font-medium">

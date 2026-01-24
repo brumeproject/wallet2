@@ -196,7 +196,10 @@ export function SessionPasswordAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [title, setTitle] = useState("")
+  const [rawtitle, setRawTitle] = useState("")
+
+  const title = rawtitle || "Untitled"
+
   const [color, setColor] = useState<Nullable<string>>()
 
   const [masked, setMasked] = useState<boolean>(true)
@@ -307,12 +310,10 @@ export function SessionPasswordAddPage() {
   }).catch(Errors.display), [store, encryptOrThrow, close])
 
   const error = useMemo(() => {
-    if (!title.length)
-      return "Title is required"
     if (!password.length)
       return "Password is required"
     return
-  }, [title, password])
+  }, [password])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -370,8 +371,8 @@ export function SessionPasswordAddPage() {
         <Outline.TagIcon className="size-5" />
         <input className="w-full focus-visible:outline-none"
           placeholder="My Account"
-          onChange={e => setTitle(e.target.value)}
-          value={title} />
+          onChange={e => setRawTitle(e.target.value)}
+          value={rawtitle} />
       </div>
       <div className="h-6" />
       <div className="font-medium">
