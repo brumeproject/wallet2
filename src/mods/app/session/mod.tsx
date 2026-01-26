@@ -387,7 +387,7 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
       data-color={getEntryColor($entry)}
       onAnimationEnd={onAnimationEnd}
       onClick={onClick}>
-      <div className="absolute h-full w-full p-4 flex flex-col backface-hidden">
+      <div className="absolute inset-0 p-4 flex flex-col backface-hidden">
         <div className="font-medium text-xl text-wrap wrap-anywhere">
           {getEntryTitle($entry) || "Untitled"}
         </div>
@@ -462,7 +462,7 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
           })()}
         </div>
       </div>
-      <div className="absolute h-full w-full p-4 flex items-center justify-center backface-hidden rotate-y-180">
+      <div className="absolute inset-0 p-4 flex items-center justify-center backface-hidden rotate-y-180">
         <div className="font-mono text-default-half-contrast whitespace-pre-wrap">
           {`
 00100010 01010110 01101001

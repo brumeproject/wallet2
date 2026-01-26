@@ -242,7 +242,7 @@ function UserImportFilePage() {
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <input className="absolute w-full h-full opacity-0 cursor-pointer"
+        <input className="absolute inset-0 opacity-0 cursor-pointer"
           type="file"
           accept="application/octet-stream,.kdbx"
           onChange={e => setFile(e.target.files?.item(0))} />
@@ -413,7 +413,7 @@ function UserImportFsfhPage() {
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         {"showOpenFilePicker" in window === true &&
-          <button className="absolute w-full h-full opacity-0 cursor-pointer"
+          <button className="absolute inset-0 opacity-0 cursor-pointer"
             type="button"
             onClick={pickOrAlert}
             onDragOver={Events.preventDefault}
@@ -691,19 +691,10 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
         </PathBoard>}
     </SubpathProvider>
     <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast transition-all">
-      <a className="absolute w-full h-full opacity-0 cursor-pointer"
+      <a className="absolute inset-0 opacity-0 cursor-pointer"
         href={coords.url.hash}
         onClick={coords.onClick}
         onKeyDown={coords.onKeyDown} />
-      {/* {user.fsfh == null &&
-        <input className="absolute w-full h-full opacity-0 cursor-pointer"
-          type="file"
-          accept="application/octet-stream,.kdbx"
-          onChange={e => loadOrAlert(user, e.currentTarget.files?.[0])} />}
-      {user.fsfh != null &&
-        <button className="absolute w-full h-full opacity-0 cursor-pointer"
-          type="button"
-          onClick={() => openOrAlert(user, user.fsfh)} />} */}
       <div className="po-2 flex items-center justify-start">
         <div className="flex items-center gap-4">
           <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
@@ -1061,7 +1052,7 @@ function UserReimportFilePage(props: { user: UserData }) {
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <input className="absolute w-full h-full opacity-0 cursor-pointer"
+        <input className="absolute inset-0 opacity-0 cursor-pointer"
           type="file"
           accept="application/octet-stream,.kdbx"
           onChange={e => setFile(e.target.files?.item(0))} />
@@ -1234,7 +1225,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         {"showOpenFilePicker" in window === true &&
-          <button className="absolute w-full h-full opacity-0 cursor-pointer"
+          <button className="absolute inset-0 opacity-0 cursor-pointer"
             type="button"
             onClick={pickOrAlert}
             onDragOver={Events.preventDefault}

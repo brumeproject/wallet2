@@ -364,7 +364,7 @@ function SettingsPage() {
     <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
       {appicon == null &&
         <div className="relative size-24 border-2 border-dashed border-default-contrast flex items-center justify-center rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <input className="absolute w-full h-full opacity-0 cursor-pointer rounded-xl"
+          <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
             type="file"
             accept="image/*"
             onChange={onIconChange} />
