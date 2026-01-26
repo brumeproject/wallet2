@@ -13,7 +13,8 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Result } from "@hazae41/result-and-option";
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { QrCode } from "../../../../libs/qrcode/mod.ts";
 import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
@@ -315,6 +316,17 @@ export function SessionPasswordAddPage() {
     return
   }, [password])
 
+  const onTotpQrcodeChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.item(0)
+
+    if (file == null)
+      return
+
+    const content = await QrCode.decodeFileOrNull(file)
+
+    console.log(content)
+  }, [])
+
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/password" &&
@@ -440,11 +452,16 @@ export function SessionPasswordAddPage() {
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all">
+          <div className="group relative rounded-full p-1 [&:has(:hover)]:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast [&:has(:focus-visible)]:outline-none transition-all">
+            <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={onTotpQrcodeChange} />
             <InAnchor>
               <Outline.QrCodeIcon className="size-5" />
             </InAnchor>
-          </a>
+          </div>
         </div>
       </div>
       <div className="h-4" />
