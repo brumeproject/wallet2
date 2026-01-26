@@ -475,26 +475,14 @@ function SessionAccountAddButton() {
 function SessionAccountAddMenu() {
   return <div className="flex flex-col text-left gap-2">
     <SessionPasswordAddAnchor />
+    <WideNakedMenuAnchor
+      aria-disabled>
+      Crypto
+    </WideNakedMenuAnchor>
     <SessionCardAddAnchor />
     <WideNakedMenuAnchor
       aria-disabled>
       Seed
-    </WideNakedMenuAnchor>
-    <WideNakedMenuAnchor
-      aria-disabled>
-      Ethereum
-    </WideNakedMenuAnchor>
-    <WideNakedMenuAnchor
-      aria-disabled>
-      Solana
-    </WideNakedMenuAnchor>
-    <WideNakedMenuAnchor
-      aria-disabled>
-      Bitcoin
-    </WideNakedMenuAnchor>
-    <WideNakedMenuAnchor
-      aria-disabled>
-      Monero
     </WideNakedMenuAnchor>
   </div>
 }
