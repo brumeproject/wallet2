@@ -324,7 +324,7 @@ export function SessionPasswordAddPage() {
 
     const content = await QrCode.decodeFileOrNull(file)
 
-    console.log(content)
+    alert(content)
   }, [])
 
   return <Fragment>
