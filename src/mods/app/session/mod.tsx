@@ -3,7 +3,7 @@ import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
+import { getEntryColor, getEntryFilter, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
@@ -99,7 +99,7 @@ export function SessionPage() {
       if (!filter)
         return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
 
-      if (filter === getEntryType($entry))
+      if (filter === getEntryFilter($entry))
         return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
 
       // if (filter === "trash" && $entry.getParentGroupOrThrow().isDeleted())
@@ -172,31 +172,10 @@ export function SessionPage() {
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
-          aria-selected={filter === "ethereum"}
-          onClick={() => filter === "ethereum" ? setFilter(undefined) : setFilter("ethereum")}>
-          <Outline.CubeIcon className="size-5" />
-          Ethereum
-        </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
-          type="button"
-          aria-selected={filter === "solana"}
-          onClick={() => filter === "solana" ? setFilter(undefined) : setFilter("solana")}>
-          <Outline.CubeIcon className="size-5" />
-          Solana
-        </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
-          type="button"
-          aria-selected={filter === "bitcoin"}
-          onClick={() => filter === "bitcoin" ? setFilter(undefined) : setFilter("bitcoin")}>
+          aria-selected={filter === "crypto"}
+          onClick={() => filter === "crypto" ? setFilter(undefined) : setFilter("crypto")}>
           <Outline.BanknotesIcon className="size-5" />
-          Bitcoin
-        </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
-          type="button"
-          aria-selected={filter === "monero"}
-          onClick={() => filter === "monero" ? setFilter(undefined) : setFilter("monero")}>
-          <Outline.BanknotesIcon className="size-5" />
-          Monero
+          Cryptos
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"

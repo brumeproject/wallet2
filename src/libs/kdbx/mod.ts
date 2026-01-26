@@ -22,6 +22,30 @@ export function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
   return "password"
 }
 
+export function getEntryFilter($entry: KDBX.Inner.KeePassFile.Entry) {
+  const type = getEntryType($entry)
+
+  if (type === "card")
+    return "card"
+
+  if (type === "ethereum")
+    return "crypto"
+
+  if (type === "solana")
+    return "crypto"
+
+  if (type === "bitcoin")
+    return "crypto"
+
+  if (type === "monero")
+    return "crypto"
+
+  if (type === "seed")
+    return "seed"
+
+  return "password"
+}
+
 export function getEntryColor($entry: KDBX.Inner.KeePassFile.Entry) {
   return $entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get()
 }
