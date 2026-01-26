@@ -207,7 +207,7 @@ export function SessionPasswordAddPage() {
 
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [totpseed, setTotpseed] = useState("")
+  const [totpseed, setTotpSeed] = useState("")
 
   const totp = useMemo(() => {
     if (!totpseed.length)
@@ -215,7 +215,7 @@ export function SessionPasswordAddPage() {
 
     const generator = Result.runAndWrapSync(() => {
       return Totp.parseOrThrow(totpseed)
-    }).getOrNull()
+    }).inspectErrSync(console.log).getOrNull()
 
     return generator
   }, [totpseed])
@@ -316,7 +316,7 @@ export function SessionPasswordAddPage() {
     return
   }, [password])
 
-  const onTotpQrcodeChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+  const onTotpQrcodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => Promise.try(async () => {
     const file = e.target.files?.item(0)
 
     if (file == null)
@@ -324,8 +324,11 @@ export function SessionPasswordAddPage() {
 
     const content = await QrCode.decodeFileOrNull(file)
 
-    alert(content)
-  }, [])
+    if (content == null)
+      throw new Error("Could not find QR code")
+
+    setTotpSeed(content)
+  }).catch(Errors.display), [])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -442,7 +445,7 @@ export function SessionPasswordAddPage() {
         <Outline.HashtagIcon className="size-5" />
         <input className="w-full focus-visible:outline-none"
           type={masked ? "password" : "text"}
-          onChange={e => setTotpseed(e.target.value)}
+          onChange={e => setTotpSeed(e.target.value)}
           value={totpseed} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"

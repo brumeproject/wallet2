@@ -20,12 +20,11 @@ export namespace Totp {
 
     if (secret == null)
       throw new Error("Missing secret")
-    if (digits == null)
-      throw new Error("Missing digits")
-    if (period == null)
-      throw new Error("Missing period")
 
-    return new Sha1Totp(base32.decode(secret).slice(), Number(digits), Number(period))
+    const digits2 = digits != null ? Number(digits) : undefined
+    const period2 = period != null ? Number(period) : undefined
+
+    return new Sha1Totp(base32.decode(secret).slice(), digits2, period2)
   }
 
 }
