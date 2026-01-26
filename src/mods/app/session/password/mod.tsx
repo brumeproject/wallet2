@@ -7,13 +7,12 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
-import { Totp } from "@/libs/totp/mod.ts";
+import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
-import { Result } from "@hazae41/result-and-option";
-import React, { ChangeEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, Fragment, useCallback, useMemo, useState } from "react";
 import { QrCode } from "../../../../libs/qrcode/mod.ts";
 import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
@@ -36,31 +35,7 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
     return $entry.getDirectStringByKeyOrNull("otp")?.getValueOrThrow().get()
   }, [$entry])
 
-  const totp = useMemo(() => {
-    if (totpseed == null)
-      return
-    if (!totpseed.length)
-      return
-
-    const generator = Result.runAndWrapSync(() => {
-      return Totp.parseOrThrow(totpseed)
-    }).getOrNull()
-
-    return generator
-  }, [totpseed])
-
-  const [totpcode, setTotpcode] = useState<Nullable<string>>()
-
-  useEffect(() => {
-    if (totp == null)
-      return
-
-    const interval = setInterval(async () => {
-      setTotpcode(await totp.generate())
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [totp])
+  const totpcode = useTotpCode(totpseed)
 
   const notes = useMemo(() => {
     return $entry.getDirectStringByKeyOrNull("Notes")?.getValueOrThrow().get()
@@ -209,29 +184,7 @@ export function SessionPasswordAddPage() {
   const [password, setPassword] = useState("")
   const [totpseed, setTotpSeed] = useState("")
 
-  const totp = useMemo(() => {
-    if (!totpseed.length)
-      return
-
-    const generator = Result.runAndWrapSync(() => {
-      return Totp.parseOrThrow(totpseed)
-    }).inspectErrSync(console.log).getOrNull()
-
-    return generator
-  }, [totpseed])
-
-  const [totpcode, setTotpcode] = useState<Nullable<string>>()
-
-  useEffect(() => {
-    if (totp == null)
-      return
-
-    const interval = setInterval(async () => {
-      setTotpcode(await totp.generate())
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [totp])
+  const totpcode = useTotpCode(totpseed)
 
   const [notes, setNotes] = useState("")
 
@@ -257,8 +210,8 @@ export function SessionPasswordAddPage() {
     if (notes)
       $entry.createStringOrThrow("Notes", notes)
 
-    if (totp)
-      $entry.createStringOrThrow("otp", totp.url.toString(), true)
+    if (totpseed)
+      $entry.createStringOrThrow("otp", totpseed, true)
 
     $group.element.appendChild($entry.element)
 

@@ -2,11 +2,47 @@
 
 import { Result } from "@hazae41/result-and-option";
 import { base32 } from "@scure/base";
+import { useEffect, useMemo, useState } from "react";
+import { Nullable } from "../nullable/mod.tsx";
+
+export function useTotpCode(seed: Nullable<string>) {
+  const [code, setCode] = useState<Nullable<string>>()
+
+  const totp = useMemo(() => {
+    if (!seed)
+      return
+
+    const totp = Result.runAndWrapSync(() => {
+      return Totp.parseOrThrow(seed)
+    }).getOrNull()
+
+    return totp
+  }, [seed])
+
+  useEffect(() => {
+    if (totp == null)
+      return
+
+    const interval = setInterval(async () => {
+      setCode(await totp.generate())
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [totp])
+
+  useEffect(() => () => {
+    setCode(null)
+  }, [totp])
+
+  return code
+}
 
 export namespace Totp {
 
   export function parseOrThrow(text: string) {
-    const url = Result.runAndWrapSync(() => new URL(text)).getOrNull()
+    const url = Result.runAndWrapSync(() => {
+      return new URL(text)
+    }).getOrNull()
 
     if (url == null)
       return new Sha1Totp(base32.decode(text).slice())
