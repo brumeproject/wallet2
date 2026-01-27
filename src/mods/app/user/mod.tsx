@@ -70,17 +70,6 @@ export function LoginMenu(props: { login(session: SessionData): void }) {
         <PathPaper>
           <UserAddMenu />
         </PathPaper>}
-      {hash.url.pathname === "/add/import" &&
-        <PathBoard>
-          {"showOpenFilePicker" in window === true &&
-            <UserImportFsfhPage />}
-          {"showOpenFilePicker" in window === false &&
-            <UserImportFilePage />}
-        </PathBoard>}
-      {hash.url.pathname === "/add/create" &&
-        <PathBoard>
-          <UserCreatePage />
-        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       {users?.map(user =>
@@ -112,16 +101,35 @@ function UserAddButton() {
 }
 
 function UserAddMenu() {
-  return <div className="flex flex-col text-left gap-2">
-    <UserCreateButton />
-    <UserImportButton />
-  </div>
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/import" &&
+        <PathBoard>
+          {"showOpenFilePicker" in window === true &&
+            <UserImportFsfhPage />}
+          {"showOpenFilePicker" in window === false &&
+            <UserImportFilePage />}
+        </PathBoard>}
+      {hash.url.pathname === "/create" &&
+        <PathBoard>
+          <UserCreatePage />
+        </PathBoard>}
+    </SubpathProvider>
+    <div className="flex flex-col text-left gap-2">
+      <UserCreateButton />
+      <UserImportButton />
+    </div>
+  </Fragment>
 }
 
 function UserCreateButton() {
   const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(path, "/add/create")
+  const coords = useAnchorWithCoords(hash, "/create")
 
   return <WideNakedMenuAnchor
     href={coords.url.hash}
@@ -134,8 +142,9 @@ function UserCreateButton() {
 
 function UserImportButton() {
   const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(path, "/add/import")
+  const coords = useAnchorWithCoords(hash, "/import")
 
   return <WideNakedMenuAnchor
     href={coords.url.hash}
@@ -682,13 +691,6 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
         <PathPaper>
           <UserMenu user={user} />
         </PathPaper>}
-      {hash.url.pathname === `/${user.uuid}/reimport` &&
-        <PathBoard>
-          {"showOpenFilePicker" in window === true &&
-            <UserReimportFsfhPage user={user} />}
-          {"showOpenFilePicker" in window === false &&
-            <UserReimportFilePage user={user} />}
-        </PathBoard>}
     </SubpathProvider>
     <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast transition-all">
       <a className="absolute inset-0 opacity-0 cursor-pointer"
@@ -932,18 +934,31 @@ function UserMenuButton(props: { user: UserData }) {
 function UserMenu(props: { user: UserData }) {
   const { user } = props
 
-  return <div className="flex flex-col text-left gap-2">
-    <UserReimportButton user={user} />
-    <UserRemoveButton user={user} />
-  </div>
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/reimport" &&
+        <PathBoard>
+          {"showOpenFilePicker" in window === true &&
+            <UserReimportFsfhPage user={user} />}
+          {"showOpenFilePicker" in window === false &&
+            <UserReimportFilePage user={user} />}
+        </PathBoard>}
+    </SubpathProvider>
+    <div className="flex flex-col text-left gap-2">
+      <UserReimportButton />
+      <UserRemoveButton user={user} />
+    </div>
+  </Fragment>
 }
 
-function UserReimportButton(props: { user: UserData }) {
-  const { user } = props
-
+function UserReimportButton() {
   const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(path, `/${user.uuid}/reimport`)
+  const coords = useAnchorWithCoords(hash, "/reimport")
 
   return <WideNakedMenuAnchor
     href={coords.url.hash}

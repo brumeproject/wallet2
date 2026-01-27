@@ -123,10 +123,6 @@ export function SessionPage() {
         <PathPaper>
           <SessionAccountAddMenu />
         </PathPaper>}
-      {hash.url.pathname === "/add/password" &&
-        <PathBoard>
-          <SessionPasswordAddPage />
-        </PathBoard>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
       {!display &&
@@ -473,16 +469,65 @@ function SessionAccountAddButton() {
 }
 
 function SessionAccountAddMenu() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/password" &&
+        <PathBoard>
+          <SessionPasswordAddPage />
+        </PathBoard>}
+      {hash.url.pathname === "/crypto" &&
+        <PathPaper>
+          <SessionCryptoAddMenu />
+        </PathPaper>}
+      {hash.url.pathname === "/card" &&
+        <PathBoard>
+          {/* <SessionCardAddPage /> */}
+        </PathBoard>}
+    </SubpathProvider>
+    <div className="flex flex-col text-left gap-2">
+      <SessionPasswordAddAnchor />
+      <SessionCryptoAddAnchor />
+      <SessionCardAddAnchor />
+      <WideNakedMenuAnchor
+        aria-disabled>
+        <Outline.SparklesIcon className="size-5" />
+        Seed
+      </WideNakedMenuAnchor>
+    </div>
+  </Fragment>
+}
+
+function SessionCryptoAddAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/crypto")
+
+  return <WideNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <Outline.BanknotesIcon className="size-5" />
+    Crypto
+  </WideNakedMenuAnchor>
+}
+
+function SessionCryptoAddMenu() {
   return <div className="flex flex-col text-left gap-2">
-    <SessionPasswordAddAnchor />
-    <WideNakedMenuAnchor
-      aria-disabled>
-      Crypto
+    <WideNakedMenuAnchor aria-disabled>
+      Ethereum
     </WideNakedMenuAnchor>
-    <SessionCardAddAnchor />
-    <WideNakedMenuAnchor
-      aria-disabled>
-      Seed
+    <WideNakedMenuAnchor aria-disabled>
+      Bitcoin
+    </WideNakedMenuAnchor>
+    <WideNakedMenuAnchor aria-disabled>
+      Solana
+    </WideNakedMenuAnchor>
+    <WideNakedMenuAnchor aria-disabled>
+      Monero
     </WideNakedMenuAnchor>
   </div>
 }
@@ -515,14 +560,6 @@ function SessionMoreMenu(props: { logout(): void }) {
         <PathPaper>
           <SessionAccountAddMenu />
         </PathPaper>}
-      {hash.url.pathname === "/add/password" &&
-        <PathBoard>
-          <SessionPasswordAddPage />
-        </PathBoard>}
-      {/* {hash.url.pathname === "/add/card" &&
-        <PathPage>
-          <SessionCardAddPage />
-        </PathPage>} */}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <WideNakedMenuButton>

@@ -3,7 +3,7 @@ import { useCopy } from "@/libs/copy/mod.ts";
 import { WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
-import { useAnchorWithCoords, usePathContext } from "@hazae41/chemin";
+import { useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import React, { Fragment, useMemo, useState } from "react";
 import { SessionAccountCard } from "../mod.tsx";
@@ -224,13 +224,16 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
 
 export function SessionCardAddAnchor() {
   const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(path, "/add/card")
+  const coords = useAnchorWithCoords(hash, "/card")
 
   return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
-    onKeyDown={coords.onKeyDown}>
+    onKeyDown={coords.onKeyDown}
+    aria-disabled>
+    <Outline.CreditCardIcon className="size-5" />
     Card
   </WideNakedMenuAnchor>
 }

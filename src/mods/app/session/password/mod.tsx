@@ -152,13 +152,15 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
 
 export function SessionPasswordAddAnchor() {
   const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(path, "/add/password")
+  const coords = useAnchorWithCoords(hash, "/password")
 
   return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
+    <Outline.LanguageIcon className="size-5" />
     Password
   </WideNakedMenuAnchor>
 }
