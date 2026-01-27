@@ -516,20 +516,44 @@ function SessionCryptoAddAnchor() {
 }
 
 function SessionCryptoAddMenu() {
-  return <div className="flex flex-col text-left gap-2">
-    <WideNakedMenuAnchor aria-disabled>
-      Ethereum
-    </WideNakedMenuAnchor>
-    <WideNakedMenuAnchor aria-disabled>
-      Bitcoin
-    </WideNakedMenuAnchor>
-    <WideNakedMenuAnchor aria-disabled>
-      Solana
-    </WideNakedMenuAnchor>
-    <WideNakedMenuAnchor aria-disabled>
-      Monero
-    </WideNakedMenuAnchor>
-  </div>
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/ethereum" &&
+        <PathBoard>
+          {/* <SessionCryptoEthereumAddPage /> */}
+        </PathBoard>}
+    </SubpathProvider>
+    <div className="flex flex-col text-left gap-2">
+      <SessionCryptoEthereumAddAnchor />
+      <WideNakedMenuAnchor aria-disabled>
+        Bitcoin
+      </WideNakedMenuAnchor>
+      <WideNakedMenuAnchor aria-disabled>
+        Solana
+      </WideNakedMenuAnchor>
+      <WideNakedMenuAnchor aria-disabled>
+        Monero
+      </WideNakedMenuAnchor>
+    </div>
+  </Fragment>
+}
+
+function SessionCryptoEthereumAddAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/ethereum")
+
+  return <WideNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}
+    aria-disabled>
+    Ethereum
+  </WideNakedMenuAnchor>
 }
 
 function SessionMoreButton() {
