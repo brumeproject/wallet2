@@ -61,7 +61,6 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
     <div className="flex items-center justify-center">
       <SessionAccountCard $entry={$entry} />
     </div>
-    <div className="grow" />
     {num && <Fragment>
       <div className="h-6" />
       <div className="font-medium">

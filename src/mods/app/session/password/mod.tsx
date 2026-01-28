@@ -56,7 +56,6 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
     <div className="flex items-center justify-center">
       <SessionAccountCard $entry={$entry} />
     </div>
-    <div className="grow" />
     {username && <Fragment>
       <div className="h-6" />
       <div className="font-medium">
