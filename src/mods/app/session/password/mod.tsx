@@ -266,10 +266,8 @@ export function SessionPasswordAddPage() {
   }).catch(Errors.display), [store, encryptOrThrow, close])
 
   const error = useMemo(() => {
-    if (!password.length)
-      return "Password is required"
     return
-  }, [password])
+  }, [])
 
   const onTotpQrcodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => Promise.try(async () => {
     const file = e.target.files?.item(0)
@@ -408,6 +406,7 @@ export function SessionPasswordAddPage() {
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             type={masked ? "password" : "text"}
+            placeholder="JBSWY3DPEHPK3PXP or otpauth://totp/..."
             onChange={e => setTotpSeed(e.target.value)}
             value={totpseed} />
           <div className="flex items-center gap-2">

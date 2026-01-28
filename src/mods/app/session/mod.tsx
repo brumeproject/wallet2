@@ -13,7 +13,7 @@ import { Option } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { UserData } from "../user/mod.tsx";
-import { SessionCardAccountPage, SessionCardAddAnchor } from "./card/mod.tsx";
+import { SessionCardAccountPage, SessionCardAddAnchor, SessionCardAddPage } from "./card/mod.tsx";
 import { SessionPasswordAccountPage, SessionPasswordAddAnchor, SessionPasswordAddPage } from "./password/mod.tsx";
 
 React;
@@ -485,7 +485,7 @@ function SessionAccountAddMenu() {
         </PathPaper>}
       {hash.url.pathname === "/card" &&
         <PathBoard>
-          {/* <SessionCardAddPage /> */}
+          <SessionCardAddPage />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
