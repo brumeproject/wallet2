@@ -370,8 +370,8 @@ export function SessionCardAddPage() {
           <div className="h-4 grow" />
           <div className="flex flex-wrap items-center gap-2">
             <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.LanguageIcon className="size-5" />
-              Password
+              <Outline.CreditCardIcon className="size-5" />
+              Card
             </div>
           </div>
         </div>
