@@ -98,7 +98,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.LanguageIcon className="size-5" />
+        <Outline.UserIcon className="size-5" />
         <input className="w-full focus-visible:outline-none"
           readOnly
           onFocus={e => e.currentTarget.select()}
@@ -150,7 +150,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.CalendarIcon className="size-5" />
+        <Outline.HashtagIcon className="size-5" />
         <input className="w-full focus-visible:outline-none"
           readOnly
           type={masked ? "password" : "text"}
@@ -184,7 +184,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.CalendarIcon className="size-5" />
+        <Outline.HashtagIcon className="size-5" />
         <input className="w-full focus-visible:outline-none"
           readOnly
           type={masked ? "password" : "text"}
@@ -427,6 +427,22 @@ export function SessionCardAddPage() {
             placeholder="John Doe"
             onChange={e => setHol(e.target.value)}
             value={hol} />
+        </div>
+        <div className="h-6" />
+        <div className="font-medium">
+          Expiry
+        </div>
+        <div className="text-default-contrast">
+          Your card expiry date
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.CalendarIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            autoComplete="off"
+            placeholder="12/34"
+            onChange={e => setExp(e.target.value)}
+            value={exp} />
         </div>
         <div className="h-6" />
         <div className="font-medium">
