@@ -618,58 +618,65 @@ function UserCreatePage() {
     <h1 className="text-xl font-medium">
       Create user
     </h1>
-    <div className="h-6" />
-    <div className="font-medium">
-      Name
-    </div>
-    <div className="text-default-contrast">
-      Will be used locally for display purposes
-    </div>
-    <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-      <input className="w-full focus-visible:outline-none"
-        placeholder="Anon"
-        value={rawname}
-        onChange={e => setRawName(e.target.value)} />
-    </div>
-    <div className="h-6" />
-    <div className="font-medium">
-      Password
-    </div>
-    <div className="text-default-contrast">
-      At least 3 characters
-    </div>
-    <div className="h-4" />
-    <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-      <input className="w-full focus-visible:outline-none"
-        type={masked ? "password" : "text"}
-        value={password}
-        onChange={e => setPassword(e.target.value)} />
-      <div className="flex items-center gap-2">
-        <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-          type="button"
-          onClick={() => setMasked(!masked)}>
-          <InButton>
-            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-          </InButton>
-        </button>
+    <form className="grow flex flex-col">
+      <input className="hidden"
+        autoComplete="off"
+        name="username" />
+      <div className="h-6" />
+      <div className="font-medium">
+        Name
       </div>
-    </div>
-    <div className="h-8 grow" />
-    <div className="flex items-center flex-wrap-reverse gap-2">
-      {"showSaveFilePicker" in window === true &&
-        <WideOppositeButton
-          disabled={error != null}
-          onClick={pickOrAlert}>
-          {error != null ? error : "Save file"}
-        </WideOppositeButton>}
-      {"showSaveFilePicker" in window === false &&
-        <WideOppositeButton
-          disabled={error != null}
-          onClick={saveOrAlert}>
-          {error != null ? error : "Save file"}
-        </WideOppositeButton>}
-    </div>
+      <div className="text-default-contrast">
+        Will be used locally for display purposes
+      </div>
+      <div className="h-4" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <input className="w-full focus-visible:outline-none"
+          autoComplete="off"
+          placeholder="Anon"
+          value={rawname}
+          onChange={e => setRawName(e.target.value)} />
+      </div>
+      <div className="h-6" />
+      <div className="font-medium">
+        Password
+      </div>
+      <div className="text-default-contrast">
+        At least 3 characters
+      </div>
+      <div className="h-4" />
+      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <input className="w-full focus-visible:outline-none"
+          autoComplete="off"
+          type={masked ? "password" : "text"}
+          value={password}
+          onChange={e => setPassword(e.target.value)} />
+        <div className="flex items-center gap-2">
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            type="button"
+            onClick={() => setMasked(!masked)}>
+            <InButton>
+              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+            </InButton>
+          </button>
+        </div>
+      </div>
+      <div className="h-8 grow" />
+      <div className="flex items-center flex-wrap-reverse gap-2">
+        {"showSaveFilePicker" in window === true &&
+          <WideOppositeButton
+            disabled={error != null}
+            onClick={pickOrAlert}>
+            {error != null ? error : "Save file"}
+          </WideOppositeButton>}
+        {"showSaveFilePicker" in window === false &&
+          <WideOppositeButton
+            disabled={error != null}
+            onClick={saveOrAlert}>
+            {error != null ? error : "Save file"}
+          </WideOppositeButton>}
+      </div>
+    </form>
   </div>
 }
 

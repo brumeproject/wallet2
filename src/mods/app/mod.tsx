@@ -353,34 +353,40 @@ function SettingsPage() {
     <h1 className="text-xl font-medium">
       Settings
     </h1>
-    <div className="h-6" />
-    <div className="font-medium">
-      Custom app display
-    </div>
-    <div className="text-default-contrast">
-      Custom name and icon to hide the app
-    </div>
-    <div className="h-4" />
-    <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-      {appicon == null &&
-        <div className="relative size-24 border-2 border-dashed border-default-contrast flex items-center justify-center rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <input className="absolute inset-0 opacity-0 cursor-pointer"
-            type="file"
-            accept="image/*"
-            onChange={onIconChange} />
-          <Outline.ArrowUpTrayIcon className="size-6 text-default-contrast" />
-        </div>}
-      {appicon != null &&
-        <button className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
-          type="button"
-          onClick={onIconRemove}>
-          <img className="size-24 rounded-xl bg-opposite" src={appicon} />
-        </button>}
+    <form className="grow flex flex-col">
+      <input className="hidden"
+        autoComplete="off"
+        name="username" />
+      <div className="h-6" />
+      <div className="font-medium">
+        Custom app display
+      </div>
+      <div className="text-default-contrast">
+        Custom name and icon to hide the app
+      </div>
       <div className="h-4" />
-      <input className="text-center bg-default-contrast po-2 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
-        placeholder="Wallet"
-        value={appname || ""}
-        onChange={onNameChange} />
-    </div>
+      <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+        {appicon == null &&
+          <div className="relative size-24 border-2 border-dashed border-default-contrast flex items-center justify-center rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <input className="absolute inset-0 opacity-0 cursor-pointer"
+              type="file"
+              accept="image/*"
+              onChange={onIconChange} />
+            <Outline.ArrowUpTrayIcon className="size-6 text-default-contrast" />
+          </div>}
+        {appicon != null &&
+          <button className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
+            type="button"
+            onClick={onIconRemove}>
+            <img className="size-24 rounded-xl bg-opposite" src={appicon} />
+          </button>}
+        <div className="h-4" />
+        <input className="text-center bg-default-contrast po-2 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
+          autoComplete="off"
+          placeholder="Wallet"
+          value={appname || ""}
+          onChange={onNameChange} />
+      </div>
+    </form>
   </div>
 }

@@ -1,4 +1,3 @@
-import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -13,6 +12,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useMemo, useState } from "react";
+import { InAnchor } from "../../../../libs/anchor/mod.tsx";
 import { QrCode } from "../../../../libs/qrcode/mod.ts";
 import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
@@ -329,134 +329,143 @@ export function SessionPasswordAddPage() {
           </div>
         </div>
       </div>
-      <div className="h-6 grow" />
-      <div className="font-medium">
-        Title
-      </div>
-      <div className="text-default-contrast">
-        A name to identify this account
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.TagIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          placeholder="My Account"
-          onChange={e => setRawTitle(e.target.value)}
-          value={rawtitle} />
-      </div>
-      <div className="h-6" />
-      <div className="font-medium">
-        Username
-      </div>
-      <div className="text-default-contrast">
-        Your username or email
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.AtSymbolIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          placeholder="john.doe@mail.com"
-          onChange={e => setUsername(e.target.value)}
-          value={username} />
-      </div>
-      <div className="h-6" />
-      <div className="font-medium">
-        Password
-      </div>
-      <div className="text-default-contrast">
-        Your password
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.LanguageIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          type={masked ? "password" : "text"}
-          onChange={e => setPassword(e.target.value)}
-          value={password} />
-        <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={() => setMasked(!masked)}>
-            <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-            </InButton>
-          </button>
-          <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all">
-            <InAnchor>
-              <Outline.SparklesIcon className="size-5" />
-            </InAnchor>
-          </a>
+      <form className="grow flex flex-col">
+        <input className="hidden"
+          autoComplete="off"
+          name="username" />
+        <div className="h-6" />
+        <div className="font-medium">
+          Title
         </div>
-      </div>
-      <div className="h-6" />
-      <div className="font-medium">
-        One-time passcode
-      </div>
-      <div className="text-default-contrast">
-        Your time-based one-time passcode
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.HashtagIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          type={masked ? "password" : "text"}
-          onChange={e => setTotpSeed(e.target.value)}
-          value={totpseed} />
-        <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={() => setMasked(!masked)}>
-            <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-            </InButton>
-          </button>
-          <div className="group relative rounded-full p-1 [&:has(:hover)]:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast [&:has(:focus-visible)]:outline-none transition-all">
-            <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={onTotpQrcodeChange} />
-            <InAnchor>
-              <Outline.QrCodeIcon className="size-5" />
-            </InAnchor>
+        <div className="text-default-contrast">
+          A name to identify this account
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.TagIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            autoComplete="off"
+            placeholder="My Account"
+            onChange={e => setRawTitle(e.target.value)}
+            value={rawtitle} />
+        </div>
+        <div className="h-6" />
+        <div className="font-medium">
+          Username
+        </div>
+        <div className="text-default-contrast">
+          Your username or email
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.AtSymbolIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            autoComplete="off"
+            placeholder="john.doe@mail.com"
+            onChange={e => setUsername(e.target.value)}
+            value={username} />
+        </div>
+        <div className="h-6" />
+        <div className="font-medium">
+          Password
+        </div>
+        <div className="text-default-contrast">
+          Your password
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.LanguageIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            autoComplete="off"
+            type={masked ? "password" : "text"}
+            onChange={e => setPassword(e.target.value)}
+            value={password} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={() => setMasked(!masked)}>
+              <InButton>
+                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              </InButton>
+            </button>
+            <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all">
+              <InAnchor>
+                <Outline.SparklesIcon className="size-5" />
+              </InAnchor>
+            </a>
           </div>
         </div>
-      </div>
-      <div className="h-4" />
-      <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
-        readOnly
-        onClick={copyTheTotpcode.copyOrAlert}
-        value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
-      <div className="h-6" />
-      <div className="font-medium">
-        Notes
-      </div>
-      <div className="text-default-contrast">
-        Any additional information
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <textarea className="w-full resize-none focus-visible:outline-none"
-          rows={6}
-          placeholder="I use this account for..."
-          onChange={e => setNotes(e.target.value)}
-          value={notes} />
-      </div>
-      <div className="h-8" />
-      <div className="flex items-center flex-wrap-reverse gap-2">
-        {session.value.user.fsfh != null &&
-          <WideOppositeButton
-            disabled={error != null}
-            onClick={writeOrAlert}>
-            {error != null ? error : "Save file"}
-          </WideOppositeButton>}
-        {session.value.user.fsfh == null &&
-          <WideOppositeButton
-            disabled={error != null}
-            onClick={saveOrAlert}>
-            {error != null ? error : "Save file"}
-          </WideOppositeButton>}
-      </div>
+        <div className="h-6" />
+        <div className="font-medium">
+          One-time passcode
+        </div>
+        <div className="text-default-contrast">
+          Your time-based one-time passcode
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.HashtagIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            autoComplete="off"
+            type={masked ? "password" : "text"}
+            onChange={e => setTotpSeed(e.target.value)}
+            value={totpseed} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={() => setMasked(!masked)}>
+              <InButton>
+                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              </InButton>
+            </button>
+            <div className="group relative rounded-full p-1 [&:has(:hover)]:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast [&:has(:focus-visible)]:outline-none transition-all">
+              <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
+                type="file"
+                accept="image/*"
+                onChange={onTotpQrcodeChange} />
+              <InAnchor>
+                <Outline.QrCodeIcon className="size-5" />
+              </InAnchor>
+            </div>
+          </div>
+        </div>
+        <div className="h-4" />
+        <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
+          readOnly
+          onClick={copyTheTotpcode.copyOrAlert}
+          value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
+        <div className="h-6" />
+        <div className="font-medium">
+          Notes
+        </div>
+        <div className="text-default-contrast">
+          Any additional information
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full resize-none focus-visible:outline-none"
+            rows={6}
+            autoComplete="off"
+            placeholder="I use this account for..."
+            onChange={e => setNotes(e.target.value)}
+            value={notes} />
+        </div>
+        <div className="h-8" />
+        <div className="flex items-center flex-wrap-reverse gap-2">
+          {session.value.user.fsfh != null &&
+            <WideOppositeButton
+              disabled={error != null}
+              onClick={writeOrAlert}>
+              {error != null ? error : "Save file"}
+            </WideOppositeButton>}
+          {session.value.user.fsfh == null &&
+            <WideOppositeButton
+              disabled={error != null}
+              onClick={saveOrAlert}>
+              {error != null ? error : "Save file"}
+            </WideOppositeButton>}
+        </div>
+      </form>
     </div>
   </Fragment>
 }
