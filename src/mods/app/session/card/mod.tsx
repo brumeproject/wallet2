@@ -236,8 +236,7 @@ export function SessionCardAddAnchor() {
   return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
-    onKeyDown={coords.onKeyDown}
-    aria-disabled>
+    onKeyDown={coords.onKeyDown}>
     <Outline.CreditCardIcon className="size-5" />
     Card
   </WideNakedMenuAnchor>
