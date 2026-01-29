@@ -220,7 +220,7 @@ export function App() {
               Other wallets have around 1000 external dependencies
             </div>
             <div className="bg-opposite text-opposite selection-opposite p-4 rounded-xl">
-              We have 8
+              We have 10
             </div>
           </div>
           <div className="h-[max(24rem,50dvh)]" />
