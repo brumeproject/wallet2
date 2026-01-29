@@ -9,7 +9,9 @@ import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
-import React, { Fragment, useCallback, useMemo, useState } from "react";
+import { validateMnemonic } from "@scure/bip39";
+import { wordlist } from "@scure/bip39/wordlists/english.js";
+import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
@@ -104,13 +106,11 @@ export function SessionSeedAddPage() {
 
   const [color, setColor] = useState<Nullable<string>>()
 
-  const [seedphrase, setSeedPhrase] = useState("")
+  const [rawseedphrase, setRawSeedPhrase] = useState("")
+
+  const seedphrase = useDeferredValue(rawseedphrase)
 
   const [notes, setNotes] = useState("")
-
-  const seed = useMemo(() => {
-    // TODO: validate seed phrase
-  }, [seedphrase])
 
   const encryptOrThrow = useCallback(async () => {
     const kdbx = session.value.kdbx
@@ -182,6 +182,8 @@ export function SessionSeedAddPage() {
   const error = useMemo(() => {
     if (!seedphrase)
       return "Seed phrase is required"
+    if (!validateMnemonic(seedphrase, wordlist))
+      return "Seed phrase is invalid"
     return
   }, [seedphrase])
 
@@ -251,8 +253,8 @@ export function SessionSeedAddPage() {
           <textarea className="w-full focus-visible:outline-none"
             rows={6}
             autoComplete="off"
-            onChange={e => setSeedPhrase(e.target.value)}
-            value={seedphrase} />
+            onChange={e => setRawSeedPhrase(e.target.value)}
+            value={rawseedphrase} />
         </div>
         <div className="h-6" />
         <div className="font-medium">

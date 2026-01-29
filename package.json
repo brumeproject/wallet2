@@ -30,6 +30,7 @@
     "@heroicons/react": "^2.2.0",
     "@nuintun/qrcode": "^5.0.2",
     "@scure/base": "^2.0.0",
+    "@scure/bip39": "^2.0.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
