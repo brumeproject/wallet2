@@ -61,168 +61,173 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
     <div className="flex items-center justify-center">
       <SessionAccountCard $entry={$entry} />
     </div>
-    {num && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        Number
-      </div>
-      <div className="text-default-contrast">
-        Your card number
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.HashtagIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          readOnly
-          onFocus={e => e.currentTarget.select()}
-          value={num} />
-        <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={copyTheNum.copyOrAlert}>
-            <InButton>
-              {copyTheNum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            </InButton>
-          </button>
+    <form className="grow flex flex-col">
+      <input className="hidden"
+        autoComplete="off"
+        name="username" />
+      {num && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Number
         </div>
-      </div>
-    </Fragment>}
-    {hol && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        Holder
-      </div>
-      <div className="text-default-contrast">
-        Your card holder name
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.UserIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          readOnly
-          onFocus={e => e.currentTarget.select()}
-          value={hol} />
-        <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={copyTheHol.copyOrAlert}>
-            <InButton>
-              {copyTheHol.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            </InButton>
-          </button>
+        <div className="text-default-contrast">
+          Your card number
         </div>
-      </div>
-    </Fragment>}
-    {exp && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        Expiry
-      </div>
-      <div className="text-default-contrast">
-        Your card expiry date
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.CalendarIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          readOnly
-          onFocus={e => e.currentTarget.select()}
-          value={exp} />
-        <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={copyTheExp.copyOrAlert}>
-            <InButton>
-              {copyTheExp.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            </InButton>
-          </button>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.HashtagIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={num} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={copyTheNum.copyOrAlert}>
+              <InButton>
+                {copyTheNum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
         </div>
-      </div>
-    </Fragment>}
-    {cvv && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        CVV
-      </div>
-      <div className="text-default-contrast">
-        Your card verification value
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.HashtagIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          readOnly
-          type={masked ? "password" : "text"}
-          onFocus={e => e.currentTarget.select()}
-          value={cvv} />
-        <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={() => setMasked(!masked)}>
-            <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-            </InButton>
-          </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={copyTheCvv.copyOrAlert}>
-            <InButton>
-              {copyTheCvv.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            </InButton>
-          </button>
+      </Fragment>}
+      {hol && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Holder
         </div>
-      </div>
-    </Fragment>}
-    {pin && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        PIN
-      </div>
-      <div className="text-default-contrast">
-        Your card personal identification number
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.HashtagIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          readOnly
-          type={masked ? "password" : "text"}
-          onFocus={e => e.currentTarget.select()}
-          value={pin} />
-        <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={() => setMasked(!masked)}>
-            <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-            </InButton>
-          </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={copyThePin.copyOrAlert}>
-            <InButton>
-              {copyThePin.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            </InButton>
-          </button>
+        <div className="text-default-contrast">
+          Your card holder name
         </div>
-      </div>
-    </Fragment>}
-    {notes && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        Notes
-      </div>
-      <div className="text-default-contrast">
-        Any additional information
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <textarea className="w-full resize-none focus-visible:outline-none"
-          readOnly
-          rows={6}
-          value={notes} />
-      </div>
-    </Fragment>}
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.UserIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={hol} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={copyTheHol.copyOrAlert}>
+              <InButton>
+                {copyTheHol.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {exp && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Expiry
+        </div>
+        <div className="text-default-contrast">
+          Your card expiry date
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.CalendarIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={exp} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={copyTheExp.copyOrAlert}>
+              <InButton>
+                {copyTheExp.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {cvv && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          CVV
+        </div>
+        <div className="text-default-contrast">
+          Your card verification value
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.HashtagIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            type={masked ? "password" : "text"}
+            onFocus={e => e.currentTarget.select()}
+            value={cvv} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={() => setMasked(!masked)}>
+              <InButton>
+                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              </InButton>
+            </button>
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={copyTheCvv.copyOrAlert}>
+              <InButton>
+                {copyTheCvv.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {pin && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          PIN
+        </div>
+        <div className="text-default-contrast">
+          Your card personal identification number
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.HashtagIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            type={masked ? "password" : "text"}
+            onFocus={e => e.currentTarget.select()}
+            value={pin} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={() => setMasked(!masked)}>
+              <InButton>
+                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              </InButton>
+            </button>
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={copyThePin.copyOrAlert}>
+              <InButton>
+                {copyThePin.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {notes && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Notes
+        </div>
+        <div className="text-default-contrast">
+          Any additional information
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full resize-none focus-visible:outline-none"
+            readOnly
+            rows={6}
+            value={notes} />
+        </div>
+      </Fragment>}
+    </form>
   </div>
 }
 

@@ -56,96 +56,98 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
     <div className="flex items-center justify-center">
       <SessionAccountCard $entry={$entry} />
     </div>
-    {username && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        Username
-      </div>
-      <div className="text-default-contrast">
-        Your username or email
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.AtSymbolIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          readOnly
-          onFocus={e => e.currentTarget.select()}
-          value={username} />
-        <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={copyTheUsername.copyOrAlert}>
-            <InButton>
-              {copyTheUsername.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            </InButton>
-          </button>
+    <form className="grow flex flex-col">
+      {username && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Username
         </div>
-      </div>
-    </Fragment>}
-    {password && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        Password
-      </div>
-      <div className="text-default-contrast">
-        Your password
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <Outline.LanguageIcon className="size-5" />
-        <input className="w-full focus-visible:outline-none"
-          readOnly
-          onFocus={e => e.currentTarget.select()}
-          type={masked ? "password" : "text"}
-          value={password} />
-        <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={() => setMasked(!masked)}>
-            <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-            </InButton>
-          </button>
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-            type="button"
-            onClick={copyThePassword.copyOrAlert}>
-            <InButton>
-              {copyThePassword.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            </InButton>
-          </button>
+        <div className="text-default-contrast">
+          Your username or email
         </div>
-      </div>
-    </Fragment>}
-    {totpseed && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        One-time passcode
-      </div>
-      <div className="text-default-contrast">
-        Your time-based one-time passcode
-      </div>
-      <div className="h-4" />
-      <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
-        readOnly
-        onClick={copyTheTotpcode.copyOrAlert}
-        value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
-    </Fragment>}
-    {notes && <Fragment>
-      <div className="h-6" />
-      <div className="font-medium">
-        Notes
-      </div>
-      <div className="text-default-contrast">
-        Any additional information
-      </div>
-      <div className="h-4" />
-      <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-        <textarea className="w-full resize-none focus-visible:outline-none"
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.AtSymbolIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={username} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={copyTheUsername.copyOrAlert}>
+              <InButton>
+                {copyTheUsername.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {password && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Password
+        </div>
+        <div className="text-default-contrast">
+          Your password
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.LanguageIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            type={masked ? "password" : "text"}
+            value={password} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={() => setMasked(!masked)}>
+              <InButton>
+                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              </InButton>
+            </button>
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={copyThePassword.copyOrAlert}>
+              <InButton>
+                {copyThePassword.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {totpseed && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          One-time passcode
+        </div>
+        <div className="text-default-contrast">
+          Your time-based one-time passcode
+        </div>
+        <div className="h-4" />
+        <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
           readOnly
-          rows={6}
-          value={notes} />
-      </div>
-    </Fragment>}
+          onClick={copyTheTotpcode.copyOrAlert}
+          value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
+      </Fragment>}
+      {notes && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Notes
+        </div>
+        <div className="text-default-contrast">
+          Any additional information
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full resize-none focus-visible:outline-none"
+            readOnly
+            rows={6}
+            value={notes} />
+        </div>
+      </Fragment>}
+    </form>
   </div>
 }
 
