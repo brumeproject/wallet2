@@ -6,6 +6,7 @@ import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
+import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
@@ -15,7 +16,6 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { DragEvent, Fragment, KeyboardEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { useAutoFocus } from "../../../libs/focus/mod.ts";
 import { SessionData } from "../session/mod.tsx";
 
 React;

@@ -1,3 +1,4 @@
+import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -5,6 +6,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
+import { QrCode } from "@/libs/qrcode/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
@@ -12,8 +14,6 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useMemo, useState } from "react";
-import { InAnchor } from "../../../../libs/anchor/mod.tsx";
-import { QrCode } from "../../../../libs/qrcode/mod.ts";
 import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;

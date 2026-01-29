@@ -1,16 +1,16 @@
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
+import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
+import { Nullable } from "@/libs/nullable/mod.tsx";
+import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useMemo, useState } from "react";
-import { Errors } from "../../../../libs/errors/mod.ts";
-import { Nullable } from "../../../../libs/nullable/mod.tsx";
-import { useStoreContext } from "../../../../libs/store/mod.tsx";
 import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
