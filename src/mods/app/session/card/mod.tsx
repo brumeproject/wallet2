@@ -78,6 +78,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
           <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
+            autoComplete="off"
             onFocus={e => e.currentTarget.select()}
             value={num} />
           <div className="flex items-center gap-2">
@@ -104,6 +105,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
           <Outline.UserIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
+            autoComplete="off"
             onFocus={e => e.currentTarget.select()}
             value={hol} />
           <div className="flex items-center gap-2">
@@ -130,6 +132,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
           <Outline.CalendarIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
+            autoComplete="off"
             onFocus={e => e.currentTarget.select()}
             value={exp} />
           <div className="flex items-center gap-2">
@@ -156,6 +159,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
           <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
+            autoComplete="off"
             type={masked ? "password" : "text"}
             onFocus={e => e.currentTarget.select()}
             value={cvv} />
@@ -190,6 +194,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
           <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
+            autoComplete="off"
             type={masked ? "password" : "text"}
             onFocus={e => e.currentTarget.select()}
             value={pin} />
@@ -223,6 +228,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
         <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <textarea className="w-full resize-none focus-visible:outline-none"
             readOnly
+            autoComplete="off"
             rows={6}
             value={notes} />
         </div>
