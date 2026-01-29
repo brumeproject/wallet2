@@ -70,6 +70,7 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
           <Outline.AtSymbolIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
+            autoComplete="off"
             onFocus={e => e.currentTarget.select()}
             value={username} />
           <div className="flex items-center gap-2">
@@ -96,6 +97,7 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
           <Outline.LanguageIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
+            autoComplete="off"
             onFocus={e => e.currentTarget.select()}
             type={masked ? "password" : "text"}
             value={password} />
@@ -128,6 +130,7 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
         <div className="h-4" />
         <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
           readOnly
+          autoComplete="off"
           onClick={copyTheTotpcode.copyOrAlert}
           value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
       </Fragment>}
