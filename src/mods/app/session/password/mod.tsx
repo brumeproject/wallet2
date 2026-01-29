@@ -143,7 +143,7 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
           Any additional information
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <textarea className="w-full resize-none focus-visible:outline-none"
             readOnly
             rows={6}
@@ -445,10 +445,9 @@ export function SessionPasswordAddPage() {
           Any additional information
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <textarea className="w-full resize-none focus-visible:outline-none"
             rows={6}
-            autoComplete="off"
             placeholder="I use this account for..."
             onChange={e => setNotes(e.target.value)}
             value={notes} />

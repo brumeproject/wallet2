@@ -15,6 +15,7 @@ import { flushSync } from "react-dom";
 import { UserData } from "../user/mod.tsx";
 import { SessionCardAccountPage, SessionCardAddAnchor, SessionCardAddPage } from "./card/mod.tsx";
 import { SessionPasswordAccountPage, SessionPasswordAddAnchor, SessionPasswordAddPage } from "./password/mod.tsx";
+import { SessionSeedAccountPage, SessionSeedAddAnchor, SessionSeedAddPage } from "./seed/mod.tsx";
 
 React;
 
@@ -253,6 +254,9 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             if (type === "card")
               return <SessionCardAccountPage $entry={$entry} />
 
+            if (type === "seed")
+              return <SessionSeedAccountPage $entry={$entry} />
+
             return null
           })()}
         </PathBoard>}
@@ -271,17 +275,26 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         {(() => {
           const type = getEntryType($entry)
 
+          if (type === "password")
+            return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+
           if (type === "card")
             return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
           if (type === "ethereum")
             return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
 
+          if (type === "solana")
+            return $entry.getDirectStringByKeyOrNull("SolanaAddress")?.getValueOrThrow().get()
+
           if (type === "bitcoin")
             return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
 
-          if (type === "password")
-            return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+          if (type === "monero")
+            return $entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get()
+
+          if (type === "seed")
+            return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
 
           return null
         })()}
@@ -372,6 +385,9 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
           {(() => {
             const type = getEntryType($entry)
 
+            if (type === "password")
+              return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+
             if (type === "card")
               return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
@@ -381,8 +397,8 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
             if (type === "bitcoin")
               return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
 
-            if (type === "password")
-              return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+            if (type === "seed")
+              return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
 
             return null
           })()}
@@ -487,16 +503,16 @@ function SessionAccountAddMenu() {
         <PathBoard>
           <SessionCardAddPage />
         </PathBoard>}
+      {hash.url.pathname === "/seed" &&
+        <PathBoard>
+          <SessionSeedAddPage />
+        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <SessionPasswordAddAnchor />
       <SessionCryptoAddAnchor />
       <SessionCardAddAnchor />
-      <WideNakedMenuAnchor
-        aria-disabled>
-        <Outline.SparklesIcon className="size-5" />
-        Seed
-      </WideNakedMenuAnchor>
+      <SessionSeedAddAnchor />
     </div>
   </Fragment>
 }

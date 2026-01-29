@@ -16,7 +16,7 @@ export function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
   if ($entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get())
     return "monero"
 
-  if ($entry.getDirectStringByKeyOrNull("Seed")?.getValueOrThrow().get())
+  if ($entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get())
     return "seed"
 
   return "password"
