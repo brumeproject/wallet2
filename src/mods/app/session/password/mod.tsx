@@ -410,7 +410,7 @@ export function SessionPasswordAddPage() {
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             type={masked ? "password" : "text"}
-            placeholder="JBSWY3DPEHPK3PXP or otpauth://totp/..."
+            placeholder="JBSWY3DPEHPK3PXP or otpauth://..."
             onChange={e => setTotpSeed(e.target.value)}
             value={totpseed} />
           <div className="flex items-center gap-2">
