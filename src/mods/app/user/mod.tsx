@@ -24,7 +24,7 @@ export interface UserData {
   readonly uuid: string
   readonly name: string
   readonly fsfh?: Nullable<FileSystemFileHandle>
-  readonly pass?: Nullable<Uint8Array<ArrayBuffer>>
+  readonly auth?: Nullable<Uint8Array<ArrayBuffer>>
 }
 
 export function LoginButton() {
@@ -162,13 +162,12 @@ function UserImportFilePage() {
   const [masked, setMasked] = useState(true)
 
   const [$name, setName] = useState("")
-  const [$password, setPassword] = useState("")
+  const [$pass, setPass] = useState("")
 
   const name = useDeferredValue($name || "Anon")
+  const pass = useDeferredValue($pass)
 
   const [file, setFile] = useState<Nullable<File>>()
-
-  const password = useDeferredValue($password)
 
   const loadOrAlert = useCallback(() => Promise.try(async () => {
     if (file == null)
@@ -177,7 +176,7 @@ function UserImportFilePage() {
     const data = new Uint8Array(await file.arrayBuffer())
 
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
 
@@ -199,26 +198,26 @@ function UserImportFilePage() {
 
     const uuid = crypto.randomUUID()
 
-    const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    const auth = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    const fresh = [...stale, { uuid, name, pass } satisfies UserData]
+    const fresh = [...stale, { uuid, name, auth } satisfies UserData]
 
     await store.value.getOrThrow().setOrThrow("users", fresh)
 
     store.update()
 
     close()
-  }).catch(Errors.display), [store, name, file, password, close])
+  }).catch(Errors.display), [store, name, file, pass, close])
 
   const error = useMemo(() => {
     if (file == null)
       return "File is required"
-    if (!password.length)
+    if (!pass.length)
       return "Password is required"
     return
-  }, [file, password])
+  }, [file, pass])
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
@@ -277,8 +276,8 @@ function UserImportFilePage() {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           type={masked ? "password" : "text"}
-          value={$password}
-          onChange={e => setPassword(e.target.value)} />
+          value={$pass}
+          onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
@@ -308,13 +307,12 @@ function UserImportFsfhPage() {
   const [masked, setMasked] = useState(true)
 
   const [$name, setName] = useState("")
-  const [$password, setPassword] = useState("")
+  const [$pass, setPass] = useState("")
 
   const name = useDeferredValue($name || "Anon")
+  const pass = useDeferredValue($pass)
 
   const [fsfh, setFsfh] = useState<FileSystemFileHandle>()
-
-  const password = useDeferredValue($password)
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker!({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
@@ -348,7 +346,7 @@ function UserImportFsfhPage() {
     const data = new Uint8Array(await file.arrayBuffer())
 
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
 
@@ -370,26 +368,26 @@ function UserImportFsfhPage() {
 
     const uuid = crypto.randomUUID()
 
-    const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    const auth = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    const fresh = [...stale, { uuid, name, fsfh, pass } satisfies UserData]
+    const fresh = [...stale, { uuid, name, fsfh, auth } satisfies UserData]
 
     await store.value.getOrThrow().setOrThrow("users", fresh)
 
     store.update()
 
     close()
-  }).catch(Errors.display), [store, name, fsfh, password, close])
+  }).catch(Errors.display), [store, name, fsfh, pass, close])
 
   const error = useMemo(() => {
     if (fsfh == null)
       return "File is required"
-    if (!password.length)
+    if (!pass.length)
       return "Password is required"
     return
-  }, [fsfh, password])
+  }, [fsfh, pass])
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
@@ -450,8 +448,8 @@ function UserImportFsfhPage() {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           type={masked ? "password" : "text"}
-          value={$password}
-          onChange={e => setPassword(e.target.value)} />
+          value={$pass}
+          onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
@@ -481,11 +479,10 @@ function UserCreatePage() {
   const [masked, setMasked] = useState(true)
 
   const [$name, setName] = useState("")
-  const [$password, setPassword] = useState("")
+  const [$pass, setPass] = useState("")
 
   const name = useDeferredValue($name || "Anon")
-
-  const password = useDeferredValue($password)
+  const pass = useDeferredValue($pass)
 
   const xml = useMemo(() => `
     <KeePassFile>
@@ -533,7 +530,7 @@ function UserCreatePage() {
     const headers = KDBX.Outer.Headers.initOrThrow({ cipher, compression, seed, iv, kdf })
     const wrapper = new KDBX.Outer.MagicAndVersionAndHeaders(new KDBX.Outer.Version(4, 0), headers)
 
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     const derived = await headers.deriveOrThrow(composite)
 
@@ -541,7 +538,7 @@ function UserCreatePage() {
     const hashs = await KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmac.computeOrThrow(bytes, derived)
 
     return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, derived)
-  }, [password])
+  }, [pass])
 
   const encryptOrThrow = useCallback(async () => {
     const inner = innerizeOrThrow()
@@ -612,10 +609,10 @@ function UserCreatePage() {
   }).catch(Errors.display), [store, encryptOrThrow, close])
 
   const error = useMemo(() => {
-    if (!password.length)
+    if (!pass.length)
       return "Password is required"
     return
-  }, [password])
+  }, [pass])
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
@@ -652,8 +649,8 @@ function UserCreatePage() {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           type={masked ? "password" : "text"}
-          value={$password}
-          onChange={e => setPassword(e.target.value)} />
+          value={$pass}
+          onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
@@ -730,11 +727,11 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
   const [masked, setMasked] = useState(true)
 
-  const [$password, setPassword] = useState("")
+  const [$pass, setPass] = useState("")
 
-  const password = useDeferredValue($password)
+  const pass = useDeferredValue($pass)
 
-  const [stored, setStored] = useState<Nullable<Uint8Array<ArrayBuffer> & { length: 32 }>>()
+  const [auth, setAuth] = useState<Nullable<Uint8Array<ArrayBuffer> & { length: 32 }>>()
 
   const [picker1, setPicker1] = useState<Nullable<HTMLInputElement>>()
   const [picker2, setPicker2] = useState<Nullable<HTMLInputElement>>()
@@ -745,13 +742,13 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
   const loadOrAlert1 = useCallback(() => Promise.try(async () => {
     if (file1 == null)
       return
-    if (!password)
+    if (!pass)
       return
 
     const data = new Uint8Array(await file1.arrayBuffer())
 
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
     console.log(decrypted.inner.content.value.document)
@@ -759,18 +756,18 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     login({ user, kdbx: decrypted })
 
     close()
-  }).catch(Errors.display), [user, login, file1, password, close])
+  }).catch(Errors.display), [user, login, file1, pass, close])
 
   const loadOrAlert2 = useCallback(() => Promise.try(async () => {
     if (file2 == null)
       return
-    if (stored == null)
+    if (auth == null)
       return
 
     const data = new Uint8Array(await file2.arrayBuffer())
 
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = new KDBX.CompositeKey(new Unknown(stored))
+    const composite = new KDBX.CompositeKey(new Unknown(auth))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
     console.log(decrypted.inner.content.value.document)
@@ -778,28 +775,28 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     login({ user, kdbx: decrypted })
 
     close()
-  }).catch(Errors.display), [user, login, file2, stored, close])
+  }).catch(Errors.display), [user, login, file2, auth, close])
 
   useEffect(() => {
     if (file1 == null)
       return
-    if (!password)
+    if (!pass)
       return
     loadOrAlert1().catch(console.error)
-  }, [file1, password, loadOrAlert1])
+  }, [file1, pass, loadOrAlert1])
 
   useEffect(() => {
     if (file2 == null)
       return
-    if (stored == null)
+    if (auth == null)
       return
     loadOrAlert2().catch(console.error)
-  }, [file2, stored, loadOrAlert2])
+  }, [file2, auth, loadOrAlert2])
 
   const openOrAlert1 = useCallback(() => Promise.try(async () => {
     if (user.fsfh == null)
       return
-    if (!password)
+    if (!pass)
       return
 
     await user.fsfh.requestPermission({ mode: "readwrite" })
@@ -808,7 +805,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     const data = new Uint8Array(await file.arrayBuffer())
 
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
     console.log(decrypted.inner.content.value.document)
@@ -816,10 +813,10 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     login({ user, kdbx: decrypted })
 
     close()
-  }).catch(Errors.display), [user, login, password, close])
+  }).catch(Errors.display), [user, login, pass, close])
 
   const openOrAlert2 = useCallback((stored: Uint8Array<ArrayBuffer> & { length: 32 }) => Promise.try(async () => {
-    if (user.pass == null)
+    if (user.auth == null)
       return
     if (user.fsfh == null)
       return
@@ -840,7 +837,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     login({ user, kdbx: decrypted })
 
     close()
-  }).catch(Errors.display), [user, login, stored, close])
+  }).catch(Errors.display), [user, login, auth, close])
 
   const onKeyDown = useCallback(async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter")
@@ -855,18 +852,18 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
   }, [user, openOrAlert1, picker1])
 
   const onPassClick = useCallback(async () => {
-    if (user.pass == null)
+    if (user.auth == null)
       return
 
     if (user.fsfh == null) {
       picker2!.click()
 
-      setStored(await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 })
+      setAuth(await webAuthnStorage.getOrThrow(user.auth) as Uint8Array<ArrayBuffer> & { length: 32 })
 
       return
     }
 
-    await openOrAlert2(await webAuthnStorage.getOrThrow(user.pass) as Uint8Array<ArrayBuffer> & { length: 32 })
+    await openOrAlert2(await webAuthnStorage.getOrThrow(user.auth) as Uint8Array<ArrayBuffer> & { length: 32 })
   }, [user, openOrAlert2, picker2])
 
   return <div className="flex flex-col items-center justify-center grow p-6 py-24">
@@ -887,8 +884,8 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
           autoComplete="off"
           type={masked ? "password" : "text"}
           placeholder="Password"
-          value={$password}
-          onChange={e => setPassword(e.currentTarget.value)}
+          value={$pass}
+          onChange={e => setPass(e.currentTarget.value)}
           onKeyDown={onKeyDown}
           ref={useAutoFocus()} />
         <div className="flex items-center gap-2">
@@ -899,7 +896,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
               {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
             </InButton>
           </button>
-          {user.pass != null &&
+          {user.auth != null &&
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
               type="button"
               onClick={onPassClick}>
@@ -990,13 +987,12 @@ function UserReimportFilePage(props: { user: UserData }) {
   const [masked, setMasked] = useState(true)
 
   const [$name, setName] = useState(user.name)
-  const [$password, setPassword] = useState("")
+  const [$pass, setPass] = useState("")
 
   const name = useDeferredValue($name || "Anon")
+  const pass = useDeferredValue($pass)
 
   const [file, setFile] = useState<Nullable<File>>()
-
-  const password = useDeferredValue($password)
 
   const loadOrAlert = useCallback(() => Promise.try(async () => {
     if (file == null)
@@ -1005,7 +1001,7 @@ function UserReimportFilePage(props: { user: UserData }) {
     const data = new Uint8Array(await file.arrayBuffer())
 
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
 
@@ -1027,26 +1023,26 @@ function UserReimportFilePage(props: { user: UserData }) {
 
     const uuid = user.uuid
 
-    const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    const auth = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    const fresh = stale.map(x => x.uuid === user.uuid ? { uuid, name, pass } : x)
+    const fresh = stale.map(x => x.uuid === user.uuid ? { uuid, name, auth } : x)
 
     await store.value.getOrThrow().setOrThrow("users", fresh)
 
     store.update()
 
     close()
-  }).catch(Errors.display), [user, store, name, file, password, close])
+  }).catch(Errors.display), [user, store, name, file, pass, close])
 
   const error = useMemo(() => {
     if (file == null)
       return "File is required"
-    if (!password.length)
+    if (!pass.length)
       return "Password is required"
     return
-  }, [file, password])
+  }, [file, pass])
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
@@ -1105,8 +1101,8 @@ function UserReimportFilePage(props: { user: UserData }) {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           type={masked ? "password" : "text"}
-          value={$password}
-          onChange={e => setPassword(e.target.value)} />
+          value={$pass}
+          onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"
@@ -1141,7 +1137,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
   const [$pass, setPass] = useState("")
 
   const name = useDeferredValue($name || "Anon")
-  const password = useDeferredValue($pass)
+  const pass = useDeferredValue($pass)
 
   const [fsfh, setFsfh] = useState<Nullable<FileSystemFileHandle>>(user.fsfh)
 
@@ -1177,7 +1173,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     const data = new Uint8Array(await file.arrayBuffer())
 
     const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(password)))
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
 
@@ -1199,26 +1195,26 @@ function UserReimportFsfhPage(props: { user: UserData }) {
 
     const uuid = user.uuid
 
-    const pass = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    const auth = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    const fresh = stale.map(x => x.uuid === user.uuid ? { uuid, name, fsfh, pass } : x)
+    const fresh = stale.map(x => x.uuid === user.uuid ? { uuid, name, fsfh, auth } : x)
 
     await store.value.getOrThrow().setOrThrow("users", fresh)
 
     store.update()
 
     close()
-  }).catch(Errors.display), [user, store, name, fsfh, password, close])
+  }).catch(Errors.display), [user, store, name, fsfh, pass, close])
 
   const error = useMemo(() => {
     if (fsfh == null)
       return "File is required"
-    if (!password.length)
+    if (!pass.length)
       return "Password is required"
     return
-  }, [fsfh, password])
+  }, [fsfh, pass])
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
