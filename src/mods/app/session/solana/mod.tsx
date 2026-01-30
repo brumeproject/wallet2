@@ -1,3 +1,4 @@
+import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -10,9 +11,8 @@ import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
-import { validateMnemonic } from "@scure/bip39";
-import { wordlist } from "@scure/bip39/wordlists/english.js";
-import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
+import { base58 } from "@scure/base";
+import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
@@ -59,7 +59,7 @@ export function SessionSolanaAccountPage(props: { $entry: KDBX.Inner.KeePassFile
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
+          <Outline.UserIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -82,11 +82,11 @@ export function SessionSolanaAccountPage(props: { $entry: KDBX.Inner.KeePassFile
           Private key
         </div>
         <div className="text-default-contrast">
-          Your Ed25519 private key
+          Your Solana private key
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
+          <Outline.KeyIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -141,12 +141,11 @@ export function SessionSolanaAddAnchor() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <Outline.SparklesIcon className="size-5" />
     Solana
   </WideNakedMenuAnchor>
 }
 
-export function SessionSeedAddPage() {
+export function SessionSolanaAddPage() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -155,9 +154,11 @@ export function SessionSeedAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
+  const [masked, setMasked] = useState(true)
+
   const [$title, setTitle] = useState("")
 
-  const [$seedphrase, setSeedPhrase] = useState("")
+  const [$signer, setSigner] = useState("")
 
   const [$notes, setNotes] = useState("")
 
@@ -165,9 +166,34 @@ export function SessionSeedAddPage() {
 
   const [color, setColor] = useState<Nullable<string>>()
 
-  const seedphrase = useDeferredValue($seedphrase)
+  const signer = useDeferredValue($signer)
 
   const notes = useDeferredValue($notes)
+
+  const [address, setAddress] = useState<Nullable<string>>()
+
+  const getAddressOrNull = useCallback(async () => {
+    if (!signer)
+      return
+
+    const keypair = base58.decode(signer)
+
+    console.log({ keypair })
+
+    if (keypair.length !== 64)
+      return
+
+    const sigkey = keypair.slice(0, 32)
+    const pubkey = keypair.slice(32, 64)
+
+    // TODO validate
+
+    return base58.encode(pubkey)
+  }, [signer])
+
+  useEffect(() => {
+    getAddressOrNull().then(setAddress)
+  }, [getAddressOrNull])
 
   const encryptOrThrow = useCallback(async () => {
     const kdbx = session.value.kdbx
@@ -180,8 +206,11 @@ export function SessionSeedAddPage() {
 
     $entry.createStringOrThrow("Title", title)
 
-    if (seedphrase)
-      $entry.createStringOrThrow("SeedPhrase", seedphrase, true)
+    if (address)
+      $entry.createStringOrThrow("SolanaAddress", address)
+
+    if (signer)
+      $entry.createStringOrThrow("SolanaSigningKey", signer, true)
 
     if (notes)
       $entry.createStringOrThrow("Notes", notes)
@@ -189,7 +218,7 @@ export function SessionSeedAddPage() {
     $group.element.appendChild($entry.element)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
-  }, [session, title, seedphrase, notes])
+  }, [session, title, address, signer, notes])
 
   const writeOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
@@ -237,12 +266,14 @@ export function SessionSeedAddPage() {
   }).catch(Errors.display), [store, encryptOrThrow, close])
 
   const error = useMemo(() => {
-    if (!seedphrase)
-      return "Seed phrase is required"
-    if (!validateMnemonic(seedphrase, wordlist))
-      return "Seed phrase is invalid"
+    if (!signer)
+      return "Private key is required"
+    if (!address)
+      return "Private key is invalid"
     return
-  }, [seedphrase])
+  }, [signer, address])
+
+  const copyTheAddress = useCopy(address)
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -255,7 +286,7 @@ export function SessionSeedAddPage() {
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        Add seed
+        Add Solana account
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
@@ -267,13 +298,13 @@ export function SessionSeedAddPage() {
           </div>
           <div className="h-4" />
           <div className="text-default-half-contrast text-wrap wrap-anywhere">
-            {seedphrase.split(" ").at(0)}
+            {address}
           </div>
           <div className="h-4 grow" />
           <div className="flex flex-wrap items-center gap-2">
             <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.SparklesIcon className="size-5" />
-              Seed
+              Solana
             </div>
           </div>
         </div>
@@ -300,18 +331,59 @@ export function SessionSeedAddPage() {
         </div>
         <div className="h-6" />
         <div className="font-medium">
-          Seed phrase
+          Address
         </div>
         <div className="text-default-contrast">
-          Your BIP-39 mnemonic seed phrase
+          Your Solana address
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={6}
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.UserIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            readOnly
             autoComplete="off"
-            onChange={e => setSeedPhrase(e.target.value)}
-            value={$seedphrase} />
+            placeholder="Enter your private key below"
+            onFocus={e => e.currentTarget.select()}
+            value={address || ""} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={copyTheAddress.copyOrAlert}>
+              <InButton>
+                {copyTheAddress.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+        <div className="h-6" />
+        <div className="font-medium">
+          Private key
+        </div>
+        <div className="text-default-contrast">
+          Your Solana private key
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.KeyIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            autoComplete="off"
+            type={masked ? "password" : "text"}
+            onChange={e => setSigner(e.target.value)}
+            value={$signer} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={() => setMasked(!masked)}>
+              <InButton>
+                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              </InButton>
+            </button>
+            <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all">
+              <InAnchor>
+                <Outline.SparklesIcon className="size-5" />
+              </InAnchor>
+            </a>
+          </div>
         </div>
         <div className="h-6" />
         <div className="font-medium">

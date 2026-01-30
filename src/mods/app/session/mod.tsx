@@ -16,6 +16,7 @@ import { UserData } from "../user/mod.tsx";
 import { SessionCardAccountPage, SessionCardAddAnchor, SessionCardAddPage } from "./card/mod.tsx";
 import { SessionPasswordAccountPage, SessionPasswordAddAnchor, SessionPasswordAddPage } from "./password/mod.tsx";
 import { SessionSeedAccountPage, SessionSeedAddAnchor, SessionSeedAddPage } from "./seed/mod.tsx";
+import { SessionSolanaAccountPage, SessionSolanaAddAnchor, SessionSolanaAddPage } from "./solana/mod.tsx";
 
 React;
 
@@ -252,6 +253,18 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             if (type === "card")
               return <SessionCardAccountPage $entry={$entry} />
 
+            if (type === "ethereum")
+              return // <SessionEthereumAccountPage $entry={$entry} />
+
+            if (type === "solana")
+              return <SessionSolanaAccountPage $entry={$entry} />
+
+            if (type === "bitcoin")
+              return // <SessionBitcoinAccountPage $entry={$entry} />
+
+            if (type === "monero")
+              return // <SessionMoneroAccountPage $entry={$entry} />
+
             if (type === "seed")
               return <SessionSeedAccountPage $entry={$entry} />
 
@@ -392,8 +405,14 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
             if (type === "ethereum")
               return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
 
+            if (type === "solana")
+              return $entry.getDirectStringByKeyOrNull("SolanaAddress")?.getValueOrThrow().get()
+
             if (type === "bitcoin")
               return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
+
+            if (type === "monero")
+              return $entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get()
 
             if (type === "seed")
               return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
@@ -536,9 +555,9 @@ function SessionCryptoAddMenu() {
 
   return <Fragment>
     <SubpathProvider value={hash}>
-      {hash.url.pathname === "/ethereum" &&
+      {hash.url.pathname === "/solana" &&
         <PathBoard>
-          {/* <SessionCryptoEthereumAddPage /> */}
+          <SessionSolanaAddPage />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
@@ -546,9 +565,7 @@ function SessionCryptoAddMenu() {
       <WideNakedMenuAnchor aria-disabled>
         Bitcoin
       </WideNakedMenuAnchor>
-      <WideNakedMenuAnchor aria-disabled>
-        Solana
-      </WideNakedMenuAnchor>
+      <SessionSolanaAddAnchor />
       <WideNakedMenuAnchor aria-disabled>
         Monero
       </WideNakedMenuAnchor>
