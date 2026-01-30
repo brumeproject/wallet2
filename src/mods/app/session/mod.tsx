@@ -10,7 +10,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, u
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Option } from "@hazae41/result-and-option";
-import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useMemo, useState } from "react";
+import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { UserData } from "../user/mod.tsx";
 import { SessionCardAccountPage, SessionCardAddAnchor, SessionCardAddPage } from "./card/mod.tsx";
@@ -69,8 +69,6 @@ export function SessionPage() {
   const [search, setSearch] = useSearchState(path, "search")
   const [filter, setFilter] = useSearchState(path, "filter")
 
-  const dsearch = useDeferredValue(search)
-
   useMemo(() => {
     if (!filter)
       return
@@ -78,10 +76,10 @@ export function SessionPage() {
   }, [filter])
 
   useMemo(() => {
-    if (!dsearch)
+    if (!search)
       return
     setDisplay(true)
-  }, [dsearch])
+  }, [search])
 
   const entries = useMemo(() => {
     const elements = [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")]
@@ -93,22 +91,22 @@ export function SessionPage() {
   }, [session])
 
   const visibles = useMemo(() => {
-    if (!filter && !dsearch)
+    if (!filter && !search)
       return entries
 
     return entries.filter($entry => {
       if (!filter)
-        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
+        return search ? $entry.element.innerHTML.toLowerCase().includes(search.toLowerCase()) : true
 
       if (filter === getEntryFilter($entry))
-        return dsearch ? $entry.element.innerHTML.toLowerCase().includes(dsearch.toLowerCase()) : true
+        return search ? $entry.element.innerHTML.toLowerCase().includes(search.toLowerCase()) : true
 
       // if (filter === "trash" && $entry.getParentGroupOrThrow().isDeleted())
       //   return true
 
       return false
     })
-  }, [entries, filter, dsearch])
+  }, [entries, filter, search])
 
   const logout = useCallback(() => {
     close()

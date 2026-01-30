@@ -285,10 +285,10 @@ function SettingsButton() {
 function SettingsPage() {
   const store = useStoreContext().getOrThrow()
 
-  const [appname, setAppName] = useState<Nullable<string>>()
+  const [name, setName] = useState<Nullable<string>>()
 
   const getNameOrThrow = useCallback(async () => {
-    setAppName(await store.value.getOrThrow().getOrThrow<string>("appname"))
+    setName(await store.value.getOrThrow().getOrThrow<string>("appname"))
   }, [store])
 
   useEffect(() => {
@@ -300,7 +300,7 @@ function SettingsPage() {
   }, [store])
 
   const onNameChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
-    setAppName(e.target.value)
+    setName(e.target.value)
 
     if (store == null)
       return
@@ -312,10 +312,10 @@ function SettingsPage() {
     store.update()
   }, [store])
 
-  const [appicon, setAppIcon] = useState<Nullable<string>>()
+  const [icon, setIcon] = useState<Nullable<string>>()
 
-  const getAppIconOrThrow = useCallback(async () => {
-    setAppIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("appicon").then(x => x && URL.createObjectURL(new Blob([x]))))
+  const getIconOrThrow = useCallback(async () => {
+    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("appicon").then(x => x && URL.createObjectURL(new Blob([x]))))
   }, [store])
 
   useEffect(() => {
@@ -323,7 +323,7 @@ function SettingsPage() {
       return
     if (store.value.isErr())
       return
-    getAppIconOrThrow().catch(console.error)
+    getIconOrThrow().catch(console.error)
   }, [store])
 
   const onIconChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
@@ -332,7 +332,7 @@ function SettingsPage() {
     if (file == null)
       return
 
-    setAppIcon(URL.createObjectURL(file))
+    setIcon(URL.createObjectURL(file))
 
     const data = new Uint8Array(await file.arrayBuffer())
 
@@ -344,7 +344,7 @@ function SettingsPage() {
   const onIconRemove = useCallback(async () => {
     await store.value.getOrThrow().deleteOrThrow("appicon")
 
-    setAppIcon(undefined)
+    setIcon(undefined)
 
     store.update()
   }, [store])
@@ -366,7 +366,7 @@ function SettingsPage() {
       </div>
       <div className="h-4" />
       <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-        {appicon == null &&
+        {icon == null &&
           <div className="relative size-24 border-2 border-dashed border-default-contrast flex items-center justify-center rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
             <input className="absolute inset-0 opacity-0 cursor-pointer"
               type="file"
@@ -374,17 +374,17 @@ function SettingsPage() {
               onChange={onIconChange} />
             <Outline.ArrowUpTrayIcon className="size-6 text-default-contrast" />
           </div>}
-        {appicon != null &&
+        {icon != null &&
           <button className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
             type="button"
             onClick={onIconRemove}>
-            <img className="size-24 rounded-xl bg-opposite" src={appicon} />
+            <img className="size-24 rounded-xl bg-opposite" src={icon} />
           </button>}
         <div className="h-4" />
         <input className="text-center bg-default-contrast po-2 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
           autoComplete="off"
           placeholder="Wallet"
-          value={appname || ""}
+          value={name || ""}
           onChange={onNameChange} />
       </div>
     </form>

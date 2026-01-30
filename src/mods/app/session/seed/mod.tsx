@@ -100,17 +100,19 @@ export function SessionSeedAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [rawtitle, setRawTitle] = useState("")
+  const [$title, setTitle] = useState("")
 
-  const title = rawtitle || "Untitled"
+  const [$seedphrase, setSeedPhrase] = useState("")
+
+  const [$notes, setNotes] = useState("")
+
+  const title = useDeferredValue($title || "Untitled")
 
   const [color, setColor] = useState<Nullable<string>>()
 
-  const [rawseedphrase, setRawSeedPhrase] = useState("")
+  const seedphrase = useDeferredValue($seedphrase)
 
-  const seedphrase = useDeferredValue(rawseedphrase)
-
-  const [notes, setNotes] = useState("")
+  const notes = useDeferredValue($notes)
 
   const encryptOrThrow = useCallback(async () => {
     const kdbx = session.value.kdbx
@@ -238,8 +240,8 @@ export function SessionSeedAddPage() {
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder="My Account"
-            onChange={e => setRawTitle(e.target.value)}
-            value={rawtitle} />
+            onChange={e => setTitle(e.target.value)}
+            value={$title} />
         </div>
         <div className="h-6" />
         <div className="font-medium">
@@ -253,8 +255,8 @@ export function SessionSeedAddPage() {
           <textarea className="w-full focus-visible:outline-none"
             rows={6}
             autoComplete="off"
-            onChange={e => setRawSeedPhrase(e.target.value)}
-            value={rawseedphrase} />
+            onChange={e => setSeedPhrase(e.target.value)}
+            value={$seedphrase} />
         </div>
         <div className="h-6" />
         <div className="font-medium">
@@ -270,7 +272,7 @@ export function SessionSeedAddPage() {
             autoComplete="off"
             placeholder="I use this account for..."
             onChange={e => setNotes(e.target.value)}
-            value={notes} />
+            value={$notes} />
         </div>
         <div className="h-8" />
         <div className="flex items-center flex-wrap-reverse gap-2">

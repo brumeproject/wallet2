@@ -10,7 +10,7 @@ import { Writable } from "@hazae41/binary";
 import { useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
-import React, { Fragment, useCallback, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
@@ -257,21 +257,29 @@ export function SessionCardAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [rawtitle, setRawTitle] = useState("")
+  const [masked, setMasked] = useState(true)
 
-  const title = rawtitle || "Untitled"
+  const [$title, setTitle] = useState("")
+
+  const [$num, setNum] = useState("")
+  const [$hol, setHol] = useState("")
+  const [$exp, setExp] = useState("")
+  const [$cvv, setCvv] = useState("")
+  const [$pin, setPin] = useState("")
+
+  const [$notes, setNotes] = useState("")
+
+  const title = useDeferredValue($title || "Untitled")
 
   const [color, setColor] = useState<Nullable<string>>()
 
-  const [masked, setMasked] = useState<boolean>(true)
+  const num = useDeferredValue($num)
+  const hol = useDeferredValue($hol)
+  const exp = useDeferredValue($exp)
+  const cvv = useDeferredValue($cvv)
+  const pin = useDeferredValue($pin)
 
-  const [num, setNum] = useState("")
-  const [hol, setHol] = useState("")
-  const [exp, setExp] = useState("")
-  const [cvv, setCvv] = useState("")
-  const [pin, setPin] = useState("")
-
-  const [notes, setNotes] = useState("")
+  const notes = useDeferredValue($notes)
 
   const encryptOrThrow = useCallback(async () => {
     const kdbx = session.value.kdbx
@@ -401,8 +409,8 @@ export function SessionCardAddPage() {
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder="My Account"
-            onChange={e => setRawTitle(e.target.value)}
-            value={rawtitle} />
+            onChange={e => setTitle(e.target.value)}
+            value={$title} />
         </div>
         <div className="h-6" />
         <div className="font-medium">
@@ -418,7 +426,7 @@ export function SessionCardAddPage() {
             autoComplete="off"
             placeholder="1234 5678 9012 3456"
             onChange={e => setNum(e.target.value)}
-            value={num} />
+            value={$num} />
         </div>
         <div className="h-6" />
         <div className="font-medium">
@@ -434,7 +442,7 @@ export function SessionCardAddPage() {
             autoComplete="off"
             placeholder="John Doe"
             onChange={e => setHol(e.target.value)}
-            value={hol} />
+            value={$hol} />
         </div>
         <div className="h-6" />
         <div className="font-medium">
@@ -450,7 +458,7 @@ export function SessionCardAddPage() {
             autoComplete="off"
             placeholder="12/34"
             onChange={e => setExp(e.target.value)}
-            value={exp} />
+            value={$exp} />
         </div>
         <div className="h-6" />
         <div className="font-medium">
@@ -467,7 +475,7 @@ export function SessionCardAddPage() {
             type={masked ? "password" : "text"}
             placeholder="123"
             onChange={e => setCvv(e.target.value)}
-            value={cvv} />
+            value={$cvv} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
               type="button"
@@ -493,7 +501,7 @@ export function SessionCardAddPage() {
             type={masked ? "password" : "text"}
             placeholder="123456"
             onChange={e => setPin(e.target.value)}
-            value={pin} />
+            value={$pin} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
               type="button"
@@ -517,7 +525,7 @@ export function SessionCardAddPage() {
             rows={6}
             placeholder="I use this account for..."
             onChange={e => setNotes(e.target.value)}
-            value={notes} />
+            value={$notes} />
         </div>
         <div className="h-8" />
         <div className="flex items-center flex-wrap-reverse gap-2">

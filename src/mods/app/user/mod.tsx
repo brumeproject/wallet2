@@ -15,7 +15,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
-import React, { DragEvent, Fragment, KeyboardEvent, useCallback, useEffect, useMemo, useState } from "react";
+import React, { DragEvent, Fragment, KeyboardEvent, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { SessionData } from "../session/mod.tsx";
 
 React;
@@ -159,15 +159,16 @@ function UserImportFilePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [rawname, setRawName] = useState("")
+  const [masked, setMasked] = useState(true)
 
-  const name = rawname || "Anon"
+  const [$name, setName] = useState("")
+  const [$password, setPassword] = useState("")
+
+  const name = useDeferredValue($name || "Anon")
 
   const [file, setFile] = useState<Nullable<File>>()
 
-  const [password, setPassword] = useState("")
-
-  const [masked, setMasked] = useState(true)
+  const password = useDeferredValue($password)
 
   const loadOrAlert = useCallback(() => Promise.try(async () => {
     if (file == null)
@@ -239,8 +240,8 @@ function UserImportFilePage() {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           placeholder="Anon"
-          value={rawname}
-          onChange={e => setRawName(e.target.value)} />
+          value={$name}
+          onChange={e => setName(e.target.value)} />
       </div>
       <div className="h-6" />
       <div className="font-medium">
@@ -276,7 +277,7 @@ function UserImportFilePage() {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           type={masked ? "password" : "text"}
-          value={password}
+          value={$password}
           onChange={e => setPassword(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
@@ -304,15 +305,16 @@ function UserImportFsfhPage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [rawname, setRawName] = useState("")
+  const [masked, setMasked] = useState(true)
 
-  const name = rawname || "Anon"
+  const [$name, setName] = useState("")
+  const [$password, setPassword] = useState("")
+
+  const name = useDeferredValue($name || "Anon")
 
   const [fsfh, setFsfh] = useState<FileSystemFileHandle>()
 
-  const [password, setPassword] = useState("")
-
-  const [masked, setMasked] = useState(true)
+  const password = useDeferredValue($password)
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker!({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
@@ -409,8 +411,8 @@ function UserImportFsfhPage() {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           placeholder="Anon"
-          value={rawname}
-          onChange={e => setRawName(e.target.value)} />
+          value={$name}
+          onChange={e => setName(e.target.value)} />
       </div>
       <div className="h-6" />
       <div className="font-medium">
@@ -448,7 +450,7 @@ function UserImportFsfhPage() {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           type={masked ? "password" : "text"}
-          value={password}
+          value={$password}
           onChange={e => setPassword(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
@@ -476,13 +478,14 @@ function UserCreatePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [rawname, setRawName] = useState("")
-
-  const name = rawname || "Anon"
-
-  const [password, setPassword] = useState("")
-
   const [masked, setMasked] = useState(true)
+
+  const [$name, setName] = useState("")
+  const [$password, setPassword] = useState("")
+
+  const name = useDeferredValue($name || "Anon")
+
+  const password = useDeferredValue($password)
 
   const xml = useMemo(() => `
     <KeePassFile>
@@ -634,8 +637,8 @@ function UserCreatePage() {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           placeholder="Anon"
-          value={rawname}
-          onChange={e => setRawName(e.target.value)} />
+          value={$name}
+          onChange={e => setName(e.target.value)} />
       </div>
       <div className="h-6" />
       <div className="font-medium">
@@ -649,7 +652,7 @@ function UserCreatePage() {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           type={masked ? "password" : "text"}
-          value={password}
+          value={$password}
           onChange={e => setPassword(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
@@ -725,9 +728,11 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
   const close = useCloseContext().getOrThrow()
 
-  const [password, setPassword] = useState("")
-
   const [masked, setMasked] = useState(true)
+
+  const [$password, setPassword] = useState("")
+
+  const password = useDeferredValue($password)
 
   const [stored, setStored] = useState<Nullable<Uint8Array<ArrayBuffer> & { length: 32 }>>()
 
@@ -882,7 +887,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
           autoComplete="off"
           type={masked ? "password" : "text"}
           placeholder="Password"
-          value={password}
+          value={$password}
           onChange={e => setPassword(e.currentTarget.value)}
           onKeyDown={onKeyDown}
           ref={useAutoFocus()} />
@@ -982,15 +987,16 @@ function UserReimportFilePage(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [rawname, setRawName] = useState(user.name)
+  const [masked, setMasked] = useState(true)
 
-  const name = rawname || "Anon"
+  const [$name, setName] = useState(user.name)
+  const [$password, setPassword] = useState("")
+
+  const name = useDeferredValue($name || "Anon")
 
   const [file, setFile] = useState<Nullable<File>>()
 
-  const [password, setPassword] = useState("")
-
-  const [masked, setMasked] = useState(true)
+  const password = useDeferredValue($password)
 
   const loadOrAlert = useCallback(() => Promise.try(async () => {
     if (file == null)
@@ -1062,8 +1068,8 @@ function UserReimportFilePage(props: { user: UserData }) {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           placeholder="Anon"
-          value={rawname}
-          onChange={e => setRawName(e.target.value)} />
+          value={$name}
+          onChange={e => setName(e.target.value)} />
       </div>
       <div className="h-6" />
       <div className="font-medium">
@@ -1099,7 +1105,7 @@ function UserReimportFilePage(props: { user: UserData }) {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           type={masked ? "password" : "text"}
-          value={password}
+          value={$password}
           onChange={e => setPassword(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
@@ -1129,15 +1135,15 @@ function UserReimportFsfhPage(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [rawname, setRawName] = useState(user.name)
+  const [masked, setMasked] = useState(true)
 
-  const name = rawname || "Anon"
+  const [$name, setName] = useState(user.name)
+  const [$pass, setPass] = useState("")
+
+  const name = useDeferredValue($name || "Anon")
+  const password = useDeferredValue($pass)
 
   const [fsfh, setFsfh] = useState<Nullable<FileSystemFileHandle>>(user.fsfh)
-
-  const [password, setPassword] = useState("")
-
-  const [masked, setMasked] = useState(true)
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker!({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
@@ -1234,8 +1240,8 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           placeholder="Anon"
-          value={rawname}
-          onChange={e => setRawName(e.target.value)} />
+          value={$name}
+          onChange={e => setName(e.target.value)} />
       </div>
       <div className="h-6" />
       <div className="font-medium">
@@ -1273,8 +1279,8 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
           type={masked ? "password" : "text"}
-          value={password}
-          onChange={e => setPassword(e.target.value)} />
+          value={$pass}
+          onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
             type="button"

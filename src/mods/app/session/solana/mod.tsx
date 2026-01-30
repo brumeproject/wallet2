@@ -1,4 +1,3 @@
-import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -6,44 +5,37 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
-import { QrCode } from "@/libs/qrcode/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
-import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
-import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
+import { validateMnemonic } from "@scure/bip39";
+import { wordlist } from "@scure/bip39/wordlists/english.js";
+import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
 
-export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function SessionSolanaAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const [masked, setMasked] = useState(true)
 
-  const username = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+  const address = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("SolanaAddress")?.getValueOrThrow().get()
   }, [$entry])
 
-  const password = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get()
+  const sigkey = useMemo(() => {
+    return $entry.getDirectStringByKeyOrNull("SolanaSigningKey")?.getValueOrThrow().get()
   }, [$entry])
-
-  const totpseed = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("otp")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const totpcode = useTotpCode(totpseed)
 
   const notes = useMemo(() => {
     return $entry.getDirectStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
-  const copyTheUsername = useCopy(username)
-  const copyThePassword = useCopy(password)
-  const copyTheTotpcode = useCopy(totpcode)
+  const copyTheAddress = useCopy(address)
+  const copyTheSigKey = useCopy(sigkey)
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
@@ -57,50 +49,50 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
       <SessionAccountCard $entry={$entry} />
     </div>
     <form className="grow flex flex-col">
-      {username && <Fragment>
+      {address && <Fragment>
         <div className="h-6" />
         <div className="font-medium">
-          Username
+          Address
         </div>
         <div className="text-default-contrast">
-          Your username or email
+          Your Solana address
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.AtSymbolIcon className="size-5" />
+          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
             onFocus={e => e.currentTarget.select()}
-            value={username} />
+            value={address} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
               type="button"
-              onClick={copyTheUsername.copyOrAlert}>
+              onClick={copyTheAddress.copyOrAlert}>
               <InButton>
-                {copyTheUsername.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+                {copyTheAddress.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               </InButton>
             </button>
           </div>
         </div>
       </Fragment>}
-      {password && <Fragment>
+      {sigkey && <Fragment>
         <div className="h-6" />
         <div className="font-medium">
-          Password
+          Private key
         </div>
         <div className="text-default-contrast">
-          Your password
+          Your Ed25519 private key
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.LanguageIcon className="size-5" />
+          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
-            onFocus={e => e.currentTarget.select()}
             type={masked ? "password" : "text"}
-            value={password} />
+            onFocus={e => e.currentTarget.select()}
+            value={sigkey} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
               type="button"
@@ -111,28 +103,13 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
             </button>
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
               type="button"
-              onClick={copyThePassword.copyOrAlert}>
+              onClick={copyTheSigKey.copyOrAlert}>
               <InButton>
-                {copyThePassword.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+                {copyTheSigKey.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               </InButton>
             </button>
           </div>
         </div>
-      </Fragment>}
-      {totpseed && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          One-time passcode
-        </div>
-        <div className="text-default-contrast">
-          Your time-based one-time passcode
-        </div>
-        <div className="h-4" />
-        <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
-          readOnly
-          autoComplete="off"
-          onClick={copyTheTotpcode.copyOrAlert}
-          value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
       </Fragment>}
       {notes && <Fragment>
         <div className="h-6" />
@@ -154,22 +131,22 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
   </div>
 }
 
-export function SessionPasswordAddAnchor() {
+export function SessionSolanaAddAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, "/password")
+  const coords = useAnchorWithCoords(hash, "/solana")
 
   return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <Outline.LanguageIcon className="size-5" />
-    Password
+    <Outline.SparklesIcon className="size-5" />
+    Solana
   </WideNakedMenuAnchor>
 }
 
-export function SessionPasswordAddPage() {
+export function SessionSeedAddPage() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -178,13 +155,9 @@ export function SessionPasswordAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
-
   const [$title, setTitle] = useState("")
 
-  const [$username, setUsername] = useState("")
-  const [$password, setPassword] = useState("")
-  const [$totpseed, setTotpSeed] = useState("")
+  const [$seedphrase, setSeedPhrase] = useState("")
 
   const [$notes, setNotes] = useState("")
 
@@ -192,14 +165,9 @@ export function SessionPasswordAddPage() {
 
   const [color, setColor] = useState<Nullable<string>>()
 
-  const username = useDeferredValue($username)
-  const password = useDeferredValue($password)
-  const totpseed = useDeferredValue($totpseed)
-  const totpcode = useTotpCode(totpseed)
+  const seedphrase = useDeferredValue($seedphrase)
 
   const notes = useDeferredValue($notes)
-
-  const copyTheTotpcode = useCopy(totpcode)
 
   const encryptOrThrow = useCallback(async () => {
     const kdbx = session.value.kdbx
@@ -212,22 +180,16 @@ export function SessionPasswordAddPage() {
 
     $entry.createStringOrThrow("Title", title)
 
-    if (username)
-      $entry.createStringOrThrow("UserName", username)
-
-    if (password)
-      $entry.createStringOrThrow("Password", password, true)
+    if (seedphrase)
+      $entry.createStringOrThrow("SeedPhrase", seedphrase, true)
 
     if (notes)
       $entry.createStringOrThrow("Notes", notes)
 
-    if (totpseed)
-      $entry.createStringOrThrow("otp", totpseed, true)
-
     $group.element.appendChild($entry.element)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
-  }, [session, title, username, password, totpseed, notes])
+  }, [session, title, seedphrase, notes])
 
   const writeOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
@@ -275,45 +237,25 @@ export function SessionPasswordAddPage() {
   }).catch(Errors.display), [store, encryptOrThrow, close])
 
   const error = useMemo(() => {
+    if (!seedphrase)
+      return "Seed phrase is required"
+    if (!validateMnemonic(seedphrase, wordlist))
+      return "Seed phrase is invalid"
     return
-  }, [])
-
-  const onTotpQrcodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => Promise.try(async () => {
-    const file = e.target.files?.item(0)
-
-    if (file == null)
-      return
-
-    const content = await QrCode.decodeFileOrNull(file)
-
-    if (content == null)
-      throw new Error("Could not find QR code")
-
-    setTotpSeed(content)
-  }).catch(Errors.display), [])
+  }, [seedphrase])
 
   return <Fragment>
     <SubpathProvider value={hash}>
-      {hash.url.pathname === "/password" &&
+      {hash.url.pathname === "/generate" &&
         <PathPaper>
           <div className="flex flex-col text-left gap-2">
 
           </div>
-        </PathPaper>}
-      {hash.url.pathname === "/password/alphanumeric" &&
-        <PathPaper>
-          <div className="flex flex-col text-left gap-2">
-
-          </div>
-        </PathPaper>}
-      {hash.url.pathname === "/password/correcthorse" &&
-        <PathPaper>
-
         </PathPaper>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        Add password
+        Add seed
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
@@ -325,13 +267,13 @@ export function SessionPasswordAddPage() {
           </div>
           <div className="h-4" />
           <div className="text-default-half-contrast text-wrap wrap-anywhere">
-            {username}
+            {seedphrase.split(" ").at(0)}
           </div>
           <div className="h-4 grow" />
           <div className="flex flex-wrap items-center gap-2">
             <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.LanguageIcon className="size-5" />
-              Password
+              <Outline.SparklesIcon className="size-5" />
+              Seed
             </div>
           </div>
         </div>
@@ -358,90 +300,19 @@ export function SessionPasswordAddPage() {
         </div>
         <div className="h-6" />
         <div className="font-medium">
-          Username
+          Seed phrase
         </div>
         <div className="text-default-contrast">
-          Your username or email
+          Your BIP-39 mnemonic seed phrase
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.AtSymbolIcon className="size-5" />
-          <input className="w-full focus-visible:outline-none"
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={6}
             autoComplete="off"
-            placeholder="john.doe@mail.com"
-            onChange={e => setUsername(e.target.value)}
-            value={$username} />
+            onChange={e => setSeedPhrase(e.target.value)}
+            value={$seedphrase} />
         </div>
-        <div className="h-6" />
-        <div className="font-medium">
-          Password
-        </div>
-        <div className="text-default-contrast">
-          Your password
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.LanguageIcon className="size-5" />
-          <input className="w-full focus-visible:outline-none"
-            autoComplete="off"
-            type={masked ? "password" : "text"}
-            onChange={e => setPassword(e.target.value)}
-            value={$password} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-              type="button"
-              onClick={() => setMasked(!masked)}>
-              <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-              </InButton>
-            </button>
-            <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all">
-              <InAnchor>
-                <Outline.SparklesIcon className="size-5" />
-              </InAnchor>
-            </a>
-          </div>
-        </div>
-        <div className="h-6" />
-        <div className="font-medium">
-          One-time passcode
-        </div>
-        <div className="text-default-contrast">
-          Your time-based one-time passcode
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
-          <input className="w-full focus-visible:outline-none"
-            autoComplete="off"
-            type={masked ? "password" : "text"}
-            placeholder="JBSWY3DPEHPK3PXP or otpauth://..."
-            onChange={e => setTotpSeed(e.target.value)}
-            value={$totpseed} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
-              type="button"
-              onClick={() => setMasked(!masked)}>
-              <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-              </InButton>
-            </button>
-            <div className="group relative rounded-full p-1 [&:has(:hover)]:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast [&:has(:focus-visible)]:outline-none transition-all">
-              <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
-                type="file"
-                accept="image/*"
-                onChange={onTotpQrcodeChange} />
-              <InAnchor>
-                <Outline.QrCodeIcon className="size-5" />
-              </InAnchor>
-            </div>
-          </div>
-        </div>
-        <div className="h-4" />
-        <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
-          readOnly
-          onClick={copyTheTotpcode.copyOrAlert}
-          value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
         <div className="h-6" />
         <div className="font-medium">
           Notes
@@ -450,9 +321,10 @@ export function SessionPasswordAddPage() {
           Any additional information
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col  gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <textarea className="w-full resize-none focus-visible:outline-none"
             rows={6}
+            autoComplete="off"
             placeholder="I use this account for..."
             onChange={e => setNotes(e.target.value)}
             value={$notes} />
