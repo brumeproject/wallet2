@@ -323,13 +323,13 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
           if (type === "ethereum")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.CubeIcon className="size-5" />
+              <Outline.BanknotesIcon className="size-5" />
               Ethereum
             </div>
 
           if (type === "solana")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.CubeIcon className="size-5" />
+              <Outline.BanknotesIcon className="size-5" />
               Solana
             </div>
 
@@ -433,13 +433,13 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
 
             if (type === "ethereum")
               return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.CubeIcon className="size-5" />
+                <Outline.BanknotesIcon className="size-5" />
                 Ethereum
               </div>
 
             if (type === "solana")
               return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.CubeIcon className="size-5" />
+                <Outline.BanknotesIcon className="size-5" />
                 Solana
               </div>
 

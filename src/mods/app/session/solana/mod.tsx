@@ -303,7 +303,7 @@ export function SessionSolanaAddPage() {
           <div className="h-4 grow" />
           <div className="flex flex-wrap items-center gap-2">
             <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.SparklesIcon className="size-5" />
+              <Outline.BanknotesIcon className="size-5" />
               Solana
             </div>
           </div>
