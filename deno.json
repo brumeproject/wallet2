@@ -6,7 +6,8 @@
     "rules": {
       "exclude": [
         "no-unused-vars",
-        "no-namespace"
+        "no-namespace",
+        "require-await"
       ]
     }
   }
