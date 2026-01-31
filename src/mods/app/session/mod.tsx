@@ -221,7 +221,7 @@ function SessionAccountAddButtonInGrid() {
 
   const coords = useAnchorWithCoords(hash, "/add")
 
-  return <a className="group w-[320px] aspect-video rounded-xl border-2 border-dashed border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-all"
+  return <a className="group w-[320px] aspect-video rounded-xl border-2 border-dashed border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -275,17 +275,51 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           })()}
         </PathBoard>}
     </SubpathProvider>
-    <a className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default focus-visible:data-[color=red]:outline-red-500/90 focus-visible:data-[color=blue]:outline-blue-500/90 focus-visible:data-[color=3]:outline-green-500/90 transition-all"
+    <a className="w-[320px] aspect-video flex flex-col p-4 rounded-xl text-left bg-default text-default select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default
+    data-[color=red]:bg-red-500/90
+    data-[color=orange]:bg-orange-500/90
+    data-[color=amber]:bg-amber-500/90
+    data-[color=yellow]:bg-yellow-500/90
+    data-[color=lime]:bg-lime-500/90
+    data-[color=green]:bg-green-500/90
+    data-[color=emerald]:bg-emerald-500/90
+    data-[color=teal]:bg-teal-500/90
+    data-[color=cyan]:bg-cyan-500/90
+    data-[color=sky]:bg-sky-500/90
+    data-[color=blue]:bg-blue-500/90
+    data-[color=indigo]:bg-indigo-500/90
+    data-[color=violet]:bg-violet-500/90
+    data-[color=purple]:bg-purple-500/90
+    data-[color=fuchsia]:bg-fuchsia-500/90
+    data-[color=pink]:bg-pink-500/90
+    data-[color=rose]:bg-rose-500/90
+    focus-visible:data-[color=red]:outline-red-500/90 
+    focus-visible:data-[color=orange]:outline-orange-500/90
+    focus-visible:data-[color=amber]:outline-amber-500/90
+    focus-visible:data-[color=yellow]:outline-yellow-500/90
+    focus-visible:data-[color=lime]:outline-lime-500/90
+    focus-visible:data-[color=green]:outline-green-500/90
+    focus-visible:data-[color=emerald]:outline-emerald-500/90
+    focus-visible:data-[color=teal]:outline-teal-500/90
+    focus-visible:data-[color=cyan]:outline-cyan-500/90
+    focus-visible:data-[color=sky]:outline-sky-500/90
+    focus-visible:data-[color=blue]:outline-blue-500/90
+    focus-visible:data-[color=indigo]:outline-indigo-500/90
+    focus-visible:data-[color=violet]:outline-violet-500/90
+    focus-visible:data-[color=purple]:outline-purple-500/90
+    focus-visible:data-[color=fuchsia]:outline-fuchsia-500/90
+    focus-visible:data-[color=pink]:outline-pink-500/90
+    focus-visible:data-[color=rose]:outline-rose-500/90"
       data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
       data-color={getEntryColor($entry)}
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
-      <div className="font-medium text-xl text-wrap wrap-anywhere">
+      <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
         {getEntryTitle($entry) || "Untitled"}
       </div>
       <div className="h-2" />
-      <div className="text-default-half-contrast text-wrap wrap-anywhere">
+      <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
         {(() => {
           const type = getEntryType($entry)
 
@@ -382,7 +416,24 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
   }, [])
 
   return <div className="w-[320px] aspect-video perspective-[640px]">
-    <div className="h-full w-full data-[flip=true]:animate-flip-in data-[unflip=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90"
+    <div className="h-full w-full overflow-hidden data-[flip=true]:animate-flip-in data-[unflip=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default select-none
+    data-[color=red]:bg-red-500/90
+    data-[color=orange]:bg-orange-500/90
+    data-[color=amber]:bg-amber-500/90
+    data-[color=yellow]:bg-yellow-500/90
+    data-[color=lime]:bg-lime-500/90
+    data-[color=green]:bg-green-500/90
+    data-[color=emerald]:bg-emerald-500/90
+    data-[color=teal]:bg-teal-500/90
+    data-[color=cyan]:bg-cyan-500/90
+    data-[color=sky]:bg-sky-500/90
+    data-[color=blue]:bg-blue-500/90
+    data-[color=indigo]:bg-indigo-500/90
+    data-[color=violet]:bg-violet-500/90
+    data-[color=purple]:bg-purple-500/90
+    data-[color=fuchsia]:bg-fuchsia-500/90
+    data-[color=pink]:bg-pink-500/90
+    data-[color=rose]:bg-rose-500/90"
       data-flip={flipping && !flipped}
       data-unflip={!flipping && flipped}
       data-flipped={flipping && flipped}
@@ -391,11 +442,11 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
       onAnimationEnd={onAnimationEnd}
       onClick={onClick}>
       <div className="absolute inset-0 p-4 flex flex-col backface-hidden">
-        <div className="font-medium text-xl text-wrap wrap-anywhere">
+        <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
           {getEntryTitle($entry) || "Untitled"}
         </div>
         <div className="h-2" />
-        <div className="text-default-half-contrast text-wrap wrap-anywhere">
+        <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
           {(() => {
             const type = getEntryType($entry)
 
@@ -597,7 +648,7 @@ function SessionMoreButton() {
 
   const coords = useAnchorWithCoords(hash, "/menu")
 
-  return <a className="group p-2 bg-opposite text-opposite rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-opposite transition-all"
+  return <a className="group p-2 bg-opposite text-opposite rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-opposite"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -745,7 +796,7 @@ export function SessionExportPage() {
             value={$pass}
             onChange={e => setPass(e.target.value)} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={() => setMasked(!masked)}>
               <InButton>

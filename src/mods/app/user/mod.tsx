@@ -279,7 +279,7 @@ function UserImportFilePage() {
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
@@ -451,7 +451,7 @@ function UserImportFsfhPage() {
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
@@ -652,7 +652,7 @@ function UserCreatePage() {
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
@@ -699,7 +699,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
           <UserMenu user={user} />
         </PathPaper>}
     </SubpathProvider>
-    <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast transition-all">
+    <div className="relative group flex-1 rounded-xl hover:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast">
       <a className="absolute inset-0 opacity-0 cursor-pointer"
         href={coords.url.hash}
         onClick={coords.onClick}
@@ -889,7 +889,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
           onKeyDown={onKeyDown}
           ref={useAutoFocus()} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
@@ -897,7 +897,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
             </InButton>
           </button>
           {user.auth != null &&
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={onPassClick}>
               <InButton>
@@ -930,7 +930,7 @@ function UserMenuButton(props: { user: UserData }) {
 
   const coords = useAnchorWithCoords(hash, `/${user.uuid}/menu`)
 
-  return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+  return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -1104,7 +1104,7 @@ function UserReimportFilePage(props: { user: UserData }) {
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>
@@ -1278,7 +1278,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
-          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+          <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
             onClick={() => setMasked(!masked)}>
             <InButton>

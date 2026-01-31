@@ -73,7 +73,7 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
             onFocus={e => e.currentTarget.select()}
             value={username} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={copyTheUsername.copyOrAlert}>
               <InButton>
@@ -101,14 +101,14 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
             type={masked ? "password" : "text"}
             value={password} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={() => setMasked(!masked)}>
               <InButton>
                 {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
               </InButton>
             </button>
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={copyThePassword.copyOrAlert}>
               <InButton>
@@ -210,6 +210,9 @@ export function SessionPasswordAddPage() {
 
     $entry.createStringOrThrow("Title", title)
 
+    if (color)
+      $entry.createStringOrThrow("Color", color)
+
     if (username)
       $entry.createStringOrThrow("UserName", username)
 
@@ -225,7 +228,7 @@ export function SessionPasswordAddPage() {
     $group.element.appendChild($entry.element)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
-  }, [session, title, username, password, totpseed, notes])
+  }, [session, title, color, username, password, totpseed, notes])
 
   const writeOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
@@ -292,6 +295,46 @@ export function SessionPasswordAddPage() {
 
   return <Fragment>
     <SubpathProvider value={hash}>
+      {hash.url.pathname === "/color" &&
+        <PathPaper>
+          <div className="grid grid-cols-6 grid-auto-rows gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              onClick={() => setColor(null)}
+              type="button">
+              <InButton>
+                <div className="size-5 rounded-full bg-opposite" />
+              </InButton>
+            </button>
+            {["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"].map(color =>
+              <Fragment key={color}>
+                <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+                  onClick={() => setColor(color)}
+                  type="button">
+                  <InButton>
+                    <div className="size-5 rounded-full
+                      data-[color=red]:bg-red-500/90
+                      data-[color=orange]:bg-orange-500/90
+                      data-[color=amber]:bg-amber-500/90
+                      data-[color=yellow]:bg-yellow-500/90
+                      data-[color=lime]:bg-lime-500/90
+                      data-[color=green]:bg-green-500/90
+                      data-[color=emerald]:bg-emerald-500/90
+                      data-[color=teal]:bg-teal-500/90
+                      data-[color=cyan]:bg-cyan-500/90
+                      data-[color=sky]:bg-sky-500/90
+                      data-[color=blue]:bg-blue-500/90
+                      data-[color=indigo]:bg-indigo-500/90
+                      data-[color=violet]:bg-violet-500/90
+                      data-[color=purple]:bg-purple-500/90
+                      data-[color=fuchsia]:bg-fuchsia-500/90
+                      data-[color=pink]:bg-pink-500/90
+                      data-[color=rose]:bg-rose-500/90"
+                      data-color={color} />
+                  </InButton>
+                </button>
+              </Fragment>)}
+          </div>
+        </PathPaper>}
       {hash.url.pathname === "/password" &&
         <PathPaper>
           <div className="flex flex-col text-left gap-2">
@@ -315,14 +358,31 @@ export function SessionPasswordAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <div className="w-80 aspect-video flex flex-col bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
+        <div className="w-[320px] aspect-video overflow-hidden flex flex-col bg-default text-default select-none p-4 rounded-xl
+        data-[color=red]:bg-red-500/90
+        data-[color=orange]:bg-orange-500/90
+        data-[color=amber]:bg-amber-500/90
+        data-[color=yellow]:bg-yellow-500/90
+        data-[color=lime]:bg-lime-500/90
+        data-[color=green]:bg-green-500/90
+        data-[color=emerald]:bg-emerald-500/90
+        data-[color=teal]:bg-teal-500/90
+        data-[color=cyan]:bg-cyan-500/90
+        data-[color=sky]:bg-sky-500/90
+        data-[color=blue]:bg-blue-500/90
+        data-[color=indigo]:bg-indigo-500/90
+        data-[color=violet]:bg-violet-500/90
+        data-[color=purple]:bg-purple-500/90
+        data-[color=fuchsia]:bg-fuchsia-500/90
+        data-[color=pink]:bg-pink-500/90
+        data-[color=rose]:bg-rose-500/90"
           data-theme={color == null ? "opposite" : "dark"}
           data-color={color}>
-          <div className="font-medium text-xl text-wrap wrap-anywhere">
+          <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
             {title}
           </div>
           <div className="h-4" />
-          <div className="text-default-half-contrast text-wrap wrap-anywhere">
+          <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
             {username}
           </div>
           <div className="h-4 grow" />
@@ -353,6 +413,9 @@ export function SessionPasswordAddPage() {
             placeholder="My Account"
             onChange={e => setTitle(e.target.value)}
             value={$title} />
+          <div className="flex items-center gap-2">
+            <AccountColorAnchor color={color} />
+          </div>
         </div>
         <div className="h-6" />
         <div className="font-medium">
@@ -386,14 +449,14 @@ export function SessionPasswordAddPage() {
             onChange={e => setPassword(e.target.value)}
             value={$password} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={() => setMasked(!masked)}>
               <InButton>
                 {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
               </InButton>
             </button>
-            <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all">
+            <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none">
               <InAnchor>
                 <Outline.SparklesIcon className="size-5" />
               </InAnchor>
@@ -413,18 +476,18 @@ export function SessionPasswordAddPage() {
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             type={masked ? "password" : "text"}
-            placeholder="JBSWY3DPEHPK3PXP or otpauth://..."
+            placeholder="otpauth://..."
             onChange={e => setTotpSeed(e.target.value)}
             value={$totpseed} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={() => setMasked(!masked)}>
               <InButton>
                 {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
               </InButton>
             </button>
-            <div className="group relative rounded-full p-1 [&:has(:hover)]:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast [&:has(:focus-visible)]:outline-none transition-all">
+            <div className="group relative rounded-full p-1 [&:has(:hover)]:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast [&:has(:focus-visible)]:outline-none">
               <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
                 type="file"
                 accept="image/*"
@@ -473,4 +536,40 @@ export function SessionPasswordAddPage() {
       </form>
     </div>
   </Fragment>
+}
+
+export function AccountColorAnchor(props: { color?: Nullable<string> }) {
+  const { color } = props
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/color")
+
+  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <InAnchor>
+      <div className="size-5 rounded-full bg-opposite
+        data-[color=red]:bg-red-500/90
+        data-[color=orange]:bg-orange-500/90
+        data-[color=amber]:bg-amber-500/90
+        data-[color=yellow]:bg-yellow-500/90
+        data-[color=lime]:bg-lime-500/90
+        data-[color=green]:bg-green-500/90
+        data-[color=emerald]:bg-emerald-500/90
+        data-[color=teal]:bg-teal-500/90
+        data-[color=cyan]:bg-cyan-500/90
+        data-[color=sky]:bg-sky-500/90
+        data-[color=blue]:bg-blue-500/90
+        data-[color=indigo]:bg-indigo-500/90
+        data-[color=violet]:bg-violet-500/90
+        data-[color=purple]:bg-purple-500/90
+        data-[color=fuchsia]:bg-fuchsia-500/90
+        data-[color=pink]:bg-pink-500/90
+        data-[color=rose]:bg-rose-500/90"
+        data-color={color} />
+    </InAnchor>
+  </a>
 }

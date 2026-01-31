@@ -82,7 +82,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
             onFocus={e => e.currentTarget.select()}
             value={num} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={copyTheNum.copyOrAlert}>
               <InButton>
@@ -109,7 +109,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
             onFocus={e => e.currentTarget.select()}
             value={hol} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={copyTheHol.copyOrAlert}>
               <InButton>
@@ -136,7 +136,7 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
             onFocus={e => e.currentTarget.select()}
             value={exp} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={copyTheExp.copyOrAlert}>
               <InButton>
@@ -164,14 +164,14 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
             onFocus={e => e.currentTarget.select()}
             value={cvv} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={() => setMasked(!masked)}>
               <InButton>
                 {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
               </InButton>
             </button>
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={copyTheCvv.copyOrAlert}>
               <InButton>
@@ -199,14 +199,14 @@ export function SessionCardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
             onFocus={e => e.currentTarget.select()}
             value={pin} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={() => setMasked(!masked)}>
               <InButton>
                 {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
               </InButton>
             </button>
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={copyThePin.copyOrAlert}>
               <InButton>
@@ -373,14 +373,31 @@ export function SessionCardAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <div className="w-80 aspect-video flex flex-col bg-default text-default select-none data-[color=red]:bg-red-500/90 data-[color=blue]:bg-blue-500/90 data-[color=3]:bg-green-500/90 p-4 rounded-xl"
+        <div className="w-[320px] aspect-video overflow-hidden flex flex-col bg-default text-default select-none p-4 rounded-xl
+        data-[color=red]:bg-red-500/90
+        data-[color=orange]:bg-orange-500/90
+        data-[color=amber]:bg-amber-500/90
+        data-[color=yellow]:bg-yellow-500/90
+        data-[color=lime]:bg-lime-500/90
+        data-[color=green]:bg-green-500/90
+        data-[color=emerald]:bg-emerald-500/90
+        data-[color=teal]:bg-teal-500/90
+        data-[color=cyan]:bg-cyan-500/90
+        data-[color=sky]:bg-sky-500/90
+        data-[color=blue]:bg-blue-500/90
+        data-[color=indigo]:bg-indigo-500/90
+        data-[color=violet]:bg-violet-500/90
+        data-[color=purple]:bg-purple-500/90
+        data-[color=fuchsia]:bg-fuchsia-500/90
+        data-[color=pink]:bg-pink-500/90
+        data-[color=rose]:bg-rose-500/90"
           data-theme={color == null ? "opposite" : "dark"}
           data-color={color}>
-          <div className="font-medium text-xl text-wrap wrap-anywhere">
+          <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
             {title}
           </div>
           <div className="h-4" />
-          <div className="text-default-half-contrast text-wrap wrap-anywhere">
+          <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
             {num}
           </div>
           <div className="h-4 grow" />
@@ -477,7 +494,7 @@ export function SessionCardAddPage() {
             onChange={e => setCvv(e.target.value)}
             value={$cvv} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={() => setMasked(!masked)}>
               <InButton>
@@ -503,7 +520,7 @@ export function SessionCardAddPage() {
             onChange={e => setPin(e.target.value)}
             value={$pin} />
           <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
               onClick={() => setMasked(!masked)}>
               <InButton>
