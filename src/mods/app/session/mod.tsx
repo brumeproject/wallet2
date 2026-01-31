@@ -824,3 +824,39 @@ export function SessionExportPage() {
     </div>
   </Fragment>
 }
+
+export function AccountColorAnchor(props: { color?: Nullable<string> }) {
+  const { color } = props
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/color")
+
+  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <InAnchor>
+      <div className="size-5 rounded-full bg-opposite
+        data-[color=red]:bg-red-500/90
+        data-[color=orange]:bg-orange-500/90
+        data-[color=amber]:bg-amber-500/90
+        data-[color=yellow]:bg-yellow-500/90
+        data-[color=lime]:bg-lime-500/90
+        data-[color=green]:bg-green-500/90
+        data-[color=emerald]:bg-emerald-500/90
+        data-[color=teal]:bg-teal-500/90
+        data-[color=cyan]:bg-cyan-500/90
+        data-[color=sky]:bg-sky-500/90
+        data-[color=blue]:bg-blue-500/90
+        data-[color=indigo]:bg-indigo-500/90
+        data-[color=violet]:bg-violet-500/90
+        data-[color=purple]:bg-purple-500/90
+        data-[color=fuchsia]:bg-fuchsia-500/90
+        data-[color=pink]:bg-pink-500/90
+        data-[color=rose]:bg-rose-500/90"
+        data-color={color} />
+    </InAnchor>
+  </a>
+}

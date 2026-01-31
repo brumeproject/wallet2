@@ -1,4 +1,4 @@
-import { WideOppositeButton } from "@/libs/button/mod.tsx";
+import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -11,7 +11,7 @@ import { useCloseContext } from "@hazae41/react-close-context";
 import { validateMnemonic } from "@scure/bip39";
 import { wordlist } from "@scure/bip39/wordlists/english.js";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
-import { SessionAccountCard, useSessionContext } from "../mod.tsx";
+import { AccountColorAnchor, SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
 
@@ -123,6 +123,9 @@ export function SessionSeedAddPage() {
 
     $entry.createStringOrThrow("Title", title)
 
+    if (color)
+      $entry.createStringOrThrow("Color", color)
+
     if (seedphrase)
       $entry.createStringOrThrow("SeedPhrase", seedphrase, true)
 
@@ -132,7 +135,7 @@ export function SessionSeedAddPage() {
     $group.element.appendChild($entry.element)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
-  }, [session, title, seedphrase, notes])
+  }, [session, title, color, seedphrase, notes])
 
   const writeOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
@@ -189,6 +192,46 @@ export function SessionSeedAddPage() {
 
   return <Fragment>
     <SubpathProvider value={hash}>
+      {hash.url.pathname === "/color" &&
+        <PathPaper>
+          <div className="grid grid-cols-6 grid-auto-rows gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              onClick={() => setColor(null)}
+              type="button">
+              <InButton>
+                <div className="size-5 rounded-full bg-opposite" />
+              </InButton>
+            </button>
+            {["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"].map(color =>
+              <Fragment key={color}>
+                <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+                  onClick={() => setColor(color)}
+                  type="button">
+                  <InButton>
+                    <div className="size-5 rounded-full
+                            data-[color=red]:bg-red-500/90
+                            data-[color=orange]:bg-orange-500/90
+                            data-[color=amber]:bg-amber-500/90
+                            data-[color=yellow]:bg-yellow-500/90
+                            data-[color=lime]:bg-lime-500/90
+                            data-[color=green]:bg-green-500/90
+                            data-[color=emerald]:bg-emerald-500/90
+                            data-[color=teal]:bg-teal-500/90
+                            data-[color=cyan]:bg-cyan-500/90
+                            data-[color=sky]:bg-sky-500/90
+                            data-[color=blue]:bg-blue-500/90
+                            data-[color=indigo]:bg-indigo-500/90
+                            data-[color=violet]:bg-violet-500/90
+                            data-[color=purple]:bg-purple-500/90
+                            data-[color=fuchsia]:bg-fuchsia-500/90
+                            data-[color=pink]:bg-pink-500/90
+                            data-[color=rose]:bg-rose-500/90"
+                      data-color={color} />
+                  </InButton>
+                </button>
+              </Fragment>)}
+          </div>
+        </PathPaper>}
       {hash.url.pathname === "/generate" &&
         <PathPaper>
           <div className="flex flex-col text-left gap-2">
@@ -257,6 +300,9 @@ export function SessionSeedAddPage() {
             placeholder="My Account"
             onChange={e => setTitle(e.target.value)}
             value={$title} />
+          <div className="flex items-center gap-2">
+            <AccountColorAnchor color={color} />
+          </div>
         </div>
         <div className="h-6" />
         <div className="font-medium">
