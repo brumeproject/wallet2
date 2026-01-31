@@ -6,12 +6,15 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryColor, getEntryFilter, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
 import { ChildrenProps } from "@/libs/props/mod.ts";
+import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Option } from "@hazae41/result-and-option";
-import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useMemo, useState } from "react";
+import React, { createContext, Fragment, MouseEvent, useCallback, useContext, useDeferredValue, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
+import { InButton, WideOppositeButton } from "../../../libs/button/mod.tsx";
+import { Errors } from "../../../libs/errors/mod.ts";
 import { UserData } from "../user/mod.tsx";
 import { SessionCardAccountPage, SessionCardAddAnchor, SessionCardAddPage } from "./card/mod.tsx";
 import { SessionPasswordAccountPage, SessionPasswordAddAnchor, SessionPasswordAddPage } from "./password/mod.tsx";
@@ -616,17 +619,157 @@ function SessionMoreMenu(props: { logout(): void }) {
         <PathPaper>
           <SessionAccountAddMenu />
         </PathPaper>}
+      {hash.url.pathname === "/export" &&
+        <PathBoard>
+          <SessionExportPage />
+        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <WideNakedMenuButton>
         <Outline.GlobeAltIcon className="size-5" />
         Connections
       </WideNakedMenuButton>
+      <SessionExportAnchor />
       <WideNakedMenuButton
         onClick={logout}>
         <Outline.LockClosedIcon className="size-5" />
         Logout
       </WideNakedMenuButton>
+    </div>
+  </Fragment>
+}
+
+export function SessionExportAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/export")
+
+  return <WideNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <Outline.ArrowUpOnSquareIcon className="size-5" />
+    Export
+  </WideNakedMenuAnchor>
+}
+
+export function SessionExportPage() {
+  const close = useCloseContext().getOrThrow()
+
+  const session = useSessionContext().getOrThrow()
+
+  const [masked, setMasked] = useState(true)
+
+  const [$pass, setPass] = useState("")
+
+  const pass = useDeferredValue($pass)
+
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx } = session.value
+
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+
+    const rotated = await kdbx.rotateOrThrow(composite)
+
+    return Writable.writeToBytesOrThrow(await rotated.encryptOrThrow())
+  }, [session, pass])
+
+  const pickOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+
+    const content = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    close()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const saveOrAlert = useCallback(() => Promise.try(async () => {
+    const content = await encryptOrThrow()
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    session.update()
+
+    close()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const error = useMemo(() => {
+    if (!pass.length)
+      return "Password is required"
+    return
+  }, [pass])
+
+  return <Fragment>
+    <div className="flex flex-col grow p-6">
+      <h1 className="text-xl font-medium">
+        Export user
+      </h1>
+      <form className="grow flex flex-col">
+        <input className="hidden"
+          autoComplete="off"
+          name="username" />
+        <div className="h-6" />
+        <div className="font-medium">
+          Password
+        </div>
+        <div className="text-default-contrast">
+          A password to encrypt the exported file
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <input className="w-full focus-visible:outline-none"
+            autoComplete="off"
+            type={masked ? "password" : "text"}
+            value={$pass}
+            onChange={e => setPass(e.target.value)} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none transition-all"
+              type="button"
+              onClick={() => setMasked(!masked)}>
+              <InButton>
+                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+        <div className="h-8 grow" />
+        <div className="flex items-center flex-wrap-reverse gap-2">
+          {"showSaveFilePicker" in window === true &&
+            <WideOppositeButton
+              disabled={error != null}
+              onClick={pickOrAlert}>
+              {error != null ? error : "Save file"}
+            </WideOppositeButton>}
+          {"showSaveFilePicker" in window === false &&
+            <WideOppositeButton
+              disabled={error != null}
+              onClick={saveOrAlert}>
+              {error != null ? error : "Save file"}
+            </WideOppositeButton>}
+        </div>
+      </form>
     </div>
   </Fragment>
 }

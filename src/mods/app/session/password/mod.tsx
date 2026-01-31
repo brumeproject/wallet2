@@ -7,7 +7,6 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
 import { QrCode } from "@/libs/qrcode/mod.ts";
-import { useStoreContext } from "@/libs/store/mod.tsx";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -174,7 +173,6 @@ export function SessionPasswordAddPage() {
   const hash = useHashSubpath(path)
 
   const close = useCloseContext().getOrThrow()
-  const store = useStoreContext().getOrThrow()
 
   const session = useSessionContext().getOrThrow()
 
@@ -202,7 +200,7 @@ export function SessionPasswordAddPage() {
   const copyTheTotpcode = useCopy(totpcode)
 
   const encryptOrThrow = useCallback(async () => {
-    const kdbx = session.value.kdbx
+    const { kdbx } = session.value
 
     const $file = kdbx.inner.content.value
     const $root = $file.getRootOrThrow()
@@ -244,7 +242,7 @@ export function SessionPasswordAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [store, encryptOrThrow, close])
+  }).catch(Errors.display), [encryptOrThrow, close])
 
   const saveOrAlert = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
@@ -272,7 +270,7 @@ export function SessionPasswordAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [store, encryptOrThrow, close])
+  }).catch(Errors.display), [encryptOrThrow, close])
 
   const error = useMemo(() => {
     return

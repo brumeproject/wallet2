@@ -7,7 +7,8 @@
       "exclude": [
         "no-unused-vars",
         "no-namespace",
-        "require-await"
+        "require-await",
+        "no-window"
       ]
     }
   }

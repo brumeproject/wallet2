@@ -6,7 +6,6 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
-import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
@@ -150,7 +149,6 @@ export function SessionSolanaAddPage() {
   const hash = useHashSubpath(path)
 
   const close = useCloseContext().getOrThrow()
-  const store = useStoreContext().getOrThrow()
 
   const session = useSessionContext().getOrThrow()
 
@@ -196,7 +194,7 @@ export function SessionSolanaAddPage() {
   }, [getAddressOrNull])
 
   const encryptOrThrow = useCallback(async () => {
-    const kdbx = session.value.kdbx
+    const { kdbx } = session.value
 
     const $file = kdbx.inner.content.value
     const $root = $file.getRootOrThrow()
@@ -235,7 +233,7 @@ export function SessionSolanaAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [store, encryptOrThrow, close])
+  }).catch(Errors.display), [encryptOrThrow, close])
 
   const saveOrAlert = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
@@ -263,7 +261,7 @@ export function SessionSolanaAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [store, encryptOrThrow, close])
+  }).catch(Errors.display), [encryptOrThrow, close])
 
   const error = useMemo(() => {
     if (!signer)

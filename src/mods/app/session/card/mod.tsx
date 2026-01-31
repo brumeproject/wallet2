@@ -282,7 +282,7 @@ export function SessionCardAddPage() {
   const notes = useDeferredValue($notes)
 
   const encryptOrThrow = useCallback(async () => {
-    const kdbx = session.value.kdbx
+    const { kdbx } = session.value
 
     const $file = kdbx.inner.content.value
     const $root = $file.getRootOrThrow()

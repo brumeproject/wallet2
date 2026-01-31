@@ -150,7 +150,7 @@ function UserImportButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <Outline.PaperClipIcon className="size-5" />
+    <Outline.ArrowDownOnSquareIcon className="size-5" />
     Import user
   </WideNakedMenuAnchor>
 }
@@ -642,7 +642,7 @@ function UserCreatePage() {
         Password
       </div>
       <div className="text-default-contrast">
-        At least 3 characters
+        A password to encrypt the created file
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -973,7 +973,7 @@ function UserReimportButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <Outline.CogIcon className="size-5" />
+    <Outline.ArrowDownOnSquareIcon className="size-5" />
     Reimport
   </WideNakedMenuAnchor>
 }
