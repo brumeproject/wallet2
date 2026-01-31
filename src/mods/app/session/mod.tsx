@@ -416,7 +416,7 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
   }, [])
 
   return <div className="w-[320px] aspect-video perspective-[640px]">
-    <div className="h-full w-full overflow-hidden data-[flip=true]:animate-flip-in data-[unflip=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default select-none
+    <div className="h-full w-full data-[flip=true]:animate-flip-in data-[unflip=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default select-none
     data-[color=red]:bg-red-500/90
     data-[color=orange]:bg-orange-500/90
     data-[color=amber]:bg-amber-500/90
@@ -441,7 +441,7 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
       data-color={getEntryColor($entry)}
       onAnimationEnd={onAnimationEnd}
       onClick={onClick}>
-      <div className="absolute inset-0 p-4 flex flex-col backface-hidden">
+      <div className="absolute inset-0 p-4 flex flex-col backface-hidden overflow-hidden">
         <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
           {getEntryTitle($entry) || "Untitled"}
         </div>
@@ -525,7 +525,7 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
           })()}
         </div>
       </div>
-      <div className="absolute inset-0 p-4 flex items-center justify-center backface-hidden rotate-y-180">
+      <div className="absolute inset-0 p-4 flex items-center justify-center backface-hidden overflow-hidden rotate-y-180">
         <div className="font-mono text-default-half-contrast whitespace-pre-wrap">
           {`
 00100010 01010110 01101001
