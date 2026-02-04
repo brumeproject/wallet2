@@ -5,12 +5,11 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.tsx";
 import { Writable } from "@hazae41/binary";
+import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
-import { validateMnemonic } from "@scure/bip39";
-import { wordlist } from "@scure/bip39/wordlists/english.js";
-import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { AccountColorAnchor, SessionAccountCard, useSessionContext } from "../mod.tsx";
 
 React;
@@ -182,13 +181,23 @@ export function SessionSeedAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
+  const [valid, setValid] = useState(false)
+
+  const getValidOrThrow = useCallback(async () => {
+    return await BitcoinSeedPhrase.validate(seedphrase)
+  }, [seedphrase])
+
+  useEffect(() => {
+    getValidOrThrow().then(setValid).catch(console.error)
+  }, [getValidOrThrow])
+
   const error = useMemo(() => {
     if (!seedphrase)
       return "Seed phrase is required"
-    if (!validateMnemonic(seedphrase, wordlist))
+    if (!valid)
       return "Seed phrase is invalid"
     return
-  }, [seedphrase])
+  }, [seedphrase, valid])
 
   return <Fragment>
     <SubpathProvider value={hash}>
