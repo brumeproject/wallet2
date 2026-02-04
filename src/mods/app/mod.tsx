@@ -217,7 +217,7 @@ export function App() {
           <div className="h-16" />
           <div className="flex flex-col items-start w-full gap-4">
             <div className="bg-default-contrast w-full p-4 rounded-xl">
-              Other wallets have around 1000 external dependencies
+              Other wallets have more than 1000 external dependencies
             </div>
             <div className="bg-opposite text-opposite selection-opposite p-4 rounded-xl">
               We have 7
