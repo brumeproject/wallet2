@@ -11,6 +11,7 @@ import React, { Fragment, MouseEvent, useCallback, useMemo, useState } from "rea
 import { flushSync } from "react-dom";
 import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";
 import { EthereumAccountAddMenuAnchor, EthereumAccountPage, StandaloneEthereumAccountAddPage } from "./ethereum/mod.tsx";
+import { MoneroAccountAddMenuAnchor, MoneroAccountPage, StandaloneMoneroAccountAddPage } from "./monero/mod.tsx";
 import { PasswordAccountAddMenuAnchor, PasswordAccountAddPage, PasswordAccountPage } from "./password/mod.tsx";
 import { SeedAccountAddMenuAnchor, SeedAccountAddPage, SeedAccountPage } from "./seed/mod.tsx";
 import { SolanaAccountAddMenuAnchor, SolanaAccountPage, StandaloneSolanaAccountAddPage } from "./solana/mod.tsx";
@@ -68,7 +69,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               return // <SessionBitcoinAccountPage $entry={$entry} />
 
             if (type === "monero")
-              return // <SessionMoneroAccountPage $entry={$entry} />
+              return <MoneroAccountPage $entry={$entry} />
 
             if (type === "seed")
               return <SeedAccountPage $entry={$entry} />
@@ -419,6 +420,15 @@ export function CryptoAccountAddMenu() {
         <PathBoard>
           <StandaloneSolanaAccountAddPage />
         </PathBoard>}
+      {hash.url.pathname === "/bitcoin" &&
+        <PathBoard>
+          {/* <StandaloneBitcoinAccountAddPage /> */}
+        </PathBoard>}
+      {hash.url.pathname === "/monero" &&
+        <PathBoard>
+          <StandaloneMoneroAccountAddPage />
+        </PathBoard>
+      }
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <EthereumAccountAddMenuAnchor />
@@ -426,9 +436,7 @@ export function CryptoAccountAddMenu() {
         Bitcoin
       </WideNakedMenuAnchor>
       <SolanaAccountAddMenuAnchor />
-      <WideNakedMenuAnchor aria-disabled>
-        Monero
-      </WideNakedMenuAnchor>
+      <MoneroAccountAddMenuAnchor />
     </div>
   </Fragment>
 }
