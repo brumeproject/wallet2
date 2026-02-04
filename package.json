@@ -31,12 +31,12 @@
     "@hazae41/webauthnstorage": "^1.0.3",
     "@heroicons/react": "^2.2.0",
     "@nuintun/qrcode": "^5.0.2",
-    "@scure/base": "^2.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@hazae41/glace": "^1.0.32",
+    "@hazae41/phobos": "^2.0.16",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "deno": "^2.6.4"
