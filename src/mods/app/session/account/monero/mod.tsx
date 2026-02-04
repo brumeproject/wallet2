@@ -340,7 +340,7 @@ export function StandaloneMoneroAccountAddPage() {
           </div>
           <div className="h-4" />
           <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
-            {address}
+            {address && address.slice(0, 56) + "..."}
           </div>
           <div className="h-4 grow" />
           <div className="flex flex-wrap items-center gap-2">

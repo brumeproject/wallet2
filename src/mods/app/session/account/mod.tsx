@@ -142,7 +142,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
 
           if (type === "monero")
-            return $entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get()
+            return $entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get().slice(0, 56) + "..."
 
           if (type === "seed")
             return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
@@ -269,7 +269,7 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
               return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
 
             if (type === "monero")
-              return $entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get()
+              return $entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get().slice(0, 56) + "..."
 
             if (type === "seed")
               return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
