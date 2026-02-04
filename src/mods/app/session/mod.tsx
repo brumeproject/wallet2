@@ -124,7 +124,7 @@ export function SessionPage() {
         </PathPaper>}
       {hash.url.pathname === "/add" &&
         <PathPaper>
-          <SessionAccountAddMenu />
+          <AccountAddMenu />
         </PathPaper>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
@@ -139,7 +139,7 @@ export function SessionPage() {
           </div>
           <div className="h-16" />
           <div className="flex flex-col items-center gap-4">
-            <SessionAccountAddButton />
+            <AccountAddButton />
             <ContrastAnchor onClick={() => setDisplay(true)}>
               <Outline.EyeIcon className="size-5" />
               See accounts
@@ -152,10 +152,10 @@ export function SessionPage() {
             <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-center gap-4">
               {visibles.map($entry =>
                 <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                  <SessionAccountCardInGrid $entry={$entry} />
+                  <AccountCardInGrid $entry={$entry} />
                 </Fragment>)}
               {filter !== "trash" && <Fragment>
-                <SessionAccountAddButtonInGrid />
+                <AccountAddButtonInGrid />
               </Fragment>}
             </div>
           </div>
@@ -215,7 +215,7 @@ export function SessionPage() {
   </Fragment>
 }
 
-function SessionAccountAddButtonInGrid() {
+function AccountAddButtonInGrid() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -231,7 +231,7 @@ function SessionAccountAddButtonInGrid() {
   </a>
 }
 
-function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const path = usePathContext().getOrThrow()
@@ -401,7 +401,7 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   </Fragment>
 }
 
-export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const [flipping, setFlipping] = useState(false)
@@ -541,7 +541,7 @@ export function SessionAccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry
   </div>
 }
 
-function SessionAccountAddButton() {
+function AccountAddButton() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -556,7 +556,7 @@ function SessionAccountAddButton() {
   </OppositeAnchor>
 }
 
-function SessionAccountAddMenu() {
+function AccountAddMenu() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -568,7 +568,7 @@ function SessionAccountAddMenu() {
         </PathBoard>}
       {hash.url.pathname === "/crypto" &&
         <PathPaper>
-          <SessionCryptoAddMenu />
+          <CryptoAccountAddMenu />
         </PathPaper>}
       {hash.url.pathname === "/card" &&
         <PathBoard>
@@ -581,14 +581,14 @@ function SessionAccountAddMenu() {
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <PasswordAccountAddMenuAnchor />
-      <SessionCryptoAddAnchor />
+      <CryptoAccountAddMenuAnchor />
       <CardAccountAddMenuAnchor />
       <SeedAccountAddMenuAnchor />
     </div>
   </Fragment>
 }
 
-function SessionCryptoAddAnchor() {
+function CryptoAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -603,7 +603,7 @@ function SessionCryptoAddAnchor() {
   </WideNakedMenuAnchor>
 }
 
-function SessionCryptoAddMenu() {
+function CryptoAccountAddMenu() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -615,7 +615,7 @@ function SessionCryptoAddMenu() {
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
-      <SessionCryptoEthereumAddAnchor />
+      <EthereumAccountAddMenuAnchor />
       <WideNakedMenuAnchor aria-disabled>
         Bitcoin
       </WideNakedMenuAnchor>
@@ -627,7 +627,7 @@ function SessionCryptoAddMenu() {
   </Fragment>
 }
 
-function SessionCryptoEthereumAddAnchor() {
+function EthereumAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -668,7 +668,7 @@ function SessionMoreMenu(props: { logout(): void }) {
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/add" &&
         <PathPaper>
-          <SessionAccountAddMenu />
+          <AccountAddMenu />
         </PathPaper>}
       {hash.url.pathname === "/export" &&
         <PathBoard>

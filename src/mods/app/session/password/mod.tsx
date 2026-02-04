@@ -13,7 +13,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
-import { AccountColorAnchor, SessionAccountCard, useSessionContext } from "../mod.tsx";
+import { AccountCard, AccountColorAnchor, useSessionContext } from "../mod.tsx";
 
 React;
 
@@ -53,7 +53,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">
-      <SessionAccountCard $entry={$entry} />
+      <AccountCard $entry={$entry} />
     </div>
     <form className="grow flex flex-col">
       {username && <Fragment>

@@ -12,7 +12,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { AccountColorAnchor, SessionAccountCard, useSessionContext } from "../mod.tsx";
+import { AccountCard, AccountColorAnchor, useSessionContext } from "../mod.tsx";
 
 React;
 
@@ -45,7 +45,7 @@ export function SolanaAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">
-      <SessionAccountCard $entry={$entry} />
+      <AccountCard $entry={$entry} />
     </div>
     <form className="grow flex flex-col">
       {address && <Fragment>
