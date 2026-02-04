@@ -27,7 +27,7 @@ export interface UserData {
   readonly auth?: Nullable<Uint8Array<ArrayBuffer>>
 }
 
-export function LoginButton() {
+export function UserLoginButton() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -42,7 +42,7 @@ export function LoginButton() {
   </OppositeAnchor>
 }
 
-export function LoginMenu(props: { login(session: SessionData): void }) {
+export function UserLoginMenu(props: { login(session: SessionData): void }) {
   const { login } = props
 
   const store = useStoreContext().getOrThrow()

@@ -11,7 +11,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { CloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useEffect, useState } from "react";
 import { SessionData, SessionPage, SessionProvider } from "./session/mod.tsx";
-import { LoginButton, LoginMenu } from "./user/mod.tsx";
+import { UserLoginButton, UserLoginMenu } from "./user/mod.tsx";
 
 React;
 
@@ -106,7 +106,7 @@ export function App() {
     <SubpathProvider value={hash}>
       {client && hash.url.pathname === "/login" &&
         <PathPaper>
-          <LoginMenu login={login} />
+          <UserLoginMenu login={login} />
         </PathPaper>}
       {client && hash.url.pathname === "/settings" &&
         <PathBoard>
@@ -126,7 +126,7 @@ export function App() {
           </div>
           <div className="h-16" />
           <div className="flex items-center gap-4">
-            <LoginButton />
+            <UserLoginButton />
             <SettingsButton />
           </div>
           <div className="h-16" />
