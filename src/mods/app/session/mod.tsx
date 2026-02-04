@@ -16,10 +16,10 @@ import { flushSync } from "react-dom";
 import { InButton, WideOppositeButton } from "../../../libs/button/mod.tsx";
 import { Errors } from "../../../libs/errors/mod.ts";
 import { UserData } from "../user/mod.tsx";
-import { SessionCardAccountPage, SessionCardAddAnchor, SessionCardAddPage } from "./card/mod.tsx";
-import { SessionPasswordAccountPage, SessionPasswordAddAnchor, SessionPasswordAddPage } from "./password/mod.tsx";
-import { SessionSeedAccountPage, SessionSeedAddAnchor, SessionSeedAddPage } from "./seed/mod.tsx";
-import { SessionSolanaAccountPage, SessionSolanaAddAnchor, SessionSolanaAddPage } from "./solana/mod.tsx";
+import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";
+import { PasswordAccountAddMenuAnchor, PasswordAccountAddPage, PasswordAccountPage } from "./password/mod.tsx";
+import { SeedAccountAddMenuAnchor, SeedAccountAddPage, SeedAccountPage } from "./seed/mod.tsx";
+import { SolanaAccountAddMenuAnchor, SolanaAccountAddPage, SolanaAccountPage } from "./solana/mod.tsx";
 
 React;
 
@@ -251,16 +251,16 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             const type = getEntryType($entry)
 
             if (type === "password")
-              return <SessionPasswordAccountPage $entry={$entry} />
+              return <PasswordAccountPage $entry={$entry} />
 
             if (type === "card")
-              return <SessionCardAccountPage $entry={$entry} />
+              return <CardAccountPage $entry={$entry} />
 
             if (type === "ethereum")
               return // <SessionEthereumAccountPage $entry={$entry} />
 
             if (type === "solana")
-              return <SessionSolanaAccountPage $entry={$entry} />
+              return <SolanaAccountPage $entry={$entry} />
 
             if (type === "bitcoin")
               return // <SessionBitcoinAccountPage $entry={$entry} />
@@ -269,7 +269,7 @@ function SessionAccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               return // <SessionMoneroAccountPage $entry={$entry} />
 
             if (type === "seed")
-              return <SessionSeedAccountPage $entry={$entry} />
+              return <SeedAccountPage $entry={$entry} />
 
             return null
           })()}
@@ -564,7 +564,7 @@ function SessionAccountAddMenu() {
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/password" &&
         <PathBoard>
-          <SessionPasswordAddPage />
+          <PasswordAccountAddPage />
         </PathBoard>}
       {hash.url.pathname === "/crypto" &&
         <PathPaper>
@@ -572,18 +572,18 @@ function SessionAccountAddMenu() {
         </PathPaper>}
       {hash.url.pathname === "/card" &&
         <PathBoard>
-          <SessionCardAddPage />
+          <CardAccountAddPage />
         </PathBoard>}
       {hash.url.pathname === "/seed" &&
         <PathBoard>
-          <SessionSeedAddPage />
+          <SeedAccountAddPage />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
-      <SessionPasswordAddAnchor />
+      <PasswordAccountAddMenuAnchor />
       <SessionCryptoAddAnchor />
-      <SessionCardAddAnchor />
-      <SessionSeedAddAnchor />
+      <CardAccountAddMenuAnchor />
+      <SeedAccountAddMenuAnchor />
     </div>
   </Fragment>
 }
@@ -611,7 +611,7 @@ function SessionCryptoAddMenu() {
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/solana" &&
         <PathBoard>
-          <SessionSolanaAddPage />
+          <SolanaAccountAddPage />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
@@ -619,7 +619,7 @@ function SessionCryptoAddMenu() {
       <WideNakedMenuAnchor aria-disabled>
         Bitcoin
       </WideNakedMenuAnchor>
-      <SessionSolanaAddAnchor />
+      <SolanaAccountAddMenuAnchor />
       <WideNakedMenuAnchor aria-disabled>
         Monero
       </WideNakedMenuAnchor>

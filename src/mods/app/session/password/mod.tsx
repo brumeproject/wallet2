@@ -17,7 +17,7 @@ import { AccountColorAnchor, SessionAccountCard, useSessionContext } from "../mo
 
 React;
 
-export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const [masked, setMasked] = useState(true)
@@ -153,7 +153,7 @@ export function SessionPasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFi
   </div>
 }
 
-export function SessionPasswordAddAnchor() {
+export function PasswordAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -168,7 +168,7 @@ export function SessionPasswordAddAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function SessionPasswordAddPage() {
+export function PasswordAccountAddPage() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 

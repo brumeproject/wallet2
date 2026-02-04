@@ -14,7 +14,7 @@ import { AccountColorAnchor, SessionAccountCard, useSessionContext } from "../mo
 
 React;
 
-export function SessionSeedAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function SeedAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const seedphrase = useMemo(() => {
@@ -74,7 +74,7 @@ export function SessionSeedAccountPage(props: { $entry: KDBX.Inner.KeePassFile.E
   </div>
 }
 
-export function SessionSeedAddAnchor() {
+export function SeedAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -89,7 +89,7 @@ export function SessionSeedAddAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function SessionSeedAddPage() {
+export function SeedAccountAddPage() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 

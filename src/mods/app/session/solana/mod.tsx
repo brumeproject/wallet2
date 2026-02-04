@@ -16,7 +16,7 @@ import { AccountColorAnchor, SessionAccountCard, useSessionContext } from "../mo
 
 React;
 
-export function SessionSolanaAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function SolanaAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const [masked, setMasked] = useState(true)
@@ -130,7 +130,7 @@ export function SessionSolanaAccountPage(props: { $entry: KDBX.Inner.KeePassFile
   </div>
 }
 
-export function SessionSolanaAddAnchor() {
+export function SolanaAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -144,7 +144,7 @@ export function SessionSolanaAddAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function SessionSolanaAddPage() {
+export function SolanaAccountAddPage() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
