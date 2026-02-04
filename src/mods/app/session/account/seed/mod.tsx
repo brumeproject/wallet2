@@ -1,4 +1,4 @@
-import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -10,7 +10,8 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { AccountCard, AccountColorAnchor, useSessionContext } from "../mod.tsx";
+import { useSessionContext } from "../../mod.tsx";
+import { AccountCard, ColorAnchor, ColorMenu } from "../mod.tsx";
 
 React;
 
@@ -203,43 +204,7 @@ export function SeedAccountAddPage() {
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/color" &&
         <PathPaper>
-          <div className="grid grid-cols-6 grid-auto-rows gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              onClick={() => setColor(null)}
-              type="button">
-              <InButton>
-                <div className="size-5 rounded-full bg-opposite" />
-              </InButton>
-            </button>
-            {["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"].map(color =>
-              <Fragment key={color}>
-                <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-                  onClick={() => setColor(color)}
-                  type="button">
-                  <InButton>
-                    <div className="size-5 rounded-full
-                      data-[color=red]:bg-red-500/90
-                      data-[color=orange]:bg-orange-500/90
-                      data-[color=amber]:bg-amber-500/90
-                      data-[color=yellow]:bg-yellow-500/90
-                      data-[color=lime]:bg-lime-500/90
-                      data-[color=green]:bg-green-500/90
-                      data-[color=emerald]:bg-emerald-500/90
-                      data-[color=teal]:bg-teal-500/90
-                      data-[color=cyan]:bg-cyan-500/90
-                      data-[color=sky]:bg-sky-500/90
-                      data-[color=blue]:bg-blue-500/90
-                      data-[color=indigo]:bg-indigo-500/90
-                      data-[color=violet]:bg-violet-500/90
-                      data-[color=purple]:bg-purple-500/90
-                      data-[color=fuchsia]:bg-fuchsia-500/90
-                      data-[color=pink]:bg-pink-500/90
-                      data-[color=rose]:bg-rose-500/90"
-                      data-color={color} />
-                  </InButton>
-                </button>
-              </Fragment>)}
-          </div>
+          <ColorMenu ok={setColor} />
         </PathPaper>}
       {hash.url.pathname === "/generate" &&
         <PathPaper>
@@ -310,7 +275,7 @@ export function SeedAccountAddPage() {
             onChange={e => setTitle(e.target.value)}
             value={$title} />
           <div className="flex items-center gap-2">
-            <AccountColorAnchor color={color} />
+            <ColorAnchor color={color} />
           </div>
         </div>
         <div className="h-6" />
