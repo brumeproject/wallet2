@@ -10,9 +10,10 @@ import * as KDBX from "@hazae41/kdbx";
 import React, { Fragment, MouseEvent, useCallback, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";
+import { EthereumAccountAddMenuAnchor, EthereumAccountPage, StandaloneEthereumAccountAddPage } from "./ethereum/mod.tsx";
 import { PasswordAccountAddMenuAnchor, PasswordAccountAddPage, PasswordAccountPage } from "./password/mod.tsx";
 import { SeedAccountAddMenuAnchor, SeedAccountAddPage, SeedAccountPage } from "./seed/mod.tsx";
-import { SolanaAccountAddMenuAnchor, SolanaAccountAddPage, SolanaAccountPage } from "./solana/mod.tsx";
+import { SolanaAccountAddMenuAnchor, SolanaAccountPage, StandaloneSolanaAccountAddPage } from "./solana/mod.tsx";
 
 React;
 
@@ -58,7 +59,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               return <CardAccountPage $entry={$entry} />
 
             if (type === "ethereum")
-              return // <SessionEthereumAccountPage $entry={$entry} />
+              return <EthereumAccountPage $entry={$entry} />
 
             if (type === "solana")
               return <SolanaAccountPage $entry={$entry} />
@@ -410,9 +411,13 @@ export function CryptoAccountAddMenu() {
 
   return <Fragment>
     <SubpathProvider value={hash}>
+      {hash.url.pathname === "/ethereum" &&
+        <PathBoard>
+          <StandaloneEthereumAccountAddPage />
+        </PathBoard>}
       {hash.url.pathname === "/solana" &&
         <PathBoard>
-          <SolanaAccountAddPage />
+          <StandaloneSolanaAccountAddPage />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
@@ -426,21 +431,6 @@ export function CryptoAccountAddMenu() {
       </WideNakedMenuAnchor>
     </div>
   </Fragment>
-}
-
-export function EthereumAccountAddMenuAnchor() {
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const coords = useAnchorWithCoords(hash, "/ethereum")
-
-  return <WideNakedMenuAnchor
-    href={coords.url.hash}
-    onClick={coords.onClick}
-    onKeyDown={coords.onKeyDown}
-    aria-disabled>
-    Ethereum
-  </WideNakedMenuAnchor>
 }
 
 export function ColorAnchor(props: { color?: Nullable<string> }) {

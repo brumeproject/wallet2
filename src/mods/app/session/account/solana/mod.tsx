@@ -27,7 +27,7 @@ export function SolanaAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [$entry])
 
   const sigkey = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("SolanaSigningKey")?.getValueOrThrow().get()
+    return $entry.getDirectStringByKeyOrNull("SolanaPrivateKey")?.getValueOrThrow().get()
   }, [$entry])
 
   const notes = useMemo(() => {
@@ -145,7 +145,7 @@ export function SolanaAccountAddMenuAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function SolanaAccountAddPage() {
+export function StandaloneSolanaAccountAddPage() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -157,7 +157,7 @@ export function SolanaAccountAddPage() {
 
   const [$title, setTitle] = useState("")
 
-  const [$signer, setSigner] = useState("")
+  const [$sigkey, setSigKey] = useState("")
 
   const [$notes, setNotes] = useState("")
 
@@ -165,28 +165,28 @@ export function SolanaAccountAddPage() {
 
   const [color, setColor] = useState<Nullable<string>>()
 
-  const signer = useDeferredValue($signer)
+  const sigkey = useDeferredValue($sigkey)
 
   const notes = useDeferredValue($notes)
 
   const [address, setAddress] = useState<Nullable<string>>()
 
   const getAddressOrNull = useCallback(async () => {
-    if (!signer)
+    if (!sigkey)
       return
 
-    const keypair = base58.decode(signer)
+    const keypair = base58.decode(sigkey)
 
     if (keypair.length !== 64)
       return
 
-    const sigkey = keypair.slice(0, 32)
-    const pubkey = keypair.slice(32, 64)
+    const l = keypair.slice(0, 32)
+    const r = keypair.slice(32, 64)
 
     // TODO validate
 
-    return base58.encode(pubkey)
-  }, [signer])
+    return base58.encode(r)
+  }, [sigkey])
 
   useEffect(() => {
     getAddressOrNull().then(setAddress)
@@ -209,8 +209,8 @@ export function SolanaAccountAddPage() {
     if (address)
       $entry.createStringOrThrow("SolanaAddress", address)
 
-    if (signer)
-      $entry.createStringOrThrow("SolanaSigningKey", signer, true)
+    if (sigkey)
+      $entry.createStringOrThrow("SolanaPrivateKey", sigkey, true)
 
     if (notes)
       $entry.createStringOrThrow("Notes", notes)
@@ -218,7 +218,7 @@ export function SolanaAccountAddPage() {
     $group.element.appendChild($entry.element)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
-  }, [session, title, color, address, signer, notes])
+  }, [session, title, color, address, sigkey, notes])
 
   const writeOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
@@ -266,14 +266,12 @@ export function SolanaAccountAddPage() {
   }).catch(Errors.display), [encryptOrThrow, close])
 
   const error = useMemo(() => {
-    if (!signer)
+    if (!sigkey)
       return "Private key is required"
     if (!address)
       return "Private key is invalid"
     return
-  }, [signer, address])
-
-  const copyTheAddress = useCopy(address)
+  }, [sigkey, address])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -355,32 +353,6 @@ export function SolanaAccountAddPage() {
         </div>
         <div className="h-6" />
         <div className="font-medium">
-          Address
-        </div>
-        <div className="text-default-contrast">
-          Your Solana address
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.UserIcon className="size-5" />
-          <input className="w-full focus-visible:outline-none"
-            readOnly
-            autoComplete="off"
-            placeholder="Enter your private key below"
-            onFocus={e => e.currentTarget.select()}
-            value={address || ""} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={copyTheAddress.copyOrAlert}>
-              <InButton>
-                {copyTheAddress.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-              </InButton>
-            </button>
-          </div>
-        </div>
-        <div className="h-6" />
-        <div className="font-medium">
           Private key
         </div>
         <div className="text-default-contrast">
@@ -392,8 +364,8 @@ export function SolanaAccountAddPage() {
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             type={masked ? "password" : "text"}
-            onChange={e => setSigner(e.target.value)}
-            value={$signer} />
+            onChange={e => setSigKey(e.target.value)}
+            value={$sigkey} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"

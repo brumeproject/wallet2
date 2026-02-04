@@ -30,6 +30,8 @@
     "@hazae41/symbol-dispose-polyfill": "^1.1.2",
     "@hazae41/webauthnstorage": "^1.0.3",
     "@heroicons/react": "^2.2.0",
+    "@noble/curves": "^2.0.1",
+    "@noble/hashes": "^2.0.1",
     "@nuintun/qrcode": "^5.0.2",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
