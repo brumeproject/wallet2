@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Nullable } from "../nullable/mod.tsx";
+import { Nullable } from "../nullable/mod.ts";
 
 export function useAutoFocus() {
   const [current, setCurrent] = useState<Nullable<HTMLElement>>(null)

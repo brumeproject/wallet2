@@ -1,16 +1,16 @@
 import { InAnchor } from "@/libs/anchor/mod.tsx";
-import { base58 } from "@/libs/base58/mod.ts";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.tsx";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
+import { base58 } from "@scure/base";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountCard, ColorAnchor, ColorMenu } from "../mod.tsx";

@@ -4,7 +4,7 @@ import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.tsx";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import React, { Fragment, MouseEvent, useCallback, useMemo, useState } from "react";

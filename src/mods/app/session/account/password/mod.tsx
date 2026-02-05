@@ -5,7 +5,7 @@ import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.tsx";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { QrCode } from "@/libs/qrcode/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";

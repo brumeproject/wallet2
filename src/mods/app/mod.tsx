@@ -5,7 +5,7 @@ import { PathPaper } from "@/libs/dialog/paper/mod.tsx";
 import { Wall } from "@/libs/dialog/wall/mod.tsx";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.tsx";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { CloseContext } from "@hazae41/react-close-context";

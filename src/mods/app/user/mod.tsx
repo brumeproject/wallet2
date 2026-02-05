@@ -8,7 +8,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.tsx";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";

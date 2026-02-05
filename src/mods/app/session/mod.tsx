@@ -6,7 +6,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryFilter } from "@/libs/kdbx/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.tsx";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
