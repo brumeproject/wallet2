@@ -188,6 +188,13 @@ export function SessionPage() {
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
+          aria-selected={filter === "ssh"}
+          onClick={() => filter === "ssh" ? setFilter(undefined) : setFilter("ssh")}>
+          <Outline.KeyIcon className="size-5" />
+          SSH Keys
+        </button>
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
+          type="button"
           aria-selected={filter === "trash"}
           onClick={() => filter === "trash" ? setFilter(undefined) : setFilter("trash")}>
           <Outline.TrashIcon className="size-5" />

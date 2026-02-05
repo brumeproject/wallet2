@@ -19,6 +19,9 @@ export function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
   if ($entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get())
     return "seed"
 
+  if ($entry.getDirectStringByKeyOrNull("SshPublicKey")?.getValueOrThrow().get())
+    return "ssh"
+
   return "password"
 }
 
@@ -42,6 +45,9 @@ export function getEntryFilter($entry: KDBX.Inner.KeePassFile.Entry) {
 
   if (type === "seed")
     return "seed"
+
+  if (type === "ssh")
+    return "ssh"
 
   return "password"
 }

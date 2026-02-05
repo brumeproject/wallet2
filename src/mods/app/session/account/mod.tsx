@@ -15,6 +15,7 @@ import { MoneroAccountAddMenuAnchor, MoneroAccountPage, StandaloneMoneroAccountA
 import { PasswordAccountAddMenuAnchor, PasswordAccountAddPage, PasswordAccountPage } from "./password/mod.tsx";
 import { SeedAccountAddMenuAnchor, SeedAccountAddPage, SeedAccountPage } from "./seed/mod.tsx";
 import { SolanaAccountAddMenuAnchor, SolanaAccountPage, StandaloneSolanaAccountAddPage } from "./solana/mod.tsx";
+import { SshAccountAddMenuAnchor, SshAccountAddPage, SshAccountPage } from "./ssh/mod.tsx";
 
 React;
 
@@ -73,6 +74,9 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
             if (type === "seed")
               return <SeedAccountPage $entry={$entry} />
+
+            if (type === "ssh")
+              return <SshAccountPage $entry={$entry} />
 
             return null
           })()}
@@ -147,6 +151,9 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           if (type === "seed")
             return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
 
+          if (type === "ssh")
+            return $entry.getDirectStringByKeyOrNull("SshPublicKey")?.getValueOrThrow().get()?.trim().split(/\s+/).slice(0, 2).join(" ")
+
           return null
         })()}
       </div>
@@ -189,6 +196,12 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.SparklesIcon className="size-5" />
               Seed
+            </div>
+
+          if (type === "ssh")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.KeyIcon className="size-5" />
+              SSH
             </div>
 
           if (type === "password")
@@ -274,6 +287,9 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
             if (type === "seed")
               return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
 
+            if (type === "ssh")
+              return $entry.getDirectStringByKeyOrNull("SshPublicKey")?.getValueOrThrow().get()?.trim().split(/\s+/).slice(0, 2).join(" ")
+
             return null
           })()}
         </div>
@@ -316,6 +332,12 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
               return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                 <Outline.SparklesIcon className="size-5" />
                 Seed
+              </div>
+
+            if (type === "ssh")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.KeyIcon className="size-5" />
+                SSH
               </div>
 
             if (type === "password")
@@ -381,12 +403,17 @@ export function AccountAddMenu() {
         <PathBoard>
           <SeedAccountAddPage />
         </PathBoard>}
+      {hash.url.pathname === "/ssh" &&
+        <PathBoard>
+          <SshAccountAddPage />
+        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <PasswordAccountAddMenuAnchor />
       <CryptoAccountAddMenuAnchor />
       <CardAccountAddMenuAnchor />
       <SeedAccountAddMenuAnchor />
+      <SshAccountAddMenuAnchor />
     </div>
   </Fragment>
 }
