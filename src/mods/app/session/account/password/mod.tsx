@@ -1,7 +1,7 @@
 import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
-import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
+import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
@@ -9,6 +9,7 @@ import { Nullable } from "@/libs/nullable/mod.ts";
 import { QrCode } from "@/libs/qrcode/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
+import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
@@ -294,6 +295,31 @@ export function PasswordAccountAddPage() {
     setTotpSeed(content)
   }).catch(Errors.display), [])
 
+  const onDigicodeClick = useCallback(() => Promise.try(async () => {
+    const random = Array.from(crypto.getRandomValues(new Uint8Array(8)))
+    const result = random.map(x => (x % 10).toString()).join("")
+
+    setPassword(result)
+  }).catch(Errors.display), [])
+
+  const onPasswordClick = useCallback(() => Promise.try(async () => {
+    const source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?/~`"
+
+    const random = Array.from(crypto.getRandomValues(new Uint8Array(24)))
+    const result = random.map(x => source.charAt(x % source.length)).join("")
+
+    setPassword(result)
+  }).catch(Errors.display), [])
+
+  const onPassphraseClick = useCallback(() => Promise.try(async () => {
+    const source = await BitcoinSeedPhrase.generate(128).then(x => x.split(" ").slice(0, 4))
+
+    const random = crypto.getRandomValues(new Uint8Array(1))[0]
+    const result = source.map((x, i) => x.charAt(0).toUpperCase() + x.slice(1) + (i === random % source.length ? (random % 10) : "")).join("")
+
+    return setPassword(result)
+  }).catch(Errors.display), [])
+
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/color" &&
@@ -303,18 +329,22 @@ export function PasswordAccountAddPage() {
       {hash.url.pathname === "/password" &&
         <PathPaper>
           <div className="flex flex-col text-left gap-2">
-
+            <WideNakedMenuButton
+              onClick={onDigicodeClick}>
+              <Outline.HashtagIcon className="size-5" />
+              Digicode
+            </WideNakedMenuButton>
+            <WideNakedMenuButton
+              onClick={onPasswordClick}>
+              <Outline.LanguageIcon className="size-5" />
+              Password
+            </WideNakedMenuButton>
+            <WideNakedMenuButton
+              onClick={onPassphraseClick}>
+              <Outline.ChatBubbleOvalLeftEllipsisIcon className="size-5" />
+              Passphrase
+            </WideNakedMenuButton>
           </div>
-        </PathPaper>}
-      {hash.url.pathname === "/password/alphanumeric" &&
-        <PathPaper>
-          <div className="flex flex-col text-left gap-2">
-
-          </div>
-        </PathPaper>}
-      {hash.url.pathname === "/password/correcthorse" &&
-        <PathPaper>
-
         </PathPaper>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
@@ -421,11 +451,7 @@ export function PasswordAccountAddPage() {
                 {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
               </InButton>
             </button>
-            <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none">
-              <InAnchor>
-                <Outline.SparklesIcon className="size-5" />
-              </InAnchor>
-            </a>
+            <PasswordAnchor />
           </div>
         </div>
         <div className="h-6" />
@@ -501,4 +527,20 @@ export function PasswordAccountAddPage() {
       </form>
     </div>
   </Fragment>
+}
+
+function PasswordAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/password")
+
+  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <InAnchor>
+      <Outline.SparklesIcon className="size-5" />
+    </InAnchor>
+  </a>
 }
