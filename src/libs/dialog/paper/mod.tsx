@@ -164,7 +164,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
 export function InMenuAnchor(props: ChildrenProps) {
   const { children } = props
 
-  return <div className="h-full w-full flex items-center justify-start gap-4 group-not-aria-disabled:group-active:scale-90 transition-transform">
+  return <div className="h-full w-full flex items-center justify-start gap-4 select-none group-not-aria-disabled:group-active:scale-90 transition-transform">
     {children}
   </div>
 }
@@ -172,7 +172,7 @@ export function InMenuAnchor(props: ChildrenProps) {
 export function InMenuButton(props: ChildrenProps) {
   const { children } = props
 
-  return <div className="h-full w-full flex items-center justify-start gap-4 group-enabled:group-active:scale-90 transition-transform">
+  return <div className="h-full w-full flex items-center justify-start gap-4 select-none group-enabled:group-active:scale-90 transition-transform">
     {children}
   </div>
 }
