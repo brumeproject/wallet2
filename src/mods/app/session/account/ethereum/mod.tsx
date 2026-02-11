@@ -332,7 +332,7 @@ export function StandaloneEthereumAccountAddPage() {
           <div className="flex flex-wrap items-center gap-2">
             <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
-              Ethereum
+              Crypto
             </div>
           </div>
         </div>

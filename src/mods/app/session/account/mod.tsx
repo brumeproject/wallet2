@@ -164,25 +164,25 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           if (type === "ethereum")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
-              Ethereum
+              Crypto
             </div>
 
           if (type === "solana")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
-              Solana
+              Crypto
             </div>
 
           if (type === "bitcoin")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
-              Bitcoin
+              Crypto
             </div>
 
           if (type === "monero")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
-              Monero
+              Crypto
             </div>
 
           if (type === "seed")
@@ -291,25 +291,25 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
             if (type === "ethereum")
               return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                 <Outline.BanknotesIcon className="size-5" />
-                Ethereum
+                Crypto
               </div>
 
             if (type === "solana")
               return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                 <Outline.BanknotesIcon className="size-5" />
-                Solana
+                Crypto
               </div>
 
             if (type === "bitcoin")
               return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                 <Outline.BanknotesIcon className="size-5" />
-                Bitcoin
+                Crypto
               </div>
 
             if (type === "monero")
               return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                 <Outline.BanknotesIcon className="size-5" />
-                Monero
+                Crypto
               </div>
 
             if (type === "seed")

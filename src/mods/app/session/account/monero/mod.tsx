@@ -346,7 +346,7 @@ export function StandaloneMoneroAccountAddPage() {
           <div className="flex flex-wrap items-center gap-2">
             <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
-              Monero
+              Crypto
             </div>
           </div>
         </div>
