@@ -85,8 +85,7 @@ export function SeedAccountAddMenuAnchor() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <Outline.SparklesIcon className="size-5" />
-    Seed
+    Multiple
   </WideNakedMenuAnchor>
 }
 
@@ -215,7 +214,7 @@ export function SeedAccountAddPage() {
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        Add seed
+        Add crypto account
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
@@ -249,8 +248,8 @@ export function SeedAccountAddPage() {
           <div className="h-4 grow" />
           <div className="flex flex-wrap items-center gap-2">
             <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.SparklesIcon className="size-5" />
-              Seed
+              <Outline.BanknotesIcon className="size-5" />
+              Crypto
             </div>
           </div>
         </div>

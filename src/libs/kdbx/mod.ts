@@ -41,7 +41,7 @@ export function getEntryFilter($entry: KDBX.Inner.KeePassFile.Entry) {
     return "crypto"
 
   if (type === "seed")
-    return "seed"
+    return "crypto"
 
   return "password"
 }

@@ -187,8 +187,8 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
           if (type === "seed")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.SparklesIcon className="size-5" />
-              Seed
+              <Outline.BanknotesIcon className="size-5" />
+              Crypto
             </div>
 
           if (type === "password")
@@ -314,8 +314,8 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
 
             if (type === "seed")
               return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.SparklesIcon className="size-5" />
-                Seed
+                <Outline.BanknotesIcon className="size-5" />
+                Crypto
               </div>
 
             if (type === "password")
@@ -377,16 +377,11 @@ export function AccountAddMenu() {
         <PathBoard>
           <CardAccountAddPage />
         </PathBoard>}
-      {hash.url.pathname === "/seed" &&
-        <PathBoard>
-          <SeedAccountAddPage />
-        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <PasswordAccountAddMenuAnchor />
       <CryptoAccountAddMenuAnchor />
       <CardAccountAddMenuAnchor />
-      <SeedAccountAddMenuAnchor />
     </div>
   </Fragment>
 }
@@ -412,6 +407,10 @@ export function CryptoAccountAddMenu() {
 
   return <Fragment>
     <SubpathProvider value={hash}>
+      {hash.url.pathname === "/seed" &&
+        <PathBoard>
+          <SeedAccountAddPage />
+        </PathBoard>}
       {hash.url.pathname === "/ethereum" &&
         <PathBoard>
           <StandaloneEthereumAccountAddPage />
@@ -427,10 +426,10 @@ export function CryptoAccountAddMenu() {
       {hash.url.pathname === "/monero" &&
         <PathBoard>
           <StandaloneMoneroAccountAddPage />
-        </PathBoard>
-      }
+        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
+      <SeedAccountAddMenuAnchor />
       <EthereumAccountAddMenuAnchor />
       <WideNakedMenuAnchor aria-disabled>
         Bitcoin
