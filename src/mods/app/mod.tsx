@@ -3,6 +3,7 @@ import { useClientContext } from "@/libs/client/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper } from "@/libs/dialog/paper/mod.tsx";
 import { Wall } from "@/libs/dialog/wall/mod.tsx";
+import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
@@ -353,7 +354,8 @@ function SettingsPage() {
     <h1 className="text-xl font-medium">
       Settings
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />

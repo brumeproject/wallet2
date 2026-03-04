@@ -3,6 +3,7 @@ import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
+import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryFilter } from "@/libs/kdbx/mod.ts";
@@ -339,7 +340,8 @@ export function SessionExportPage() {
       <h1 className="text-xl font-medium">
         Export user
       </h1>
-      <form className="grow flex flex-col">
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
         <input className="hidden"
           autoComplete="off"
           name="username" />

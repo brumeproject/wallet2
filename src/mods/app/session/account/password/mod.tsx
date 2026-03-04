@@ -3,6 +3,7 @@ import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
+import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
@@ -57,7 +58,11 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     <div className="flex items-center justify-center">
       <AccountCard $entry={$entry} />
     </div>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
+      <input className="hidden"
+        autoComplete="off"
+        name="username" />
       {username && <Fragment>
         <div className="h-6" />
         <div className="font-medium">
@@ -389,7 +394,8 @@ export function PasswordAccountAddPage() {
           </div>
         </div>
       </div>
-      <form className="grow flex flex-col">
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
         <input className="hidden"
           autoComplete="off"
           name="username" />

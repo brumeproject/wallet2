@@ -3,6 +3,7 @@ import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
+import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryTitle } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
@@ -51,7 +52,11 @@ export function MoneroAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     <div className="flex items-center justify-center">
       <AccountCard $entry={$entry} />
     </div>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
+      <input className="hidden"
+        autoComplete="off"
+        name="username" />
       {address && <Fragment>
         <div className="h-6" />
         <div className="font-medium">
@@ -351,7 +356,8 @@ export function StandaloneMoneroAccountAddPage() {
           </div>
         </div>
       </div>
-      <form className="grow flex flex-col">
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
         <input className="hidden"
           autoComplete="off"
           name="username" />

@@ -223,7 +223,8 @@ function UserImportFilePage() {
     <h1 className="text-xl font-medium">
       Import user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -393,7 +394,8 @@ function UserImportFsfhPage() {
     <h1 className="text-xl font-medium">
       Import user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -618,7 +620,8 @@ function UserCreatePage() {
     <h1 className="text-xl font-medium">
       Create user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -875,7 +878,8 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
       {user.name}
     </h1>
     <div className="h-6" />
-    <form className="grow flex flex-col items-center">
+    <form className="grow flex flex-col items-center"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -1048,7 +1052,8 @@ function UserReimportFilePage(props: { user: UserData }) {
     <h1 className="text-xl font-medium">
       Reimport user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -1220,7 +1225,8 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     <h1 className="text-xl font-medium">
       Reimport user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
