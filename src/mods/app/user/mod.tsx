@@ -292,6 +292,7 @@ function UserImportFilePage() {
       <div className="h-8 grow" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
+          type="button"
           disabled={error != null}
           onClick={loadOrAlert}>
           {error != null ? error : "Open file"}
@@ -465,6 +466,7 @@ function UserImportFsfhPage() {
       <div className="h-8 grow" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
+          type="button"
           disabled={error != null}
           onClick={openOrAlert}>
           {error != null ? error : "Open file"}
@@ -668,12 +670,14 @@ function UserCreatePage() {
       <div className="flex items-center flex-wrap-reverse gap-2">
         {"showSaveFilePicker" in window === true &&
           <WideOppositeButton
+            type="button"
             disabled={error != null}
             onClick={pickOrAlert}>
             {error != null ? error : "Save file"}
           </WideOppositeButton>}
         {"showSaveFilePicker" in window === false &&
           <WideOppositeButton
+            type="button"
             disabled={error != null}
             onClick={saveOrAlert}>
             {error != null ? error : "Save file"}
@@ -1121,6 +1125,7 @@ function UserReimportFilePage(props: { user: UserData }) {
       <div className="h-8 grow" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
+          type="button"
           disabled={error != null}
           onClick={loadOrAlert}>
           {error != null ? error : "Open file"}
@@ -1296,6 +1301,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
       <div className="h-8 grow" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
+          type="button"
           disabled={error != null}
           onClick={openOrAlert}>
           {error != null ? error : "Open file"}

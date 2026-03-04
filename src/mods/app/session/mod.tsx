@@ -373,12 +373,14 @@ export function SessionExportPage() {
         <div className="flex items-center flex-wrap-reverse gap-2">
           {"showSaveFilePicker" in window === true &&
             <WideOppositeButton
+              type="button"
               disabled={error != null}
               onClick={pickOrAlert}>
               {error != null ? error : "Save file"}
             </WideOppositeButton>}
           {"showSaveFilePicker" in window === false &&
             <WideOppositeButton
+              type="button"
               disabled={error != null}
               onClick={saveOrAlert}>
               {error != null ? error : "Save file"}

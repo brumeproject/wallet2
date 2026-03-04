@@ -565,12 +565,14 @@ export function CardAccountAddPage() {
         <div className="flex items-center flex-wrap-reverse gap-2">
           {session.value.user.fsfh != null &&
             <WideOppositeButton
+              type="button"
               disabled={error != null}
               onClick={writeOrAlert}>
               {error != null ? error : "Save file"}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
+              type="button"
               disabled={error != null}
               onClick={saveOrAlert}>
               {error != null ? error : "Save file"}
