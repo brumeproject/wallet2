@@ -1,7 +1,7 @@
 {
   "type": "module",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.0",
   "scripts": {
     "examine": "deno lint ./src && deno check ./src && deno test ./src",
     "prepack": "deno x glace ./www --out=./out",
