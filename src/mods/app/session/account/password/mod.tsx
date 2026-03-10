@@ -48,11 +48,21 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
   const copyTheTotpcode = useCopy(totpcode)
 
   return <div className="flex flex-col grow p-6">
-    <h1 className="text-xl font-medium">
-      {getEntryTitle($entry) || "Untitled"}
-    </h1>
-    <div className="text-default-contrast">
-      {$entry.getUuidOrThrow().getOrThrow().slice(0, 8).toUpperCase()}
+    <div className="flex items-center justify-between">
+      <div className="flex flex-col">
+        <h1 className="text-xl font-medium">
+          {getEntryTitle($entry) || "Untitled"}
+        </h1>
+        <div className="text-default-contrast">
+          {$entry.getUuidOrThrow().getOrThrow().slice(0, 8).toUpperCase()}
+        </div>
+      </div>
+      <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+        type="button">
+        <InButton>
+          <Outline.EllipsisVerticalIcon className="size-6" />
+        </InButton>
+      </button>
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">
