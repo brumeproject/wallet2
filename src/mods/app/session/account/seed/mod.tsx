@@ -90,7 +90,7 @@ export function SeedAccountAddMenuAnchor() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    Multiple
+    Standard
   </WideNakedMenuAnchor>
 }
 

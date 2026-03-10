@@ -411,6 +411,38 @@ export function CryptoAccountAddMenu() {
         <PathBoard>
           <SeedAccountAddPage />
         </PathBoard>}
+      {hash.url.pathname === "/other" &&
+        <PathPaper>
+          <DerivedCryptoAccountAddMenu />
+        </PathPaper>}
+    </SubpathProvider>
+    <div className="flex flex-col text-left gap-2">
+      <SeedAccountAddMenuAnchor />
+      <DerivedCryptoAccountAddMenuAnchor />
+    </div>
+  </Fragment>
+}
+
+export function DerivedCryptoAccountAddMenuAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/other")
+
+  return <WideNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    Other
+  </WideNakedMenuAnchor>
+}
+
+export function DerivedCryptoAccountAddMenu() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
       {hash.url.pathname === "/ethereum" &&
         <PathBoard>
           <StandaloneEthereumAccountAddPage />
@@ -429,7 +461,6 @@ export function CryptoAccountAddMenu() {
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
-      <SeedAccountAddMenuAnchor />
       <EthereumAccountAddMenuAnchor />
       <WideNakedMenuAnchor aria-disabled>
         Bitcoin
