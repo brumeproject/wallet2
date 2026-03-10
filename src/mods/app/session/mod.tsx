@@ -6,7 +6,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { getEntryFilter } from "@/libs/kdbx/mod.ts";
+import { getEntryFilter, getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { Writable } from "@hazae41/binary";
@@ -82,6 +82,10 @@ export function SessionPage() {
     setDisplay(true)
   }, [search])
 
+  const trash = useMemo(() => {
+    return getRecycleBinOrNull(session.value.kdbx.inner.content.value)
+  }, [session])
+
   const entries = useMemo(() => {
     const elements = [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")]
     const currents = elements.filter(e => !e.closest("History"))
@@ -96,18 +100,20 @@ export function SessionPage() {
       return entries
 
     return entries.filter($entry => {
-      if (!filter)
+      const trashed = trash != null ? trash.element.contains($entry.element) : false
+
+      if (!filter && !trashed)
         return search ? $entry.element.innerHTML.toLowerCase().includes(search.toLowerCase()) : true
 
-      if (filter === getEntryFilter($entry))
+      if (filter === getEntryFilter($entry) && !trashed)
         return search ? $entry.element.innerHTML.toLowerCase().includes(search.toLowerCase()) : true
 
-      // if (filter === "trash" && $entry.getParentGroupOrThrow().isDeleted())
-      //   return true
+      if (filter === "trash" && trashed)
+        return search ? $entry.element.innerHTML.toLowerCase().includes(search.toLowerCase()) : true
 
       return false
     })
-  }, [entries, filter, search])
+  }, [entries, filter, search, trash])
 
   const logout = useCallback(() => {
     close()
