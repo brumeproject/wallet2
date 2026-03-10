@@ -10,8 +10,8 @@ import * as KDBX from "@hazae41/kdbx";
 import React, { Fragment, MouseEvent, useCallback, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";
+import { CryptoAccountAddPage, CryptoAccountPage } from "./crypto/mod.tsx";
 import { PasswordAccountAddMenuAnchor, PasswordAccountAddPage, PasswordAccountPage } from "./password/mod.tsx";
-import { CryptoAccountAddPage, CryptoAccountPage } from "./seed/mod.tsx";
 
 React;
 
