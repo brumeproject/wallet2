@@ -6,7 +6,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { getEntryFilter, getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
+import { getEntryType, getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { Writable } from "@hazae41/binary";
@@ -102,7 +102,7 @@ export function SessionPage() {
     if (!filter && !trashed)
       return searched
 
-    if (filter === getEntryFilter($entry) && !trashed)
+    if (filter === getEntryType($entry) && !trashed)
       return searched
 
     if (filter === "trash" && trashed)

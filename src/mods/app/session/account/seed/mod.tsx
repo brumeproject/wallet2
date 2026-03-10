@@ -16,7 +16,7 @@ import { AccountCard, ColorAnchor, ColorMenu } from "../mod.tsx";
 
 React;
 
-export function SeedAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const seedphrase = useMemo(() => {
@@ -80,11 +80,11 @@ export function SeedAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
   </div>
 }
 
-export function SeedAccountAddMenuAnchor() {
+export function CryptoAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, "/seed")
+  const coords = useAnchorWithCoords(hash, "/crypto")
 
   return <WideNakedMenuAnchor
     href={coords.url.hash}
@@ -94,7 +94,7 @@ export function SeedAccountAddMenuAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function SeedAccountAddPage() {
+export function CryptoAccountAddPage() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 

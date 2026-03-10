@@ -1,7 +1,7 @@
 import { InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
-import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
+import { WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
@@ -10,11 +10,8 @@ import * as KDBX from "@hazae41/kdbx";
 import React, { Fragment, MouseEvent, useCallback, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";
-import { EthereumAccountAddMenuAnchor, EthereumAccountPage, StandaloneEthereumAccountAddPage } from "./ethereum/mod.tsx";
-import { MoneroAccountAddMenuAnchor, MoneroAccountPage, StandaloneMoneroAccountAddPage } from "./monero/mod.tsx";
 import { PasswordAccountAddMenuAnchor, PasswordAccountAddPage, PasswordAccountPage } from "./password/mod.tsx";
-import { SeedAccountAddMenuAnchor, SeedAccountAddPage, SeedAccountPage } from "./seed/mod.tsx";
-import { SolanaAccountAddMenuAnchor, SolanaAccountPage, StandaloneSolanaAccountAddPage } from "./solana/mod.tsx";
+import { CryptoAccountAddPage, CryptoAccountPage } from "./seed/mod.tsx";
 
 React;
 
@@ -59,20 +56,8 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             if (type === "card")
               return <CardAccountPage $entry={$entry} />
 
-            if (type === "ethereum")
-              return <EthereumAccountPage $entry={$entry} />
-
-            if (type === "solana")
-              return <SolanaAccountPage $entry={$entry} />
-
-            if (type === "bitcoin")
-              return // <SessionBitcoinAccountPage $entry={$entry} />
-
-            if (type === "monero")
-              return <MoneroAccountPage $entry={$entry} />
-
-            if (type === "seed")
-              return <SeedAccountPage $entry={$entry} />
+            if (type === "crypto")
+              return <CryptoAccountPage $entry={$entry} />
 
             return null
           })()}
@@ -132,19 +117,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           if (type === "card")
             return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
-          if (type === "ethereum")
-            return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
-
-          if (type === "solana")
-            return $entry.getDirectStringByKeyOrNull("SolanaAddress")?.getValueOrThrow().get()
-
-          if (type === "bitcoin")
-            return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
-
-          if (type === "monero")
-            return $entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get().slice(0, 56) + "..."
-
-          if (type === "seed")
+          if (type === "crypto")
             return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
 
           return null
@@ -161,31 +134,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               Card
             </div>
 
-          if (type === "ethereum")
-            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.BanknotesIcon className="size-5" />
-              Crypto
-            </div>
-
-          if (type === "solana")
-            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.BanknotesIcon className="size-5" />
-              Crypto
-            </div>
-
-          if (type === "bitcoin")
-            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.BanknotesIcon className="size-5" />
-              Crypto
-            </div>
-
-          if (type === "monero")
-            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.BanknotesIcon className="size-5" />
-              Crypto
-            </div>
-
-          if (type === "seed")
+          if (type === "crypto")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
               Crypto
@@ -259,19 +208,7 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
             if (type === "card")
               return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
-            if (type === "ethereum")
-              return $entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get()
-
-            if (type === "solana")
-              return $entry.getDirectStringByKeyOrNull("SolanaAddress")?.getValueOrThrow().get()
-
-            if (type === "bitcoin")
-              return $entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get()
-
-            if (type === "monero")
-              return $entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get().slice(0, 56) + "..."
-
-            if (type === "seed")
+            if (type === "crypto")
               return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
 
             return null
@@ -288,31 +225,7 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
                 Card
               </div>
 
-            if (type === "ethereum")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.BanknotesIcon className="size-5" />
-                Crypto
-              </div>
-
-            if (type === "solana")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.BanknotesIcon className="size-5" />
-                Crypto
-              </div>
-
-            if (type === "bitcoin")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.BanknotesIcon className="size-5" />
-                Crypto
-              </div>
-
-            if (type === "monero")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.BanknotesIcon className="size-5" />
-                Crypto
-              </div>
-
-            if (type === "seed")
+            if (type === "crypto")
               return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
                 <Outline.BanknotesIcon className="size-5" />
                 Crypto
@@ -370,9 +283,9 @@ export function AccountAddMenu() {
           <PasswordAccountAddPage />
         </PathBoard>}
       {hash.url.pathname === "/crypto" &&
-        <PathPaper>
-          <CryptoAccountAddMenu />
-        </PathPaper>}
+        <PathBoard>
+          <CryptoAccountAddPage />
+        </PathBoard>}
       {hash.url.pathname === "/card" &&
         <PathBoard>
           <CardAccountAddPage />
@@ -399,76 +312,6 @@ export function CryptoAccountAddMenuAnchor() {
     <Outline.BanknotesIcon className="size-5" />
     Crypto
   </WideNakedMenuAnchor>
-}
-
-export function CryptoAccountAddMenu() {
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  return <Fragment>
-    <SubpathProvider value={hash}>
-      {hash.url.pathname === "/seed" &&
-        <PathBoard>
-          <SeedAccountAddPage />
-        </PathBoard>}
-      {hash.url.pathname === "/other" &&
-        <PathPaper>
-          <DerivedCryptoAccountAddMenu />
-        </PathPaper>}
-    </SubpathProvider>
-    <div className="flex flex-col text-left gap-2">
-      <SeedAccountAddMenuAnchor />
-      <DerivedCryptoAccountAddMenuAnchor />
-    </div>
-  </Fragment>
-}
-
-export function DerivedCryptoAccountAddMenuAnchor() {
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const coords = useAnchorWithCoords(hash, "/other")
-
-  return <WideNakedMenuAnchor
-    href={coords.url.hash}
-    onClick={coords.onClick}
-    onKeyDown={coords.onKeyDown}>
-    Other
-  </WideNakedMenuAnchor>
-}
-
-export function DerivedCryptoAccountAddMenu() {
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  return <Fragment>
-    <SubpathProvider value={hash}>
-      {hash.url.pathname === "/ethereum" &&
-        <PathBoard>
-          <StandaloneEthereumAccountAddPage />
-        </PathBoard>}
-      {hash.url.pathname === "/solana" &&
-        <PathBoard>
-          <StandaloneSolanaAccountAddPage />
-        </PathBoard>}
-      {hash.url.pathname === "/bitcoin" &&
-        <PathBoard>
-          {/* <StandaloneBitcoinAccountAddPage /> */}
-        </PathBoard>}
-      {hash.url.pathname === "/monero" &&
-        <PathBoard>
-          <StandaloneMoneroAccountAddPage />
-        </PathBoard>}
-    </SubpathProvider>
-    <div className="flex flex-col text-left gap-2">
-      <EthereumAccountAddMenuAnchor />
-      <WideNakedMenuAnchor aria-disabled>
-        Bitcoin
-      </WideNakedMenuAnchor>
-      <SolanaAccountAddMenuAnchor />
-      <MoneroAccountAddMenuAnchor />
-    </div>
-  </Fragment>
 }
 
 export function ColorAnchor(props: { color?: Nullable<string> }) {
