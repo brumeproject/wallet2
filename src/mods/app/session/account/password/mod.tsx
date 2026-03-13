@@ -22,7 +22,7 @@ React;
 
 export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
-  d
+
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
