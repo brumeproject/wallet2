@@ -332,7 +332,7 @@ export function CardAccountAddPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
   }, [session, title, color, num, hol, exp, cvv, pin, notes])
 
-  const writeOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -349,7 +349,7 @@ export function CardAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -577,14 +577,14 @@ export function CardAccountAddPage() {
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={writeOrAlert}>
+              onClick={encryptAndWriteOrAlert}>
               {error != null ? error : "Save file"}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={saveOrAlert}>
+              onClick={encryptAndSaveOrAlert}>
               {error != null ? error : "Save file"}
             </WideOppositeButton>}
         </div>

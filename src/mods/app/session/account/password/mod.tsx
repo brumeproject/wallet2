@@ -22,6 +22,9 @@ React;
 
 export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
+  d
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
   const [masked, setMasked] = useState(true)
 
@@ -47,134 +50,229 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
   const copyThePassword = useCopy(password)
   const copyTheTotpcode = useCopy(totpcode)
 
-  return <div className="flex flex-col grow p-6">
-    <div className="flex items-center justify-between">
-      <div className="flex flex-col">
-        <h1 className="text-xl font-medium">
-          {getEntryTitle($entry) || "Untitled"}
-        </h1>
-        <div className="text-default-contrast">
-          {$entry.getUuidOrThrow().getOrThrow().slice(0, 8).toUpperCase()}
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/+" &&
+        <PathPaper>
+          <div className="flex flex-col text-left gap-2">
+            <WideNakedMenuButton>
+              <Outline.PencilIcon className="size-5" />
+              Edit
+            </WideNakedMenuButton>
+            <PasswordAccountMenuTrashButton $entry={$entry} />
+          </div>
+        </PathPaper>}
+    </SubpathProvider>
+    <div className="flex flex-col grow p-6">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col">
+          <h1 className="text-xl font-medium">
+            {getEntryTitle($entry) || "Untitled"}
+          </h1>
+          <div className="text-default-contrast">
+            {$entry.getUuidOrThrow().getOrThrow().slice(0, 8).toUpperCase()}
+          </div>
         </div>
+        <PasswordAccountMenuAnchor />
       </div>
-      <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-        type="button">
-        <InButton>
-          <Outline.EllipsisVerticalIcon className="size-6" />
-        </InButton>
-      </button>
-    </div>
-    <div className="h-6" />
-    <div className="flex items-center justify-center">
-      <AccountCard $entry={$entry} />
-    </div>
-    <form className="grow flex flex-col"
-      onSubmit={Events.preventDefault}>
-      <input className="hidden"
-        autoComplete="off"
-        name="username" />
-      {username && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Username
-        </div>
-        <div className="text-default-contrast">
-          Your username or email
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.AtSymbolIcon className="size-5" />
-          <input className="w-full focus-visible:outline-none"
-            readOnly
-            autoComplete="off"
-            onFocus={e => e.currentTarget.select()}
-            value={username} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={copyTheUsername.copyOrAlert}>
-              <InButton>
-                {copyTheUsername.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-              </InButton>
-            </button>
-          </div>
-        </div>
-      </Fragment>}
-      {password && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Password
-        </div>
-        <div className="text-default-contrast">
-          Your password
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.LanguageIcon className="size-5" />
-          <input className="w-full focus-visible:outline-none"
-            readOnly
-            autoComplete="off"
-            onFocus={e => e.currentTarget.select()}
-            type={masked ? "password" : "text"}
-            value={password} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={() => setMasked(!masked)}>
-              <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-              </InButton>
-            </button>
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={copyThePassword.copyOrAlert}>
-              <InButton>
-                {copyThePassword.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-              </InButton>
-            </button>
-          </div>
-        </div>
-      </Fragment>}
-      {totpseed && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          One-time passcode
-        </div>
-        <div className="text-default-contrast">
-          Your time-based one-time passcode
-        </div>
-        <div className="h-4" />
-        <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
-          readOnly
+      <div className="h-6" />
+      <div className="flex items-center justify-center">
+        <AccountCard $entry={$entry} />
+      </div>
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
+        <input className="hidden"
           autoComplete="off"
-          onClick={copyTheTotpcode.copyOrAlert}
-          value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
-      </Fragment>}
-      {notes && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Notes
-        </div>
-        <div className="text-default-contrast">
-          Any additional information
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full resize-none focus-visible:outline-none"
+          name="username" />
+        {username && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Username
+          </div>
+          <div className="text-default-contrast">
+            Your username or email
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <Outline.AtSymbolIcon className="size-5" />
+            <input className="w-full focus-visible:outline-none"
+              readOnly
+              autoComplete="off"
+              onFocus={e => e.currentTarget.select()}
+              value={username} />
+            <div className="flex items-center gap-2">
+              <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+                type="button"
+                onClick={copyTheUsername.copyOrAlert}>
+                <InButton>
+                  {copyTheUsername.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+                </InButton>
+              </button>
+            </div>
+          </div>
+        </Fragment>}
+        {password && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Password
+          </div>
+          <div className="text-default-contrast">
+            Your password
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <Outline.LanguageIcon className="size-5" />
+            <input className="w-full focus-visible:outline-none"
+              readOnly
+              autoComplete="off"
+              onFocus={e => e.currentTarget.select()}
+              type={masked ? "password" : "text"}
+              value={password} />
+            <div className="flex items-center gap-2">
+              <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+                type="button"
+                onClick={() => setMasked(!masked)}>
+                <InButton>
+                  {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                </InButton>
+              </button>
+              <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+                type="button"
+                onClick={copyThePassword.copyOrAlert}>
+                <InButton>
+                  {copyThePassword.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+                </InButton>
+              </button>
+            </div>
+          </div>
+        </Fragment>}
+        {totpseed && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            One-time passcode
+          </div>
+          <div className="text-default-contrast">
+            Your time-based one-time passcode
+          </div>
+          <div className="h-4" />
+          <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
             readOnly
-            rows={6}
-            value={notes} />
-        </div>
-      </Fragment>}
-    </form>
-  </div>
+            autoComplete="off"
+            onClick={copyTheTotpcode.copyOrAlert}
+            value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
+        </Fragment>}
+        {notes && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Notes
+          </div>
+          <div className="text-default-contrast">
+            Any additional information
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="w-full resize-none focus-visible:outline-none"
+              readOnly
+              rows={6}
+              value={notes} />
+          </div>
+        </Fragment>}
+      </form>
+    </div>
+  </Fragment>
 }
 
-export function PasswordAccountMenuAnchor() {
+function PasswordAccountMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
   const coords = useAnchorWithCoords(hash, "/+")
+
+  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <InAnchor>
+      <Outline.EllipsisVerticalIcon className="size-6" />
+    </InAnchor>
+  </a>
+}
+
+function PasswordAccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+  const { $entry } = props
+
+  const close = useCloseContext().getOrThrow()
+  const session = useSessionContext().getOrThrow()
+
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx } = session.value
+
+    $entry.moveToTrashOrThrow()
+
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
+  }, [session, $entry])
+
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = session.value.user.fsfh
+
+    if (fsfh == null)
+      return
+
+    const content = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    session.update()
+
+    close()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+    const content = await encryptOrThrow()
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    session.update()
+
+    close()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  return <Fragment>
+    {session.value.user.fsfh != null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndWriteOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Trash
+      </WideNakedMenuButton>}
+    {session.value.user.fsfh == null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndSaveOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Trash
+      </WideNakedMenuButton>}
+  </Fragment>
 }
 
 export function PasswordAccountAddMenuAnchor() {
@@ -190,6 +288,22 @@ export function PasswordAccountAddMenuAnchor() {
     <Outline.LanguageIcon className="size-5" />
     Password
   </WideNakedMenuAnchor>
+}
+
+function PasswordMenuAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/password")
+
+  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <InAnchor>
+      <Outline.SparklesIcon className="size-5" />
+    </InAnchor>
+  </a>
 }
 
 export function PasswordAccountAddPage() {
@@ -254,7 +368,7 @@ export function PasswordAccountAddPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
   }, [session, title, color, username, password, totpseed, notes])
 
-  const writeOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -271,7 +385,7 @@ export function PasswordAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -474,7 +588,7 @@ export function PasswordAccountAddPage() {
                 {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
               </InButton>
             </button>
-            <PasswordAnchor />
+            <PasswordMenuAnchor />
           </div>
         </div>
         <div className="h-6" />
@@ -538,34 +652,18 @@ export function PasswordAccountAddPage() {
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={writeOrAlert}>
+              onClick={encryptAndWriteOrAlert}>
               {error != null ? error : "Save file"}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={saveOrAlert}>
+              onClick={encryptAndSaveOrAlert}>
               {error != null ? error : "Save file"}
             </WideOppositeButton>}
         </div>
       </form>
     </div>
   </Fragment>
-}
-
-function PasswordAnchor() {
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const coords = useAnchorWithCoords(hash, "/password")
-
-  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-    href={coords.url.hash}
-    onClick={coords.onClick}
-    onKeyDown={coords.onKeyDown}>
-    <InAnchor>
-      <Outline.SparklesIcon className="size-5" />
-    </InAnchor>
-  </a>
 }
