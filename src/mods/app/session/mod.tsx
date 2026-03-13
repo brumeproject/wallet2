@@ -117,9 +117,9 @@ export function SessionPage() {
 
   return <Fragment>
     <SubpathProvider value={hash}>
-      {hash.url.pathname === "/menu" &&
+      {hash.url.pathname === "/+" &&
         <PathPaper>
-          <SessionMoreMenu logout={logout} />
+          <SessionMenu logout={logout} />
         </PathPaper>}
       {hash.url.pathname === "/add" &&
         <PathPaper>
@@ -192,7 +192,7 @@ export function SessionPage() {
       </div>
       <div className="h-4 shrink-0" />
       <div className="flex items-center gap-2">
-        <SessionMoreButton />
+        <SessionMenuButton />
         <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <Outline.MagnifyingGlassIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
@@ -207,11 +207,11 @@ export function SessionPage() {
   </Fragment>
 }
 
-function SessionMoreButton() {
+function SessionMenuButton() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, "/menu")
+  const coords = useAnchorWithCoords(hash, "/+")
 
   return <a className="group p-2 bg-opposite text-opposite rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-opposite"
     href={coords.url.hash}
@@ -223,7 +223,7 @@ function SessionMoreButton() {
   </a>
 }
 
-function SessionMoreMenu(props: { logout(): void }) {
+function SessionMenu(props: { logout(): void }) {
   const { logout } = props
 
   const path = usePathContext().getOrThrow()

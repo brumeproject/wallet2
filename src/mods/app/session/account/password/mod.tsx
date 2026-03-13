@@ -170,6 +170,13 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
   </div>
 }
 
+export function PasswordAccountMenuAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/+")
+}
+
 export function PasswordAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)

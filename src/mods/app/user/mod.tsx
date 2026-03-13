@@ -701,7 +701,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
         <PathBoard>
           <UserLoginPage user={user} login={login} />
         </PathBoard>}
-      {hash.url.pathname === `/${user.uuid}/menu` &&
+      {hash.url.pathname === `/${user.uuid}/+` &&
         <PathPaper>
           <UserMenu user={user} />
         </PathPaper>}
@@ -936,7 +936,7 @@ function UserMenuButton(props: { user: UserData }) {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, `/${user.uuid}/menu`)
+  const coords = useAnchorWithCoords(hash, `/${user.uuid}/+`)
 
   return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
     href={coords.url.hash}
