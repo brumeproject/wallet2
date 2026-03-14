@@ -22,27 +22,27 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
   const [masked, setMasked] = useState(true)
 
   const num = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
   }, [$entry])
 
   const hol = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("CardHolder")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("CardHolder")?.getValueOrThrow().get()
   }, [$entry])
 
   const exp = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get()
   }, [$entry])
 
   const cvv = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("CVV")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("CVV")?.getValueOrThrow().get()
   }, [$entry])
 
   const pin = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("PIN")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("PIN")?.getValueOrThrow().get()
   }, [$entry])
 
   const notes = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("Notes")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
   const copyTheNum = useCopy(num)
@@ -302,32 +302,30 @@ export function CardAccountAddPage() {
     const $root = $file.getRootOrThrow()
 
     const $group = $root.getDirectGroupByIndexOrThrow(0)
-    const $entry = $file.createEntryOrThrow()
+    const $entry = $group.addEntryOrThrow()
 
-    $entry.createStringOrThrow("Title", title)
+    $entry.addStringOrThrow("Title", title)
 
     if (color)
-      $entry.createStringOrThrow("Color", color)
+      $entry.addStringOrThrow("Color", color)
 
     if (num)
-      $entry.createStringOrThrow("CardNumber", num)
+      $entry.addStringOrThrow("CardNumber", num)
 
     if (hol)
-      $entry.createStringOrThrow("CardHolder", hol)
+      $entry.addStringOrThrow("CardHolder", hol)
 
     if (exp)
-      $entry.createStringOrThrow("ExpiryDate", exp)
+      $entry.addStringOrThrow("ExpiryDate", exp)
 
     if (cvv)
-      $entry.createStringOrThrow("CVV", cvv, true)
+      $entry.addStringOrThrow("CVV", cvv, true)
 
     if (pin)
-      $entry.createStringOrThrow("PIN", pin, true)
+      $entry.addStringOrThrow("PIN", pin, true)
 
     if (notes)
-      $entry.createStringOrThrow("Notes", notes)
-
-    $group.element.appendChild($entry.element)
+      $entry.addStringOrThrow("Notes", notes)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
   }, [session, title, color, num, hol, exp, cvv, pin, notes])

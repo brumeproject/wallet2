@@ -112,13 +112,13 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           const type = getEntryType($entry)
 
           if (type === "password")
-            return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+            return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
 
           if (type === "card")
-            return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+            return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
           if (type === "crypto")
-            return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
+            return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
 
           return null
         })()}
@@ -203,13 +203,13 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
             const type = getEntryType($entry)
 
             if (type === "password")
-              return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+              return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
 
             if (type === "card")
-              return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+              return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
             if (type === "crypto")
-              return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
+              return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
 
             return null
           })()}

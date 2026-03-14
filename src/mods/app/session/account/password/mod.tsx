@@ -29,21 +29,21 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
   const [masked, setMasked] = useState(true)
 
   const username = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
   }, [$entry])
 
   const password = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("Password")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Password")?.getValueOrThrow().get()
   }, [$entry])
 
   const totpseed = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("otp")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("otp")?.getValueOrThrow().get()
   }, [$entry])
 
   const totpcode = useTotpCode(totpseed)
 
   const notes = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("Notes")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
   const copyTheUsername = useCopy(username)
@@ -207,7 +207,7 @@ function PasswordAccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.
   const encryptOrThrow = useCallback(async () => {
     const { kdbx } = session.value
 
-    $entry.moveToTrashOrThrow()
+    $entry.trashOrThrow()
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
   }, [session, $entry])
@@ -344,26 +344,24 @@ export function PasswordAccountAddPage() {
     const $root = $file.getRootOrThrow()
 
     const $group = $root.getDirectGroupByIndexOrThrow(0)
-    const $entry = $file.createEntryOrThrow()
+    const $entry = $group.addEntryOrThrow()
 
-    $entry.createStringOrThrow("Title", title)
+    $entry.addStringOrThrow("Title", title)
 
     if (color)
-      $entry.createStringOrThrow("Color", color)
+      $entry.addStringOrThrow("Color", color)
 
     if (username)
-      $entry.createStringOrThrow("UserName", username)
+      $entry.addStringOrThrow("UserName", username)
 
     if (password)
-      $entry.createStringOrThrow("Password", password, true)
+      $entry.addStringOrThrow("Password", password, true)
 
     if (notes)
-      $entry.createStringOrThrow("Notes", notes)
+      $entry.addStringOrThrow("Notes", notes)
 
     if (totpseed)
-      $entry.createStringOrThrow("otp", totpseed, true)
-
-    $group.element.appendChild($entry.element)
+      $entry.addStringOrThrow("otp", totpseed, true)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
   }, [session, title, color, username, password, totpseed, notes])

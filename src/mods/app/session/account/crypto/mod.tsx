@@ -20,11 +20,11 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const { $entry } = props
 
   const seedphrase = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
   }, [$entry])
 
   const notes = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("Notes")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
   return <div className="flex flex-col grow p-6">
@@ -133,20 +133,18 @@ export function CryptoAccountAddPage() {
     const $root = $file.getRootOrThrow()
 
     const $group = $root.getDirectGroupByIndexOrThrow(0)
-    const $entry = $file.createEntryOrThrow()
+    const $entry = $group.addEntryOrThrow()
 
-    $entry.createStringOrThrow("Title", title)
+    $entry.addStringOrThrow("Title", title)
 
     if (color)
-      $entry.createStringOrThrow("Color", color)
+      $entry.addStringOrThrow("Color", color)
 
     if (seedphrase)
-      $entry.createStringOrThrow("SeedPhrase", seedphrase, true)
+      $entry.addStringOrThrow("SeedPhrase", seedphrase, true)
 
     if (notes)
-      $entry.createStringOrThrow("Notes", notes)
-
-    $group.element.appendChild($entry.element)
+      $entry.addStringOrThrow("Notes", notes)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
   }, [session, title, color, seedphrase, notes])
