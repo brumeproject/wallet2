@@ -523,7 +523,7 @@ function UserCreatePage() {
     return KDBX.Inner.HeadersAndContentWithBytes.computeOrThrow(headers, content)
   }, [xml])
 
-  const outerizeOrThrow = useCallback(async () => {
+  const outerizeOrThrow = useCallback(async (composite: KDBX.CompositeKey) => {
     const cipher = KDBX.Outer.Cipher.Aes256Cbc
     const compression = KDBX.Outer.Compression.Gzip
 
@@ -534,25 +534,25 @@ function UserCreatePage() {
     const headers = KDBX.Outer.Headers.initOrThrow({ cipher, compression, seed, iv, kdf })
     const wrapper = new KDBX.Outer.MagicAndVersionAndHeaders(new KDBX.Outer.Version(4, 0), headers)
 
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
-
     const derived = await headers.deriveOrThrow(composite)
 
     const bytes = KDBX.Outer.MagicAndVersionAndHeadersWithBytes.computeOrThrow(wrapper)
     const hashs = await KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmac.computeOrThrow(bytes, derived)
 
     return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, derived)
-  }, [pass])
+  }, [])
 
   const encryptOrThrow = useCallback(async () => {
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+
     const inner = innerizeOrThrow()
-    const outer = await outerizeOrThrow()
+    const outer = await outerizeOrThrow(composite)
 
     const decrypted = new KDBX.Database.Decrypted(outer, inner)
-    const encrypted = await decrypted.encryptOrThrow()
+    const encrypted = await decrypted.encryptOrThrow(composite)
 
     return Writable.writeToBytesOrThrow(encrypted)
-  }, [innerizeOrThrow, outerizeOrThrow])
+  }, [pass, innerizeOrThrow, outerizeOrThrow])
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
@@ -760,7 +760,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, kdbx: decrypted })
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, file1, pass, close])
@@ -779,7 +779,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, kdbx: decrypted })
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, file2, auth, close])
@@ -817,7 +817,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, kdbx: decrypted })
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, pass, close])
@@ -841,7 +841,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, kdbx: decrypted })
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, auth, close])

@@ -205,11 +205,11 @@ function PasswordAccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.
   const session = useSessionContext().getOrThrow()
 
   const encryptOrThrow = useCallback(async () => {
-    const { kdbx } = session.value
+    const { kdbx, comp } = session.value
 
     $entry.trashOrThrow()
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, $entry])
 
   const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
@@ -338,7 +338,7 @@ export function PasswordAccountAddPage() {
   const copyTheTotpcode = useCopy(totpcode)
 
   const encryptOrThrow = useCallback(async () => {
-    const { kdbx } = session.value
+    const { kdbx, comp } = session.value
 
     const $file = kdbx.inner.content.value
     const $root = $file.getRootOrThrow()
@@ -363,7 +363,7 @@ export function PasswordAccountAddPage() {
     if (totpseed)
       $entry.addStringOrThrow("otp", totpseed, true)
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, username, password, totpseed, notes])
 
   const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {

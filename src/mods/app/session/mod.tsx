@@ -22,6 +22,7 @@ React;
 
 export interface SessionData {
   readonly user: UserData
+  readonly comp: KDBX.CompositeKey
   readonly kdbx: KDBX.Database.Decrypted
 }
 
@@ -286,9 +287,7 @@ export function SessionExportPage() {
 
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
-    const rotated = await kdbx.rotateOrThrow(composite)
-
-    return Writable.writeToBytesOrThrow(await rotated.encryptOrThrow())
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(composite))
   }, [session, pass])
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {

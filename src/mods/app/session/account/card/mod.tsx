@@ -296,7 +296,7 @@ export function CardAccountAddPage() {
   const notes = useDeferredValue($notes)
 
   const encryptOrThrow = useCallback(async () => {
-    const { kdbx } = session.value
+    const { kdbx, comp } = session.value
 
     const $file = kdbx.inner.content.value
     const $root = $file.getRootOrThrow()
@@ -327,7 +327,7 @@ export function CardAccountAddPage() {
     if (notes)
       $entry.addStringOrThrow("Notes", notes)
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, num, hol, exp, cvv, pin, notes])
 
   const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
