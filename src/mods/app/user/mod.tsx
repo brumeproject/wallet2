@@ -517,10 +517,10 @@ function UserCreatePage() {
   const innerizeOrThrow = useCallback(() => {
     const document = new DOMParser().parseFromString(xml, "text/xml")
 
-    const content = new KDBX.Inner.KeePassFile(document)
     const headers = KDBX.Inner.Headers.createOrThrow(KDBX.Inner.Cipher.ChaCha20)
+    const content = KDBX.Inner.ContentWithBytes.computeOrThrow(new KDBX.Inner.KeePassFile(document))
 
-    return KDBX.Inner.HeadersAndContentWithBytes.computeOrThrow(headers, content)
+    return new KDBX.Inner.HeadersAndContentWithBytes(headers, content)
   }, [xml])
 
   const outerizeOrThrow = useCallback(async (composite: KDBX.CompositeKey) => {
