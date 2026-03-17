@@ -77,6 +77,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
             </WideNakedMenuButton>
             {trashed === false && <PasswordAccountMenuTrashButton $entry={$entry} close={close} />}
             {trashed === true && <PasswordAccountMenuUntrashButton $entry={$entry} close={close} />}
+            {trashed === true && <PasswordAccountMenuDeleteButton $entry={$entry} close={close} />}
           </div>
         </PathPaper>}
     </SubpathProvider>
@@ -370,6 +371,87 @@ function PasswordAccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFil
   </Fragment>
 }
 
+function PasswordAccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { close(force: boolean): void }) {
+  const { $entry, close } = props
+
+  const session = useSessionContext().getOrThrow()
+
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx, comp } = session.value
+
+    $entry.element.parentNode?.removeChild($entry.element)
+
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+  }, [session, $entry])
+
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+    if (!confirm("Are you sure you want to permanently delete this entry?"))
+      return
+
+    const fsfh = session.value.user.fsfh
+
+    if (fsfh == null)
+      return
+
+    const content = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+    if (!confirm("Are you sure you want to permanently delete this entry?"))
+      return
+
+    const content = await encryptOrThrow()
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  return <Fragment>
+    {session.value.user.fsfh != null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndWriteOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Delete
+      </WideNakedMenuButton>}
+    {session.value.user.fsfh == null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndSaveOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Delete
+      </WideNakedMenuButton>}
+  </Fragment>
+}
 
 export function PasswordAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
