@@ -500,15 +500,12 @@ function UserCreatePage() {
       </Meta>
       <Root>
         <Group>
-          <Name>Database</Name>
+          <Name>Fresh</Name>
           <UUID>H2qgo3GARAW5tSvIO/mYtQ==</UUID>
-          <Group>
-            <Name>Deleted</Name>
-            <UUID>KitVu0Z+S26bU0ek9ghs7g==</UUID>
-            <IconID>43</IconID>
-            <EnableAutoType>False</EnableAutoType>
-            <EnableSearching>False</EnableSearching>
-          </Group>
+        </Group>
+        <Group>
+          <Name>Trash</Name>
+          <UUID>KitVu0Z+S26bU0ek9ghs7g==</UUID>
         </Group>
       </Root>
     </KeePassFile>
