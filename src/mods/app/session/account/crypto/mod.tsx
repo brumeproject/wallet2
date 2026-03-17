@@ -1,9 +1,8 @@
-import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { getEntryTitle } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
@@ -11,13 +10,33 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { getRecycleBinOrNull } from "../../../../../libs/kdbx/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
-import { AccountCard, ColorAnchor, ColorMenu } from "../mod.tsx";
+import { AccountCard, AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
 
 React;
 
 export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
+
+  const close = useCloseContext().getOrThrow()
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const session = useSessionContext().getOrThrow()
+
+  const trashed = useMemo(() => {
+    const { kdbx } = session.value
+
+    const $file = kdbx.inner.content.value
+    const $trash = getRecycleBinOrNull($file)
+
+    if ($trash == null)
+      return false
+
+    return $trash.element.contains($entry.element)
+  }, [session, $entry])
 
   const seedphrase = useMemo(() => {
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
@@ -28,21 +47,25 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [$entry])
 
   return <div className="flex flex-col grow p-6">
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/+" &&
+        <PathPaper>
+          <div className="flex flex-col text-left gap-2">
+            {/* <WideNakedMenuButton>
+              <Outline.PencilIcon className="size-5" />
+              Edit
+            </WideNakedMenuButton> */}
+            {trashed === false && <AccountMenuTrashButton $entry={$entry} close={close} />}
+            {trashed === true && <AccountMenuUntrashButton $entry={$entry} close={close} />}
+            {trashed === true && <AccountMenuDeleteButton $entry={$entry} close={close} />}
+          </div>
+        </PathPaper>}
+    </SubpathProvider>
     <div className="flex items-center justify-between">
-      <div className="flex flex-col">
-        <h1 className="text-xl font-medium">
-          {getEntryTitle($entry) || "Untitled"}
-        </h1>
-        <div className="text-default-contrast">
-          {$entry.getUuidOrThrow().getOrThrow().slice(0, 8).toUpperCase()}
-        </div>
-      </div>
-      <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-        type="button">
-        <InButton>
-          <Outline.EllipsisVerticalIcon className="size-6" />
-        </InButton>
-      </button>
+      <h1 className="text-xl font-medium">
+        Crypto account
+      </h1>
+      <AccountMenuAnchor />
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">

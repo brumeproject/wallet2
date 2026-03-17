@@ -5,7 +5,7 @@ import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dial
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { getEntryTitle, getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
+import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { QrCode } from "@/libs/qrcode/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
@@ -30,6 +30,18 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
 
   const session = useSessionContext().getOrThrow()
 
+  const trashed = useMemo(() => {
+    const { kdbx } = session.value
+
+    const $file = kdbx.inner.content.value
+    const $trash = getRecycleBinOrNull($file)
+
+    if ($trash == null)
+      return false
+
+    return $trash.element.contains($entry.element)
+  }, [session, $entry])
+
   const [masked, setMasked] = useState(true)
 
   const username = useMemo(() => {
@@ -50,18 +62,6 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
-  const trashed = useMemo(() => {
-    const { kdbx } = session.value
-
-    const $file = kdbx.inner.content.value
-    const $trash = getRecycleBinOrNull($file)
-
-    if ($trash == null)
-      return false
-
-    return $trash.element.contains($entry.element)
-  }, [session, $entry])
-
   const copyTheUsername = useCopy(username)
   const copyThePassword = useCopy(password)
   const copyTheTotpcode = useCopy(totpcode)
@@ -71,10 +71,10 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
       {hash.url.pathname === "/+" &&
         <PathPaper>
           <div className="flex flex-col text-left gap-2">
-            <WideNakedMenuButton>
+            {/* <WideNakedMenuButton>
               <Outline.PencilIcon className="size-5" />
               Edit
-            </WideNakedMenuButton>
+            </WideNakedMenuButton> */}
             {trashed === false && <AccountMenuTrashButton $entry={$entry} close={close} />}
             {trashed === true && <AccountMenuUntrashButton $entry={$entry} close={close} />}
             {trashed === true && <AccountMenuDeleteButton $entry={$entry} close={close} />}
@@ -83,14 +83,9 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <div className="flex items-center justify-between">
-        <div className="flex flex-col">
-          <h1 className="text-xl font-medium">
-            {getEntryTitle($entry) || "Untitled"}
-          </h1>
-          <div className="text-default-contrast">
-            {$entry.getUuidOrThrow().getOrThrow().slice(0, 8).toUpperCase()}
-          </div>
-        </div>
+        <h1 className="text-xl font-medium">
+          Password account
+        </h1>
         <AccountMenuAnchor />
       </div>
       <div className="h-6" />
