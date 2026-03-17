@@ -413,7 +413,7 @@ export function CardAccountAddPage() {
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        Add card
+        Add card account
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
