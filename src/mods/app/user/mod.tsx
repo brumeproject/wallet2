@@ -175,7 +175,7 @@ function UserImportFilePage() {
 
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
@@ -347,7 +347,7 @@ function UserImportFsfhPage() {
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
@@ -754,7 +754,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     const data = new Uint8Array(await file1.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
@@ -773,7 +773,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     const data = new Uint8Array(await file2.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = new KDBX.CompositeKey(new Unknown(auth))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
@@ -811,7 +811,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
@@ -835,7 +835,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = new KDBX.CompositeKey(new Unknown(stored))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
@@ -1008,7 +1008,7 @@ function UserReimportFilePage(props: { user: UserData }) {
 
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
@@ -1182,7 +1182,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
