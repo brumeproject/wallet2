@@ -385,7 +385,7 @@ function PasswordAccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile
   }, [session, $entry])
 
   const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
-    if (!confirm("Are you sure you want to permanently delete this entry?"))
+    if (!confirm("Are you sure you want to permanently delete this account?"))
       return
 
     const fsfh = session.value.user.fsfh
@@ -405,7 +405,7 @@ function PasswordAccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile
   }).catch(Errors.display), [encryptOrThrow, close])
 
   const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
-    if (!confirm("Are you sure you want to permanently delete this entry?"))
+    if (!confirm("Are you sure you want to permanently delete this account?"))
       return
 
     const content = await encryptOrThrow()
@@ -440,14 +440,14 @@ function PasswordAccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile
       <WideNakedMenuButton
         type="button"
         onClick={encryptAndWriteOrAlert}>
-        <Outline.TrashIcon className="size-5" />
+        <Outline.ScissorsIcon className="size-5" />
         Delete
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
       <WideNakedMenuButton
         type="button"
         onClick={encryptAndSaveOrAlert}>
-        <Outline.TrashIcon className="size-5" />
+        <Outline.ScissorsIcon className="size-5" />
         Delete
       </WideNakedMenuButton>}
   </Fragment>
