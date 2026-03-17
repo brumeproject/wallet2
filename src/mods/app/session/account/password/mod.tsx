@@ -5,7 +5,7 @@ import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dial
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { getEntryTitle } from "@/libs/kdbx/mod.ts";
+import { getEntryTitle, getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { QrCode } from "@/libs/qrcode/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
@@ -23,8 +23,12 @@ React;
 export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
+  const close = useCloseContext().getOrThrow()
+
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
+
+  const session = useSessionContext().getOrThrow()
 
   const [masked, setMasked] = useState(true)
 
@@ -46,6 +50,18 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
+  const trashed = useMemo(() => {
+    const { kdbx } = session.value
+
+    const $file = kdbx.inner.content.value
+    const $trash = getRecycleBinOrNull($file)
+
+    if ($trash == null)
+      return false
+
+    return $trash.element.contains($entry.element)
+  }, [session, $entry])
+
   const copyTheUsername = useCopy(username)
   const copyThePassword = useCopy(password)
   const copyTheTotpcode = useCopy(totpcode)
@@ -59,7 +75,8 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
               <Outline.PencilIcon className="size-5" />
               Edit
             </WideNakedMenuButton>
-            <PasswordAccountMenuTrashButton $entry={$entry} />
+            {trashed === false && <PasswordAccountMenuTrashButton $entry={$entry} close={close} />}
+            {trashed === true && <PasswordAccountMenuUntrashButton $entry={$entry} close={close} />}
           </div>
         </PathPaper>}
     </SubpathProvider>
@@ -198,10 +215,9 @@ function PasswordAccountMenuAnchor() {
   </a>
 }
 
-function PasswordAccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
-  const { $entry } = props
+function PasswordAccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { close(force: boolean): void }) {
+  const { $entry, close } = props
 
-  const close = useCloseContext().getOrThrow()
   const session = useSessionContext().getOrThrow()
 
   const encryptOrThrow = useCallback(async () => {
@@ -224,9 +240,9 @@ function PasswordAccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.
     await writable.write(content)
     await writable.close()
 
-    session.update()
+    close(true)
 
-    close()
+    session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
   const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
@@ -252,9 +268,9 @@ function PasswordAccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.
       URL.revokeObjectURL(url)
     }
 
-    session.update()
+    close(true)
 
-    close()
+    session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
   return <Fragment>
@@ -274,6 +290,86 @@ function PasswordAccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.
       </WideNakedMenuButton>}
   </Fragment>
 }
+
+function PasswordAccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { close(force: boolean): void }) {
+  const { $entry, close } = props
+
+  const session = useSessionContext().getOrThrow()
+
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx, comp } = session.value
+
+    const $file = kdbx.inner.content.value
+    const $root = $file.getRootOrThrow()
+
+    $entry.moveOrThrow($root.getDirectGroupByIndexOrThrow(0))
+
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+  }, [session, $entry])
+
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = session.value.user.fsfh
+
+    if (fsfh == null)
+      return
+
+    const content = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+    const content = await encryptOrThrow()
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  return <Fragment>
+    {session.value.user.fsfh != null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndWriteOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Untrash
+      </WideNakedMenuButton>}
+    {session.value.user.fsfh == null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndSaveOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Untrash
+      </WideNakedMenuButton>}
+  </Fragment>
+}
+
 
 export function PasswordAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
