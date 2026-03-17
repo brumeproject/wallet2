@@ -1,14 +1,17 @@
 import { InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
-import { WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
+import { WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import React, { Fragment, MouseEvent, useCallback, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
+import { Errors } from "../../../../libs/errors/mod.ts";
+import { useSessionContext } from "../mod.tsx";
 import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";
 import { CryptoAccountAddPage, CryptoAccountPage } from "./crypto/mod.tsx";
 import { PasswordAccountAddMenuAnchor, PasswordAccountAddPage, PasswordAccountPage } from "./password/mod.tsx";
@@ -390,4 +393,257 @@ export function ColorMenu(props: { ok(color: Nullable<string>): void }) {
         </button>
       </Fragment>)}
   </div>
+}
+
+export function AccountMenuAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/+")
+
+  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <InAnchor>
+      <Outline.EllipsisVerticalIcon className="size-6" />
+    </InAnchor>
+  </a>
+}
+
+export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { close(force: boolean): void }) {
+  const { $entry, close } = props
+
+  const session = useSessionContext().getOrThrow()
+
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx, comp } = session.value
+
+    $entry.trashOrThrow()
+
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+  }, [session, $entry])
+
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = session.value.user.fsfh
+
+    if (fsfh == null)
+      return
+
+    const content = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+    const content = await encryptOrThrow()
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  return <Fragment>
+    {session.value.user.fsfh != null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndWriteOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Trash
+      </WideNakedMenuButton>}
+    {session.value.user.fsfh == null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndSaveOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Trash
+      </WideNakedMenuButton>}
+  </Fragment>
+}
+
+export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { close(force: boolean): void }) {
+  const { $entry, close } = props
+
+  const session = useSessionContext().getOrThrow()
+
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx, comp } = session.value
+
+    const $file = kdbx.inner.content.value
+    const $root = $file.getRootOrThrow()
+
+    $entry.moveOrThrow($root.getDirectGroupByIndexOrThrow(0))
+
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+  }, [session, $entry])
+
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = session.value.user.fsfh
+
+    if (fsfh == null)
+      return
+
+    const content = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+    const content = await encryptOrThrow()
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  return <Fragment>
+    {session.value.user.fsfh != null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndWriteOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Untrash
+      </WideNakedMenuButton>}
+    {session.value.user.fsfh == null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndSaveOrAlert}>
+        <Outline.TrashIcon className="size-5" />
+        Untrash
+      </WideNakedMenuButton>}
+  </Fragment>
+}
+
+export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { close(force: boolean): void }) {
+  const { $entry, close } = props
+
+  const session = useSessionContext().getOrThrow()
+
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx, comp } = session.value
+
+    $entry.element.parentNode?.removeChild($entry.element)
+
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+  }, [session, $entry])
+
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+    if (!confirm("Are you sure you want to permanently delete this account?"))
+      return
+
+    const fsfh = session.value.user.fsfh
+
+    if (fsfh == null)
+      return
+
+    const content = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+    if (!confirm("Are you sure you want to permanently delete this account?"))
+      return
+
+    const content = await encryptOrThrow()
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  return <Fragment>
+    {session.value.user.fsfh != null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndWriteOrAlert}>
+        <Outline.ScissorsIcon className="size-5" />
+        Delete
+      </WideNakedMenuButton>}
+    {session.value.user.fsfh == null &&
+      <WideNakedMenuButton
+        type="button"
+        onClick={encryptAndSaveOrAlert}>
+        <Outline.ScissorsIcon className="size-5" />
+        Delete
+      </WideNakedMenuButton>}
+  </Fragment>
 }
