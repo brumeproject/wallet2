@@ -6,7 +6,7 @@ The wallet with maximum security and privacy
 
 ### Public
 
-You can just visit https://beta.wallet.brume.tech and install it as a webapp
+You can just visit https://wallet.brume.tech and install it as a webapp
 
 ### Manual
 
