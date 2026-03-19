@@ -1,4 +1,4 @@
-import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
@@ -109,22 +109,12 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           Your Ethereum-like address (Ethereum, Base, Polygon, etc.)
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.AtSymbolIcon className="size-5" />
-          <input className="w-full focus-visible:outline-none"
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
             readOnly
-            autoComplete="off"
             onFocus={e => e.currentTarget.select()}
             value={ethereum} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={copyEthereum.copyOrAlert}>
-              <InButton>
-                {copyEthereum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-              </InButton>
-            </button>
-          </div>
         </div>
       </Fragment>}
       {seedphrase && <Fragment>
@@ -138,7 +128,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <textarea className="w-full focus-visible:outline-none"
-            rows={6}
+            rows={3}
             readOnly
             onFocus={e => e.currentTarget.select()}
             value={seedphrase} />
