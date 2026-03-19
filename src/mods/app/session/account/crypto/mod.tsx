@@ -83,6 +83,26 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     getSolanaOrThrow().then(setSolana).catch(console.error)
   }, [getSolanaOrThrow])
 
+  const [bobine, setBobine] = useState<Nullable<string>>()
+
+  const getBobineOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive("m/44'/1'/0'/0'/0'")
+    const upub = await ed25519.publish(xsig.key)
+
+    const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", upub))
+
+    return hash.toHex()
+  }, [seedphrase])
+
+  useEffect(() => {
+    getBobineOrThrow().then(setBobine).catch(console.error)
+  }, [getBobineOrThrow])
+
   const notes = useMemo(() => {
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
@@ -123,7 +143,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           Ethereum address
         </div>
         <div className="text-default-contrast">
-          Your Ethereum-like address (Ethereum, Base, Polygon, etc.)
+          Your Ethereum address (Ethereum, Base, Polygon, etc.)
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -140,7 +160,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           Solana address
         </div>
         <div className="text-default-contrast">
-          Your Solana-like address (Solana, Eclipse, Atlas, etc.)
+          Your Solana address (Solana, Eclipse, Atlas, etc.)
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -149,6 +169,23 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             readOnly
             onFocus={e => e.currentTarget.select()}
             value={solana || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Bobine address
+        </div>
+        <div className="text-default-contrast">
+          Your Bobine address (Bobzero, etc.)
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={bobine || ""} />
         </div>
       </Fragment>
       {seedphrase && <Fragment>
