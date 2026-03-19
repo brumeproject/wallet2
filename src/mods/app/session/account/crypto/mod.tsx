@@ -1,4 +1,4 @@
-import { WideOppositeButton } from "@/libs/button/mod.tsx";
+import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
@@ -7,9 +7,13 @@ import { Nullable } from "@/libs/nullable/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
+import { BitcoinSeedKey } from "@hazae41/clade";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
+import { keccak_256 } from "@noble/hashes/sha3.js";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useCopy } from "../../../../../libs/copy/mod.ts";
 import { getRecycleBinOrNull } from "../../../../../libs/kdbx/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountCard, AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
@@ -42,9 +46,31 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
   }, [$entry])
 
+  const [ethereum, setEthereum] = useState<Nullable<string>>()
+
+  const getEthereumOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive("m/44'/60'/0'/0/0")
+    const upub = secp256k1.getPublicKey(xsig.key, false)
+
+    const trail = keccak_256(upub.slice(1)).slice(-20)
+
+    return `0x${trail.toHex()}`
+  }, [seedphrase])
+
+  useEffect(() => {
+    getEthereumOrThrow().then(setEthereum).catch(console.error)
+  }, [getEthereumOrThrow])
+
   const notes = useMemo(() => {
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
+
+  const copyEthereum = useCopy(ethereum)
 
   return <div className="flex flex-col grow p-6">
     <SubpathProvider value={hash}>
@@ -76,6 +102,33 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       <input className="hidden"
         autoComplete="off"
         name="username" />
+      {ethereum && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Ethereum address
+        </div>
+        <div className="text-default-contrast">
+          Your Ethereum-like address (Ethereum, Base, Polygon, etc.)
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <Outline.AtSymbolIcon className="size-5" />
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            autoComplete="off"
+            onFocus={e => e.currentTarget.select()}
+            value={ethereum} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              type="button"
+              onClick={copyEthereum.copyOrAlert}>
+              <InButton>
+                {copyEthereum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
       {seedphrase && <Fragment>
         <div className="h-6" />
         <div className="font-medium">
