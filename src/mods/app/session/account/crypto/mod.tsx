@@ -140,7 +140,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           Solana address
         </div>
         <div className="text-default-contrast">
-          Your Solana address
+          Your Solana-like address (Solana, Eclipse, Atlas, etc.)
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
