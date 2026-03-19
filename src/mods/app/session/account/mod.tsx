@@ -2,6 +2,7 @@ import { InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
+import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
@@ -10,7 +11,6 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import React, { Fragment, MouseEvent, useCallback, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
-import { Errors } from "../../../../libs/errors/mod.ts";
 import { useSessionContext } from "../mod.tsx";
 import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";
 import { CryptoAccountAddPage, CryptoAccountPage } from "./crypto/mod.tsx";

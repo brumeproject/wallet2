@@ -1,8 +1,10 @@
 import { WideOppositeButton } from "@/libs/button/mod.tsx";
+import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
+import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
@@ -13,8 +15,6 @@ import { useCloseContext } from "@hazae41/react-close-context";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { useCopy } from "../../../../../libs/copy/mod.ts";
-import { getRecycleBinOrNull } from "../../../../../libs/kdbx/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountCard, AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
 
