@@ -57,9 +57,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const xsig = await seed.derive("m/44'/60'/0'/0/0")
     const upub = secp256k1.getPublicKey(xsig.key, false)
 
-    const trail = keccak_256(upub.slice(1)).slice(-20)
-
-    return `0x${trail.toHex()}`
+    return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
   }, [seedphrase])
 
   useEffect(() => {
