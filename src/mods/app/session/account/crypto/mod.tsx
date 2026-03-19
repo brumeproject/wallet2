@@ -1,6 +1,6 @@
 import { WideOppositeButton } from "@/libs/button/mod.tsx";
-import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
+import { ed25519 } from "@/libs/ed25519/mod.ts";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -9,11 +9,12 @@ import { Nullable } from "@/libs/nullable/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
-import { BitcoinSeedKey } from "@hazae41/clade";
+import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
+import { base58 } from "@scure/base";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountCard, AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
@@ -64,11 +65,27 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     getEthereumOrThrow().then(setEthereum).catch(console.error)
   }, [getEthereumOrThrow])
 
+  const [solana, setSolana] = useState<Nullable<string>>()
+
+  const getSolanaOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive("m/44'/501'/0'/0'")
+    const upub = await ed25519.publish(xsig.key)
+
+    return base58.encode(upub)
+  }, [seedphrase])
+
+  useEffect(() => {
+    getSolanaOrThrow().then(setSolana).catch(console.error)
+  }, [getSolanaOrThrow])
+
   const notes = useMemo(() => {
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
-
-  const copyEthereum = useCopy(ethereum)
 
   return <div className="flex flex-col grow p-6">
     <SubpathProvider value={hash}>
@@ -100,7 +117,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       <input className="hidden"
         autoComplete="off"
         name="username" />
-      {ethereum && <Fragment>
+      <Fragment>
         <div className="h-6" />
         <div className="font-medium">
           Ethereum address
@@ -114,9 +131,26 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             rows={2}
             readOnly
             onFocus={e => e.currentTarget.select()}
-            value={ethereum} />
+            value={ethereum || ""} />
         </div>
-      </Fragment>}
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Solana address
+        </div>
+        <div className="text-default-contrast">
+          Your Solana address
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={solana || ""} />
+        </div>
+      </Fragment>
       {seedphrase && <Fragment>
         <div className="h-6" />
         <div className="font-medium">
