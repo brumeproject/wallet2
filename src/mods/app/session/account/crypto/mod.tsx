@@ -96,7 +96,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
     const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", upub))
 
-    return hash.toHex()
+    return `0x${hash.toHex()}`
   }, [seedphrase])
 
   useEffect(() => {
