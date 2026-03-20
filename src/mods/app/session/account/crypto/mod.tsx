@@ -289,7 +289,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           Seed phrase
         </div>
         <div className="text-default-contrast">
-          Your BIP-39 mnemonic seed phrase
+          Your BIP-39 seed phrase
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -306,7 +306,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           Monero seed phrase
         </div>
         <div className="text-default-contrast">
-          Your Monero mnemonic seed phrase (derived from your BIP-39 seed phrase)
+          Your Monero seed phrase (derived from your BIP-39 seed phrase)
         </div>
         <div className="text-default-contrast">
           Use this to recover your Monero address and funds in Monero wallets
@@ -546,7 +546,7 @@ export function CryptoAccountAddPage() {
           Seed phrase
         </div>
         <div className="text-default-contrast">
-          Your BIP-39 mnemonic seed phrase
+          Your BIP-39 seed phrase
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
