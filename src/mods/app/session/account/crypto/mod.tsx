@@ -111,15 +111,15 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (bitcoinseed == null)
       return
 
-    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(bitcoinseed))
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(bitcoinseed))
 
-    const xsig = await seed.derive("m/44'/128'/0'/0/0")
+    const xsig = await seed.derive("m/44'/128'/0'")
 
-    const rootAsRaw = keccak_256(xsig.key)
-    const rootAsHex = rootAsRaw.toReversed().toHex()
-    const rootAsNum = BigInt("0x" + rootAsHex)
+    const sigspreAsRaw = xsig.key
+    const sigspreAsHex = sigspreAsRaw.toReversed().toHex()
+    const sigspreAsNum = BigInt("0x" + sigspreAsHex)
 
-    const sigskeyAsNum = rootAsNum % ed25519.Point.Fn.ORDER
+    const sigskeyAsNum = sigspreAsNum % ed25519.Point.Fn.ORDER
     const sigskeyAsHex = sigskeyAsNum.toString(16).padStart(64, "0")
     const sigskeyAsRaw = Uint8Array.fromHex(sigskeyAsHex).toReversed()
 
@@ -136,22 +136,25 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (bitcoinseed == null)
       return
 
-    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(bitcoinseed))
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(bitcoinseed))
 
-    const xsig = await seed.derive("m/44'/128'/0'/0/0")
+    const xsig = await seed.derive("m/44'/128'/0'")
 
-    const rootAsRaw = keccak_256(xsig.key)
-    const rootAsHex = rootAsRaw.toReversed().toHex()
-    const rootAsNum = BigInt("0x" + rootAsHex)
+    const sigspreAsRaw = xsig.key
+    const sigspreAsHex = sigspreAsRaw.toReversed().toHex()
+    const sigspreAsNum = BigInt("0x" + sigspreAsHex)
 
-    const sigskeyAsNum = rootAsNum % ed25519.Point.Fn.ORDER
+    const sigskeyAsNum = sigspreAsNum % ed25519.Point.Fn.ORDER
     const sigskeyAsHex = sigskeyAsNum.toString(16).padStart(64, "0")
     const sigskeyAsRaw = Uint8Array.fromHex(sigskeyAsHex).toReversed()
 
-    const sigsshaAsRaw = keccak_256(sigskeyAsRaw)
-    const sigsshaAsNum = BigInt("0x" + sigsshaAsRaw.toReversed().toHex())
+    const sigvpreAsRaw = keccak_256(sigskeyAsRaw)
+    const sigvpreAsHex = sigvpreAsRaw.toReversed().toHex()
+    const sigvpreAsNum = BigInt("0x" + sigvpreAsHex)
 
-    const sigvkeyAsNum = sigsshaAsNum % ed25519.Point.Fn.ORDER
+    const sigvkeyAsNum = sigvpreAsNum % ed25519.Point.Fn.ORDER
+    const sigvkeyAsHex = sigvkeyAsNum.toString(16).padStart(64, "0")
+    const sigvkeyAsRaw = Uint8Array.fromHex(sigvkeyAsHex).toReversed()
 
     const pubskeyAsRaw = ed25519.Point.BASE.multiply(sigskeyAsNum).toBytes()
     const pubvkeyAsRaw = ed25519.Point.BASE.multiply(sigvkeyAsNum).toBytes()
