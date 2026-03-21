@@ -27,6 +27,8 @@ React;
 export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
+  const close = useCloseContext().getOrThrow()
+
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -149,7 +151,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
         <PathPaper>
-          <CryptoAccountMenu $entry={$entry} />
+          <CryptoAccountMenu $entry={$entry} close={close} />
         </PathPaper>}
     </SubpathProvider>
     <div className="flex items-center justify-between">
@@ -270,8 +272,8 @@ export function CryptoAccountExportMenuAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function CryptoAccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
-  const { $entry } = props
+export function CryptoAccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { close(force?: boolean): void }) {
+  const { $entry, close } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)

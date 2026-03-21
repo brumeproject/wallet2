@@ -6,7 +6,7 @@ React;
 export function InButton(props: ChildrenProps) {
   const { children } = props
 
-  return <div className="h-full w-full flex justify-center items-center gap-2 select-none group-enabled:group-active:scale-90 transition-transform">
+  return <div className="h-full w-full flex justify-center items-center gap-2 select-none cursor-pointer group-enabled:group-active:scale-90 transition-transform">
     {children}
   </div>
 }

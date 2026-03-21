@@ -172,7 +172,7 @@ export function InMenuAnchor(props: ChildrenProps) {
 export function InMenuButton(props: ChildrenProps) {
   const { children } = props
 
-  return <div className="h-full w-full flex items-center justify-start gap-4 select-none group-enabled:group-active:scale-90 transition-transform">
+  return <div className="h-full w-full flex items-center justify-start gap-4 select-none cursor-pointer group-enabled:group-active:scale-90 transition-transform">
     {children}
   </div>
 }
