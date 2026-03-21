@@ -364,7 +364,7 @@ function SettingsPage() {
         Custom app display
       </div>
       <div className="text-default-contrast">
-        Custom name and icon to hide the app
+        Custom name and icon to hide the app.
       </div>
       <div className="h-4" />
       <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">

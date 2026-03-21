@@ -351,7 +351,7 @@ export function SessionExportPage() {
           Password
         </div>
         <div className="text-default-contrast">
-          A password to encrypt the exported file
+          A password to encrypt the exported file.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">

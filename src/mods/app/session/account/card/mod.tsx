@@ -106,7 +106,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           Number
         </div>
         <div className="text-default-contrast">
-          Your card number
+          Your card number.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -133,7 +133,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           Holder
         </div>
         <div className="text-default-contrast">
-          Your card holder name
+          Your card holder name.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -160,7 +160,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           Expiry
         </div>
         <div className="text-default-contrast">
-          Your card expiry date
+          Your card expiry date.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -187,7 +187,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           CVV
         </div>
         <div className="text-default-contrast">
-          Your card verification value
+          Your card verification value.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -222,7 +222,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           PIN
         </div>
         <div className="text-default-contrast">
-          Your card personal identification number
+          Your card personal identification number.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -257,7 +257,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           Notes
         </div>
         <div className="text-default-contrast">
-          Any additional information
+          Any additional information.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -463,7 +463,7 @@ export function CardAccountAddPage() {
           Title
         </div>
         <div className="text-default-contrast">
-          A name to identify this account
+          A name to identify this account.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -482,7 +482,7 @@ export function CardAccountAddPage() {
           Number
         </div>
         <div className="text-default-contrast">
-          Your card number
+          Your card number.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -498,7 +498,7 @@ export function CardAccountAddPage() {
           Holder
         </div>
         <div className="text-default-contrast">
-          Your card holder name
+          Your card holder name.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -514,7 +514,7 @@ export function CardAccountAddPage() {
           Expiry
         </div>
         <div className="text-default-contrast">
-          Your card expiry date
+          Your card expiry date.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -530,7 +530,7 @@ export function CardAccountAddPage() {
           CVV
         </div>
         <div className="text-default-contrast">
-          Your card verification value
+          Your card verification value.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -556,7 +556,7 @@ export function CardAccountAddPage() {
           PIN
         </div>
         <div className="text-default-contrast">
-          Your card personal identification number
+          Your card personal identification number.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -582,7 +582,7 @@ export function CardAccountAddPage() {
           Notes
         </div>
         <div className="text-default-contrast">
-          Any additional information
+          Any additional information.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">

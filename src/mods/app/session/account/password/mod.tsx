@@ -103,7 +103,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
             Username
           </div>
           <div className="text-default-contrast">
-            Your username or email
+            Your username or email.
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -130,7 +130,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
             Password
           </div>
           <div className="text-default-contrast">
-            Your password
+            Your password.
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -165,7 +165,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
             One-time passcode
           </div>
           <div className="text-default-contrast">
-            Your time-based one-time passcode
+            Your time-based one-time passcode.
           </div>
           <div className="h-4" />
           <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
@@ -180,7 +180,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
             Notes
           </div>
           <div className="text-default-contrast">
-            Any additional information
+            Any additional information.
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -455,7 +455,7 @@ export function PasswordAccountAddPage() {
           Title
         </div>
         <div className="text-default-contrast">
-          A name to identify this account
+          A name to identify this account.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -474,7 +474,7 @@ export function PasswordAccountAddPage() {
           Username
         </div>
         <div className="text-default-contrast">
-          Your username or email
+          Your username or email.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -490,7 +490,7 @@ export function PasswordAccountAddPage() {
           Password
         </div>
         <div className="text-default-contrast">
-          Your password
+          Your password.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -516,7 +516,7 @@ export function PasswordAccountAddPage() {
           One-time passcode
         </div>
         <div className="text-default-contrast">
-          Your time-based one-time passcode
+          Your time-based one-time passcode.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -556,7 +556,7 @@ export function PasswordAccountAddPage() {
           Notes
         </div>
         <div className="text-default-contrast">
-          Any additional information
+          Any additional information.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
