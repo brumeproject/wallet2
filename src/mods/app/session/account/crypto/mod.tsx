@@ -19,6 +19,7 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58, base58xmr } from "@scure/base";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { InAnchor } from "../../../../../libs/anchor/mod.tsx";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountCard, AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
 
@@ -237,6 +238,43 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             value={monero || ""} />
         </div>
       </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Subaccounts
+        </div>
+        <div className="text-default-contrast">
+          Your subaccounts.
+        </div>
+        <div className="h-4" />
+        <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+          <div className="w-[320px] h-14 po-2 z-10 rounded-t-xl bg-blue-400 dark:bg-blue-500 border-2 border-default-contrast text-white translate-y-6">
+            <div className="flex items-center justify-between">
+              <div className="">
+                #0
+              </div>
+              <div className="font-medium">
+                Personal
+              </div>
+            </div>
+          </div>
+          <div className="w-[320px] h-14 po-2 z-10 rounded-t-xl bg-red-400 dark:bg-red-500 border-2 border-default-contrast text-white translate-y-3">
+            <div className="flex items-center justify-between">
+              <div className="">
+                #1
+              </div>
+              <div className="font-medium">
+                Business
+              </div>
+            </div>
+          </div>
+          <a className="w-[320px] aspect-video po-2 z-10 rounded-xl bg-default border-2 border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast">
+            <InAnchor>
+              <Outline.PlusIcon className="size-8" />
+            </InAnchor>
+          </a>
+        </div>
+      </Fragment>
       {notes && <Fragment>
         <div className="h-6" />
         <div className="font-medium">
@@ -449,24 +487,41 @@ export function CryptoAccountAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <div className="w-[320px] aspect-video overflow-hidden flex flex-col bg-default text-default select-none p-4 rounded-xl
-        data-[color=red]:bg-red-500/90
-        data-[color=orange]:bg-orange-500/90
-        data-[color=amber]:bg-amber-500/90
-        data-[color=yellow]:bg-yellow-500/90
-        data-[color=lime]:bg-lime-500/90
-        data-[color=green]:bg-green-500/90
-        data-[color=emerald]:bg-emerald-500/90
-        data-[color=teal]:bg-teal-500/90
-        data-[color=cyan]:bg-cyan-500/90
-        data-[color=sky]:bg-sky-500/90
-        data-[color=blue]:bg-blue-500/90
-        data-[color=indigo]:bg-indigo-500/90
-        data-[color=violet]:bg-violet-500/90
-        data-[color=purple]:bg-purple-500/90
-        data-[color=fuchsia]:bg-fuchsia-500/90
-        data-[color=pink]:bg-pink-500/90
-        data-[color=rose]:bg-rose-500/90"
+        <div className="w-[320px] aspect-video border-2 border-default-contrast overflow-hidden flex flex-col bg-default text-default select-none p-4 rounded-xl
+          data-[color=red]:bg-red-400 
+          data-[color=orange]:bg-orange-400 
+          data-[color=amber]:bg-amber-400 
+          data-[color=yellow]:bg-yellow-400 
+          data-[color=lime]:bg-lime-400 
+          data-[color=green]:bg-green-400 
+          data-[color=emerald]:bg-emerald-400 
+          data-[color=teal]:bg-teal-400 
+          data-[color=cyan]:bg-cyan-400 
+          data-[color=sky]:bg-sky-400 
+          data-[color=blue]:bg-blue-400 
+          data-[color=indigo]:bg-indigo-400 
+          data-[color=violet]:bg-violet-400 
+          data-[color=purple]:bg-purple-400 
+          data-[color=fuchsia]:bg-fuchsia-400 
+          data-[color=pink]:bg-pink-400 
+          data-[color=rose]:bg-rose-400 
+          dark:data-[color=red]:bg-red-500
+          dark:data-[color=orange]:bg-orange-500
+          dark:data-[color=amber]:bg-amber-500
+          dark:data-[color=yellow]:bg-yellow-500
+          dark:data-[color=lime]:bg-lime-500
+          dark:data-[color=green]:bg-green-500
+          dark:data-[color=emerald]:bg-emerald-500
+          dark:data-[color=teal]:bg-teal-500
+          dark:data-[color=cyan]:bg-cyan-500
+          dark:data-[color=sky]:bg-sky-500
+          dark:data-[color=blue]:bg-blue-500
+          dark:data-[color=indigo]:bg-indigo-500
+          dark:data-[color=violet]:bg-violet-500
+          dark:data-[color=purple]:bg-purple-500
+          dark:data-[color=fuchsia]:bg-fuchsia-500
+          dark:data-[color=pink]:bg-pink-500
+          dark:data-[color=rose]:bg-rose-500"
           data-theme={color == null ? "opposite" : "dark"}
           data-color={color}>
           <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
