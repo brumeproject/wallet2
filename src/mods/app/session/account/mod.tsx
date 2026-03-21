@@ -66,127 +66,125 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           })()}
         </PathBoard>}
     </SubpathProvider>
-    <a className="w-[320px] aspect-video border-2 border-white/20 dark:border-black/10 data-color:border-white/20 p-4 rounded-xl text-left bg-opposite select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-opposite focus-visible:data-color:outline-white/20
-    data-[color=red]:bg-red-400 
-    data-[color=orange]:bg-orange-400 
-    data-[color=amber]:bg-amber-400 
-    data-[color=yellow]:bg-yellow-400 
-    data-[color=lime]:bg-lime-400 
-    data-[color=green]:bg-green-400 
-    data-[color=emerald]:bg-emerald-400 
-    data-[color=teal]:bg-teal-400 
-    data-[color=cyan]:bg-cyan-400 
-    data-[color=sky]:bg-sky-400 
-    data-[color=blue]:bg-blue-400 
-    data-[color=indigo]:bg-indigo-400 
-    data-[color=violet]:bg-violet-400 
-    data-[color=purple]:bg-purple-400 
-    data-[color=fuchsia]:bg-fuchsia-400 
-    data-[color=pink]:bg-pink-400 
-    data-[color=rose]:bg-rose-400 
-    dark:data-[color=red]:bg-red-500
-    dark:data-[color=orange]:bg-orange-500
-    dark:data-[color=amber]:bg-amber-500
-    dark:data-[color=yellow]:bg-yellow-500
-    dark:data-[color=lime]:bg-lime-500
-    dark:data-[color=green]:bg-green-500
-    dark:data-[color=emerald]:bg-emerald-500
-    dark:data-[color=teal]:bg-teal-500
-    dark:data-[color=cyan]:bg-cyan-500
-    dark:data-[color=sky]:bg-sky-500
-    dark:data-[color=blue]:bg-blue-500
-    dark:data-[color=indigo]:bg-indigo-500
-    dark:data-[color=violet]:bg-violet-500
-    dark:data-[color=purple]:bg-purple-500
-    dark:data-[color=fuchsia]:bg-fuchsia-500
-    dark:data-[color=pink]:bg-pink-500
-    dark:data-[color=rose]:bg-rose-500
-    focus-visible:data-[color=red]:outline-red-400 
-    focus-visible:data-[color=orange]:outline-orange-400 
-    focus-visible:data-[color=amber]:outline-amber-400 
-    focus-visible:data-[color=yellow]:outline-yellow-400 
-    focus-visible:data-[color=lime]:outline-lime-400 
-    focus-visible:data-[color=green]:outline-green-400 
-    focus-visible:data-[color=emerald]:outline-emerald-400 
-    focus-visible:data-[color=teal]:outline-teal-400 
-    focus-visible:data-[color=cyan]:outline-cyan-400 
-    focus-visible:data-[color=sky]:outline-sky-400 
-    focus-visible:data-[color=blue]:outline-blue-400 
-    focus-visible:data-[color=indigo]:outline-indigo-400 
-    focus-visible:data-[color=violet]:outline-violet-400 
-    focus-visible:data-[color=purple]:outline-purple-400 
-    focus-visible:data-[color=fuchsia]:outline-fuchsia-400 
-    focus-visible:data-[color=pink]:outline-pink-400 
-    focus-visible:data-[color=rose]:outline-rose-400 
-    focus-visible:dark:data-[color=red]:outline-red-500
-    focus-visible:dark:data-[color=orange]:outline-orange-500
-    focus-visible:dark:data-[color=amber]:outline-amber-500
-    focus-visible:dark:data-[color=yellow]:outline-yellow-500
-    focus-visible:dark:data-[color=lime]:outline-lime-500
-    focus-visible:dark:data-[color=green]:outline-green-500
-    focus-visible:dark:data-[color=emerald]:outline-emerald-500
-    focus-visible:dark:data-[color=teal]:outline-teal-500
-    focus-visible:dark:data-[color=cyan]:outline-cyan-500
-    focus-visible:dark:data-[color=sky]:outline-sky-500
-    focus-visible:dark:data-[color=blue]:outline-blue-500
-    focus-visible:dark:data-[color=indigo]:outline-indigo-500
-    focus-visible:dark:data-[color=violet]:outline-violet-500
-    focus-visible:dark:data-[color=purple]:outline-purple-500
-    focus-visible:dark:data-[color=fuchsia]:outline-fuchsia-500
-    focus-visible:dark:data-[color=pink]:outline-pink-500
-    focus-visible:dark:data-[color=rose]:outline-rose-500"
+    <a className="w-[320px] aspect-video border-2 border-default-contrast p-4 rounded-xl text-left bg-default text-default select-none flex flex-col focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default
+      data-[color=red]:bg-red-400 
+      data-[color=orange]:bg-orange-400 
+      data-[color=amber]:bg-amber-400 
+      data-[color=yellow]:bg-yellow-400 
+      data-[color=lime]:bg-lime-400 
+      data-[color=green]:bg-green-400 
+      data-[color=emerald]:bg-emerald-400 
+      data-[color=teal]:bg-teal-400 
+      data-[color=cyan]:bg-cyan-400 
+      data-[color=sky]:bg-sky-400 
+      data-[color=blue]:bg-blue-400 
+      data-[color=indigo]:bg-indigo-400 
+      data-[color=violet]:bg-violet-400 
+      data-[color=purple]:bg-purple-400 
+      data-[color=fuchsia]:bg-fuchsia-400 
+      data-[color=pink]:bg-pink-400 
+      data-[color=rose]:bg-rose-400 
+      in-dark:data-[color=red]:bg-red-500
+      in-dark:data-[color=orange]:bg-orange-500
+      in-dark:data-[color=amber]:bg-amber-500
+      in-dark:data-[color=yellow]:bg-yellow-500
+      in-dark:data-[color=lime]:bg-lime-500
+      in-dark:data-[color=green]:bg-green-500
+      in-dark:data-[color=emerald]:bg-emerald-500
+      in-dark:data-[color=teal]:bg-teal-500
+      in-dark:data-[color=cyan]:bg-cyan-500
+      in-dark:data-[color=sky]:bg-sky-500
+      in-dark:data-[color=blue]:bg-blue-500
+      in-dark:data-[color=indigo]:bg-indigo-500
+      in-dark:data-[color=violet]:bg-violet-500
+      in-dark:data-[color=purple]:bg-purple-500
+      in-dark:data-[color=fuchsia]:bg-fuchsia-500
+      in-dark:data-[color=pink]:bg-pink-500
+      in-dark:data-[color=rose]:bg-rose-500
+      focus-visible:data-[color=red]:outline-red-400 
+      focus-visible:data-[color=orange]:outline-orange-400 
+      focus-visible:data-[color=amber]:outline-amber-400 
+      focus-visible:data-[color=yellow]:outline-yellow-400 
+      focus-visible:data-[color=lime]:outline-lime-400 
+      focus-visible:data-[color=green]:outline-green-400 
+      focus-visible:data-[color=emerald]:outline-emerald-400 
+      focus-visible:data-[color=teal]:outline-teal-400 
+      focus-visible:data-[color=cyan]:outline-cyan-400 
+      focus-visible:data-[color=sky]:outline-sky-400 
+      focus-visible:data-[color=blue]:outline-blue-400 
+      focus-visible:data-[color=indigo]:outline-indigo-400 
+      focus-visible:data-[color=violet]:outline-violet-400 
+      focus-visible:data-[color=purple]:outline-purple-400 
+      focus-visible:data-[color=fuchsia]:outline-fuchsia-400 
+      focus-visible:data-[color=pink]:outline-pink-400 
+      focus-visible:data-[color=rose]:outline-rose-400 
+      focus-visible:in-dark:data-[color=red]:outline-red-500
+      focus-visible:in-dark:data-[color=orange]:outline-orange-500
+      focus-visible:in-dark:data-[color=amber]:outline-amber-500
+      focus-visible:in-dark:data-[color=yellow]:outline-yellow-500
+      focus-visible:in-dark:data-[color=lime]:outline-lime-500
+      focus-visible:in-dark:data-[color=green]:outline-green-500
+      focus-visible:in-dark:data-[color=emerald]:outline-emerald-500
+      focus-visible:in-dark:data-[color=teal]:outline-teal-500
+      focus-visible:in-dark:data-[color=cyan]:outline-cyan-500
+      focus-visible:in-dark:data-[color=sky]:outline-sky-500
+      focus-visible:in-dark:data-[color=blue]:outline-blue-500
+      focus-visible:in-dark:data-[color=indigo]:outline-indigo-500
+      focus-visible:in-dark:data-[color=violet]:outline-violet-500
+      focus-visible:in-dark:data-[color=purple]:outline-purple-500
+      focus-visible:in-dark:data-[color=fuchsia]:outline-fuchsia-500
+      focus-visible:in-dark:data-[color=pink]:outline-pink-500
+      focus-visible:in-dark:data-[color=rose]:outline-rose-500"
+      data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
       data-color={getEntryColor($entry)}
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
-      <div className="h-full flex flex-col text-default"
-        data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}>
-        <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
-          {getEntryTitle($entry) || "Untitled"}
-        </div>
-        <div className="h-2" />
-        <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
-          {(() => {
-            const type = getEntryType($entry)
+      <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
+        {getEntryTitle($entry) || "Untitled"}
+      </div>
+      <div className="h-2" />
+      <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
+        {(() => {
+          const type = getEntryType($entry)
 
-            if (type === "password")
-              return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+          if (type === "password")
+            return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
 
-            if (type === "card")
-              return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+          if (type === "card")
+            return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
-            if (type === "crypto")
-              return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
+          if (type === "crypto")
+            return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
 
-            return null
-          })()}
-        </div>
-        <div className="h-4 grow" />
-        <div className="flex flex-wrap items-center gap-2">
-          {(() => {
-            const type = getEntryType($entry)
+          return null
+        })()}
+      </div>
+      <div className="h-4 grow" />
+      <div className="flex flex-wrap items-center gap-2">
+        {(() => {
+          const type = getEntryType($entry)
 
-            if (type === "card")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.CreditCardIcon className="size-5" />
-                Card
-              </div>
+          if (type === "card")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.CreditCardIcon className="size-5" />
+              Card
+            </div>
 
-            if (type === "crypto")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.BanknotesIcon className="size-5" />
-                Crypto
-              </div>
+          if (type === "crypto")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.BanknotesIcon className="size-5" />
+              Crypto
+            </div>
 
-            if (type === "password")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.LanguageIcon className="size-5" />
-                Password
-              </div>
+          if (type === "password")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.LanguageIcon className="size-5" />
+              Password
+            </div>
 
-            return null
-          })()}
-        </div>
+          return null
+        })()}
       </div>
     </a>
   </Fragment>
@@ -225,23 +223,23 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
       data-[color=fuchsia]:bg-fuchsia-400 
       data-[color=pink]:bg-pink-400 
       data-[color=rose]:bg-rose-400 
-      dark:data-[color=red]:bg-red-500
-      dark:data-[color=orange]:bg-orange-500
-      dark:data-[color=amber]:bg-amber-500
-      dark:data-[color=yellow]:bg-yellow-500
-      dark:data-[color=lime]:bg-lime-500
-      dark:data-[color=green]:bg-green-500
-      dark:data-[color=emerald]:bg-emerald-500
-      dark:data-[color=teal]:bg-teal-500
-      dark:data-[color=cyan]:bg-cyan-500
-      dark:data-[color=sky]:bg-sky-500
-      dark:data-[color=blue]:bg-blue-500
-      dark:data-[color=indigo]:bg-indigo-500
-      dark:data-[color=violet]:bg-violet-500
-      dark:data-[color=purple]:bg-purple-500
-      dark:data-[color=fuchsia]:bg-fuchsia-500
-      dark:data-[color=pink]:bg-pink-500
-      dark:data-[color=rose]:bg-rose-500"
+      in-dark:data-[color=red]:bg-red-500
+      in-dark:data-[color=orange]:bg-orange-500
+      in-dark:data-[color=amber]:bg-amber-500
+      in-dark:data-[color=yellow]:bg-yellow-500
+      in-dark:data-[color=lime]:bg-lime-500
+      in-dark:data-[color=green]:bg-green-500
+      in-dark:data-[color=emerald]:bg-emerald-500
+      in-dark:data-[color=teal]:bg-teal-500
+      in-dark:data-[color=cyan]:bg-cyan-500
+      in-dark:data-[color=sky]:bg-sky-500
+      in-dark:data-[color=blue]:bg-blue-500
+      in-dark:data-[color=indigo]:bg-indigo-500
+      in-dark:data-[color=violet]:bg-violet-500
+      in-dark:data-[color=purple]:bg-purple-500
+      in-dark:data-[color=fuchsia]:bg-fuchsia-500
+      in-dark:data-[color=pink]:bg-pink-500
+      in-dark:data-[color=rose]:bg-rose-500"
       data-flip={flipping && !flipped}
       data-unflip={!flipping && flipped}
       data-flipped={flipping && flipped}
@@ -401,23 +399,23 @@ export function ColorAnchor(props: { color?: Nullable<string> }) {
         data-[color=fuchsia]:bg-fuchsia-400 
         data-[color=pink]:bg-pink-400 
         data-[color=rose]:bg-rose-400 
-        dark:data-[color=red]:bg-red-500
-        dark:data-[color=orange]:bg-orange-500
-        dark:data-[color=amber]:bg-amber-500
-        dark:data-[color=yellow]:bg-yellow-500
-        dark:data-[color=lime]:bg-lime-500
-        dark:data-[color=green]:bg-green-500
-        dark:data-[color=emerald]:bg-emerald-500
-        dark:data-[color=teal]:bg-teal-500
-        dark:data-[color=cyan]:bg-cyan-500
-        dark:data-[color=sky]:bg-sky-500
-        dark:data-[color=blue]:bg-blue-500
-        dark:data-[color=indigo]:bg-indigo-500
-        dark:data-[color=violet]:bg-violet-500
-        dark:data-[color=purple]:bg-purple-500
-        dark:data-[color=fuchsia]:bg-fuchsia-500
-        dark:data-[color=pink]:bg-pink-500
-        dark:data-[color=rose]:bg-rose-500"
+        in-dark:data-[color=red]:bg-red-500
+        in-dark:data-[color=orange]:bg-orange-500
+        in-dark:data-[color=amber]:bg-amber-500
+        in-dark:data-[color=yellow]:bg-yellow-500
+        in-dark:data-[color=lime]:bg-lime-500
+        in-dark:data-[color=green]:bg-green-500
+        in-dark:data-[color=emerald]:bg-emerald-500
+        in-dark:data-[color=teal]:bg-teal-500
+        in-dark:data-[color=cyan]:bg-cyan-500
+        in-dark:data-[color=sky]:bg-sky-500
+        in-dark:data-[color=blue]:bg-blue-500
+        in-dark:data-[color=indigo]:bg-indigo-500
+        in-dark:data-[color=violet]:bg-violet-500
+        in-dark:data-[color=purple]:bg-purple-500
+        in-dark:data-[color=fuchsia]:bg-fuchsia-500
+        in-dark:data-[color=pink]:bg-pink-500
+        in-dark:data-[color=rose]:bg-rose-500"
         data-color={color} />
     </InAnchor>
   </a>
@@ -458,23 +456,23 @@ export function ColorMenu(props: { ok(color: Nullable<string>): void }) {
               data-[color=fuchsia]:bg-fuchsia-400 
               data-[color=pink]:bg-pink-400 
               data-[color=rose]:bg-rose-400 
-              dark:data-[color=red]:bg-red-500
-              dark:data-[color=orange]:bg-orange-500
-              dark:data-[color=amber]:bg-amber-500
-              dark:data-[color=yellow]:bg-yellow-500
-              dark:data-[color=lime]:bg-lime-500
-              dark:data-[color=green]:bg-green-500
-              dark:data-[color=emerald]:bg-emerald-500
-              dark:data-[color=teal]:bg-teal-500
-              dark:data-[color=cyan]:bg-cyan-500
-              dark:data-[color=sky]:bg-sky-500
-              dark:data-[color=blue]:bg-blue-500
-              dark:data-[color=indigo]:bg-indigo-500
-              dark:data-[color=violet]:bg-violet-500
-              dark:data-[color=purple]:bg-purple-500
-              dark:data-[color=fuchsia]:bg-fuchsia-500
-              dark:data-[color=pink]:bg-pink-500
-              dark:data-[color=rose]:bg-rose-500"
+              in-dark:data-[color=red]:bg-red-500
+              in-dark:data-[color=orange]:bg-orange-500
+              in-dark:data-[color=amber]:bg-amber-500
+              in-dark:data-[color=yellow]:bg-yellow-500
+              in-dark:data-[color=lime]:bg-lime-500
+              in-dark:data-[color=green]:bg-green-500
+              in-dark:data-[color=emerald]:bg-emerald-500
+              in-dark:data-[color=teal]:bg-teal-500
+              in-dark:data-[color=cyan]:bg-cyan-500
+              in-dark:data-[color=sky]:bg-sky-500
+              in-dark:data-[color=blue]:bg-blue-500
+              in-dark:data-[color=indigo]:bg-indigo-500
+              in-dark:data-[color=violet]:bg-violet-500
+              in-dark:data-[color=purple]:bg-purple-500
+              in-dark:data-[color=fuchsia]:bg-fuchsia-500
+              in-dark:data-[color=pink]:bg-pink-500
+              in-dark:data-[color=rose]:bg-rose-500"
               data-color={color} />
           </InButton>
         </button>
