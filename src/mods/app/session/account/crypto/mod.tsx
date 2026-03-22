@@ -45,6 +45,9 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
+  const i0 = useAnchorWithCoords(hash, "/0")
+  const i1 = useAnchorWithCoords(hash, "/1")
+
   return <div className="flex flex-col grow p-6">
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
@@ -101,31 +104,35 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         </div>
         <div className="h-4" />
         <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-          <a className="w-[320px] h-18 p-4 z-10 rounded-t-xl bg-orange-400 text-default border-2 border-default-contrast focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
             data-theme="dark"
-            href={hash.go("/0").hash}>
+            href={i0.url.hash}
+            onClick={i0.onClick}
+            onKeyDown={i0.onKeyDown}>
             <div className="flex items-center justify-between">
               <div className="font-medium text-xl">
                 Personal
-              </div>
-              <div className="font-medium text-xl text-default-contrast">
-                #0
-              </div>
-            </div>
-          </a>
-          <a className="w-[320px] h-18 p-4 z-10 rounded-t-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-            data-theme="dark"
-            href={hash.go("/1").hash}>
-            <div className="flex items-center justify-between">
-              <div className="font-medium text-xl">
-                Business
               </div>
               <div className="font-medium text-xl text-default-contrast">
                 #1
               </div>
             </div>
           </a>
-          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-6 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-30 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+            data-theme="dark"
+            href={i1.url.hash}
+            onClick={i1.onClick}
+            onKeyDown={i1.onKeyDown}>
+            <div className="flex items-center justify-between">
+              <div className="font-medium text-xl">
+                Business
+              </div>
+              <div className="font-medium text-xl text-default-contrast">
+                #2
+              </div>
+            </div>
+          </a>
+          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-60 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
             data-theme="dark"
             href={hash.go("/add").hash}>
             <InAnchor>

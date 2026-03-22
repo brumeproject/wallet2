@@ -285,7 +285,7 @@ export function GenericAccountCard(props: { type: string } & { icon: ReactNode }
           </div>
           <div className="grow" />
           <div className="font-medium text-xl text-default-contrast">
-            #{index}
+            {index != null ? `#${index + 1}` : null}
           </div>
         </div>
         <div className="h-2" />
