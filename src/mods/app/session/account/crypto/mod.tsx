@@ -150,7 +150,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                   <div className="font-medium text-xl">
                     Personal
                   </div>
-                  <div className="font-medium text-xl text-default-contrast">
+                  <div className="font-medium text-xl text-default-half-contrast">
                     #1
                   </div>
                 </div>
@@ -199,7 +199,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                   <div className="font-medium text-xl">
                     Business
                   </div>
-                  <div className="font-medium text-xl text-default-contrast">
+                  <div className="font-medium text-xl text-default-half-contrast">
                     #2
                   </div>
                 </div>
