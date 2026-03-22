@@ -1,3 +1,4 @@
+import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -19,9 +20,8 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58, base58xmr } from "@scure/base";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { InAnchor } from "../../../../../libs/anchor/mod.tsx";
 import { useSessionContext } from "../../mod.tsx";
-import { AccountCard, AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
+import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, CryptoAccountCard } from "../mod.tsx";
 
 React;
 
@@ -33,23 +33,31 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const bitcoinseed = useMemo(() => {
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const seedphrase = useMemo(() => {
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
   }, [$entry])
 
   const [ethereum, setEthereum] = useState<Nullable<string>>()
 
   const getEthereumOrThrow = useCallback(async () => {
-    if (bitcoinseed == null)
+    if (seedphrase == null)
       return
 
-    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(bitcoinseed))
+    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
     const xsig = await seed.derive("m/44'/60'/0'/0/0")
     const upub = secp256k1.getPublicKey(xsig.key, false)
 
     return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
-  }, [bitcoinseed])
+  }, [seedphrase])
 
   useEffect(() => {
     getEthereumOrThrow().then(setEthereum).catch(console.error)
@@ -58,16 +66,16 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const [solana, setSolana] = useState<Nullable<string>>()
 
   const getSolanaOrThrow = useCallback(async () => {
-    if (bitcoinseed == null)
+    if (seedphrase == null)
       return
 
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(bitcoinseed))
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
     const xsig = await seed.derive("m/44'/501'/0'/0'")
     const upub = await Ed25519.publish(xsig.key)
 
     return base58.encode(upub)
-  }, [bitcoinseed])
+  }, [seedphrase])
 
   useEffect(() => {
     getSolanaOrThrow().then(setSolana).catch(console.error)
@@ -76,10 +84,10 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const [bobine, setBobine] = useState<Nullable<string>>()
 
   const getBobineOrThrow = useCallback(async () => {
-    if (bitcoinseed == null)
+    if (seedphrase == null)
       return
 
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(bitcoinseed))
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
     const xsig = await seed.derive("m/44'/1'/0'/0'/0'")
     const upub = await Ed25519.publish(xsig.key)
@@ -87,7 +95,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", upub))
 
     return `0x${hash.toHex()}`
-  }, [bitcoinseed])
+  }, [seedphrase])
 
   useEffect(() => {
     getBobineOrThrow().then(setBobine).catch(console.error)
@@ -96,10 +104,10 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const [monero, setMonero] = useState<Nullable<string>>()
 
   const getMoneroOrThrow = useCallback(async () => {
-    if (bitcoinseed == null)
+    if (seedphrase == null)
       return
 
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(bitcoinseed))
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
     const xsig = await seed.derive("m/44'/128'/0'")
 
@@ -138,7 +146,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     cursor1.writeOrThrow(checksum)
 
     return base58xmr.encode(concat1)
-  }, [bitcoinseed])
+  }, [seedphrase])
 
   useEffect(() => {
     getMoneroOrThrow().then(setMonero).catch(console.error)
@@ -163,7 +171,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">
-      <AccountCard $entry={$entry} />
+      <CryptoAccountCard title={title} color={color} />
     </div>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
@@ -487,58 +495,7 @@ export function CryptoAccountAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <div className="w-[320px] aspect-video border-2 border-default-contrast overflow-hidden flex flex-col bg-default text-default select-none p-4 rounded-xl
-          data-[color=red]:bg-red-400 
-          data-[color=orange]:bg-orange-400 
-          data-[color=amber]:bg-amber-400 
-          data-[color=yellow]:bg-yellow-400 
-          data-[color=lime]:bg-lime-400 
-          data-[color=green]:bg-green-400 
-          data-[color=emerald]:bg-emerald-400 
-          data-[color=teal]:bg-teal-400 
-          data-[color=cyan]:bg-cyan-400 
-          data-[color=sky]:bg-sky-400 
-          data-[color=blue]:bg-blue-400 
-          data-[color=indigo]:bg-indigo-400 
-          data-[color=violet]:bg-violet-400 
-          data-[color=purple]:bg-purple-400 
-          data-[color=fuchsia]:bg-fuchsia-400 
-          data-[color=pink]:bg-pink-400 
-          data-[color=rose]:bg-rose-400 
-          in-dark:data-[color=red]:bg-red-500
-          in-dark:data-[color=orange]:bg-orange-500
-          in-dark:data-[color=amber]:bg-amber-500
-          in-dark:data-[color=yellow]:bg-yellow-500
-          in-dark:data-[color=lime]:bg-lime-500
-          in-dark:data-[color=green]:bg-green-500
-          in-dark:data-[color=emerald]:bg-emerald-500
-          in-dark:data-[color=teal]:bg-teal-500
-          in-dark:data-[color=cyan]:bg-cyan-500
-          in-dark:data-[color=sky]:bg-sky-500
-          in-dark:data-[color=blue]:bg-blue-500
-          in-dark:data-[color=indigo]:bg-indigo-500
-          in-dark:data-[color=violet]:bg-violet-500
-          in-dark:data-[color=purple]:bg-purple-500
-          in-dark:data-[color=fuchsia]:bg-fuchsia-500
-          in-dark:data-[color=pink]:bg-pink-500
-          in-dark:data-[color=rose]:bg-rose-500"
-          data-theme={color == null ? "opposite" : "dark"}
-          data-color={color}>
-          <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
-            {title}
-          </div>
-          <div className="h-4" />
-          <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
-            {seedphrase.split(" ").at(0)}
-          </div>
-          <div className="h-4 grow" />
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.BanknotesIcon className="size-5" />
-              Crypto
-            </div>
-          </div>
-        </div>
+        <CryptoAccountCard title={title} color={color} />
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -617,20 +574,59 @@ export function CryptoAccountAddPage() {
   </Fragment>
 }
 
+export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
+  const { $entry, index } = props
+
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
+  return <div className="flex flex-col grow p-6">
+    <div className="flex items-center justify-between">
+      <h1 className="text-xl font-medium">
+        Crypto subaccount
+      </h1>
+    </div>
+    <div className="h-6" />
+    <div className="flex items-center justify-center">
+      <CryptoAccountCard title={title} color={color} />
+    </div>
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
+      <input className="hidden"
+        autoComplete="off"
+        name="username" />
+
+    </form>
+  </div>
+}
+
 export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
-  const bitcoinseed = useMemo(() => {
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const seedphrase = useMemo(() => {
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
   }, [$entry])
 
-  const [moneroseed, setMoneroSeed] = useState<Nullable<string>>()
+  const [moneroseedphrase, setMoneroSeedphrase] = useState<Nullable<string>>()
 
-  const getMoneroSeedOrThrow = useCallback(async () => {
-    if (bitcoinseed == null)
+  const getMoneroSeedphraseOrThrow = useCallback(async () => {
+    if (seedphrase == null)
       return
 
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(bitcoinseed))
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
     const xsig = await seed.derive("m/44'/128'/0'")
 
@@ -643,11 +639,11 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
     const sigskeyAsRaw = Uint8Array.fromHex(sigskeyAsHex).toReversed()
 
     return MoneroSeedPhrase.encode(sigskeyAsRaw)
-  }, [bitcoinseed])
+  }, [seedphrase])
 
   useEffect(() => {
-    getMoneroSeedOrThrow().then(setMoneroSeed).catch(console.error)
-  }, [getMoneroSeedOrThrow])
+    getMoneroSeedphraseOrThrow().then(setMoneroSeedphrase).catch(console.error)
+  }, [getMoneroSeedphraseOrThrow])
 
   return <div className="flex flex-col grow p-6">
     <div className="flex items-center justify-between">
@@ -657,7 +653,7 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">
-      <AccountCard $entry={$entry} />
+      <CryptoAccountCard title={title} color={color} />
     </div>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
@@ -678,7 +674,7 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
             rows={3}
             readOnly
             onFocus={e => e.currentTarget.select()}
-            value={bitcoinseed} />
+            value={seedphrase} />
         </div>
       </Fragment>
       <Fragment>
@@ -695,7 +691,7 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
             rows={3}
             readOnly
             onFocus={e => e.currentTarget.select()}
-            value={moneroseed || ""} />
+            value={moneroseedphrase || ""} />
         </div>
       </Fragment>
     </form>

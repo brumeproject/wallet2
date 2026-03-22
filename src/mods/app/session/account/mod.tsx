@@ -9,7 +9,7 @@ import { Nullable } from "@/libs/nullable/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import React, { Fragment, MouseEvent, useCallback, useMemo, useState } from "react";
+import React, { Fragment, MouseEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { useSessionContext } from "../mod.tsx";
 import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";
@@ -190,8 +190,40 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   </Fragment>
 }
 
-export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
-  const { $entry } = props
+export function CryptoAccountCard(props: { title: Nullable<string> } & { color: Nullable<string> }) {
+  const { color, title } = props
+
+  return <GenericAccountCard
+    type="Crypto"
+    title={title}
+    color={color}
+    icon={<Outline.BanknotesIcon className="size-5" />} />
+}
+
+export function PasswordAccountCard(props: { title: Nullable<string> } & { username: Nullable<string> } & { color: Nullable<string> }) {
+  const { color, title, username } = props
+
+  return <GenericAccountCard
+    type="Password"
+    title={title}
+    subtitle={username}
+    color={color}
+    icon={<Outline.LanguageIcon className="size-5" />} />
+}
+
+export function CardAccountCard(props: { title: Nullable<string> } & { number: Nullable<string> } & { color: Nullable<string> }) {
+  const { color, title, number } = props
+
+  return <GenericAccountCard
+    type="Card"
+    title={title}
+    subtitle={number}
+    color={color}
+    icon={<Outline.CreditCardIcon className="size-5" />} />
+}
+
+export function GenericAccountCard(props: { title: Nullable<string> } & { subtitle?: Nullable<string> } & { color: Nullable<string> } & { type: string } & { icon: ReactNode }) {
+  const { color, title, subtitle, type, icon } = props
 
   const [flipping, setFlipping] = useState(false)
   const [flipped, setFlipped] = useState(false)
@@ -243,56 +275,24 @@ export function AccountCard(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
       data-flip={flipping && !flipped}
       data-unflip={!flipping && flipped}
       data-flipped={flipping && flipped}
-      data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
-      data-color={getEntryColor($entry)}
+      data-theme={color == null ? "opposite" : "dark"}
+      data-color={color}
       onAnimationEnd={onAnimationEnd}
       onClick={onClick}>
       <div className="absolute inset-0 p-4 flex flex-col backface-hidden overflow-hidden">
         <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
-          {getEntryTitle($entry) || "Untitled"}
+          {title || "Untitled"}
         </div>
         <div className="h-2" />
         <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
-          {(() => {
-            const type = getEntryType($entry)
-
-            if (type === "password")
-              return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
-
-            if (type === "card")
-              return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
-
-            if (type === "crypto")
-              return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
-
-            return null
-          })()}
+          {subtitle}
         </div>
         <div className="h-4 grow" />
         <div className="flex flex-wrap items-center gap-2">
-          {(() => {
-            const type = getEntryType($entry)
-
-            if (type === "card")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.CreditCardIcon className="size-5" />
-                Card
-              </div>
-
-            if (type === "crypto")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.BanknotesIcon className="size-5" />
-                Crypto
-              </div>
-
-            if (type === "password")
-              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-                <Outline.LanguageIcon className="size-5" />
-                Password
-              </div>
-
-            return null
-          })()}
+          <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+            {icon}
+            {type}
+          </div>
         </div>
       </div>
       <div className="absolute inset-0 p-4 flex items-center justify-center backface-hidden overflow-hidden rotate-y-180">

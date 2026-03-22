@@ -16,7 +16,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
-import { AccountCard, AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
+import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, PasswordAccountCard } from "../mod.tsx";
 
 React;
 
@@ -29,6 +29,14 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
   const hash = useHashSubpath(path)
 
   const session = useSessionContext().getOrThrow()
+
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
 
   const trashed = useMemo(() => {
     const { kdbx } = session.value
@@ -90,7 +98,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
       </div>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <AccountCard $entry={$entry} />
+        <PasswordAccountCard title={title} color={color} username={username} />
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -409,58 +417,7 @@ export function PasswordAccountAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <div className="w-[320px] aspect-video border-2 border-default-contrast overflow-hidden flex flex-col bg-default text-default select-none p-4 rounded-xl
-          data-[color=red]:bg-red-400 
-          data-[color=orange]:bg-orange-400 
-          data-[color=amber]:bg-amber-400 
-          data-[color=yellow]:bg-yellow-400 
-          data-[color=lime]:bg-lime-400 
-          data-[color=green]:bg-green-400 
-          data-[color=emerald]:bg-emerald-400 
-          data-[color=teal]:bg-teal-400 
-          data-[color=cyan]:bg-cyan-400 
-          data-[color=sky]:bg-sky-400 
-          data-[color=blue]:bg-blue-400 
-          data-[color=indigo]:bg-indigo-400 
-          data-[color=violet]:bg-violet-400 
-          data-[color=purple]:bg-purple-400 
-          data-[color=fuchsia]:bg-fuchsia-400 
-          data-[color=pink]:bg-pink-400 
-          data-[color=rose]:bg-rose-400 
-          in-dark:data-[color=red]:bg-red-500
-          in-dark:data-[color=orange]:bg-orange-500
-          in-dark:data-[color=amber]:bg-amber-500
-          in-dark:data-[color=yellow]:bg-yellow-500
-          in-dark:data-[color=lime]:bg-lime-500
-          in-dark:data-[color=green]:bg-green-500
-          in-dark:data-[color=emerald]:bg-emerald-500
-          in-dark:data-[color=teal]:bg-teal-500
-          in-dark:data-[color=cyan]:bg-cyan-500
-          in-dark:data-[color=sky]:bg-sky-500
-          in-dark:data-[color=blue]:bg-blue-500
-          in-dark:data-[color=indigo]:bg-indigo-500
-          in-dark:data-[color=violet]:bg-violet-500
-          in-dark:data-[color=purple]:bg-purple-500
-          in-dark:data-[color=fuchsia]:bg-fuchsia-500
-          in-dark:data-[color=pink]:bg-pink-500
-          in-dark:data-[color=rose]:bg-rose-500"
-          data-theme={color == null ? "opposite" : "dark"}
-          data-color={color}>
-          <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
-            {title}
-          </div>
-          <div className="h-4" />
-          <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
-            {username}
-          </div>
-          <div className="h-4 grow" />
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.LanguageIcon className="size-5" />
-              Password
-            </div>
-          </div>
-        </div>
+        <PasswordAccountCard title={title} color={color} username={username} />
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
