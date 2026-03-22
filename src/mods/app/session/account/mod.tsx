@@ -154,9 +154,6 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           if (type === "card")
             return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
-          if (type === "crypto")
-            return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get().split(" ").at(0)
-
           return null
         })()}
       </div>

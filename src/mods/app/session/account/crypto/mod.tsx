@@ -41,12 +41,6 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
 
-  const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
-  }, [$entry])
-
-
-
   const notes = useMemo(() => {
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
@@ -59,7 +53,11 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         </PathPaper>}
       {hash.url.pathname === "/0" &&
         <PathBoard>
-          <CryptoSubaccountPage $entry={$entry} index={0} />
+          <CryptoSubaccountPage $entry={$entry} name="Personal" index={0} />
+        </PathBoard>}
+      {hash.url.pathname === "/1" &&
+        <PathBoard>
+          <CryptoSubaccountPage $entry={$entry} name="Business" index={1} />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex items-center justify-between">
@@ -103,28 +101,33 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         </div>
         <div className="h-4" />
         <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-          <a className="w-[320px] h-18 p-4 z-10 rounded-t-xl bg-orange-400 text-white border-2 border-default-contrast"
+          <a className="w-[320px] h-18 p-4 z-10 rounded-t-xl bg-orange-400 text-default border-2 border-default-contrast focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+            data-theme="dark"
             href={hash.go("/0").hash}>
             <div className="flex items-center justify-between">
               <div className="font-medium text-xl">
                 Personal
               </div>
-              <div className="font-medium text-xl text-opposite-contrast">
+              <div className="font-medium text-xl text-default-contrast">
                 #0
               </div>
             </div>
           </a>
-          <div className="w-[320px] h-18 p-4 z-10 rounded-t-xl bg-orange-400 text-white border-2 border-default-contrast -translate-y-3">
+          <a className="w-[320px] h-18 p-4 z-10 rounded-t-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+            data-theme="dark"
+            href={hash.go("/1").hash}>
             <div className="flex items-center justify-between">
               <div className="font-medium text-xl">
                 Business
               </div>
-              <div className="font-medium text-xl text-opposite-contrast">
+              <div className="font-medium text-xl text-default-contrast">
                 #1
               </div>
             </div>
-          </div>
-          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-white border-2 border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast -translate-y-6">
+          </a>
+          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-6 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+            data-theme="dark"
+            href={hash.go("/add").hash}>
             <InAnchor>
               <Outline.PlusIcon className="size-8" />
             </InAnchor>
@@ -406,8 +409,8 @@ export function CryptoAccountAddPage() {
   </Fragment>
 }
 
-export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
-  const { $entry, index } = props
+export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
+  const { $entry, name, index } = props
 
   const title = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
@@ -429,11 +432,11 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive("m/44'/60'/0'/0/0")
+    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
     const upub = secp256k1.getPublicKey(xsig.key, false)
 
     return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
-  }, [seedphrase])
+  }, [seedphrase, index])
 
   useEffect(() => {
     getEthereumOrThrow().then(setEthereum).catch(console.error)
@@ -447,11 +450,11 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive("m/44'/501'/0'/0'")
+    const xsig = await seed.derive(`m/44'/501'/${index}'/0'`)
     const upub = await Ed25519.publish(xsig.key)
 
     return base58.encode(upub)
-  }, [seedphrase])
+  }, [seedphrase, index])
 
   useEffect(() => {
     getSolanaOrThrow().then(setSolana).catch(console.error)
@@ -465,13 +468,13 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive("m/44'/1'/0'/0'/0'")
+    const xsig = await seed.derive(`m/44'/1'/${index}'/0'/0'`)
     const upub = await Ed25519.publish(xsig.key)
 
     const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", upub))
 
     return `0x${hash.toHex()}`
-  }, [seedphrase])
+  }, [seedphrase, index])
 
   useEffect(() => {
     getBobineOrThrow().then(setBobine).catch(console.error)
@@ -485,7 +488,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive("m/44'/128'/0'")
+    const xsig = await seed.derive(`m/44'/128'/${index}'`)
 
     const sigspreAsRaw = xsig.key
     const sigspreAsHex = sigspreAsRaw.toReversed().toHex()
@@ -522,7 +525,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     cursor1.writeOrThrow(checksum)
 
     return base58xmr.encode(concat1)
-  }, [seedphrase])
+  }, [seedphrase, index])
 
   useEffect(() => {
     getMoneroOrThrow().then(setMonero).catch(console.error)
@@ -536,7 +539,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     </div>
     <div className="h-6" />
     <div className="flex flex-col items-center justify-center">
-      <CryptoAccountCard title="Personal" subtitle={title} color={color} index={index} />
+      <CryptoAccountCard title={name} subtitle={title} color={color} index={index} />
     </div>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
