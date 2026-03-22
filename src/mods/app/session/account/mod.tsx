@@ -236,7 +236,7 @@ export function GenericAccountCard(props: { type: string } & { icon: ReactNode }
   }, [])
 
   return <div className="w-[320px] aspect-video perspective-[640px]">
-    <div className="h-full w-full data-[flip=true]:animate-flip-in data-[unflip=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default border-2 border-default-contrast select-none
+    <div className="h-full w-full data-[flip=true]:animate-flip-in data-[unflip=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
