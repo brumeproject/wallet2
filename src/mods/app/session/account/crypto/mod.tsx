@@ -45,112 +45,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
   }, [$entry])
 
-  const [ethereum, setEthereum] = useState<Nullable<string>>()
 
-  const getEthereumOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
-    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
-    const xsig = await seed.derive("m/44'/60'/0'/0/0")
-    const upub = secp256k1.getPublicKey(xsig.key, false)
-
-    return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
-  }, [seedphrase])
-
-  useEffect(() => {
-    getEthereumOrThrow().then(setEthereum).catch(console.error)
-  }, [getEthereumOrThrow])
-
-  const [solana, setSolana] = useState<Nullable<string>>()
-
-  const getSolanaOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
-    const xsig = await seed.derive("m/44'/501'/0'/0'")
-    const upub = await Ed25519.publish(xsig.key)
-
-    return base58.encode(upub)
-  }, [seedphrase])
-
-  useEffect(() => {
-    getSolanaOrThrow().then(setSolana).catch(console.error)
-  }, [getSolanaOrThrow])
-
-  const [bobine, setBobine] = useState<Nullable<string>>()
-
-  const getBobineOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
-    const xsig = await seed.derive("m/44'/1'/0'/0'/0'")
-    const upub = await Ed25519.publish(xsig.key)
-
-    const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", upub))
-
-    return `0x${hash.toHex()}`
-  }, [seedphrase])
-
-  useEffect(() => {
-    getBobineOrThrow().then(setBobine).catch(console.error)
-  }, [getBobineOrThrow])
-
-  const [monero, setMonero] = useState<Nullable<string>>()
-
-  const getMoneroOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
-    const xsig = await seed.derive("m/44'/128'/0'")
-
-    const sigspreAsRaw = xsig.key
-    const sigspreAsHex = sigspreAsRaw.toReversed().toHex()
-    const sigspreAsNum = BigInt("0x" + sigspreAsHex)
-
-    const sigskeyAsNum = sigspreAsNum % ed25519.Point.Fn.ORDER
-    const sigskeyAsHex = sigskeyAsNum.toString(16).padStart(64, "0")
-    const sigskeyAsRaw = Uint8Array.fromHex(sigskeyAsHex).toReversed()
-
-    const sigvpreAsRaw = keccak_256(sigskeyAsRaw)
-    const sigvpreAsHex = sigvpreAsRaw.toReversed().toHex()
-    const sigvpreAsNum = BigInt("0x" + sigvpreAsHex)
-
-    const sigvkeyAsNum = sigvpreAsNum % ed25519.Point.Fn.ORDER
-    const sigvkeyAsHex = sigvkeyAsNum.toString(16).padStart(64, "0")
-    const sigvkeyAsRaw = Uint8Array.fromHex(sigvkeyAsHex).toReversed()
-
-    const pubskeyAsRaw = ed25519.Point.BASE.multiply(sigskeyAsNum).toBytes()
-    const pubvkeyAsRaw = ed25519.Point.BASE.multiply(sigvkeyAsNum).toBytes()
-
-    const concat0 = new Uint8Array(1 + pubskeyAsRaw.length + pubvkeyAsRaw.length)
-
-    const cursor0 = new Cursor(concat0)
-    cursor0.writeUint8OrThrow(0x12)
-    cursor0.writeOrThrow(pubskeyAsRaw)
-    cursor0.writeOrThrow(pubvkeyAsRaw)
-
-    const checksum = keccak_256(concat0).subarray(0, 4)
-
-    const concat1 = new Uint8Array(concat0.length + checksum.length)
-
-    const cursor1 = new Cursor(concat1)
-    cursor1.writeOrThrow(concat0)
-    cursor1.writeOrThrow(checksum)
-
-    return base58xmr.encode(concat1)
-  }, [seedphrase])
-
-  useEffect(() => {
-    getMoneroOrThrow().then(setMonero).catch(console.error)
-  }, [getMoneroOrThrow])
 
   const notes = useMemo(() => {
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
@@ -162,6 +57,10 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <PathPaper>
           <CryptoAccountMenu $entry={$entry} close={close} />
         </PathPaper>}
+      {hash.url.pathname === "/0" &&
+        <PathBoard>
+          <CryptoSubaccountPage $entry={$entry} index={0} />
+        </PathBoard>}
     </SubpathProvider>
     <div className="flex items-center justify-between">
       <h1 className="text-xl font-medium">
@@ -178,111 +77,6 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       <input className="hidden"
         autoComplete="off"
         name="username" />
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Ethereum address
-        </div>
-        <div className="text-default-contrast">
-          Your EVM address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={ethereum || ""} />
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Solana address
-        </div>
-        <div className="text-default-contrast">
-          Your SVM address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={solana || ""} />
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Bobine address
-        </div>
-        <div className="text-default-contrast">
-          Your Bobine address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={bobine || ""} />
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Monero address
-        </div>
-        <div className="text-default-contrast">
-          Your Monero address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={monero || ""} />
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Subaccounts
-        </div>
-        <div className="text-default-contrast">
-          Your subaccounts.
-        </div>
-        <div className="h-4" />
-        <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-          <div className="w-[320px] h-14 po-2 z-10 rounded-t-xl bg-blue-400 dark:bg-blue-500 border-2 border-default-contrast text-white translate-y-6">
-            <div className="flex items-center justify-between">
-              <div className="">
-                #0
-              </div>
-              <div className="font-medium">
-                Personal
-              </div>
-            </div>
-          </div>
-          <div className="w-[320px] h-14 po-2 z-10 rounded-t-xl bg-red-400 dark:bg-red-500 border-2 border-default-contrast text-white translate-y-3">
-            <div className="flex items-center justify-between">
-              <div className="">
-                #1
-              </div>
-              <div className="font-medium">
-                Business
-              </div>
-            </div>
-          </div>
-          <a className="w-[320px] aspect-video po-2 z-10 rounded-xl bg-default border-2 border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast">
-            <InAnchor>
-              <Outline.PlusIcon className="size-8" />
-            </InAnchor>
-          </a>
-        </div>
-      </Fragment>
       {notes && <Fragment>
         <div className="h-6" />
         <div className="font-medium">
@@ -299,6 +93,44 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             value={notes} />
         </div>
       </Fragment>}
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Subaccounts
+        </div>
+        <div className="text-default-contrast">
+          Your subaccounts.
+        </div>
+        <div className="h-4" />
+        <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+          <a className="w-[320px] h-18 p-4 z-10 rounded-t-xl bg-orange-400 text-white border-2 border-default-contrast"
+            href={hash.go("/0").hash}>
+            <div className="flex items-center justify-between">
+              <div className="font-medium text-xl">
+                Personal
+              </div>
+              <div className="font-medium text-xl text-opposite-contrast">
+                #0
+              </div>
+            </div>
+          </a>
+          <div className="w-[320px] h-18 p-4 z-10 rounded-t-xl bg-orange-400 text-white border-2 border-default-contrast -translate-y-3">
+            <div className="flex items-center justify-between">
+              <div className="font-medium text-xl">
+                Business
+              </div>
+              <div className="font-medium text-xl text-opposite-contrast">
+                #1
+              </div>
+            </div>
+          </div>
+          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-white border-2 border-default-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast -translate-y-6">
+            <InAnchor>
+              <Outline.PlusIcon className="size-8" />
+            </InAnchor>
+          </a>
+        </div>
+      </Fragment>
     </form>
   </div>
 }
@@ -585,6 +417,117 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
 
+  const seedphrase = useMemo(() => {
+    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const [ethereum, setEthereum] = useState<Nullable<string>>()
+
+  const getEthereumOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive("m/44'/60'/0'/0/0")
+    const upub = secp256k1.getPublicKey(xsig.key, false)
+
+    return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
+  }, [seedphrase])
+
+  useEffect(() => {
+    getEthereumOrThrow().then(setEthereum).catch(console.error)
+  }, [getEthereumOrThrow])
+
+  const [solana, setSolana] = useState<Nullable<string>>()
+
+  const getSolanaOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive("m/44'/501'/0'/0'")
+    const upub = await Ed25519.publish(xsig.key)
+
+    return base58.encode(upub)
+  }, [seedphrase])
+
+  useEffect(() => {
+    getSolanaOrThrow().then(setSolana).catch(console.error)
+  }, [getSolanaOrThrow])
+
+  const [bobine, setBobine] = useState<Nullable<string>>()
+
+  const getBobineOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive("m/44'/1'/0'/0'/0'")
+    const upub = await Ed25519.publish(xsig.key)
+
+    const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", upub))
+
+    return `0x${hash.toHex()}`
+  }, [seedphrase])
+
+  useEffect(() => {
+    getBobineOrThrow().then(setBobine).catch(console.error)
+  }, [getBobineOrThrow])
+
+  const [monero, setMonero] = useState<Nullable<string>>()
+
+  const getMoneroOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive("m/44'/128'/0'")
+
+    const sigspreAsRaw = xsig.key
+    const sigspreAsHex = sigspreAsRaw.toReversed().toHex()
+    const sigspreAsNum = BigInt("0x" + sigspreAsHex)
+
+    const sigskeyAsNum = sigspreAsNum % ed25519.Point.Fn.ORDER
+    const sigskeyAsHex = sigskeyAsNum.toString(16).padStart(64, "0")
+    const sigskeyAsRaw = Uint8Array.fromHex(sigskeyAsHex).toReversed()
+
+    const sigvpreAsRaw = keccak_256(sigskeyAsRaw)
+    const sigvpreAsHex = sigvpreAsRaw.toReversed().toHex()
+    const sigvpreAsNum = BigInt("0x" + sigvpreAsHex)
+
+    const sigvkeyAsNum = sigvpreAsNum % ed25519.Point.Fn.ORDER
+    const sigvkeyAsHex = sigvkeyAsNum.toString(16).padStart(64, "0")
+    const sigvkeyAsRaw = Uint8Array.fromHex(sigvkeyAsHex).toReversed()
+
+    const pubskeyAsRaw = ed25519.Point.BASE.multiply(sigskeyAsNum).toBytes()
+    const pubvkeyAsRaw = ed25519.Point.BASE.multiply(sigvkeyAsNum).toBytes()
+
+    const concat0 = new Uint8Array(1 + pubskeyAsRaw.length + pubvkeyAsRaw.length)
+
+    const cursor0 = new Cursor(concat0)
+    cursor0.writeUint8OrThrow(0x12)
+    cursor0.writeOrThrow(pubskeyAsRaw)
+    cursor0.writeOrThrow(pubvkeyAsRaw)
+
+    const checksum = keccak_256(concat0).subarray(0, 4)
+
+    const concat1 = new Uint8Array(concat0.length + checksum.length)
+
+    const cursor1 = new Cursor(concat1)
+    cursor1.writeOrThrow(concat0)
+    cursor1.writeOrThrow(checksum)
+
+    return base58xmr.encode(concat1)
+  }, [seedphrase])
+
+  useEffect(() => {
+    getMoneroOrThrow().then(setMonero).catch(console.error)
+  }, [getMoneroOrThrow])
+
   return <div className="flex flex-col grow p-6">
     <div className="flex items-center justify-between">
       <h1 className="text-xl font-medium">
@@ -592,15 +535,82 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       </h1>
     </div>
     <div className="h-6" />
-    <div className="flex items-center justify-center">
-      <CryptoAccountCard title={title} color={color} />
+    <div className="flex flex-col items-center justify-center">
+      <CryptoAccountCard title="Personal" subtitle={title} color={color} index={index} />
     </div>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
-
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Ethereum address
+        </div>
+        <div className="text-default-contrast">
+          Your EVM address.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={ethereum || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Solana address
+        </div>
+        <div className="text-default-contrast">
+          Your SVM address.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={solana || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Bobine address
+        </div>
+        <div className="text-default-contrast">
+          Your Bobine address.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={bobine || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Monero address
+        </div>
+        <div className="text-default-contrast">
+          Your Monero address.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={monero || ""} />
+        </div>
+      </Fragment>
     </form>
   </div>
 }

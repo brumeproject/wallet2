@@ -190,17 +190,19 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   </Fragment>
 }
 
-export function CryptoAccountCard(props: { title: Nullable<string> } & { color: Nullable<string> }) {
-  const { color, title } = props
+export function CryptoAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> }) {
+  const { color, title, subtitle, index } = props
 
   return <GenericAccountCard
     type="Crypto"
     title={title}
+    subtitle={subtitle}
     color={color}
+    index={index}
     icon={<Outline.BanknotesIcon className="size-5" />} />
 }
 
-export function PasswordAccountCard(props: { title: Nullable<string> } & { username: Nullable<string> } & { color: Nullable<string> }) {
+export function PasswordAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { username: Nullable<string> }) {
   const { color, title, username } = props
 
   return <GenericAccountCard
@@ -211,7 +213,7 @@ export function PasswordAccountCard(props: { title: Nullable<string> } & { usern
     icon={<Outline.LanguageIcon className="size-5" />} />
 }
 
-export function CardAccountCard(props: { title: Nullable<string> } & { number: Nullable<string> } & { color: Nullable<string> }) {
+export function CardAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { number: Nullable<string> }) {
   const { color, title, number } = props
 
   return <GenericAccountCard
@@ -222,8 +224,8 @@ export function CardAccountCard(props: { title: Nullable<string> } & { number: N
     icon={<Outline.CreditCardIcon className="size-5" />} />
 }
 
-export function GenericAccountCard(props: { title: Nullable<string> } & { subtitle?: Nullable<string> } & { color: Nullable<string> } & { type: string } & { icon: ReactNode }) {
-  const { color, title, subtitle, type, icon } = props
+export function GenericAccountCard(props: { type: string } & { icon: ReactNode } & { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> }) {
+  const { color, title, subtitle, type, icon, index } = props
 
   const [flipping, setFlipping] = useState(false)
   const [flipped, setFlipped] = useState(false)
@@ -280,8 +282,14 @@ export function GenericAccountCard(props: { title: Nullable<string> } & { subtit
       onAnimationEnd={onAnimationEnd}
       onClick={onClick}>
       <div className="absolute inset-0 p-4 flex flex-col backface-hidden overflow-hidden">
-        <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
-          {title || "Untitled"}
+        <div className="flex items-center">
+          <div className="font-medium text-xl truncate">
+            {title || "Untitled"}
+          </div>
+          <div className="grow" />
+          <div className="font-medium text-xl text-default-contrast">
+            #{index}
+          </div>
         </div>
         <div className="h-2" />
         <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
