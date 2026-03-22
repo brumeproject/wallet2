@@ -935,7 +935,7 @@ function UserMenuButton(props: { user: UserData }) {
 
   const coords = useAnchorWithCoords(hash, `/${user.uuid}/+`)
 
-  return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+  return <a className="group z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>

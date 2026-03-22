@@ -106,7 +106,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           <div className="h-4" />
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
             <div className="flex flex-col h-[calc(180px+60px+60px)]">
-              <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
+              <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
                 data-[color=red]:bg-red-400 
                 data-[color=orange]:bg-orange-400 
                 data-[color=amber]:bg-amber-400 
@@ -155,7 +155,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                   </div>
                 </div>
               </a>
-              <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none -translate-y-30 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
+              <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none -translate-y-30 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
                 data-[color=red]:bg-red-400 
                 data-[color=orange]:bg-orange-400 
                 data-[color=amber]:bg-amber-400 
@@ -204,7 +204,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                   </div>
                 </div>
               </a>
-              <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none -translate-y-60 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
+              <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none -translate-y-60 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
                 data-[color=red]:bg-red-400 
                 data-[color=orange]:bg-orange-400 
                 data-[color=amber]:bg-amber-400 
