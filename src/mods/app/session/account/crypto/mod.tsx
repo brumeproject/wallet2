@@ -48,7 +48,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const i0 = useAnchorWithCoords(hash, "/0")
   const i1 = useAnchorWithCoords(hash, "/1")
 
-  return <div className="flex flex-col grow p-6">
+  return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
         <PathPaper>
@@ -63,89 +63,106 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           <CryptoSubaccountPage $entry={$entry} name="Business" index={1} />
         </PathBoard>}
     </SubpathProvider>
-    <div className="flex items-center justify-between">
-      <h1 className="text-xl font-medium">
-        Crypto account
-      </h1>
-      <AccountMenuAnchor />
+    <div className="flex flex-col grow p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-medium">
+          Crypto account
+        </h1>
+        <AccountMenuAnchor />
+      </div>
+      <div className="h-6" />
+      <div className="flex items-center justify-center">
+        <CryptoAccountCard title={title} color={color} />
+      </div>
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
+        <input className="hidden"
+          autoComplete="off"
+          name="username" />
+        {notes && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Notes
+          </div>
+          <div className="text-default-contrast">
+            Any additional information.
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="w-full resize-none focus-visible:outline-none"
+              readOnly
+              rows={6}
+              value={notes} />
+          </div>
+        </Fragment>}
+        <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Subaccounts
+          </div>
+          <div className="text-default-contrast">
+            Your subaccounts.
+          </div>
+          <div className="h-4" />
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+            <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+              data-theme="dark"
+              href={i0.url.hash}
+              onClick={i0.onClick}
+              onKeyDown={i0.onKeyDown}>
+              <div className="flex items-center justify-between">
+                <div className="font-medium text-xl">
+                  Personal
+                </div>
+                <div className="font-medium text-xl text-default-contrast">
+                  #1
+                </div>
+              </div>
+            </a>
+            <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-30 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+              data-theme="dark"
+              href={i1.url.hash}
+              onClick={i1.onClick}
+              onKeyDown={i1.onKeyDown}>
+              <div className="flex items-center justify-between">
+                <div className="font-medium text-xl">
+                  Business
+                </div>
+                <div className="font-medium text-xl text-default-contrast">
+                  #2
+                </div>
+              </div>
+            </a>
+            <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-60 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+              data-theme="dark"
+              href={hash.go("/add").hash}>
+              <InAnchor>
+                <Outline.PlusIcon className="size-8" />
+              </InAnchor>
+            </a>
+          </div>
+        </Fragment>
+      </form>
     </div>
-    <div className="h-6" />
-    <div className="flex items-center justify-center">
-      <CryptoAccountCard title={title} color={color} />
-    </div>
-    <form className="grow flex flex-col"
-      onSubmit={Events.preventDefault}>
-      <input className="hidden"
-        autoComplete="off"
-        name="username" />
-      {notes && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Notes
-        </div>
-        <div className="text-default-contrast">
-          Any additional information.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full resize-none focus-visible:outline-none"
-            readOnly
-            rows={6}
-            value={notes} />
-        </div>
-      </Fragment>}
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Subaccounts
-        </div>
-        <div className="text-default-contrast">
-          Your subaccounts.
-        </div>
-        <div className="h-4" />
-        <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-            data-theme="dark"
-            href={i0.url.hash}
-            onClick={i0.onClick}
-            onKeyDown={i0.onKeyDown}>
-            <div className="flex items-center justify-between">
-              <div className="font-medium text-xl">
-                Personal
-              </div>
-              <div className="font-medium text-xl text-default-contrast">
-                #1
-              </div>
-            </div>
-          </a>
-          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-30 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-            data-theme="dark"
-            href={i1.url.hash}
-            onClick={i1.onClick}
-            onKeyDown={i1.onKeyDown}>
-            <div className="flex items-center justify-between">
-              <div className="font-medium text-xl">
-                Business
-              </div>
-              <div className="font-medium text-xl text-default-contrast">
-                #2
-              </div>
-            </div>
-          </a>
-          <a className="w-[320px] aspect-video p-4 z-10 rounded-xl bg-orange-400 text-default border-2 border-default-contrast -translate-y-60 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-            data-theme="dark"
-            href={hash.go("/add").hash}>
-            <InAnchor>
-              <Outline.PlusIcon className="size-8" />
-            </InAnchor>
-          </a>
-        </div>
-      </Fragment>
-    </form>
-  </div>
+  </Fragment>
 }
 
 export function CryptoAccountExportMenuAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/export")
+
+  return <WideNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <Outline.ArrowUpOnSquareIcon className="size-5" />
+    Export
+  </WideNakedMenuAnchor>
+}
+
+export function CryptoSubaccountExportMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -192,6 +209,25 @@ export function CryptoAccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       {trashed === false && <AccountMenuTrashButton $entry={$entry} close={close} />}
       {trashed === true && <AccountMenuUntrashButton $entry={$entry} close={close} />}
       {trashed === true && <AccountMenuDeleteButton $entry={$entry} close={close} />}
+    </div>
+  </Fragment>
+}
+
+export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
+  const { $entry, name, index } = props
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/export" &&
+        <PathBoard>
+          <CryptoSubaccountExportPage $entry={$entry} name={name} index={index} />
+        </PathBoard>}
+    </SubpathProvider>
+    <div className="flex flex-col text-left gap-2">
+      <CryptoSubaccountExportMenuAnchor />
     </div>
   </Fragment>
 }
@@ -419,6 +455,9 @@ export function CryptoAccountAddPage() {
 export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
   const { $entry, name, index } = props
 
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
   const title = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
   }, [$entry])
@@ -538,91 +577,100 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     getMoneroOrThrow().then(setMonero).catch(console.error)
   }, [getMoneroOrThrow])
 
-  return <div className="flex flex-col grow p-6">
-    <div className="flex items-center justify-between">
-      <h1 className="text-xl font-medium">
-        Crypto subaccount
-      </h1>
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/+" &&
+        <PathPaper>
+          <CryptoSubaccountMenu $entry={$entry} name={name} index={index} />
+        </PathPaper>}
+    </SubpathProvider>
+    <div className="flex flex-col grow p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-medium">
+          Crypto subaccount
+        </h1>
+        <AccountMenuAnchor />
+      </div>
+      <div className="h-6" />
+      <div className="flex flex-col items-center justify-center">
+        <CryptoAccountCard title={name} subtitle={title} color={color} index={index} />
+      </div>
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
+        <input className="hidden"
+          autoComplete="off"
+          name="username" />
+        <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Ethereum address
+          </div>
+          <div className="text-default-contrast">
+            Your Ethereum (EVM, ERC20) address.
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="w-full focus-visible:outline-none"
+              rows={2}
+              readOnly
+              onFocus={e => e.currentTarget.select()}
+              value={ethereum || ""} />
+          </div>
+        </Fragment>
+        <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Solana address
+          </div>
+          <div className="text-default-contrast">
+            Your Solana (SVM) address.
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="w-full focus-visible:outline-none"
+              rows={2}
+              readOnly
+              onFocus={e => e.currentTarget.select()}
+              value={solana || ""} />
+          </div>
+        </Fragment>
+        <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Bobine address
+          </div>
+          <div className="text-default-contrast">
+            Your Bobine address.
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="w-full focus-visible:outline-none"
+              rows={2}
+              readOnly
+              onFocus={e => e.currentTarget.select()}
+              value={bobine || ""} />
+          </div>
+        </Fragment>
+        <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Monero address
+          </div>
+          <div className="text-default-contrast">
+            Your Monero address.
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="w-full focus-visible:outline-none"
+              rows={2}
+              readOnly
+              onFocus={e => e.currentTarget.select()}
+              value={monero || ""} />
+          </div>
+        </Fragment>
+      </form>
     </div>
-    <div className="h-6" />
-    <div className="flex flex-col items-center justify-center">
-      <CryptoAccountCard title={name} subtitle={title} color={color} index={index} />
-    </div>
-    <form className="grow flex flex-col"
-      onSubmit={Events.preventDefault}>
-      <input className="hidden"
-        autoComplete="off"
-        name="username" />
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Ethereum address
-        </div>
-        <div className="text-default-contrast">
-          Your EVM address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={ethereum || ""} />
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Solana address
-        </div>
-        <div className="text-default-contrast">
-          Your SVM address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={solana || ""} />
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Bobine address
-        </div>
-        <div className="text-default-contrast">
-          Your Bobine address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={bobine || ""} />
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Monero address
-        </div>
-        <div className="text-default-contrast">
-          Your Monero address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={monero || ""} />
-        </div>
-      </Fragment>
-    </form>
-  </div>
+  </Fragment>
 }
 
 export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
@@ -712,6 +760,260 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
             readOnly
             onFocus={e => e.currentTarget.select()}
             value={moneroseedphrase || ""} />
+        </div>
+      </Fragment>
+    </form>
+  </div>
+}
+
+export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
+  const { $entry, name, index } = props
+
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const seedphrase = useMemo(() => {
+    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const [ethereum, setEthereum] = useState<Nullable<string>>()
+
+  const getEthereumOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+
+    return `0x${xsig.key.toHex()}`
+  }, [seedphrase, index])
+
+  useEffect(() => {
+    getEthereumOrThrow().then(setEthereum).catch(console.error)
+  }, [getEthereumOrThrow])
+
+  const [solana, setSolana] = useState<Nullable<string>>()
+
+  const getSolanaOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive(`m/44'/501'/${index}'/0'`)
+    const upub = await Ed25519.publish(xsig.key)
+
+    const concat = new Uint8Array(xsig.key.length + upub.length)
+
+    const cursor = new Cursor(concat)
+    cursor.writeOrThrow(xsig.key)
+    cursor.writeOrThrow(upub)
+
+    return base58.encode(concat)
+  }, [seedphrase, index])
+
+  useEffect(() => {
+    getSolanaOrThrow().then(setSolana).catch(console.error)
+  }, [getSolanaOrThrow])
+
+  const [bobine, setBobine] = useState<Nullable<string>>()
+
+  const getBobineOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive(`m/44'/1'/${index}'/0'/0'`)
+    const upub = await Ed25519.publish(xsig.key)
+
+    const concat = new Uint8Array(xsig.key.length + upub.length)
+
+    const cursor = new Cursor(concat)
+    cursor.writeOrThrow(xsig.key)
+    cursor.writeOrThrow(upub)
+
+    return `0x${concat.toHex()}`
+  }, [seedphrase, index])
+
+  useEffect(() => {
+    getBobineOrThrow().then(setBobine).catch(console.error)
+  }, [getBobineOrThrow])
+
+  const [monero, setMonero] = useState<Nullable<readonly [string, string, string, string]>>()
+
+  const getMoneroOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive(`m/44'/128'/${index}'`)
+
+    const sigspreAsRaw = xsig.key
+    const sigspreAsHex = sigspreAsRaw.toReversed().toHex()
+    const sigspreAsNum = BigInt("0x" + sigspreAsHex)
+
+    const sigskeyAsNum = sigspreAsNum % ed25519.Point.Fn.ORDER
+    const sigskeyAsHex = sigskeyAsNum.toString(16).padStart(64, "0")
+    const sigskeyAsRaw = Uint8Array.fromHex(sigskeyAsHex).toReversed()
+
+    const sigvpreAsRaw = keccak_256(sigskeyAsRaw)
+    const sigvpreAsHex = sigvpreAsRaw.toReversed().toHex()
+    const sigvpreAsNum = BigInt("0x" + sigvpreAsHex)
+
+    const sigvkeyAsNum = sigvpreAsNum % ed25519.Point.Fn.ORDER
+    const sigvkeyAsHex = sigvkeyAsNum.toString(16).padStart(64, "0")
+    const sigvkeyAsRaw = Uint8Array.fromHex(sigvkeyAsHex).toReversed()
+
+    const pubskeyAsRaw = ed25519.Point.BASE.multiply(sigskeyAsNum).toBytes()
+    const pubvkeyAsRaw = ed25519.Point.BASE.multiply(sigvkeyAsNum).toBytes()
+
+    return [sigskeyAsRaw.toHex(), sigvkeyAsRaw.toHex(), pubskeyAsRaw.toHex(), pubvkeyAsRaw.toHex()] as const
+  }, [seedphrase, index])
+
+  useEffect(() => {
+    getMoneroOrThrow().then(setMonero).catch(console.error)
+  }, [getMoneroOrThrow])
+
+  return <div className="flex flex-col grow p-6">
+    <div className="flex items-center justify-between">
+      <h1 className="text-xl font-medium">
+        Export crypto subaccount
+      </h1>
+    </div>
+    <div className="h-6" />
+    <div className="flex flex-col items-center justify-center">
+      <CryptoAccountCard title={name} subtitle={title} color={color} index={index} />
+    </div>
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
+      <input className="hidden"
+        autoComplete="off"
+        name="username" />
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Ethereum private key
+        </div>
+        <div className="text-default-contrast">
+          Your Ethereum (EVM, ERC20) private key in hexadecimal format.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={ethereum || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Solana private key
+        </div>
+        <div className="text-default-contrast">
+          Your Solana (SVM) private key in base58 format.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={solana || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Bobine private key
+        </div>
+        <div className="text-default-contrast">
+          Your Bobine private key in hexadecimal format.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={bobine || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Monero private spending key
+        </div>
+        <div className="text-default-contrast">
+          Your Monero private spending key in hexadecimal format.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={monero?.[0] || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Monero private viewing key
+        </div>
+        <div className="text-default-contrast">
+          Your Monero private viewing key in hexadecimal format.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={monero?.[1] || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Monero public spending key
+        </div>
+        <div className="text-default-contrast">
+          Your Monero public spending key in hexadecimal format.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={monero?.[2] || ""} />
+        </div>
+      </Fragment>
+      <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          Monero public viewing key
+        </div>
+        <div className="text-default-contrast">
+          Your Monero public viewing key in hexadecimal format.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={2}
+            readOnly
+            onFocus={e => e.currentTarget.select()}
+            value={monero?.[3] || ""} />
         </div>
       </Fragment>
     </form>
