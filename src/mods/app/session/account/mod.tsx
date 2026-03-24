@@ -66,7 +66,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           })()}
         </PathBoard>}
     </SubpathProvider>
-    <a className="w-[320px] aspect-video border-2 border-default-contrast p-4 rounded-xl text-left bg-default text-default select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
+    <a className="w-[320px] aspect-video border-2 border-default-contrast p-4 rounded-xl bg-default text-default select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -231,12 +231,14 @@ export function GenericAccountCard(props: { type: string } & { icon: ReactNode }
     flushSync(() => setFlipped(flipping))
   }, [flipping])
 
-  const onClick = useCallback((e: MouseEvent<HTMLDivElement>) => {
+  const onClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
     setFlipping(f => !f)
   }, [])
 
-  return <div className="w-[320px] aspect-video perspective-[640px]">
-    <div className="h-full w-full data-[flip=true]:animate-flip-in data-[unflip=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default border-2 border-default-contrast select-none cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
+  return <button className="w-[320px] aspect-video perspective-[640px] text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+    type="button"
+    onClick={onClick}>
+    <div className="h-full w-full data-[flip=true]:animate-flip-in data-[unflip=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default border-2 border-default-contrast select-none
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -276,8 +278,7 @@ export function GenericAccountCard(props: { type: string } & { icon: ReactNode }
       data-flipped={flipping && flipped}
       data-theme={color == null ? "opposite" : "dark"}
       data-color={color}
-      onAnimationEnd={onAnimationEnd}
-      onClick={onClick}>
+      onAnimationEnd={onAnimationEnd}>
       <div className="absolute inset-0 p-4 flex flex-col backface-hidden overflow-hidden">
         <div className="flex items-center">
           <div className="font-medium text-xl truncate">
@@ -313,7 +314,7 @@ export function GenericAccountCard(props: { type: string } & { icon: ReactNode }
         </div>
       </div>
     </div>
-  </div>
+  </button>
 }
 
 export function AccountAddButton() {
