@@ -204,7 +204,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                   </div>
                 </div>
               </a>
-              <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none -translate-y-60 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+              <a className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none -translate-y-60 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
                 href={hash.go("/add").hash}>
                 <InAnchor>
                   <Outline.PlusIcon className="size-8" />
