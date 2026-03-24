@@ -333,7 +333,7 @@ export function CryptoAccountAddPage() {
 
   const title = useDeferredValue($title || "Untitled")
 
-  const [color, setColor] = useState<Nullable<string>>()
+  const [color, setColor] = useState<Nullable<string>>(["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"][Math.floor(Math.random() * 16)])
 
   const seedphrase = useDeferredValue($seedphrase)
 
