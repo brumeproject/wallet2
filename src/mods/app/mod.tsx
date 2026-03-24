@@ -181,7 +181,7 @@ export function App() {
               Argon2
             </div>
           </div>
-          <div className="h-[max(24rem,50dvh)]" />
+          {/* <div className="h-[max(24rem,50dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
             Your IP address is hidden
           </h1>
@@ -206,7 +206,7 @@ export function App() {
             <div className="p-4 bg-default-contrast rounded-xl">
               Services
             </div>
-          </div>
+          </div> */}
           <div className="h-[max(24rem,50dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
             Supply-chain hardened
@@ -221,7 +221,7 @@ export function App() {
               Other wallets have more than 1000 external dependencies
             </div>
             <div className="bg-opposite text-opposite selection-opposite p-4 rounded-xl">
-              We have 7
+              We have 10
             </div>
           </div>
           <div className="h-[max(24rem,50dvh)]" />
