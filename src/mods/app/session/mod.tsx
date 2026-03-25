@@ -88,12 +88,7 @@ export function SessionPage() {
   }, [session])
 
   const entries = useMemo(() => {
-    const elements = [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")]
-    const currents = elements.filter(e => !e.closest("History"))
-
-    const entries = currents.map(e => new KDBX.Inner.KeePassFile.Entry(e))
-
-    return entries
+    return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e))
   }, [session])
 
   const visibles = useMemo(() => entries.filter($entry => {

@@ -45,8 +45,12 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
-  const i0 = useAnchorWithCoords(hash, "/0")
-  const i1 = useAnchorWithCoords(hash, "/1")
+  const subentries = useMemo(() => {
+    // return [...$entry.element.querySelectorAll(":scope > Subentry")].map($ => new KDBX.Inner.KeePassFile.Entry($))
+    return ["Personal", "Business"]
+  }, [$entry])
+
+  const add = useAnchorWithCoords(hash, "/subaccount/add")
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -54,13 +58,9 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <PathPaper>
           <CryptoAccountMenu $entry={$entry} close={close} />
         </PathPaper>}
-      {hash.url.pathname === "/0" &&
+      {hash.url.pathname === "/subaccount/add" &&
         <PathBoard>
-          <CryptoSubaccountPage $entry={$entry} name="Personal" index={0} />
-        </PathBoard>}
-      {hash.url.pathname === "/1" &&
-        <PathBoard>
-          <CryptoSubaccountPage $entry={$entry} name="Business" index={1} />
+          {/*  */}
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
@@ -105,107 +105,17 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           </div>
           <div className="h-4" />
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-            <div className="flex flex-col h-[calc(180px+60px+60px)]">
-              <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
-                data-[color=red]:bg-red-400 
-                data-[color=orange]:bg-orange-400 
-                data-[color=amber]:bg-amber-400 
-                data-[color=yellow]:bg-yellow-400 
-                data-[color=lime]:bg-lime-400 
-                data-[color=green]:bg-green-400 
-                data-[color=emerald]:bg-emerald-400 
-                data-[color=teal]:bg-teal-400 
-                data-[color=cyan]:bg-cyan-400 
-                data-[color=sky]:bg-sky-400 
-                data-[color=blue]:bg-blue-400 
-                data-[color=indigo]:bg-indigo-400 
-                data-[color=violet]:bg-violet-400 
-                data-[color=purple]:bg-purple-400 
-                data-[color=fuchsia]:bg-fuchsia-400 
-                data-[color=pink]:bg-pink-400 
-                data-[color=rose]:bg-rose-400 
-                in-dark:data-[color=red]:bg-red-500
-                in-dark:data-[color=orange]:bg-orange-500
-                in-dark:data-[color=amber]:bg-amber-500
-                in-dark:data-[color=yellow]:bg-yellow-500
-                in-dark:data-[color=lime]:bg-lime-500
-                in-dark:data-[color=green]:bg-green-500
-                in-dark:data-[color=emerald]:bg-emerald-500
-                in-dark:data-[color=teal]:bg-teal-500
-                in-dark:data-[color=cyan]:bg-cyan-500
-                in-dark:data-[color=sky]:bg-sky-500
-                in-dark:data-[color=blue]:bg-blue-500
-                in-dark:data-[color=indigo]:bg-indigo-500
-                in-dark:data-[color=violet]:bg-violet-500
-                in-dark:data-[color=purple]:bg-purple-500
-                in-dark:data-[color=fuchsia]:bg-fuchsia-500
-                in-dark:data-[color=pink]:bg-pink-500
-                in-dark:data-[color=rose]:bg-rose-500"
-                data-theme={color == null ? "opposite" : "dark"}
-                data-color={color}
-                href={i0.url.hash}
-                onClick={i0.onClick}
-                onKeyDown={i0.onKeyDown}>
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-xl">
-                    Personal
-                  </div>
-                  <div className="font-medium text-xl text-default-half-contrast">
-                    #1
-                  </div>
-                </div>
-              </a>
-              <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none -translate-y-30 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
-                data-[color=red]:bg-red-400 
-                data-[color=orange]:bg-orange-400 
-                data-[color=amber]:bg-amber-400 
-                data-[color=yellow]:bg-yellow-400 
-                data-[color=lime]:bg-lime-400 
-                data-[color=green]:bg-green-400 
-                data-[color=emerald]:bg-emerald-400 
-                data-[color=teal]:bg-teal-400 
-                data-[color=cyan]:bg-cyan-400 
-                data-[color=sky]:bg-sky-400 
-                data-[color=blue]:bg-blue-400 
-                data-[color=indigo]:bg-indigo-400 
-                data-[color=violet]:bg-violet-400 
-                data-[color=purple]:bg-purple-400 
-                data-[color=fuchsia]:bg-fuchsia-400 
-                data-[color=pink]:bg-pink-400 
-                data-[color=rose]:bg-rose-400 
-                in-dark:data-[color=red]:bg-red-500
-                in-dark:data-[color=orange]:bg-orange-500
-                in-dark:data-[color=amber]:bg-amber-500
-                in-dark:data-[color=yellow]:bg-yellow-500
-                in-dark:data-[color=lime]:bg-lime-500
-                in-dark:data-[color=green]:bg-green-500
-                in-dark:data-[color=emerald]:bg-emerald-500
-                in-dark:data-[color=teal]:bg-teal-500
-                in-dark:data-[color=cyan]:bg-cyan-500
-                in-dark:data-[color=sky]:bg-sky-500
-                in-dark:data-[color=blue]:bg-blue-500
-                in-dark:data-[color=indigo]:bg-indigo-500
-                in-dark:data-[color=violet]:bg-violet-500
-                in-dark:data-[color=purple]:bg-purple-500
-                in-dark:data-[color=fuchsia]:bg-fuchsia-500
-                in-dark:data-[color=pink]:bg-pink-500
-                in-dark:data-[color=rose]:bg-rose-500"
-                data-theme={color == null ? "opposite" : "dark"}
-                data-color={color}
-                href={i1.url.hash}
-                onClick={i1.onClick}
-                onKeyDown={i1.onKeyDown}>
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-xl">
-                    Business
-                  </div>
-                  <div className="font-medium text-xl text-default-half-contrast">
-                    #2
-                  </div>
-                </div>
-              </a>
-              <a className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none -translate-y-60 hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-                href={hash.go("/add").hash}>
+            <div className="flex flex-col"
+              style={{ "height": `${180 + (subentries.length * 60)}px` }}>
+              {subentries.map((name, index) =>
+                <Fragment key={index}>
+                  <CryptoSubaccountAnchor $entry={$entry} name={name} index={index} />
+                </Fragment>)}
+              <a className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+                style={{ "transform": `translateY(-${subentries.length * 120}px)` }}
+                href={add.url.hash}
+                onClick={add.onClick}
+                onKeyDown={add.onKeyDown}>
                 <InAnchor>
                   <Outline.PlusIcon className="size-8" />
                 </InAnchor>
@@ -215,6 +125,82 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         </Fragment>
       </form>
     </div>
+  </Fragment>
+}
+
+export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
+  const { $entry, name, index } = props
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, `/subaccount/${index}`)
+
+  // const title = useMemo(() => {
+  //   return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  // }, [$subentry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === `/subaccount/${index}` &&
+        <PathBoard>
+          <CryptoSubaccountPage $entry={$entry} name={name} index={index} />
+        </PathBoard>}
+    </SubpathProvider>
+    <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
+      data-[color=red]:bg-red-400 
+      data-[color=orange]:bg-orange-400 
+      data-[color=amber]:bg-amber-400 
+      data-[color=yellow]:bg-yellow-400 
+      data-[color=lime]:bg-lime-400 
+      data-[color=green]:bg-green-400 
+      data-[color=emerald]:bg-emerald-400 
+      data-[color=teal]:bg-teal-400 
+      data-[color=cyan]:bg-cyan-400 
+      data-[color=sky]:bg-sky-400 
+      data-[color=blue]:bg-blue-400 
+      data-[color=indigo]:bg-indigo-400 
+      data-[color=violet]:bg-violet-400 
+      data-[color=purple]:bg-purple-400 
+      data-[color=fuchsia]:bg-fuchsia-400 
+      data-[color=pink]:bg-pink-400 
+      data-[color=rose]:bg-rose-400 
+      in-dark:data-[color=red]:bg-red-500
+      in-dark:data-[color=orange]:bg-orange-500
+      in-dark:data-[color=amber]:bg-amber-500
+      in-dark:data-[color=yellow]:bg-yellow-500
+      in-dark:data-[color=lime]:bg-lime-500
+      in-dark:data-[color=green]:bg-green-500
+      in-dark:data-[color=emerald]:bg-emerald-500
+      in-dark:data-[color=teal]:bg-teal-500
+      in-dark:data-[color=cyan]:bg-cyan-500
+      in-dark:data-[color=sky]:bg-sky-500
+      in-dark:data-[color=blue]:bg-blue-500
+      in-dark:data-[color=indigo]:bg-indigo-500
+      in-dark:data-[color=violet]:bg-violet-500
+      in-dark:data-[color=purple]:bg-purple-500
+      in-dark:data-[color=fuchsia]:bg-fuchsia-500
+      in-dark:data-[color=pink]:bg-pink-500
+      in-dark:data-[color=rose]:bg-rose-500"
+      style={{ transform: `translateY(-${index * 120}px)` }}
+      data-theme={color == null ? "opposite" : "dark"}
+      data-color={color}
+      href={coords.url.hash}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}>
+      <div className="flex items-center justify-between">
+        <div className="font-medium text-xl">
+          {name}
+        </div>
+        <div className="font-medium text-xl text-default-half-contrast">
+          #{index + 1}
+        </div>
+      </div>
+    </a>
   </Fragment>
 }
 
