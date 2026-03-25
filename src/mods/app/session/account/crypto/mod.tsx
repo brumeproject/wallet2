@@ -20,6 +20,7 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58, base58xmr } from "@scure/base";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { capitalize } from "../../../../../libs/string/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, CryptoAccountCard } from "../mod.tsx";
 
@@ -45,12 +46,11 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
-  const subentries = useMemo(() => {
-    // return [...$entry.element.querySelectorAll(":scope > Subentry")].map($ => new KDBX.Inner.KeePassFile.Entry($))
-    return ["Personal", "Business"]
-  }, [$entry])
+  // const subentries = useMemo(() => {
+  //   // return [...$entry.element.querySelectorAll(":scope > Subentry")].map($ => new KDBX.Inner.KeePassFile.Entry($))
+  // }, [$entry])
 
-  const add = useAnchorWithCoords(hash, "/subaccount/add")
+  const [subentries, setSubentries] = useState<string[]>([])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -58,10 +58,6 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <PathPaper>
           <CryptoAccountMenu $entry={$entry} close={close} />
         </PathPaper>}
-      {hash.url.pathname === "/subaccount/add" &&
-        <PathBoard>
-          {/*  */}
-        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <div className="flex items-center justify-between">
@@ -111,15 +107,14 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                 <Fragment key={index}>
                   <CryptoSubaccountAnchor $entry={$entry} name={name} index={index} />
                 </Fragment>)}
-              <a className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+              <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
                 style={{ "transform": `translateY(-${subentries.length * 120}px)` }}
-                href={add.url.hash}
-                onClick={add.onClick}
-                onKeyDown={add.onKeyDown}>
+                onClick={() => setSubentries(x => [...x, capitalize(MoneroSeedPhrase.generate().split(" ")[0])])}
+                type="button">
                 <InAnchor>
                   <Outline.PlusIcon className="size-8" />
                 </InAnchor>
-              </a>
+              </button>
             </div>
           </div>
         </Fragment>
