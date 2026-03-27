@@ -44,13 +44,17 @@ export function CryptoAccountAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
+  const seedword = useMemo(() => {
+    return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
+  }, [])
+
   const [$title, setTitle] = useState("")
 
   const [$seedphrase, setSeedPhrase] = useState("")
 
   const [$notes, setNotes] = useState("")
 
-  const title = useDeferredValue($title || "Untitled")
+  const title = useDeferredValue($title || seedword)
 
   const [color, setColor] = useState<Nullable<string>>(["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"][Math.floor(Math.random() * 16)])
 
@@ -182,7 +186,7 @@ export function CryptoAccountAddPage() {
           <Outline.TagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            placeholder="My Account"
+            placeholder={seedword}
             onChange={e => setTitle(e.target.value)}
             value={$title} />
           <div className="flex items-center gap-2">

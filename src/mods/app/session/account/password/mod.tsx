@@ -10,11 +10,12 @@ import { Nullable } from "@/libs/nullable/mod.ts";
 import { QrCode } from "@/libs/qrcode/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
-import { BitcoinSeedPhrase } from "@hazae41/broca";
+import { BitcoinSeedPhrase, MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
+import { capitalize } from "../../../../../libs/string/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, PasswordAccountCard } from "../mod.tsx";
 
@@ -246,6 +247,10 @@ export function PasswordAccountAddPage() {
 
   const [masked, setMasked] = useState(true)
 
+  const seedword = useMemo(() => {
+    return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
+  }, [])
+
   const [$title, setTitle] = useState("")
 
   const [$username, setUsername] = useState("")
@@ -254,7 +259,7 @@ export function PasswordAccountAddPage() {
 
   const [$notes, setNotes] = useState("")
 
-  const title = useDeferredValue($title || "Untitled")
+  const title = useDeferredValue($title || seedword)
 
   const [color, setColor] = useState<Nullable<string>>(["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"][Math.floor(Math.random() * 16)])
 
@@ -436,7 +441,7 @@ export function PasswordAccountAddPage() {
           <Outline.TagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            placeholder="My Account"
+            placeholder={seedword}
             onChange={e => setTitle(e.target.value)}
             value={$title} />
           <div className="flex items-center gap-2">

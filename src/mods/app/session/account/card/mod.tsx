@@ -7,10 +7,12 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Writable } from "@hazae41/binary";
+import { MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
+import { capitalize } from "../../../../../libs/string/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, CardAccountCard, ColorAnchor, ColorMenu } from "../mod.tsx";
 
@@ -304,6 +306,10 @@ export function CardAccountAddPage() {
 
   const [masked, setMasked] = useState(true)
 
+  const seedword = useMemo(() => {
+    return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
+  }, [])
+
   const [$title, setTitle] = useState("")
 
   const [$num, setNum] = useState("")
@@ -314,7 +320,7 @@ export function CardAccountAddPage() {
 
   const [$notes, setNotes] = useState("")
 
-  const title = useDeferredValue($title || "Untitled")
+  const title = useDeferredValue($title || seedword)
 
   const [color, setColor] = useState<Nullable<string>>(["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"][Math.floor(Math.random() * 16)])
 
@@ -444,7 +450,7 @@ export function CardAccountAddPage() {
           <Outline.TagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            placeholder="My Account"
+            placeholder={seedword}
             onChange={e => setTitle(e.target.value)}
             value={$title} />
           <div className="flex items-center gap-2">
