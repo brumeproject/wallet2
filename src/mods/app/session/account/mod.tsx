@@ -290,7 +290,7 @@ export function GenericAccountCard(props: { type: string } & { icon: ReactNode }
           </div>
         </div>
         <div className="h-2" />
-        <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
+        <div className="text-default-half-contrast whitespace-pre-wrap text-wrap wrap-anywhere truncate">
           {subtitle}
         </div>
         <div className="h-4 grow" />
