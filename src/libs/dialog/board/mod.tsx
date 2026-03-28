@@ -59,15 +59,22 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
   /**
    * Compute position and size
    */
-  useLayoutEffect(() => {
+  const onDialog = useCallback((dialog: Nullable<HTMLDialogElement>) => {
+    setDialog(dialog)
+
     if (dialog == null)
       return
 
     dialog.showModal()
 
-    setW(dialog.offsetWidth)
-    setH(dialog.offsetHeight)
-  }, [x, y, dialog])
+    setTimeout(() => flushSync(() => {
+      const w = dialog.offsetWidth
+      const h = dialog.offsetHeight
+
+      setW(w)
+      setH(h)
+    }))
+  }, [x, y])
 
   const [premount, setPremount] = useState(true)
   const [postmount, setPostmount] = useState(false)
@@ -195,7 +202,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       onScroll={onScroll}
-      ref={setDialog}>
+      ref={onDialog}>
       <div className="not-md:basis-[100dvh] md:basis-[10dvh] md:grow shrink-0" />
       <div className="flex flex-col text-default bg-default selection-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip shrink-0"
         onMouseDown={Events.stopPropagation}>

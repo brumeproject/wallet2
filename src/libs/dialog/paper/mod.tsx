@@ -3,7 +3,7 @@
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { usePathContext } from "@hazae41/chemin";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
-import React, { JSX, KeyboardEvent, MouseEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { JSX, KeyboardEvent, MouseEvent, useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Nullable } from "../../nullable/mod.ts";
 
@@ -58,21 +58,25 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
   /**
    * Compute position and size
    */
-  useLayoutEffect(() => {
+  const onDialog = useCallback((dialog: Nullable<HTMLDialogElement>) => {
+    setDialog(dialog)
+
     if (dialog == null)
       return
 
     dialog.showModal()
 
-    const w = dialog.offsetWidth
-    const h = dialog.offsetHeight
+    setTimeout(() => flushSync(() => {
+      const w = dialog.offsetWidth
+      const h = dialog.offsetHeight
 
-    setW(w)
-    setH(h)
+      setW(w)
+      setH(h)
 
-    setL(((x + w) > innerWidth) ? Math.max(x - w, 0) : x)
-    setT(((y + h) > innerHeight) ? Math.max(y - h, 0) : y)
-  }, [x, y, dialog])
+      setL(((x + w) > innerWidth) ? Math.max(x - w, 0) : x)
+      setT(((y + h) > innerHeight) ? Math.max(y - h, 0) : y)
+    }))
+  }, [x, y])
 
   const [premount, setPremount] = useState(true)
   const [postmount, setPostmount] = useState(false)
@@ -154,7 +158,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
-      ref={setDialog}>
+      ref={onDialog}>
       <button type="button" autoFocus />
       {children}
     </dialog>

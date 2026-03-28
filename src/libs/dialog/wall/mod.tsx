@@ -41,17 +41,14 @@ export function Wall(props: ChildrenProps & DarkProps) {
   /**
    * Show the dialog when mounted
    */
-  useLayoutEffect(() => {
+  const onDialog = useCallback((dialog: Nullable<HTMLDialogElement>) => {
+    setDialog(dialog)
+
     if (dialog == null)
       return
 
     dialog.showModal()
-
-    if (document.activeElement instanceof HTMLElement === false)
-      return
-
-    document.activeElement.blur()
-  }, [dialog])
+  }, [])
 
   const [premount, setPremount] = useState(true)
   const [postmount, setPostmount] = useState(false)
@@ -175,7 +172,7 @@ export function Wall(props: ChildrenProps & DarkProps) {
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       onScroll={onScroll}
-      ref={setDialog}>
+      ref={onDialog}>
       <div className="basis-[100dvh] shrink-0" />
       <div className="flex flex-col bg-default text-default selection-default rounded-t-3xl shrink-0"
         onMouseDown={Events.stopPropagation}>
