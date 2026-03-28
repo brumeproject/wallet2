@@ -10,7 +10,7 @@ import { Nullable } from "@/libs/nullable/mod.ts";
 import { QrCode } from "@/libs/qrcode/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
-import { BitcoinSeedPhrase, MoneroSeedPhrase } from "@hazae41/broca";
+import { MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
@@ -381,10 +381,10 @@ export function PasswordAccountAddPage() {
   }).catch(Errors.display), [])
 
   const onPassphraseClick = useCallback(() => Promise.try(async () => {
-    const source = await BitcoinSeedPhrase.generate(128).then(x => x.split(" ").slice(0, 4))
+    const source = MoneroSeedPhrase.generate().split(" ").slice(0, 4)
 
     const random = crypto.getRandomValues(new Uint8Array(1))[0]
-    const result = source.map((x, i) => x.charAt(0).toUpperCase() + x.slice(1) + (i === random % source.length ? (random % 10) : "")).join("")
+    const result = source.map((x, i) => capitalize(x) + (i === (random % 4) ? (random % 10) : "")).join(" ")
 
     return setPassword(result)
   }).catch(Errors.display), [])
