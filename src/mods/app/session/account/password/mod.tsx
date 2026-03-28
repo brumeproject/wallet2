@@ -364,14 +364,14 @@ export function PasswordAccountAddPage() {
     setTotpSeed(content)
   }).catch(Errors.display), [])
 
-  const onDigicodeClick = useCallback(() => Promise.try(async () => {
+  const onDigicodeClick = useCallback(() => Promise.try(() => {
     const random = Array.from(crypto.getRandomValues(new Uint8Array(8)))
     const result = random.map(x => (x % 10).toString()).join("")
 
     setPassword(result)
   }).catch(Errors.display), [])
 
-  const onPasswordClick = useCallback(() => Promise.try(async () => {
+  const onPasswordClick = useCallback(() => Promise.try(() => {
     const source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?/~`"
 
     const random = Array.from(crypto.getRandomValues(new Uint8Array(24)))
@@ -380,7 +380,7 @@ export function PasswordAccountAddPage() {
     setPassword(result)
   }).catch(Errors.display), [])
 
-  const onPassphraseClick = useCallback(() => Promise.try(async () => {
+  const onPassphraseClick = useCallback(() => Promise.try(() => {
     const source = MoneroSeedPhrase.generate().split(" ").slice(0, 4)
 
     const random = crypto.getRandomValues(new Uint8Array(1))[0]
