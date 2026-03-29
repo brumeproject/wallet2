@@ -116,7 +116,6 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-            <Outline.AtSymbolIcon className="size-5" />
             <input className="w-full focus-visible:outline-none"
               readOnly
               autoComplete="off"
@@ -143,7 +142,6 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-            <Outline.LanguageIcon className="size-5" />
             <input className="w-full focus-visible:outline-none"
               readOnly
               autoComplete="off"
@@ -438,7 +436,6 @@ export function PasswordAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.TagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder={seedword}
@@ -457,7 +454,6 @@ export function PasswordAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.AtSymbolIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder="john.doe@mail.com"
@@ -473,7 +469,6 @@ export function PasswordAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.LanguageIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             type={masked ? "password" : "text"}
@@ -499,7 +494,6 @@ export function PasswordAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             type={masked ? "password" : "text"}

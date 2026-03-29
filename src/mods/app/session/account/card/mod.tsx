@@ -120,7 +120,6 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -147,7 +146,6 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.UserIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -174,7 +172,6 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.CalendarIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -201,7 +198,6 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -236,7 +232,6 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -447,7 +442,6 @@ export function CardAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.TagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder={seedword}
@@ -466,7 +460,6 @@ export function CardAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder="1234 5678 9012 3456"
@@ -482,7 +475,6 @@ export function CardAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.UserIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder="John Doe"
@@ -498,7 +490,6 @@ export function CardAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.CalendarIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder="12/34"
@@ -514,7 +505,6 @@ export function CardAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             type={masked ? "password" : "text"}
@@ -540,7 +530,6 @@ export function CardAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             type={masked ? "password" : "text"}
