@@ -158,12 +158,6 @@ export function CryptoAccountAddPage() {
         <PathPaper>
           <ColorMenu ok={setColor} />
         </PathPaper>}
-      {hash.url.pathname === "/generate" &&
-        <PathPaper>
-          <div className="flex flex-col text-left gap-2">
-
-          </div>
-        </PathPaper>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
