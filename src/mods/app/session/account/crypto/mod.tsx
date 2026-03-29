@@ -16,6 +16,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { ed25519 } from "@noble/curves/ed25519.js";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useCopy } from "../../../../../libs/copy/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, CryptoAccountCard } from "../mod.tsx";
 import { CryptoSubaccountAnchor } from "./subaccount/mod.tsx";
@@ -458,6 +459,9 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
     getMoneroSeedphraseOrThrow().then(setMoneroSeedphrase).catch(console.error)
   }, [getMoneroSeedphraseOrThrow])
 
+  const copyTheSeedPhrase = useCopy(seedphrase)
+  const copyTheMoneroSeedPhrase = useCopy(moneroseedphrase)
+
   return <div className="flex flex-col grow p-6">
     <div className="flex items-center justify-between">
       <h1 className="text-xl font-medium">
@@ -490,8 +494,21 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
           <textarea className="w-full focus-visible:outline-none"
             rows={3}
             readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={seedphrase} />
+            onFocus={e => flipped ? e.currentTarget.select() : undefined}
+            value={flipped ? seedphrase : seedphrase?.replaceAll(/./g, "•") || ""} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={copyTheSeedPhrase.copyOrAlert}>
+            {copyTheSeedPhrase.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheSeedPhrase.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
       <Fragment>
@@ -507,8 +524,21 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
           <textarea className="w-full focus-visible:outline-none"
             rows={3}
             readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={moneroseedphrase || ""} />
+            onFocus={e => flipped ? e.currentTarget.select() : undefined}
+            value={flipped ? moneroseedphrase?.valueOf() : moneroseedphrase?.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={copyTheMoneroSeedPhrase.copyOrAlert}>
+            {copyTheMoneroSeedPhrase.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheMoneroSeedPhrase.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
     </form>
