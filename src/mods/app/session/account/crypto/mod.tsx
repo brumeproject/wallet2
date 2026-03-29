@@ -1,5 +1,5 @@
 import { InAnchor } from "@/libs/anchor/mod.tsx";
-import { WideOppositeButton } from "@/libs/button/mod.tsx";
+import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
@@ -130,6 +130,10 @@ export function CryptoAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
+  const onGenerateClick = useCallback(() => Promise.try(async () => {
+    setSeedPhrase(await BitcoinSeedPhrase.generate(256))
+  }).catch(Errors.display), [])
+
   const [valid, setValid] = useState(false)
 
   const getValidOrThrow = useCallback(async () => {
@@ -206,6 +210,14 @@ export function CryptoAccountAddPage() {
             autoComplete="off"
             onChange={e => setSeedPhrase(e.target.value)}
             value={$seedphrase} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={onGenerateClick}>
+            <Outline.SparklesIcon className="size-5" />
+            Generate
+          </WideContrastButton>
         </div>
         <div className="h-6" />
         <div className="font-medium">

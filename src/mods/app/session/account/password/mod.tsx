@@ -519,7 +519,7 @@ export function PasswordAccountAddPage() {
             </div>
           </div>
         </div>
-        <div className="h-4" />
+        <div className="h-2" />
         <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
           readOnly
           onClick={copyTheTotpcode.copyOrAlert}
