@@ -271,7 +271,7 @@ export function SessionExportPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$pass, setPass] = useState("")
 
@@ -352,15 +352,15 @@ export function SessionExportPage() {
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             value={$pass}
             onChange={e => setPass(e.target.value)} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
           </div>

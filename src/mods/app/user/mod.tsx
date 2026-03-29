@@ -159,7 +159,7 @@ function UserImportFilePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState("")
   const [$pass, setPass] = useState("")
@@ -276,15 +276,15 @@ function UserImportFilePage() {
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -306,7 +306,7 @@ function UserImportFsfhPage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState("")
   const [$pass, setPass] = useState("")
@@ -450,15 +450,15 @@ function UserImportFsfhPage() {
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -480,7 +480,7 @@ function UserCreatePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState("")
   const [$pass, setPass] = useState("")
@@ -650,15 +650,15 @@ function UserCreatePage() {
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -729,7 +729,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
   const close = useCloseContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$pass, setPass] = useState("")
 
@@ -887,7 +887,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           placeholder="Password"
           value={$pass}
           onChange={e => setPass(e.currentTarget.value)}
@@ -896,9 +896,9 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
           {user.auth != null &&
@@ -989,7 +989,7 @@ function UserReimportFilePage(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState(user.name)
   const [$pass, setPass] = useState("")
@@ -1106,15 +1106,15 @@ function UserReimportFilePage(props: { user: UserData }) {
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -1138,7 +1138,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState(user.name)
   const [$pass, setPass] = useState("")
@@ -1282,15 +1282,15 @@ function UserReimportFsfhPage(props: { user: UserData }) {
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>

@@ -187,8 +187,8 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   </Fragment>
 }
 
-export function CryptoAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> }) {
-  const { color, title, subtitle, index } = props
+export function CryptoAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
+  const { color, title, subtitle, index, flip, onFlipChange } = props
 
   return <GenericAccountCard
     type="Crypto"
@@ -196,35 +196,42 @@ export function CryptoAccountCard(props: { color: Nullable<string> } & { title: 
     subtitle={subtitle}
     color={color}
     index={index}
-    icon={<Outline.BanknotesIcon className="size-5" />} />
+    icon={<Outline.BanknotesIcon className="size-5" />}
+    flip={flip}
+    onFlipChange={onFlipChange} />
 }
 
-export function PasswordAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { username: Nullable<string> }) {
-  const { color, title, username } = props
+export function PasswordAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { username: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
+  const { color, title, username, flip, onFlipChange } = props
 
   return <GenericAccountCard
     type="Password"
     title={title}
     subtitle={username}
     color={color}
-    icon={<Outline.LanguageIcon className="size-5" />} />
+    icon={<Outline.LanguageIcon className="size-5" />}
+    flip={flip}
+    onFlipChange={onFlipChange} />
 }
 
-export function CardAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { number: Nullable<string> }) {
-  const { color, title, number } = props
+export function CardAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { number: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
+  const { color, title, number, flip, onFlipChange } = props
 
   return <GenericAccountCard
     type="Card"
     title={title}
     subtitle={number}
     color={color}
-    icon={<Outline.CreditCardIcon className="size-5" />} />
+    icon={<Outline.CreditCardIcon className="size-5" />}
+    flip={flip}
+    onFlipChange={onFlipChange} />
 }
 
-export function GenericAccountCard(props: { type: string } & { icon: ReactNode } & { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> }) {
-  const { color, title, subtitle, type, icon, index } = props
+export function GenericAccountCard(props: { type: string } & { icon: ReactNode } & { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
+  const { color, title, subtitle, type, icon, index, flip, onFlipChange } = props
 
-  const [flipping, setFlipping] = useState(false)
+  const [flipping, setFlipping] = [flip, onFlipChange]
+
   const [flipped, setFlipped] = useState(false)
 
   const onAnimationEnd = useCallback(() => {
@@ -232,8 +239,8 @@ export function GenericAccountCard(props: { type: string } & { icon: ReactNode }
   }, [flipping])
 
   const onClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
-    setFlipping(f => !f)
-  }, [])
+    setFlipping(!flipping)
+  }, [flipping, setFlipping])
 
   return <button className="w-[320px] aspect-video perspective-[640px] text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     type="button"

@@ -8,6 +8,7 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { QrCode } from "@/libs/qrcode/mod.ts";
+import { capitalize } from "@/libs/string/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { MoneroSeedPhrase } from "@hazae41/broca";
@@ -15,7 +16,6 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
-import { capitalize } from "../../../../../libs/string/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, PasswordAccountCard } from "../mod.tsx";
 
@@ -30,6 +30,8 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
   const hash = useHashSubpath(path)
 
   const session = useSessionContext().getOrThrow()
+
+  const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
@@ -50,8 +52,6 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
 
     return $trash.element.contains($entry.element)
   }, [session, $entry])
-
-  const [masked, setMasked] = useState(true)
 
   const username = useMemo(() => {
     return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
@@ -99,7 +99,12 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
       </div>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <PasswordAccountCard title={title} color={color} username={username} />
+        <PasswordAccountCard
+          title={title}
+          color={color}
+          username={username}
+          flip={flipped}
+          onFlipChange={setFlipped} />
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -146,14 +151,14 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
               readOnly
               autoComplete="off"
               onFocus={e => e.currentTarget.select()}
-              type={masked ? "password" : "text"}
+              type={flipped ? "text" : "password"}
               value={password} />
             <div className="flex items-center gap-2">
               <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
                 type="button"
-                onClick={() => setMasked(!masked)}>
+                onClick={() => setFlipped(x => !x)}>
                 <InButton>
-                  {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                  {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
                 </InButton>
               </button>
               <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
@@ -243,7 +248,7 @@ export function PasswordAccountAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const seedword = useMemo(() => {
     return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
@@ -420,7 +425,12 @@ export function PasswordAccountAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <PasswordAccountCard title={title} color={color} username={username} />
+        <PasswordAccountCard
+          title={title}
+          color={color}
+          username={username}
+          flip={flipped}
+          onFlipChange={setFlipped} />
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -471,15 +481,15 @@ export function PasswordAccountAddPage() {
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             onChange={e => setPassword(e.target.value)}
             value={$password} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
             <PasswordMenuAnchor />
@@ -496,16 +506,16 @@ export function PasswordAccountAddPage() {
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             placeholder="otpauth://..."
             onChange={e => setTotpSeed(e.target.value)}
             value={$totpseed} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
             <div className="group relative rounded-full p-1 [&:has(:hover)]:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast [&:has(:focus-visible)]:outline-none">

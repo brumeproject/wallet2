@@ -44,7 +44,7 @@ export function CryptoAccountAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const seedword = useMemo(() => {
     return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
@@ -167,7 +167,11 @@ export function CryptoAccountAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <CryptoAccountCard title={title} color={color} />
+        <CryptoAccountCard
+          title={title}
+          color={color}
+          flip={flipped}
+          onFlipChange={setFlipped} />
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -205,14 +209,14 @@ export function CryptoAccountAddPage() {
             rows={6}
             autoComplete="off"
             onChange={e => setSeedPhrase(e.target.value)}
-            value={masked ? $seedphrase.replaceAll(/./g, "•") : $seedphrase} />
+            value={flipped ? $seedphrase : $seedphrase.replaceAll(/./g, "•")} />
         </div>
         <div className="h-2" />
         <div className="flex items-center gap-2">
           <WideContrastButton
-            onClick={() => setMasked(!masked)}>
-            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
-            {masked ? "Show" : "Hide"}
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
           </WideContrastButton>
           <WideContrastButton
             onClick={onGenerateClick}>
@@ -266,6 +270,8 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
+  const [flipped, setFlipped] = useState(false)
+
   const title = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
   }, [$entry])
@@ -300,7 +306,11 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       </div>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <CryptoAccountCard title={title} color={color} />
+        <CryptoAccountCard
+          title={title}
+          color={color}
+          flip={flipped}
+          onFlipChange={setFlipped} />
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -409,6 +419,8 @@ export function CryptoAccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
+  const [flipped, setFlipped] = useState(false)
+
   const title = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
   }, [$entry])
@@ -454,7 +466,11 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">
-      <CryptoAccountCard title={title} color={color} />
+      <CryptoAccountCard
+        title={title}
+        color={color}
+        flip={flipped}
+        onFlipChange={setFlipped} />
     </div>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>

@@ -6,13 +6,13 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { capitalize } from "@/libs/string/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
-import { capitalize } from "../../../../../libs/string/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, CardAccountCard, ColorAnchor, ColorMenu } from "../mod.tsx";
 
@@ -27,6 +27,8 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
   const hash = useHashSubpath(path)
 
   const session = useSessionContext().getOrThrow()
+
+  const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
@@ -47,8 +49,6 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
 
     return $trash.element.contains($entry.element)
   }, [session, $entry])
-
-  const [masked, setMasked] = useState(true)
 
   const num = useMemo(() => {
     return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
@@ -103,7 +103,12 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">
-      <CardAccountCard title={title} color={color} number={num} />
+      <CardAccountCard
+        title={title}
+        color={color}
+        number={num}
+        flip={flipped}
+        onFlipChange={setFlipped} />
     </div>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
@@ -201,15 +206,15 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             onFocus={e => e.currentTarget.select()}
             value={cvv} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
@@ -235,15 +240,15 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             onFocus={e => e.currentTarget.select()}
             value={pin} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
@@ -299,7 +304,7 @@ export function CardAccountAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const seedword = useMemo(() => {
     return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
@@ -426,7 +431,12 @@ export function CardAccountAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <CardAccountCard title={title} color={color} number={num} />
+        <CardAccountCard
+          title={title}
+          color={color}
+          number={num}
+          flip={flipped}
+          onFlipChange={setFlipped} />
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -507,16 +517,16 @@ export function CardAccountAddPage() {
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             placeholder="123"
             onChange={e => setCvv(e.target.value)}
             value={$cvv} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
           </div>
@@ -532,16 +542,16 @@ export function CardAccountAddPage() {
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             placeholder="123456"
             onChange={e => setPin(e.target.value)}
             value={$pin} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
           </div>
