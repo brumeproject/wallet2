@@ -44,6 +44,8 @@ export function CryptoAccountAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
+  const [masked, setMasked] = useState(true)
+
   const seedword = useMemo(() => {
     return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
   }, [])
@@ -203,10 +205,15 @@ export function CryptoAccountAddPage() {
             rows={6}
             autoComplete="off"
             onChange={e => setSeedPhrase(e.target.value)}
-            value={$seedphrase} />
+            value={masked ? $seedphrase.replaceAll(/./g, "•") : $seedphrase} />
         </div>
         <div className="h-2" />
         <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setMasked(!masked)}>
+            {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+            {masked ? "Show" : "Hide"}
+          </WideContrastButton>
           <WideContrastButton
             onClick={onGenerateClick}>
             <Outline.SparklesIcon className="size-5" />
