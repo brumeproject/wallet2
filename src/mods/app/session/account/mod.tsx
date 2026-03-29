@@ -190,7 +190,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 export function CryptoAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
   const { color, title, subtitle, index, flip, onFlipChange } = props
 
-  return <GenericAccountCard
+  return <FlipCard
     type="Crypto"
     title={title}
     subtitle={subtitle}
@@ -204,7 +204,7 @@ export function CryptoAccountCard(props: { color: Nullable<string> } & { title: 
 export function PasswordAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { username: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
   const { color, title, username, flip, onFlipChange } = props
 
-  return <GenericAccountCard
+  return <FlipCard
     type="Password"
     title={title}
     subtitle={username}
@@ -217,7 +217,7 @@ export function PasswordAccountCard(props: { color: Nullable<string> } & { title
 export function CardAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { number: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
   const { color, title, number, flip, onFlipChange } = props
 
-  return <GenericAccountCard
+  return <FlipCard
     type="Card"
     title={title}
     subtitle={number}
@@ -227,7 +227,7 @@ export function CardAccountCard(props: { color: Nullable<string> } & { title: Nu
     onFlipChange={onFlipChange} />
 }
 
-export function GenericAccountCard(props: { type: string } & { icon: ReactNode } & { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
+export function FlipCard(props: { type: string } & { icon: ReactNode } & { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
   const { color, title, subtitle, type, icon, index, flip, onFlipChange } = props
 
   const [flipping, setFlipping] = [flip, onFlipChange]

@@ -100,6 +100,8 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
+  const [flipped, setFlipped] = useState(false)
+
   const title = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
   }, [$entry])
@@ -124,7 +126,13 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       </div>
       <div className="h-6" />
       <div className="flex flex-col items-center justify-center">
-        <CryptoAccountCard title={name} subtitle={title} color={color} index={index} />
+        <CryptoAccountCard
+          title={name}
+          subtitle={title}
+          color={color}
+          index={index}
+          flip={flipped}
+          onFlipChange={setFlipped} />
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -207,6 +215,8 @@ export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
 export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
   const { $entry, name, index } = props
+
+  const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
@@ -335,7 +345,13 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
     </div>
     <div className="h-6" />
     <div className="flex flex-col items-center justify-center">
-      <CryptoAccountCard title={name} subtitle={title} color={color} index={index} />
+      <CryptoAccountCard
+        title={name}
+        subtitle={title}
+        color={color}
+        index={index}
+        flip={flipped}
+        onFlipChange={setFlipped} />
     </div>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
@@ -416,6 +432,8 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
 
 export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
   const { $entry, name, index } = props
+
+  const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
@@ -538,7 +556,13 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
     </div>
     <div className="h-6" />
     <div className="flex flex-col items-center justify-center">
-      <CryptoAccountCard title={name} subtitle={title} color={color} index={index} />
+      <CryptoAccountCard
+        title={name}
+        subtitle={title}
+        color={color}
+        index={index}
+        flip={flipped}
+        onFlipChange={setFlipped} />
     </div>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
