@@ -1,3 +1,5 @@
+import { WideContrastButton } from "@/libs/button/mod.tsx";
+import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
@@ -14,8 +16,6 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58, base58xmr } from "@scure/base";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { WideContrastButton } from "../../../../../../libs/button/mod.tsx";
-import { useCopy } from "../../../../../../libs/copy/mod.ts";
 import { AccountMenuAnchor, CryptoAccountCard } from "../../mod.tsx";
 
 React;

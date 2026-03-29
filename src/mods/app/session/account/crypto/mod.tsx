@@ -1,5 +1,6 @@
 import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
@@ -16,7 +17,6 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { ed25519 } from "@noble/curves/ed25519.js";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { useCopy } from "../../../../../libs/copy/mod.ts";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, CryptoAccountCard } from "../mod.tsx";
 import { CryptoSubaccountAnchor } from "./subaccount/mod.tsx";
