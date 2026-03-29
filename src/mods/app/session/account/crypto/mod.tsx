@@ -495,7 +495,7 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
             rows={3}
             readOnly
             onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? seedphrase : seedphrase?.replaceAll(/./g, "•") || ""} />
+            value={flipped ? seedphrase : seedphrase?.replaceAll(/./g, "•")} />
         </div>
         <div className="h-2" />
         <div className="flex items-center gap-2">

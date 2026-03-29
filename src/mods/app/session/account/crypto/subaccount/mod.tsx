@@ -14,6 +14,8 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58, base58xmr } from "@scure/base";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { WideContrastButton } from "../../../../../../libs/button/mod.tsx";
+import { useCopy } from "../../../../../../libs/copy/mod.ts";
 import { AccountMenuAnchor, CryptoAccountCard } from "../../mod.tsx";
 
 React;
@@ -337,6 +339,11 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
     getMoneroOrThrow().then(setMonero).catch(console.error)
   }, [getMoneroOrThrow])
 
+  const copyTheEthereum = useCopy(ethereum)
+  const copyTheSolana = useCopy(solana)
+  const copyTheBobine = useCopy(bobine)
+  const copyTheMonero = useCopy(monero)
+
   return <div className="flex flex-col grow p-6">
     <div className="flex items-center justify-between">
       <h1 className="text-xl font-medium">
@@ -374,6 +381,14 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
             onFocus={e => e.currentTarget.select()}
             value={ethereum || ""} />
         </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={copyTheEthereum.copyOrAlert}>
+            {copyTheEthereum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheEthereum.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
+        </div>
       </Fragment>
       <Fragment>
         <div className="h-6" />
@@ -390,6 +405,14 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
             readOnly
             onFocus={e => e.currentTarget.select()}
             value={solana || ""} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={copyTheSolana.copyOrAlert}>
+            {copyTheSolana.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheSolana.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
       <Fragment>
@@ -408,6 +431,14 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
             onFocus={e => e.currentTarget.select()}
             value={bobine || ""} />
         </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={copyTheBobine.copyOrAlert}>
+            {copyTheBobine.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheBobine.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
+        </div>
       </Fragment>
       <Fragment>
         <div className="h-6" />
@@ -424,6 +455,14 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
             readOnly
             onFocus={e => e.currentTarget.select()}
             value={monero || ""} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={copyTheMonero.copyOrAlert}>
+            {copyTheMonero.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheMonero.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
     </form>
@@ -548,6 +587,14 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
     getMoneroOrThrow().then(setMonero).catch(console.error)
   }, [getMoneroOrThrow])
 
+  const copyTheEthereum = useCopy(ethereum)
+  const copyTheSolana = useCopy(solana)
+  const copyTheBobine = useCopy(bobine)
+  const copyTheMonero0 = useCopy(monero?.[0])
+  const copyTheMonero1 = useCopy(monero?.[1])
+  const copyTheMonero2 = useCopy(monero?.[2])
+  const copyTheMonero3 = useCopy(monero?.[3])
+
   return <div className="flex flex-col grow p-6">
     <div className="flex items-center justify-between">
       <h1 className="text-xl font-medium">
@@ -582,8 +629,21 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
           <textarea className="w-full focus-visible:outline-none"
             rows={2}
             readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={ethereum || ""} />
+            onFocus={e => flipped ? e.currentTarget.select() : undefined}
+            value={flipped ? ethereum?.valueOf() : ethereum?.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={copyTheEthereum.copyOrAlert}>
+            {copyTheEthereum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheEthereum.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
       <Fragment>
@@ -599,8 +659,21 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
           <textarea className="w-full focus-visible:outline-none"
             rows={2}
             readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={solana || ""} />
+            onFocus={e => flipped ? e.currentTarget.select() : undefined}
+            value={flipped ? solana?.valueOf() : solana?.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={copyTheSolana.copyOrAlert}>
+            {copyTheSolana.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheSolana.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
       <Fragment>
@@ -616,8 +689,21 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
           <textarea className="w-full focus-visible:outline-none"
             rows={2}
             readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={bobine || ""} />
+            onFocus={e => flipped ? e.currentTarget.select() : undefined}
+            value={flipped ? bobine?.valueOf() : bobine?.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={copyTheBobine.copyOrAlert}>
+            {copyTheBobine.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheBobine.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
       <Fragment>
@@ -633,8 +719,21 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
           <textarea className="w-full focus-visible:outline-none"
             rows={2}
             readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={monero?.[0] || ""} />
+            onFocus={e => flipped ? e.currentTarget.select() : undefined}
+            value={flipped ? monero?.[0] : monero?.[0]?.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={copyTheMonero0.copyOrAlert}>
+            {copyTheMonero0.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheMonero0.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
       <Fragment>
@@ -650,8 +749,21 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
           <textarea className="w-full focus-visible:outline-none"
             rows={2}
             readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={monero?.[1] || ""} />
+            onFocus={e => flipped ? e.currentTarget.select() : undefined}
+            value={flipped ? monero?.[1] : monero?.[1]?.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={copyTheMonero1.copyOrAlert}>
+            {copyTheMonero1.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheMonero1.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
       <Fragment>
@@ -667,8 +779,21 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
           <textarea className="w-full focus-visible:outline-none"
             rows={2}
             readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={monero?.[2] || ""} />
+            onFocus={e => flipped ? e.currentTarget.select() : undefined}
+            value={flipped ? monero?.[2] : monero?.[2]?.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={copyTheMonero2.copyOrAlert}>
+            {copyTheMonero2.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheMonero2.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
       <Fragment>
@@ -684,8 +809,21 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
           <textarea className="w-full focus-visible:outline-none"
             rows={2}
             readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={monero?.[3] || ""} />
+            onFocus={e => flipped ? e.currentTarget.select() : undefined}
+            value={flipped ? monero?.[3] : monero?.[3]?.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={copyTheMonero3.copyOrAlert}>
+            {copyTheMonero3.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+            {copyTheMonero3.copied ? "Copied" : "Copy"}
+          </WideContrastButton>
         </div>
       </Fragment>
     </form>
