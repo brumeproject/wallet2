@@ -79,7 +79,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
       dialog.style.setProperty("--t", `${t}px`)
 
       dialog.setAttribute("data-open", "true")
-    }, 15)
+    }, 20)
   }, [x, y])
 
   const [mounting, setMounting] = useState(true)
