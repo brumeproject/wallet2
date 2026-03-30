@@ -67,6 +67,8 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
       const l = ((x + w) > innerWidth) ? Math.max(x - w, 0) : x
       const t = ((y + h) > innerHeight) ? Math.max(y - h, 0) : y
 
+      console.log({ w, h })
+
       dialog.style.setProperty("--x", `${x}px`)
       dialog.style.setProperty("--y", `${y}px`)
 
@@ -77,7 +79,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
       dialog.style.setProperty("--t", `${t}px`)
 
       dialog.setAttribute("data-open", "true")
-    }, 100)
+    }, 15)
   }, [x, y])
 
   const [mounting, setMounting] = useState(true)

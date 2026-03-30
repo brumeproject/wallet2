@@ -75,7 +75,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
       dialog.style.setProperty("--h", `${h}px`)
 
       dialog.setAttribute("data-open", "true")
-    }, 100)
+    }, 15)
   }, [x, y])
 
   const [mounting, setMounting] = useState(true)
