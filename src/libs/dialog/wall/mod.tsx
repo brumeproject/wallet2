@@ -50,14 +50,13 @@ export function Wall(props: ChildrenProps & DarkProps) {
     dialog.showModal()
   }, [])
 
-  const [premount, setPremount] = useState(true)
-  const [postmount, setPostmount] = useState(false)
+  const [mounting, setMounting] = useState(true)
 
   /**
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setPremount(false)
+    setMounting(false)
 
     if (!force)
       return
@@ -94,29 +93,31 @@ export function Wall(props: ChildrenProps & DarkProps) {
     hide()
   }, [hide])
 
+  const [mounted, setMounted] = useState(false)
+
   /**
    * Sync visible state with mounted state on animation end
    */
   const onAnimationEnd = useCallback((e: AnimationEvent) => {
-    flushSync(() => setPostmount(premount))
-  }, [premount])
+    flushSync(() => setMounted(mounting))
+  }, [mounting])
 
   /**
    * Close when both visible and mounted are false
    */
   useEffect(() => {
-    if (premount)
+    if (mounting)
       return
-    if (postmount)
+    if (mounted)
       return
     close()
-  }, [premount, postmount])
+  }, [mounting, mounted])
 
   /**
    * Sync theme-color with dark mode
    */
   useLayoutEffect(() => {
-    if (!premount)
+    if (!mounting)
       return
     if (!dark)
       return
@@ -134,7 +135,7 @@ export function Wall(props: ChildrenProps & DarkProps) {
     color.setAttribute("content", "#000000")
 
     return () => color.setAttribute("content", original)
-  }, [premount, dark])
+  }, [mounting, dark])
 
   /**
    * Swipe down to close
@@ -162,11 +163,11 @@ export function Wall(props: ChildrenProps & DarkProps) {
   /**
    * Only unmount when transition is finished
    */
-  if (!premount && !postmount)
+  if (!mounting && !mounted)
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] ${premount ? "animate-slideup-in" : "animate-opacity-out"} ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] ${mounting ? "animate-slideup-in" : "animate-opacity-out"} ${mounting ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}

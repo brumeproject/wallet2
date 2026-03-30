@@ -47,12 +47,6 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
     setTimeout(() => element.focus(), 2)
   }, [])
 
-  const [w, setW] = useState(0)
-  const [h, setH] = useState(0)
-
-  const [l, setL] = useState(0)
-  const [t, setT] = useState(0)
-
   const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
 
   /**
@@ -66,26 +60,33 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
 
     dialog.showModal()
 
-    setTimeout(() => flushSync(() => {
+    setTimeout(() => {
       const w = dialog.offsetWidth
       const h = dialog.offsetHeight
 
-      setW(w)
-      setH(h)
+      const l = ((x + w) > innerWidth) ? Math.max(x - w, 0) : x
+      const t = ((y + h) > innerHeight) ? Math.max(y - h, 0) : y
 
-      setL(((x + w) > innerWidth) ? Math.max(x - w, 0) : x)
-      setT(((y + h) > innerHeight) ? Math.max(y - h, 0) : y)
-    }))
+      dialog.style.setProperty("--x", `${x}px`)
+      dialog.style.setProperty("--y", `${y}px`)
+
+      dialog.style.setProperty("--w", `${w}px`)
+      dialog.style.setProperty("--h", `${h}px`)
+
+      dialog.style.setProperty("--l", `${l}px`)
+      dialog.style.setProperty("--t", `${t}px`)
+
+      dialog.setAttribute("data-open", "true")
+    }, 100)
   }, [x, y])
 
-  const [premount, setPremount] = useState(true)
-  const [postmount, setPostmount] = useState(false)
+  const [mounting, setMounting] = useState(true)
 
   /**
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setPremount(false)
+    setMounting(false)
 
     if (!force)
       return
@@ -129,32 +130,34 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
     hide()
   }, [dialog, hide])
 
+  const [mounted, setMounted] = useState(false)
+
   /**
    * Sync visible state with mounted state on animation end
    */
   const onAnimationEnd = useCallback(() => {
-    flushSync(() => setPostmount(premount))
-  }, [premount])
+    flushSync(() => setMounted(mounting))
+  }, [mounting])
 
   /**
    * Close when both visible and mounted are false
    */
   useEffect(() => {
-    if (premount)
+    if (mounting)
       return
-    if (postmount)
+    if (mounted)
       return
     close()
-  }, [premount, postmount])
+  }, [mounting, mounted])
 
   /**
    * Only unmount when transition is finished
    */
-  if (!premount && !postmount)
+  if (!mounting && !mounted)
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] [--l:${l}px] [--t:${t}px] [translate:var(--l)_var(--t)] ${premount ? "animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
+    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 [--x:${x}px] [--y:${y}px] opacity-0 data-open:opacity-100 data-open:[translate:var(--l)_var(--t)] ${mounting ? "data-open:animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
