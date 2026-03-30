@@ -64,7 +64,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
 
     dialog.showModal()
 
-    setTimeout(() => {
+    requestIdleCallback(() => {
       const w = dialog.offsetWidth
       const h = dialog.offsetHeight
 
@@ -75,7 +75,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
       dialog.style.setProperty("--h", `${h}px`)
 
       dialog.setAttribute("data-open", "true")
-    }, 20)
+    }, { timeout: 100 })
   }, [x, y])
 
   const [mounting, setMounting] = useState(true)

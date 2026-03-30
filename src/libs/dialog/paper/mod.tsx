@@ -60,14 +60,12 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
 
     dialog.showModal()
 
-    setTimeout(() => {
+    requestIdleCallback(() => {
       const w = dialog.offsetWidth
       const h = dialog.offsetHeight
 
       const l = ((x + w) > innerWidth) ? Math.max(x - w, 0) : x
       const t = ((y + h) > innerHeight) ? Math.max(y - h, 0) : y
-
-      console.log({ w, h })
 
       dialog.style.setProperty("--x", `${x}px`)
       dialog.style.setProperty("--y", `${y}px`)
@@ -79,7 +77,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
       dialog.style.setProperty("--t", `${t}px`)
 
       dialog.setAttribute("data-open", "true")
-    }, 20)
+    }, { timeout: 100 })
   }, [x, y])
 
   const [mounting, setMounting] = useState(true)
@@ -159,7 +157,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 [--x:${x}px] [--y:${y}px] opacity-0 data-open:opacity-100 data-open:[translate:var(--l)_var(--t)] ${mounting ? "data-open:animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
+    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 opacity-0 data-open:opacity-100 data-open:[translate:var(--l)_var(--t)] ${mounting ? "data-open:animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
