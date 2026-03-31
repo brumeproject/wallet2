@@ -5,7 +5,11 @@ export function useAutoFocus() {
   const [current, setCurrent] = useState<Nullable<HTMLElement>>(null)
 
   useEffect(() => {
-    current?.focus()
+    if (current == null)
+      return
+    if (navigator.maxTouchPoints > 0)
+      return
+    current.focus()
   }, [current])
 
   return setCurrent
