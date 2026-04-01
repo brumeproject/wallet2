@@ -1,4 +1,4 @@
-import { ContrastAnchor, InAnchor } from "@/libs/anchor/mod.tsx";
+import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
@@ -16,7 +16,7 @@ import { useCloseContext } from "@hazae41/react-close-context";
 import { Option } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, useCallback, useContext, useDeferredValue, useMemo, useState } from "react";
 import { UserData } from "../user/mod.tsx";
-import { AccountAddButton, AccountAddButtonInGrid, AccountAddMenu, AccountCardInGrid } from "./account/mod.tsx";
+import { AccountAddButtonInGrid, AccountAddMenu, AccountCardInGrid } from "./account/mod.tsx";
 
 React;
 
@@ -66,22 +66,8 @@ export function SessionPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [display, setDisplay] = useState(false)
-
   const [search, setSearch] = useSearchState(path, "search")
   const [filter, setFilter] = useSearchState(path, "filter")
-
-  useMemo(() => {
-    if (!filter)
-      return
-    setDisplay(true)
-  }, [filter])
-
-  useMemo(() => {
-    if (!search)
-      return
-    setDisplay(true)
-  }, [search])
 
   const trash = useMemo(() => {
     return getRecycleBinOrNull(session.value.kdbx.inner.content.value)
@@ -123,38 +109,23 @@ export function SessionPage() {
         </PathPaper>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
-      {!display &&
-        <div className="grow flex flex-col text-center items-center justify-center">
-          <h1 className="text-5xl md:text-6xl font-medium">
-            Welcome back, {session.value.user.name}
-          </h1>
-          <div className="h-4" />
-          <div className="text-center text-default-contrast text-xl md:text-2xl">
-            You have {entries.length} accounts in your wallet
+      <h1 className="text-2xl font-medium">
+        Your accounts
+      </h1>
+      <div className="h-6 shrink-0" />
+      <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
+        <div className="grow flex flex-col overflow-y-auto overscroll-y-none py-1 px-3">
+          <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-center gap-4">
+            {visibles.map($entry =>
+              <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
+                <AccountCardInGrid $entry={$entry} />
+              </Fragment>)}
+            {filter !== "trash" && <Fragment>
+              <AccountAddButtonInGrid />
+            </Fragment>}
           </div>
-          <div className="h-16" />
-          <div className="flex flex-col items-center gap-4">
-            <AccountAddButton />
-            <ContrastAnchor onClick={() => setDisplay(true)}>
-              <Outline.EyeIcon className="size-5" />
-              See accounts
-            </ContrastAnchor>
-          </div>
-        </div>}
-      {display &&
-        <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
-          <div className="grow flex flex-col overflow-y-auto overscroll-y-none py-1 px-3">
-            <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-center gap-4">
-              {visibles.map($entry =>
-                <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                  <AccountCardInGrid $entry={$entry} />
-                </Fragment>)}
-              {filter !== "trash" && <Fragment>
-                <AccountAddButtonInGrid />
-              </Fragment>}
-            </div>
-          </div>
-        </div>}
+        </div>
+      </div>
       <div className="h-4 shrink-0" />
       <div className="flex flex-wrap items-center gap-2">
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
