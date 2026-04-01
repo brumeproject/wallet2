@@ -39,7 +39,7 @@ export function Wall(props: ChildrenProps & DarkProps) {
   const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
 
   /**
-   * Show the dialog when mounted
+   * Show the dialog when mounting
    */
   const onDialog = useCallback((dialog: Nullable<HTMLDialogElement>) => {
     setDialog(dialog)
@@ -96,14 +96,14 @@ export function Wall(props: ChildrenProps & DarkProps) {
   const [mounted, setMounted] = useState(false)
 
   /**
-   * Sync visible state with mounted state on animation end
+   * Sync mounted state with mounting state on animation end
    */
   const onAnimationEnd = useCallback((e: AnimationEvent) => {
     flushSync(() => setMounted(mounting))
   }, [mounting])
 
   /**
-   * Close when both visible and mounted are false
+   * Close when both mounting and mounted are false
    */
   useEffect(() => {
     if (mounting)
@@ -161,13 +161,14 @@ export function Wall(props: ChildrenProps & DarkProps) {
   }, [content])
 
   /**
-   * Only unmount when transition is finished
+   * Unmount when animation is finished
    */
   if (!mounting && !mounted)
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] ${mounting ? "animate-slideup-in" : "animate-opacity-out"} ${mounting ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className="h-full w-full max-h-none max-w-none bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[mounting=true]:animate-slideup-in data-[mounting=false]:animate-opacity-out data-[mounting=true]:backdrop:animate-opacity-in data-[mounting=false]:backdrop:animate-opacity-out"
+      data-mounting={mounting}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}

@@ -133,14 +133,14 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
   const [mounted, setMounted] = useState(false)
 
   /**
-   * Sync visible state with mounted state on animation end
+   * Sync mounted state with mounting state on animation end
    */
   const onAnimationEnd = useCallback(() => {
     flushSync(() => setMounted(mounting))
   }, [mounting])
 
   /**
-   * Close when both visible and mounted are false
+   * Close when both mounting and mounted are false
    */
   useEffect(() => {
     if (mounting)
@@ -151,13 +151,14 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
   }, [mounting, mounted])
 
   /**
-   * Only unmount when transition is finished
+   * Unmount when animation is finished
    */
   if (!mounting && !mounted)
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 opacity-0 data-open:opacity-100 data-open:[translate:var(--l)_var(--t)] ${mounting ? "data-open:animate-scale-xywh-in" : "animate-scale-xywh-out"}`}
+    <dialog className="flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 opacity-0 data-open:opacity-100 data-open:[translate:var(--l)_var(--t)] data-open:data-[mounting=true]:animate-scale-xywh-in data-[mounting=false]:animate-scale-xywh-out"
+      data-mounting={mounting}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}

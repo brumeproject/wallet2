@@ -31,7 +31,7 @@ export function PathBoard(props: ChildrenProps & DarkProps) {
  * @param props 
  * @returns 
  */
-export function Board(props: ChildrenProps & DarkProps & { x: number; y: number }) {
+export function Board(props: ChildrenProps & DarkProps & { x: number, y: number }) {
   const close = useCloseContext().getOrThrow()
   const { dark, children, x, y } = props
 
@@ -124,14 +124,14 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
   const [mounted, setMounted] = useState(false)
 
   /**
-   * Sync visible state with mounted state on animation end
+   * Sync mounted state with mounting state on animation end
    */
   const onAnimationEnd = useCallback((e: AnimationEvent) => {
     flushSync(() => setMounted(mounting))
   }, [mounting])
 
   /**
-   * Close when both visible and mounted are false
+   * Close when both mounting and mounted are false
    */
   useEffect(() => {
     if (mounting)
@@ -193,13 +193,15 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
   }, [content])
 
   /**
-   * Only unmount when transition is finished
+   * Unmount when animation is finished
    */
   if (!mounting && !mounted)
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent backdrop:bg-transparent data-open:backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll ${mounted && mounting ? "" : "md:overflow-y-hidden"} overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] opacity-0 data-open:opacity-100 ${mounting ? "data-open:not-md:animate-slideup-in data-open:md:animate-scale-xywh-in" : "not-md:animate-opacity-out md:animate-scale-xywh-out"} ${mounting ? "data-open:backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className="h-full w-full max-h-none max-w-none md:p-safe bg-transparent backdrop:bg-transparent data-open:backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll md:overflow-y-hidden data-[mounted=true]:data-[mounting=true]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] opacity-0 data-open:opacity-100 data-open:data-[mounting=true]:not-md:animate-slideup-in data-open:data-[mounting=true]:md:animate-scale-xywh-in data-[mounting=false]:not-md:animate-opacity-out data-[mounting=false]:md:animate-scale-xywh-out data-open:data-[mounting=true]:backdrop:animate-opacity-in data-[mounting=false]:backdrop:animate-opacity-out"
+      data-mounting={mounting}
+      data-mounted={mounted}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
