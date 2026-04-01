@@ -1,6 +1,5 @@
 // deno-lint-ignore-file no-unused-vars
 
-import { requestIdleCallback } from "@/libs/idle/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { usePathContext } from "@hazae41/chemin";

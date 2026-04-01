@@ -1,5 +1,6 @@
 /// <reference lib="dom" />
 
+import "@hazae41/request-idle-callback-polyfill";
 import "@hazae41/symbol-dispose-polyfill";
 
 import { ClientContext } from "@/libs/client/mod.tsx";
