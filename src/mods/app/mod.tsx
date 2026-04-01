@@ -163,6 +163,29 @@ export function App() {
           </div>
           <div className="h-[max(24rem,50dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
+            Bring your own storage
+          </h1>
+          <div className="h-4" />
+          <div className="text-center text-default-contrast text-xl md:text-2xl">
+            Store your data wherever you want, securely and privately
+          </div>
+          <div className="h-16" />
+          <div className="flex flex-wrap flex-col md:flex-row items-center text-center gap-4">
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Your device
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Your iCloud
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Your Google Drive
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Your USB stick
+            </div>
+          </div>
+          <div className="h-[max(24rem,50dvh)]" />
+          <h1 className="text-center text-5xl md:text-6xl font-medium">
             Military-grade encryption
           </h1>
           <div className="h-4" />
@@ -170,7 +193,7 @@ export function App() {
             Your data uses the KeePass file format with military-grade encryption
           </div>
           <div className="h-16" />
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap flex-col md:flex-row items-center text-center gap-4">
             <div className="p-4 bg-default-contrast rounded-xl">
               AES-256
             </div>
@@ -181,13 +204,13 @@ export function App() {
               Argon2
             </div>
           </div>
-          {/* <div className="h-[max(24rem,50dvh)]" />
+          <div className="h-[max(24rem,50dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
-            Your IP address is hidden
+            Hide your fingerprint
           </h1>
           <div className="h-4" />
           <div className="text-center text-default-contrast text-xl md:text-2xl">
-            Traffic is sent through Tor with a different circuit for each identity
+            All traffic can be sent through compatible proxies or mixnets
           </div>
           <div className="h-16" />
           <div className="flex flex-wrap flex-col md:flex-row items-center text-center gap-4">
@@ -198,7 +221,7 @@ export function App() {
               {`<--->`}
             </div>
             <div className="p-4 bg-opposite text-opposite selection-opposite rounded-xl">
-              Tor darknet
+              Proxies
             </div>
             <div className="text-default-contrast whitespace-pre rotate-90 md:rotate-0">
               {`<--->`}
@@ -206,7 +229,27 @@ export function App() {
             <div className="p-4 bg-default-contrast rounded-xl">
               Services
             </div>
-          </div> */}
+          </div>
+          <div className="h-[max(24rem,50dvh)]" />
+          <h1 className="text-center text-5xl md:text-6xl font-medium">
+            Built for resilience
+          </h1>
+          <div className="h-4" />
+          <div className="text-center text-default-contrast text-xl md:text-2xl">
+            Use it on any device with a modern web browser
+          </div>
+          <div className="h-16" />
+          <div className="flex flex-wrap flex-col items-center text-center gap-4">
+            <div className="p-4 bg-default-contrast rounded-xl">
+              No installation needed
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Can be self-hosted anywhere
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
+              Works on airplane mode
+            </div>
+          </div>
           <div className="h-[max(24rem,50dvh)]" />
           <h1 className="text-center text-5xl md:text-6xl font-medium">
             Supply-chain hardened
