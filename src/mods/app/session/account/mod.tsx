@@ -239,6 +239,19 @@ export function CardAccountCard(props: { color: Nullable<string> } & { title: Nu
     onFlipChange={onFlipChange} />
 }
 
+export function SshAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
+  const { color, title, flip, onFlipChange } = props
+
+  return <FlipCard
+    type="SSH"
+    title={title}
+    color={color}
+    icon={<Outline.CommandLineIcon className="size-5" />}
+    flip={flip}
+    onFlipChange={onFlipChange} />
+}
+
+
 export function AccountAddButton() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
