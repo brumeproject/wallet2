@@ -2,46 +2,76 @@ import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
+import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { getEntryTitle } from "@/libs/kdbx/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.tsx";
+import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
+import { Nullable } from "@/libs/nullable/mod.ts";
+import { capitalize } from "@/libs/string/mod.ts";
 import { Writable } from "@hazae41/binary";
+import { MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
-import { AccountCard, ColorAnchor, ColorMenu } from "../mod.tsx";
+import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, CardAccountCard, ColorAnchor, ColorMenu } from "../mod.tsx";
 
 React;
 
 export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
-  const [masked, setMasked] = useState(true)
+  const close = useCloseContext().getOrThrow()
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const session = useSessionContext().getOrThrow()
+
+  const [flipped, setFlipped] = useState(false)
+
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const trashed = useMemo(() => {
+    const { kdbx } = session.value
+
+    const $file = kdbx.inner.content.value
+    const $trash = getRecycleBinOrNull($file)
+
+    if ($trash == null)
+      return false
+
+    return $trash.element.contains($entry.element)
+  }, [session, $entry])
 
   const num = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
   }, [$entry])
 
   const hol = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("CardHolder")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("CardHolder")?.getValueOrThrow().get()
   }, [$entry])
 
   const exp = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get()
   }, [$entry])
 
   const cvv = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("CVV")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("CVV")?.getValueOrThrow().get()
   }, [$entry])
 
   const pin = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("PIN")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("PIN")?.getValueOrThrow().get()
   }, [$entry])
 
   const notes = useMemo(() => {
-    return $entry.getDirectStringByKeyOrNull("Notes")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
   const copyTheNum = useCopy(num)
@@ -51,17 +81,37 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
   const copyThePin = useCopy(pin)
 
   return <div className="flex flex-col grow p-6">
-    <h1 className="text-xl font-medium">
-      {getEntryTitle($entry) || "Untitled"}
-    </h1>
-    <div className="text-default-contrast">
-      {$entry.getUuidOrThrow().getOrThrow().slice(0, 8).toUpperCase()}
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/+" &&
+        <PathPaper>
+          <div className="flex flex-col text-left gap-2">
+            {/* <WideNakedMenuButton>
+              <Outline.PencilIcon className="size-5" />
+              Edit
+            </WideNakedMenuButton> */}
+            {trashed === false && <AccountMenuTrashButton $entry={$entry} close={close} />}
+            {trashed === true && <AccountMenuUntrashButton $entry={$entry} close={close} />}
+            {trashed === true && <AccountMenuDeleteButton $entry={$entry} close={close} />}
+          </div>
+        </PathPaper>}
+    </SubpathProvider>
+    <div className="flex items-center justify-between">
+      <h1 className="text-xl font-medium">
+        Card account
+      </h1>
+      <AccountMenuAnchor />
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">
-      <AccountCard $entry={$entry} />
+      <CardAccountCard
+        title={title}
+        color={color}
+        number={num}
+        flip={flipped}
+        onFlipChange={setFlipped} />
     </div>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -71,11 +121,10 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           Number
         </div>
         <div className="text-default-contrast">
-          Your card number
+          Your card number.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -98,11 +147,10 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           Holder
         </div>
         <div className="text-default-contrast">
-          Your card holder name
+          Your card holder name.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.UserIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -125,11 +173,10 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           Expiry
         </div>
         <div className="text-default-contrast">
-          Your card expiry date
+          Your card expiry date.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.CalendarIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
@@ -152,23 +199,22 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           CVV
         </div>
         <div className="text-default-contrast">
-          Your card verification value
+          Your card verification value.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             onFocus={e => e.currentTarget.select()}
             value={cvv} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
@@ -187,23 +233,22 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           PIN
         </div>
         <div className="text-default-contrast">
-          Your card personal identification number
+          Your card personal identification number.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             readOnly
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             onFocus={e => e.currentTarget.select()}
             value={pin} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
@@ -222,7 +267,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           Notes
         </div>
         <div className="text-default-contrast">
-          Any additional information
+          Any additional information.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -259,7 +304,11 @@ export function CardAccountAddPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
+
+  const seedword = useMemo(() => {
+    return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
+  }, [])
 
   const [$title, setTitle] = useState("")
 
@@ -271,9 +320,9 @@ export function CardAccountAddPage() {
 
   const [$notes, setNotes] = useState("")
 
-  const title = useDeferredValue($title || "Untitled")
+  const title = useDeferredValue($title || seedword)
 
-  const [color, setColor] = useState<Nullable<string>>()
+  const [color, setColor] = useState<Nullable<string>>(["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"][Math.floor(Math.random() * 16)])
 
   const num = useDeferredValue($num)
   const hol = useDeferredValue($hol)
@@ -284,43 +333,41 @@ export function CardAccountAddPage() {
   const notes = useDeferredValue($notes)
 
   const encryptOrThrow = useCallback(async () => {
-    const { kdbx } = session.value
+    const { kdbx, comp } = session.value
 
     const $file = kdbx.inner.content.value
     const $root = $file.getRootOrThrow()
 
     const $group = $root.getDirectGroupByIndexOrThrow(0)
-    const $entry = $file.createEntryOrThrow()
+    const $entry = $group.addEntryOrThrow()
 
-    $entry.createStringOrThrow("Title", title)
+    $entry.addStringOrThrow("Title", title)
 
     if (color)
-      $entry.createStringOrThrow("Color", color)
+      $entry.addStringOrThrow("Color", color)
 
     if (num)
-      $entry.createStringOrThrow("CardNumber", num)
+      $entry.addStringOrThrow("CardNumber", num)
 
     if (hol)
-      $entry.createStringOrThrow("CardHolder", hol)
+      $entry.addStringOrThrow("CardHolder", hol)
 
     if (exp)
-      $entry.createStringOrThrow("ExpiryDate", exp)
+      $entry.addStringOrThrow("ExpiryDate", exp)
 
     if (cvv)
-      $entry.createStringOrThrow("CVV", cvv, true)
+      $entry.addStringOrThrow("CVV", cvv, true)
 
     if (pin)
-      $entry.createStringOrThrow("PIN", pin, true)
+      $entry.addStringOrThrow("PIN", pin, true)
 
     if (notes)
-      $entry.createStringOrThrow("Notes", notes)
+      $entry.addStringOrThrow("Notes", notes)
 
-    $group.element.appendChild($entry.element)
-
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow())
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, num, hol, exp, cvv, pin, notes])
 
-  const writeOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -337,7 +384,7 @@ export function CardAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -380,47 +427,19 @@ export function CardAccountAddPage() {
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        Add card
+        Add card account
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <div className="w-[320px] aspect-video overflow-hidden flex flex-col bg-default text-default select-none p-4 rounded-xl
-        data-[color=red]:bg-red-500/90
-        data-[color=orange]:bg-orange-500/90
-        data-[color=amber]:bg-amber-500/90
-        data-[color=yellow]:bg-yellow-500/90
-        data-[color=lime]:bg-lime-500/90
-        data-[color=green]:bg-green-500/90
-        data-[color=emerald]:bg-emerald-500/90
-        data-[color=teal]:bg-teal-500/90
-        data-[color=cyan]:bg-cyan-500/90
-        data-[color=sky]:bg-sky-500/90
-        data-[color=blue]:bg-blue-500/90
-        data-[color=indigo]:bg-indigo-500/90
-        data-[color=violet]:bg-violet-500/90
-        data-[color=purple]:bg-purple-500/90
-        data-[color=fuchsia]:bg-fuchsia-500/90
-        data-[color=pink]:bg-pink-500/90
-        data-[color=rose]:bg-rose-500/90"
-          data-theme={color == null ? "opposite" : "dark"}
-          data-color={color}>
-          <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
-            {title}
-          </div>
-          <div className="h-4" />
-          <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
-            {num}
-          </div>
-          <div className="h-4 grow" />
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.CreditCardIcon className="size-5" />
-              Card
-            </div>
-          </div>
-        </div>
+        <CardAccountCard
+          title={title}
+          color={color}
+          number={num}
+          flip={flipped}
+          onFlipChange={setFlipped} />
       </div>
-      <form className="grow flex flex-col">
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
         <input className="hidden"
           autoComplete="off"
           name="username" />
@@ -429,14 +448,13 @@ export function CardAccountAddPage() {
           Title
         </div>
         <div className="text-default-contrast">
-          A name to identify this account
+          A name to identify this account.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.TagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            placeholder="My Account"
+            placeholder={seedword}
             onChange={e => setTitle(e.target.value)}
             value={$title} />
           <div className="flex items-center gap-2">
@@ -448,11 +466,10 @@ export function CardAccountAddPage() {
           Number
         </div>
         <div className="text-default-contrast">
-          Your card number
+          Your card number.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder="1234 5678 9012 3456"
@@ -464,11 +481,10 @@ export function CardAccountAddPage() {
           Holder
         </div>
         <div className="text-default-contrast">
-          Your card holder name
+          Your card holder name.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.UserIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder="John Doe"
@@ -480,11 +496,10 @@ export function CardAccountAddPage() {
           Expiry
         </div>
         <div className="text-default-contrast">
-          Your card expiry date
+          Your card expiry date.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.CalendarIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
             placeholder="12/34"
@@ -496,23 +511,22 @@ export function CardAccountAddPage() {
           CVV
         </div>
         <div className="text-default-contrast">
-          Your card verification value
+          Your card verification value.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             placeholder="123"
             onChange={e => setCvv(e.target.value)}
             value={$cvv} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
           </div>
@@ -522,23 +536,22 @@ export function CardAccountAddPage() {
           PIN
         </div>
         <div className="text-default-contrast">
-          Your card personal identification number
+          Your card personal identification number.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <Outline.HashtagIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             placeholder="123456"
             onChange={e => setPin(e.target.value)}
             value={$pin} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
           </div>
@@ -548,7 +561,7 @@ export function CardAccountAddPage() {
           Notes
         </div>
         <div className="text-default-contrast">
-          Any additional information
+          Any additional information.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -562,14 +575,16 @@ export function CardAccountAddPage() {
         <div className="flex items-center flex-wrap-reverse gap-2">
           {session.value.user.fsfh != null &&
             <WideOppositeButton
+              type="button"
               disabled={error != null}
-              onClick={writeOrAlert}>
+              onClick={encryptAndWriteOrAlert}>
               {error != null ? error : "Save file"}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
+              type="button"
               disabled={error != null}
-              onClick={saveOrAlert}>
+              onClick={encryptAndSaveOrAlert}>
               {error != null ? error : "Save file"}
             </WideOppositeButton>}
         </div>

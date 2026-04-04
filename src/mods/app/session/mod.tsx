@@ -1,12 +1,13 @@
-import { ContrastAnchor, InAnchor } from "@/libs/anchor/mod.tsx";
+import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
+import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { getEntryFilter } from "@/libs/kdbx/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.tsx";
+import { getEntryType, getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
@@ -15,12 +16,13 @@ import { useCloseContext } from "@hazae41/react-close-context";
 import { Option } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, useCallback, useContext, useDeferredValue, useMemo, useState } from "react";
 import { UserData } from "../user/mod.tsx";
-import { AccountAddButton, AccountAddButtonInGrid, AccountAddMenu, AccountCardInGrid } from "./account/mod.tsx";
+import { AccountAddButtonInGrid, AccountAddMenu, AccountCardInGrid } from "./account/mod.tsx";
 
 React;
 
 export interface SessionData {
   readonly user: UserData
+  readonly comp: KDBX.CompositeKey
   readonly kdbx: KDBX.Database.Decrypted
 }
 
@@ -64,49 +66,32 @@ export function SessionPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [display, setDisplay] = useState(false)
-
   const [search, setSearch] = useSearchState(path, "search")
   const [filter, setFilter] = useSearchState(path, "filter")
 
-  useMemo(() => {
-    if (!filter)
-      return
-    setDisplay(true)
-  }, [filter])
-
-  useMemo(() => {
-    if (!search)
-      return
-    setDisplay(true)
-  }, [search])
-
-  const entries = useMemo(() => {
-    const elements = [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")]
-    const currents = elements.filter(e => !e.closest("History"))
-
-    const entries = currents.map(e => new KDBX.Inner.KeePassFile.Entry(e))
-
-    return entries
+  const trash = useMemo(() => {
+    return getRecycleBinOrNull(session.value.kdbx.inner.content.value)
   }, [session])
 
-  const visibles = useMemo(() => {
-    if (!filter && !search)
-      return entries
+  const entries = useMemo(() => {
+    return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e))
+  }, [session])
 
-    return entries.filter($entry => {
-      if (!filter)
-        return search ? $entry.element.innerHTML.toLowerCase().includes(search.toLowerCase()) : true
+  const visibles = useMemo(() => entries.filter($entry => {
+    const trashed = trash != null ? trash.element.contains($entry.element) : false
+    const searched = search ? $entry.element.textContent.toLowerCase().includes(search.toLowerCase()) : true
 
-      if (filter === getEntryFilter($entry))
-        return search ? $entry.element.innerHTML.toLowerCase().includes(search.toLowerCase()) : true
+    if (!filter && !trashed)
+      return searched
 
-      // if (filter === "trash" && $entry.getParentGroupOrThrow().isDeleted())
-      //   return true
+    if (filter === getEntryType($entry) && !trashed)
+      return searched
 
-      return false
-    })
-  }, [entries, filter, search])
+    if (filter === "trash" && trashed)
+      return searched
+
+    return false
+  }), [entries, filter, search, trash])
 
   const logout = useCallback(() => {
     close()
@@ -114,9 +99,9 @@ export function SessionPage() {
 
   return <Fragment>
     <SubpathProvider value={hash}>
-      {hash.url.pathname === "/menu" &&
+      {hash.url.pathname === "/+" &&
         <PathPaper>
-          <SessionMoreMenu logout={logout} />
+          <SessionMenu logout={logout} />
         </PathPaper>}
       {hash.url.pathname === "/add" &&
         <PathPaper>
@@ -124,38 +109,23 @@ export function SessionPage() {
         </PathPaper>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
-      {!display &&
-        <div className="grow flex flex-col text-center items-center justify-center">
-          <h1 className="text-5xl md:text-6xl font-medium">
-            Welcome back, {session.value.user.name}
-          </h1>
-          <div className="h-4" />
-          <div className="text-center text-default-contrast text-xl md:text-2xl">
-            You have {entries.length} accounts in your wallet
+      <h1 className="text-2xl font-medium">
+        Your accounts
+      </h1>
+      <div className="h-6 shrink-0" />
+      <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
+        <div className="grow flex flex-col overflow-y-auto overscroll-y-none py-1 px-3">
+          <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-center gap-4">
+            {visibles.map($entry =>
+              <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
+                <AccountCardInGrid $entry={$entry} />
+              </Fragment>)}
+            {filter !== "trash" && <Fragment>
+              <AccountAddButtonInGrid />
+            </Fragment>}
           </div>
-          <div className="h-16" />
-          <div className="flex flex-col items-center gap-4">
-            <AccountAddButton />
-            <ContrastAnchor onClick={() => setDisplay(true)}>
-              <Outline.EyeIcon className="size-5" />
-              See accounts
-            </ContrastAnchor>
-          </div>
-        </div>}
-      {display &&
-        <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
-          <div className="grow flex flex-col overflow-y-auto overscroll-y-none py-1 px-3">
-            <div className="grow grid grid-cols-[repeat(auto-fit,320px)] justify-center content-center gap-4">
-              {visibles.map($entry =>
-                <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                  <AccountCardInGrid $entry={$entry} />
-                </Fragment>)}
-              {filter !== "trash" && <Fragment>
-                <AccountAddButtonInGrid />
-              </Fragment>}
-            </div>
-          </div>
-        </div>}
+        </div>
+      </div>
       <div className="h-4 shrink-0" />
       <div className="flex flex-wrap items-center gap-2">
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
@@ -181,20 +151,6 @@ export function SessionPage() {
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
-          aria-selected={filter === "seed"}
-          onClick={() => filter === "seed" ? setFilter(undefined) : setFilter("seed")}>
-          <Outline.SparklesIcon className="size-5" />
-          Seeds
-        </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
-          type="button"
-          aria-selected={filter === "ssh"}
-          onClick={() => filter === "ssh" ? setFilter(undefined) : setFilter("ssh")}>
-          <Outline.KeyIcon className="size-5" />
-          SSH Keys
-        </button>
-        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
-          type="button"
           aria-selected={filter === "trash"}
           onClick={() => filter === "trash" ? setFilter(undefined) : setFilter("trash")}>
           <Outline.TrashIcon className="size-5" />
@@ -203,7 +159,7 @@ export function SessionPage() {
       </div>
       <div className="h-4 shrink-0" />
       <div className="flex items-center gap-2">
-        <SessionMoreButton />
+        <SessionMenuButton />
         <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <Outline.MagnifyingGlassIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
@@ -218,11 +174,11 @@ export function SessionPage() {
   </Fragment>
 }
 
-function SessionMoreButton() {
+function SessionMenuButton() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, "/menu")
+  const coords = useAnchorWithCoords(hash, "/+")
 
   return <a className="group p-2 bg-opposite text-opposite rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-opposite"
     href={coords.url.hash}
@@ -234,7 +190,7 @@ function SessionMoreButton() {
   </a>
 }
 
-function SessionMoreMenu(props: { logout(): void }) {
+function SessionMenu(props: { logout(): void }) {
   const { logout } = props
 
   const path = usePathContext().getOrThrow()
@@ -286,7 +242,7 @@ export function SessionExportPage() {
 
   const session = useSessionContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$pass, setPass] = useState("")
 
@@ -297,9 +253,7 @@ export function SessionExportPage() {
 
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
-    const rotated = await kdbx.rotateOrThrow(composite)
-
-    return Writable.writeToBytesOrThrow(await rotated.encryptOrThrow())
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(composite))
   }, [session, pass])
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
@@ -353,7 +307,8 @@ export function SessionExportPage() {
       <h1 className="text-xl font-medium">
         Export user
       </h1>
-      <form className="grow flex flex-col">
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
         <input className="hidden"
           autoComplete="off"
           name="username" />
@@ -362,21 +317,21 @@ export function SessionExportPage() {
           Password
         </div>
         <div className="text-default-contrast">
-          A password to encrypt the exported file
+          A password to encrypt the exported file.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            type={masked ? "password" : "text"}
+            type={flipped ? "text" : "password"}
             value={$pass}
             onChange={e => setPass(e.target.value)} />
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={() => setMasked(!masked)}>
+              onClick={() => setFlipped(x => !x)}>
               <InButton>
-                {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
           </div>
@@ -385,12 +340,14 @@ export function SessionExportPage() {
         <div className="flex items-center flex-wrap-reverse gap-2">
           {"showSaveFilePicker" in window === true &&
             <WideOppositeButton
+              type="button"
               disabled={error != null}
               onClick={pickOrAlert}>
               {error != null ? error : "Save file"}
             </WideOppositeButton>}
           {"showSaveFilePicker" in window === false &&
             <WideOppositeButton
+              type="button"
               disabled={error != null}
               onClick={saveOrAlert}>
               {error != null ? error : "Save file"}

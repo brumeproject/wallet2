@@ -1,9 +1,9 @@
 // deno-lint-ignore-file no-namespace
 
-import { base32 } from "@/libs/base32/mod.ts";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { Result } from "@hazae41/result-and-option";
+import { base32 } from "@scure/base";
 import { useEffect, useMemo, useState } from "react";
-import { Nullable } from "../nullable/mod.tsx";
 
 export function useTotpCode(seed: Nullable<string>) {
   const [code, setCode] = useState<Nullable<string>>()

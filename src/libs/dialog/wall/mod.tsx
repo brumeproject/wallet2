@@ -3,11 +3,11 @@
 /// <reference lib="dom"/>
 
 import { Events } from "@/libs/events/mod.ts"
-import { Nullable } from "@/libs/nullable/mod.tsx"
 import { ChildrenProps, DarkProps } from "@/libs/props/mod.ts"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
 import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
+import { Nullable } from "../../nullable/mod.ts"
 
 React;
 
@@ -39,28 +39,24 @@ export function Wall(props: ChildrenProps & DarkProps) {
   const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
 
   /**
-   * Show the dialog when mounted
+   * Show the dialog when mounting
    */
-  useLayoutEffect(() => {
+  const onDialog = useCallback((dialog: Nullable<HTMLDialogElement>) => {
+    setDialog(dialog)
+
     if (dialog == null)
       return
 
     dialog.showModal()
+  }, [])
 
-    if (document.activeElement instanceof HTMLElement === false)
-      return
-
-    document.activeElement.blur()
-  }, [dialog])
-
-  const [premount, setPremount] = useState(true)
-  const [postmount, setPostmount] = useState(false)
+  const [mounting, setMounting] = useState(true)
 
   /**
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setPremount(false)
+    setMounting(false)
 
     if (!force)
       return
@@ -97,29 +93,31 @@ export function Wall(props: ChildrenProps & DarkProps) {
     hide()
   }, [hide])
 
-  /**
-   * Sync visible state with mounted state on animation end
-   */
-  const onAnimationEnd = useCallback((e: AnimationEvent) => {
-    flushSync(() => setPostmount(premount))
-  }, [premount])
+  const [mounted, setMounted] = useState(false)
 
   /**
-   * Close when both visible and mounted are false
+   * Sync mounted state with mounting state on animation end
+   */
+  const onAnimationEnd = useCallback((e: AnimationEvent) => {
+    flushSync(() => setMounted(mounting))
+  }, [mounting])
+
+  /**
+   * Close when both mounting and mounted are false
    */
   useEffect(() => {
-    if (premount)
+    if (mounting)
       return
-    if (postmount)
+    if (mounted)
       return
     close()
-  }, [premount, postmount])
+  }, [mounting, mounted])
 
   /**
    * Sync theme-color with dark mode
    */
   useLayoutEffect(() => {
-    if (!premount)
+    if (!mounting)
       return
     if (!dark)
       return
@@ -137,7 +135,7 @@ export function Wall(props: ChildrenProps & DarkProps) {
     color.setAttribute("content", "#000000")
 
     return () => color.setAttribute("content", original)
-  }, [premount, dark])
+  }, [mounting, dark])
 
   /**
    * Swipe down to close
@@ -163,19 +161,20 @@ export function Wall(props: ChildrenProps & DarkProps) {
   }, [content])
 
   /**
-   * Only unmount when transition is finished
+   * Unmount when animation is finished
    */
-  if (!premount && !postmount)
+  if (!mounting && !mounted)
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] ${premount ? "animate-slideup-in" : "animate-opacity-out"} ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className="h-full w-full max-h-none max-w-none bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[mounting=true]:animate-slideup-in data-[mounting=false]:animate-opacity-out data-[mounting=true]:backdrop:animate-opacity-in data-[mounting=false]:backdrop:animate-opacity-out"
+      data-mounting={mounting}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       onScroll={onScroll}
-      ref={setDialog}>
+      ref={onDialog}>
       <div className="basis-[100dvh] shrink-0" />
       <div className="flex flex-col bg-default text-default selection-default rounded-t-3xl shrink-0"
         onMouseDown={Events.stopPropagation}>

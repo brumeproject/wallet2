@@ -1,61 +1,30 @@
 import * as KDBX from "@hazae41/kdbx";
 
-export function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
-  if ($entry.getDirectStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
-    return "card"
+export function getRecycleBinOrNull($file: KDBX.Inner.KeePassFile) {
+  const $meta = $file.getMetaOrThrow()
 
-  if ($entry.getDirectStringByKeyOrNull("EthereumAddress")?.getValueOrThrow().get())
-    return "ethereum"
+  if (!$meta.getRecycleBinEnabledOrNull()?.get())
+    return
 
-  if ($entry.getDirectStringByKeyOrNull("SolanaAddress")?.getValueOrThrow().get())
-    return "solana"
+  const uuid = $meta.getRecycleBinUuidOrThrow().getOrThrow()
 
-  if ($entry.getDirectStringByKeyOrNull("BitcoinAddress")?.getValueOrThrow().get())
-    return "bitcoin"
-
-  if ($entry.getDirectStringByKeyOrNull("MoneroAddress")?.getValueOrThrow().get())
-    return "monero"
-
-  if ($entry.getDirectStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get())
-    return "seed"
-
-  if ($entry.getDirectStringByKeyOrNull("SshPublicKey")?.getValueOrThrow().get())
-    return "ssh"
-
-  return "password"
+  return $file.getRootOrThrow().getGroupByUuidOrThrow(uuid)
 }
 
-export function getEntryFilter($entry: KDBX.Inner.KeePassFile.Entry) {
-  const type = getEntryType($entry)
-
-  if (type === "card")
+export function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
+  if ($entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
     return "card"
 
-  if (type === "ethereum")
+  if ($entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get())
     return "crypto"
-
-  if (type === "solana")
-    return "crypto"
-
-  if (type === "bitcoin")
-    return "crypto"
-
-  if (type === "monero")
-    return "crypto"
-
-  if (type === "seed")
-    return "seed"
-
-  if (type === "ssh")
-    return "ssh"
 
   return "password"
 }
 
 export function getEntryColor($entry: KDBX.Inner.KeePassFile.Entry) {
-  return $entry.getDirectStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
 }
 
 export function getEntryTitle($entry: KDBX.Inner.KeePassFile.Entry) {
-  return $entry.getDirectStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
 }

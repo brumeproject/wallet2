@@ -3,7 +3,7 @@
 /// <reference lib="dom"/>
 
 import { Events } from "@/libs/events/mod.ts"
-import { Nullable } from "@/libs/nullable/mod.tsx"
+import { Nullable } from "@/libs/nullable/mod.ts"
 import { ChildrenProps, DarkProps } from "@/libs/props/mod.ts"
 import { usePathContext } from "@hazae41/chemin"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
@@ -31,7 +31,7 @@ export function PathBoard(props: ChildrenProps & DarkProps) {
  * @param props 
  * @returns 
  */
-export function Board(props: ChildrenProps & DarkProps & { x: number; y: number }) {
+export function Board(props: ChildrenProps & DarkProps & { x: number, y: number }) {
   const close = useCloseContext().getOrThrow()
   const { dark, children, x, y } = props
 
@@ -51,32 +51,40 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
     setTimeout(() => element.focus(), 2)
   }, [])
 
-  const [w, setW] = useState(0)
-  const [h, setH] = useState(0)
-
   const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
 
   /**
    * Compute position and size
    */
-  useLayoutEffect(() => {
+  const onDialog = useCallback((dialog: Nullable<HTMLDialogElement>) => {
+    setDialog(dialog)
+
     if (dialog == null)
       return
 
     dialog.showModal()
 
-    setW(dialog.offsetWidth)
-    setH(dialog.offsetHeight)
-  }, [x, y, dialog])
+    requestIdleCallback(() => {
+      const w = dialog.offsetWidth
+      const h = dialog.offsetHeight
 
-  const [premount, setPremount] = useState(true)
-  const [postmount, setPostmount] = useState(false)
+      dialog.style.setProperty("--x", `${x}px`)
+      dialog.style.setProperty("--y", `${y}px`)
+
+      dialog.style.setProperty("--w", `${w}px`)
+      dialog.style.setProperty("--h", `${h}px`)
+
+      dialog.setAttribute("data-open", "true")
+    }, { timeout: 100 })
+  }, [x, y])
+
+  const [mounting, setMounting] = useState(true)
 
   /**
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setPremount(false)
+    setMounting(false)
 
     if (!force)
       return
@@ -113,29 +121,31 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
     hide()
   }, [hide])
 
-  /**
-   * Sync visible state with mounted state on animation end
-   */
-  const onAnimationEnd = useCallback((e: AnimationEvent) => {
-    flushSync(() => setPostmount(premount))
-  }, [premount])
+  const [mounted, setMounted] = useState(false)
 
   /**
-   * Close when both visible and mounted are false
+   * Sync mounted state with mounting state on animation end
+   */
+  const onAnimationEnd = useCallback((e: AnimationEvent) => {
+    flushSync(() => setMounted(mounting))
+  }, [mounting])
+
+  /**
+   * Close when both mounting and mounted are false
    */
   useEffect(() => {
-    if (premount)
+    if (mounting)
       return
-    if (postmount)
+    if (mounted)
       return
     close()
-  }, [premount, postmount])
+  }, [mounting, mounted])
 
   /**
    * Sync theme-color with dark mode
    */
   useLayoutEffect(() => {
-    if (!premount)
+    if (!mounting)
       return
     if (!dark)
       return
@@ -153,7 +163,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
     color.setAttribute("content", "#000000")
 
     return () => color.setAttribute("content", original)
-  }, [premount, dark])
+  }, [mounting, dark])
 
   /**
    * Swipe down to close
@@ -183,19 +193,21 @@ export function Board(props: ChildrenProps & DarkProps & { x: number; y: number 
   }, [content])
 
   /**
-   * Only unmount when transition is finished
+   * Unmount when animation is finished
    */
-  if (!premount && !postmount)
+  if (!mounting && !mounted)
     return null
 
   return <CloseContext value={hide}>
-    <dialog className={`h-full w-full max-h-none max-w-none md:p-safe bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll ${postmount && premount ? "" : "md:overflow-y-hidden"} overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] [--x:${x}px] [--y:${y}px] [--w:${w}px] [--h:${h}px] ${premount ? "not-md:animate-slideup-in md:animate-scale-xywh-in" : "not-md:animate-opacity-out md:animate-scale-xywh-out"} ${premount ? "backdrop:animate-opacity-in" : "backdrop:animate-opacity-out"}`}
+    <dialog className="h-full w-full max-h-none max-w-none md:p-safe bg-transparent backdrop:bg-transparent data-open:backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll md:overflow-y-hidden data-[mounted=true]:data-[mounting=true]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] opacity-0 data-open:opacity-100 data-open:data-[mounting=true]:not-md:animate-slideup-in data-open:data-[mounting=true]:md:animate-scale-xywh-in data-[mounting=false]:not-md:animate-opacity-out data-[mounting=false]:md:animate-scale-xywh-out data-open:data-[mounting=true]:backdrop:animate-opacity-in data-[mounting=false]:backdrop:animate-opacity-out"
+      data-mounting={mounting}
+      data-mounted={mounted}
       data-theme={dark && "dark"}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       onScroll={onScroll}
-      ref={setDialog}>
+      ref={onDialog}>
       <div className="not-md:basis-[100dvh] md:basis-[10dvh] md:grow shrink-0" />
       <div className="flex flex-col text-default bg-default selection-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip shrink-0"
         onMouseDown={Events.stopPropagation}>

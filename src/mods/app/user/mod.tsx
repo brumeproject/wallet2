@@ -8,7 +8,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.tsx";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -159,7 +159,7 @@ function UserImportFilePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState("")
   const [$pass, setPass] = useState("")
@@ -175,7 +175,7 @@ function UserImportFilePage() {
 
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
@@ -223,7 +223,8 @@ function UserImportFilePage() {
     <h1 className="text-xl font-medium">
       Import user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -232,7 +233,7 @@ function UserImportFilePage() {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes
+        Will be used locally for display purposes.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -247,7 +248,7 @@ function UserImportFilePage() {
         File
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file
+        Your existing KDBX file.
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -269,21 +270,21 @@ function UserImportFilePage() {
         Password
       </div>
       <div className="text-default-contrast">
-        Your existing password to decrypt the file
+        Your existing password to decrypt the file.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -291,6 +292,7 @@ function UserImportFilePage() {
       <div className="h-8 grow" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
+          type="button"
           disabled={error != null}
           onClick={loadOrAlert}>
           {error != null ? error : "Open file"}
@@ -304,7 +306,7 @@ function UserImportFsfhPage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState("")
   const [$pass, setPass] = useState("")
@@ -345,7 +347,7 @@ function UserImportFsfhPage() {
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
@@ -393,7 +395,8 @@ function UserImportFsfhPage() {
     <h1 className="text-xl font-medium">
       Import user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -402,7 +405,7 @@ function UserImportFsfhPage() {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes
+        Will be used locally for display purposes.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -417,7 +420,7 @@ function UserImportFsfhPage() {
         File
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file
+        Your existing KDBX file.
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -441,21 +444,21 @@ function UserImportFsfhPage() {
         Password
       </div>
       <div className="text-default-contrast">
-        Your existing password to decrypt the file
+        Your existing password to decrypt the file.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -463,6 +466,7 @@ function UserImportFsfhPage() {
       <div className="h-8 grow" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
+          type="button"
           disabled={error != null}
           onClick={openOrAlert}>
           {error != null ? error : "Open file"}
@@ -476,7 +480,7 @@ function UserCreatePage() {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState("")
   const [$pass, setPass] = useState("")
@@ -496,15 +500,12 @@ function UserCreatePage() {
       </Meta>
       <Root>
         <Group>
-          <Name>Database</Name>
+          <Name>Fresh</Name>
           <UUID>H2qgo3GARAW5tSvIO/mYtQ==</UUID>
-          <Group>
-            <Name>Deleted</Name>
-            <UUID>KitVu0Z+S26bU0ek9ghs7g==</UUID>
-            <IconID>43</IconID>
-            <EnableAutoType>False</EnableAutoType>
-            <EnableSearching>False</EnableSearching>
-          </Group>
+        </Group>
+        <Group>
+          <Name>Trash</Name>
+          <UUID>KitVu0Z+S26bU0ek9ghs7g==</UUID>
         </Group>
       </Root>
     </KeePassFile>
@@ -513,13 +514,13 @@ function UserCreatePage() {
   const innerizeOrThrow = useCallback(() => {
     const document = new DOMParser().parseFromString(xml, "text/xml")
 
-    const content = new KDBX.Inner.KeePassFile(document)
     const headers = KDBX.Inner.Headers.createOrThrow(KDBX.Inner.Cipher.ChaCha20)
+    const content = KDBX.Inner.ContentWithBytes.computeOrThrow(new KDBX.Inner.KeePassFile(document))
 
-    return KDBX.Inner.HeadersAndContentWithBytes.computeOrThrow(headers, content)
+    return new KDBX.Inner.HeadersAndContentWithBytes(headers, content)
   }, [xml])
 
-  const outerizeOrThrow = useCallback(async () => {
+  const outerizeOrThrow = useCallback(async (composite: KDBX.CompositeKey) => {
     const cipher = KDBX.Outer.Cipher.Aes256Cbc
     const compression = KDBX.Outer.Compression.Gzip
 
@@ -530,25 +531,25 @@ function UserCreatePage() {
     const headers = KDBX.Outer.Headers.initOrThrow({ cipher, compression, seed, iv, kdf })
     const wrapper = new KDBX.Outer.MagicAndVersionAndHeaders(new KDBX.Outer.Version(4, 0), headers)
 
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
-
     const derived = await headers.deriveOrThrow(composite)
 
     const bytes = KDBX.Outer.MagicAndVersionAndHeadersWithBytes.computeOrThrow(wrapper)
     const hashs = await KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmac.computeOrThrow(bytes, derived)
 
     return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, derived)
-  }, [pass])
+  }, [])
 
   const encryptOrThrow = useCallback(async () => {
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+
     const inner = innerizeOrThrow()
-    const outer = await outerizeOrThrow()
+    const outer = await outerizeOrThrow(composite)
 
     const decrypted = new KDBX.Database.Decrypted(outer, inner)
-    const encrypted = await decrypted.encryptOrThrow()
+    const encrypted = await decrypted.encryptOrThrow(composite)
 
     return Writable.writeToBytesOrThrow(encrypted)
-  }, [innerizeOrThrow, outerizeOrThrow])
+  }, [pass, innerizeOrThrow, outerizeOrThrow])
 
   const pickOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
@@ -618,7 +619,8 @@ function UserCreatePage() {
     <h1 className="text-xl font-medium">
       Create user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -627,7 +629,7 @@ function UserCreatePage() {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes
+        Will be used locally for display purposes.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -642,21 +644,21 @@ function UserCreatePage() {
         Password
       </div>
       <div className="text-default-contrast">
-        A password to encrypt the created file
+        A password to encrypt the created file.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -665,12 +667,14 @@ function UserCreatePage() {
       <div className="flex items-center flex-wrap-reverse gap-2">
         {"showSaveFilePicker" in window === true &&
           <WideOppositeButton
+            type="button"
             disabled={error != null}
             onClick={pickOrAlert}>
             {error != null ? error : "Save file"}
           </WideOppositeButton>}
         {"showSaveFilePicker" in window === false &&
           <WideOppositeButton
+            type="button"
             disabled={error != null}
             onClick={saveOrAlert}>
             {error != null ? error : "Save file"}
@@ -694,7 +698,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
         <PathBoard>
           <UserLoginPage user={user} login={login} />
         </PathBoard>}
-      {hash.url.pathname === `/${user.uuid}/menu` &&
+      {hash.url.pathname === `/${user.uuid}/+` &&
         <PathPaper>
           <UserMenu user={user} />
         </PathPaper>}
@@ -725,7 +729,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
   const close = useCloseContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$pass, setPass] = useState("")
 
@@ -747,13 +751,13 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     const data = new Uint8Array(await file1.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, kdbx: decrypted })
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, file1, pass, close])
@@ -766,13 +770,13 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     const data = new Uint8Array(await file2.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = new KDBX.CompositeKey(new Unknown(auth))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, kdbx: decrypted })
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, file2, auth, close])
@@ -804,13 +808,13 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, kdbx: decrypted })
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, pass, close])
@@ -828,13 +832,13 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = new KDBX.CompositeKey(new Unknown(stored))
     const decrypted = await encrypted.decryptOrThrow(composite)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, kdbx: decrypted })
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, auth, close])
@@ -875,14 +879,15 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
       {user.name}
     </h1>
     <div className="h-6" />
-    <form className="grow flex flex-col items-center">
+    <form className="grow flex flex-col items-center"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           placeholder="Password"
           value={$pass}
           onChange={e => setPass(e.currentTarget.value)}
@@ -891,9 +896,9 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
           {user.auth != null &&
@@ -928,9 +933,9 @@ function UserMenuButton(props: { user: UserData }) {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, `/${user.uuid}/menu`)
+  const coords = useAnchorWithCoords(hash, `/${user.uuid}/+`)
 
-  return <a className="z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+  return <a className="group z-10 rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -984,7 +989,7 @@ function UserReimportFilePage(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState(user.name)
   const [$pass, setPass] = useState("")
@@ -1000,7 +1005,7 @@ function UserReimportFilePage(props: { user: UserData }) {
 
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
@@ -1048,7 +1053,8 @@ function UserReimportFilePage(props: { user: UserData }) {
     <h1 className="text-xl font-medium">
       Reimport user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -1057,7 +1063,7 @@ function UserReimportFilePage(props: { user: UserData }) {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes
+        Will be used locally for display purposes.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1072,7 +1078,7 @@ function UserReimportFilePage(props: { user: UserData }) {
         File
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file
+        Your existing KDBX file.
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1094,21 +1100,21 @@ function UserReimportFilePage(props: { user: UserData }) {
         Password
       </div>
       <div className="text-default-contrast">
-        Your existing password to decrypt the file
+        Your existing password to decrypt the file.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -1116,6 +1122,7 @@ function UserReimportFilePage(props: { user: UserData }) {
       <div className="h-8 grow" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
+          type="button"
           disabled={error != null}
           onClick={loadOrAlert}>
           {error != null ? error : "Open file"}
@@ -1131,7 +1138,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const [masked, setMasked] = useState(true)
+  const [flipped, setFlipped] = useState(false)
 
   const [$name, setName] = useState(user.name)
   const [$pass, setPass] = useState("")
@@ -1172,7 +1179,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data).cloneOrThrow()
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     await encrypted.decryptOrThrow(composite)
@@ -1220,7 +1227,8 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     <h1 className="text-xl font-medium">
       Reimport user
     </h1>
-    <form className="grow flex flex-col">
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
       <input className="hidden"
         autoComplete="off"
         name="username" />
@@ -1229,7 +1237,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes
+        Will be used locally for display purposes.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1244,7 +1252,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         File
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file
+        Your existing KDBX file.
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1268,21 +1276,21 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         Password
       </div>
       <div className="text-default-contrast">
-        Your existing password to decrypt the file
+        Your existing password to decrypt the file.
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
         <input className="w-full focus-visible:outline-none"
           autoComplete="off"
-          type={masked ? "password" : "text"}
+          type={flipped ? "text" : "password"}
           value={$pass}
           onChange={e => setPass(e.target.value)} />
         <div className="flex items-center gap-2">
           <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
             type="button"
-            onClick={() => setMasked(!masked)}>
+            onClick={() => setFlipped(x => !x)}>
             <InButton>
-              {masked ? <Outline.EyeIcon className="size-5" /> : <Outline.EyeSlashIcon className="size-5" />}
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
             </InButton>
           </button>
         </div>
@@ -1290,6 +1298,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
       <div className="h-8 grow" />
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
+          type="button"
           disabled={error != null}
           onClick={openOrAlert}>
           {error != null ? error : "Open file"}

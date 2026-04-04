@@ -6,7 +6,7 @@ React;
 export function InAnchor(props: ChildrenProps) {
   const { children } = props
 
-  return <div className="h-full w-full flex justify-center items-center gap-2 group-not-aria-disabled:group-active:scale-90 transition-transform">
+  return <div className="h-full w-full flex justify-center items-center gap-2 select-none group-not-aria-disabled:group-active:scale-90 transition-transform">
     {children}
   </div>
 }

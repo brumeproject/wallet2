@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { Errors } from "../errors/mod.ts";
-import { Nullable } from "../nullable/mod.tsx";
+import { Nullable } from "../nullable/mod.ts";
 
 export function useCopy(value: Nullable<string>) {
   const [copied, setCopied] = useState(false)
