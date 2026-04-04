@@ -179,7 +179,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             Private key
           </div>
           <div className="text-default-contrast">
-            Your private key. Use this to recover your funds in most wallets.
+            Your private key.
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
