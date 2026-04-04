@@ -62,6 +62,9 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             if (type === "crypto")
               return <CryptoAccountPage $entry={$entry} />
 
+            if (type === "ssh")
+              return <SshAccountPage $entry={$entry} />
+
             return null
           })()}
         </PathBoard>}
@@ -154,6 +157,9 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           if (type === "card")
             return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
+          if (type === "ssh")
+            return $entry.getDirectStringByKeyOrNull("SshPublicKey")?.getValueOrThrow().get()?.trim().split(/\s+/).slice(0, 2).join(" ")
+
           return null
         })()}
       </div>
@@ -172,6 +178,12 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
               Crypto
+            </div>
+
+          if (type === "ssh")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.KeyIcon className="size-5" />
+              SSH
             </div>
 
           if (type === "password")
@@ -259,6 +271,10 @@ export function AccountAddMenu() {
       {hash.url.pathname === "/card" &&
         <PathBoard>
           <CardAccountAddPage />
+        </PathBoard>}
+      {hash.url.pathname === "/ssh" &&
+        <PathBoard>
+          <SshAccountAddPage />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
