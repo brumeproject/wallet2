@@ -207,7 +207,7 @@ export function CryptoAccountAddPage() {
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <textarea className="w-full focus-visible:outline-none"
-            rows={6}
+            rows={3}
             autoComplete="off"
             onChange={e => setSeedPhrase(e.target.value)}
             value={flipped ? $seedphrase : $seedphrase.replaceAll(/./g, "•")} />
