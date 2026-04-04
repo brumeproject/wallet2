@@ -295,7 +295,7 @@ function UserImportFilePage() {
           type="button"
           disabled={error != null}
           onClick={loadOrAlert}>
-          {error != null ? error : "Open file"}
+          {error != null ? error : "Open"}
         </WideOppositeButton>
       </div>
     </form>
@@ -469,7 +469,7 @@ function UserImportFsfhPage() {
           type="button"
           disabled={error != null}
           onClick={openOrAlert}>
-          {error != null ? error : "Open file"}
+          {error != null ? error : "Open"}
         </WideOppositeButton>
       </div>
     </form>
@@ -1125,7 +1125,7 @@ function UserReimportFilePage(props: { user: UserData }) {
           type="button"
           disabled={error != null}
           onClick={loadOrAlert}>
-          {error != null ? error : "Open file"}
+          {error != null ? error : "Open"}
         </WideOppositeButton>
       </div>
     </form>
@@ -1301,7 +1301,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
           type="button"
           disabled={error != null}
           onClick={openOrAlert}>
-          {error != null ? error : "Open file"}
+          {error != null ? error : "Open"}
         </WideOppositeButton>
       </div>
     </form>
