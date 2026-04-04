@@ -7,6 +7,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { KeypairAccountAddMenuAnchor, KeypairAccountAddPage, KeypairAccountPage } from "@/mods/app/session/account/keypair/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
@@ -59,11 +60,11 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             if (type === "card")
               return <CardAccountPage $entry={$entry} />
 
-            if (type === "crypto")
+            if (type === "seed")
               return <CryptoAccountPage $entry={$entry} />
 
-            if (type === "ssh")
-              return <SshAccountPage $entry={$entry} />
+            if (type === "keypair")
+              return <KeypairAccountPage $entry={$entry} />
 
             return null
           })()}
@@ -154,11 +155,11 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           if (type === "password")
             return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
 
+          if (type === "keypair")
+            return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+
           if (type === "card")
             return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
-
-          if (type === "ssh")
-            return $entry.getDirectStringByKeyOrNull("SshPublicKey")?.getValueOrThrow().get()?.trim().split(/\s+/).slice(0, 2).join(" ")
 
           return null
         })()}
@@ -168,28 +169,28 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         {(() => {
           const type = getEntryType($entry)
 
-          if (type === "card")
+          if (type === "password")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.CreditCardIcon className="size-5" />
-              Card
+              <Outline.LanguageIcon className="size-5" />
+              Password
             </div>
 
-          if (type === "crypto")
+          if (type === "keypair")
+            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              <Outline.KeyIcon className="size-5" />
+              Keypair
+            </div>
+
+          if (type === "seed")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
               Crypto
             </div>
 
-          if (type === "ssh")
+          if (type === "card")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.KeyIcon className="size-5" />
-              SSH
-            </div>
-
-          if (type === "password")
-            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.LanguageIcon className="size-5" />
-              Password
+              <Outline.CreditCardIcon className="size-5" />
+              Card
             </div>
 
           return null
@@ -239,14 +240,15 @@ export function CardAccountCard(props: { color: Nullable<string> } & { title: Nu
     onFlipChange={onFlipChange} />
 }
 
-export function SshAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
-  const { color, title, flip, onFlipChange } = props
+export function KeypairAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { username: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
+  const { color, title, username, flip, onFlipChange } = props
 
   return <FlipCard
-    type="SSH"
+    type="Keypair"
     title={title}
+    subtitle={username}
     color={color}
-    icon={<Outline.CommandLineIcon className="size-5" />}
+    icon={<Outline.KeyIcon className="size-5" />}
     flip={flip}
     onFlipChange={onFlipChange} />
 }
@@ -277,6 +279,10 @@ export function AccountAddMenu() {
         <PathBoard>
           <PasswordAccountAddPage />
         </PathBoard>}
+      {hash.url.pathname === "/keypair" &&
+        <PathBoard>
+          <KeypairAccountAddPage />
+        </PathBoard>}
       {hash.url.pathname === "/crypto" &&
         <PathBoard>
           <CryptoAccountAddPage />
@@ -285,13 +291,10 @@ export function AccountAddMenu() {
         <PathBoard>
           <CardAccountAddPage />
         </PathBoard>}
-      {hash.url.pathname === "/ssh" &&
-        <PathBoard>
-          <SshAccountAddPage />
-        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
       <PasswordAccountAddMenuAnchor />
+      <KeypairAccountAddMenuAnchor />
       <CryptoAccountAddMenuAnchor />
       <CardAccountAddMenuAnchor />
     </div>

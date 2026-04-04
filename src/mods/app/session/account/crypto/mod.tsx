@@ -148,7 +148,7 @@ export function CryptoAccountAddPage() {
   }, [getValidOrThrow])
 
   const error = useMemo(() => {
-    if (!seedphrase)
+    if (!seedphrase.length)
       return "Seed phrase is required"
     if (!valid)
       return "Seed phrase is invalid"

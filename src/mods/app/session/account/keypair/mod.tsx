@@ -1,7 +1,7 @@
 import { InAnchor } from "@/libs/anchor/mod.tsx";
-import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { InButton, WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
-import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
+import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -10,6 +10,7 @@ import { Nullable } from "@/libs/nullable/mod.ts";
 import { QrCode } from "@/libs/qrcode/mod.ts";
 import { capitalize } from "@/libs/string/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
+import { PasswordMenu, PasswordMenuAnchor } from "@/mods/app/session/account/password/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -17,11 +18,11 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
-import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, PasswordAccountCard } from "../mod.tsx";
+import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, KeypairAccountCard } from "../mod.tsx";
 
 React;
 
-export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const close = useCloseContext().getOrThrow()
@@ -53,6 +54,14 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     return $trash.element.contains($entry.element)
   }, [session, $entry])
 
+  const pubkey = useMemo(() => {
+    return $entry.getStringByKeyOrNull("PublicKey")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const sigkey = useMemo(() => {
+    return $entry.getStringByKeyOrNull("PrivateKey")?.getValueOrThrow().get()
+  }, [$entry])
+
   const username = useMemo(() => {
     return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
   }, [$entry])
@@ -71,6 +80,8 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
+  const copyThePubKey = useCopy(pubkey)
+  const copyTheSigKey = useCopy(sigkey)
   const copyTheUsername = useCopy(username)
   const copyThePassword = useCopy(password)
   const copyTheTotpcode = useCopy(totpcode)
@@ -93,13 +104,13 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     <div className="flex flex-col grow p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-medium">
-          Password account
+          Keypair account
         </h1>
         <AccountMenuAnchor />
       </div>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <PasswordAccountCard
+        <KeypairAccountCard
           title={title}
           color={color}
           username={username}
@@ -135,6 +146,61 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
                 </InButton>
               </button>
             </div>
+          </div>
+        </Fragment>}
+        {pubkey && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Public key
+          </div>
+          <div className="text-default-contrast">
+            Your public key.
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="w-full focus-visible:outline-none"
+              rows={3}
+              readOnly
+              onFocus={e => e.currentTarget.select()}
+              value={pubkey || ""} />
+          </div>
+          <div className="h-2" />
+          <div className="flex items-center gap-2">
+            <WideContrastButton
+              onClick={copyThePubKey.copyOrAlert}>
+              {copyThePubKey.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              {copyThePubKey.copied ? "Copied" : "Copy"}
+            </WideContrastButton>
+          </div>
+        </Fragment>}
+        {sigkey && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            Private key
+          </div>
+          <div className="text-default-contrast">
+            Your private key. Use this to recover your funds in most wallets.
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="w-full focus-visible:outline-none"
+              rows={9}
+              readOnly
+              onFocus={e => flipped ? e.currentTarget.select() : undefined}
+              value={flipped ? sigkey : sigkey?.replaceAll(/./g, "•")} />
+          </div>
+          <div className="h-2" />
+          <div className="flex items-center gap-2">
+            <WideContrastButton
+              onClick={() => setFlipped(x => !x)}>
+              {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+              {flipped ? "Hide" : "Show"}
+            </WideContrastButton>
+            <WideContrastButton
+              onClick={copyTheSigKey.copyOrAlert}>
+              {copyTheSigKey.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              {copyTheSigKey.copied ? "Copied" : "Copy"}
+            </WideContrastButton>
           </div>
         </Fragment>}
         {password && <Fragment>
@@ -207,89 +273,22 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
   </Fragment>
 }
 
-
-
-export function PasswordAccountAddMenuAnchor() {
+export function KeypairAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, "/password")
+  const coords = useAnchorWithCoords(hash, "/keypair")
 
   return <WideNakedMenuAnchor
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <Outline.LanguageIcon className="size-5" />
-    Password
+    <Outline.KeyIcon className="size-5" />
+    Keypair
   </WideNakedMenuAnchor>
 }
 
-export function PasswordMenuAnchor() {
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const coords = useAnchorWithCoords(hash, "/password")
-
-  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-    href={coords.url.hash}
-    onClick={coords.onClick}
-    onKeyDown={coords.onKeyDown}>
-    <InAnchor>
-      <Outline.SparklesIcon className="size-5" />
-    </InAnchor>
-  </a>
-}
-
-export function PasswordMenu(props: { value: string } & { onChange(value: string): void }) {
-  const { value, onChange } = props
-
-  const [password, setPassword] = [value, onChange]
-
-  const onDigicodeClick = useCallback(() => Promise.try(() => {
-    const random = Array.from(crypto.getRandomValues(new Uint8Array(8)))
-    const result = random.map(x => (x % 10).toString()).join("")
-
-    setPassword(result)
-  }).catch(Errors.display), [])
-
-  const onPasswordClick = useCallback(() => Promise.try(() => {
-    const source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?/~`"
-
-    const random = Array.from(crypto.getRandomValues(new Uint8Array(24)))
-    const result = random.map(x => source.charAt(x % source.length)).join("")
-
-    setPassword(result)
-  }).catch(Errors.display), [])
-
-  const onPassphraseClick = useCallback(() => Promise.try(() => {
-    const source = MoneroSeedPhrase.generate().split(" ").slice(0, 4)
-
-    const random = crypto.getRandomValues(new Uint8Array(1))[0]
-    const result = source.map((x, i) => capitalize(x) + (i === (random % 4) ? (random % 10) : "")).join(" ")
-
-    return setPassword(result)
-  }).catch(Errors.display), [])
-
-  return <div className="flex flex-col text-left gap-2">
-    <WideNakedMenuButton
-      onClick={onDigicodeClick}>
-      <Outline.HashtagIcon className="size-5" />
-      Digicode
-    </WideNakedMenuButton>
-    <WideNakedMenuButton
-      onClick={onPasswordClick}>
-      <Outline.LanguageIcon className="size-5" />
-      Password
-    </WideNakedMenuButton>
-    <WideNakedMenuButton
-      onClick={onPassphraseClick}>
-      <Outline.ChatBubbleOvalLeftEllipsisIcon className="size-5" />
-      Passphrase
-    </WideNakedMenuButton>
-  </div>
-}
-
-export function PasswordAccountAddPage() {
+export function KeypairAccountAddPage() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -305,6 +304,8 @@ export function PasswordAccountAddPage() {
 
   const [$title, setTitle] = useState("")
 
+  const [$pubkey, setPubKey] = useState("")
+  const [$sigkey, setSigKey] = useState("")
   const [$username, setUsername] = useState("")
   const [$password, setPassword] = useState("")
   const [$totpseed, setTotpSeed] = useState("")
@@ -315,6 +316,8 @@ export function PasswordAccountAddPage() {
 
   const [color, setColor] = useState<Nullable<string>>(["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"][Math.floor(Math.random() * 16)])
 
+  const pubkey = useDeferredValue($pubkey)
+  const sigkey = useDeferredValue($sigkey)
   const username = useDeferredValue($username)
   const password = useDeferredValue($password)
   const totpseed = useDeferredValue($totpseed)
@@ -338,6 +341,12 @@ export function PasswordAccountAddPage() {
     if (color)
       $entry.addStringOrThrow("Color", color)
 
+    if (pubkey)
+      $entry.addStringOrThrow("PublicKey", pubkey)
+
+    if (sigkey)
+      $entry.addStringOrThrow("PrivateKey", sigkey)
+
     if (username)
       $entry.addStringOrThrow("UserName", username)
 
@@ -351,7 +360,7 @@ export function PasswordAccountAddPage() {
       $entry.addStringOrThrow("otp", totpseed, true)
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
-  }, [session, title, color, username, password, totpseed, notes])
+  }, [session, title, color, pubkey, sigkey, username, password, totpseed, notes])
 
   const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
@@ -399,8 +408,10 @@ export function PasswordAccountAddPage() {
   }).catch(Errors.display), [encryptOrThrow, close])
 
   const error = useMemo(() => {
+    if (!pubkey.length)
+      return "Public key is required"
     return
-  }, [])
+  }, [pubkey])
 
   const onTotpQrcodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => Promise.try(async () => {
     const file = e.target.files?.item(0)
@@ -429,11 +440,11 @@ export function PasswordAccountAddPage() {
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        Add password account
+        Add keypair account
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <PasswordAccountCard
+        <KeypairAccountCard
           title={title}
           color={color}
           username={username}
@@ -477,6 +488,46 @@ export function PasswordAccountAddPage() {
             placeholder="john.doe@mail.com"
             onChange={e => setUsername(e.target.value)}
             value={$username} />
+        </div>
+        <div className="h-6" />
+        <div className="font-medium">
+          Public key
+        </div>
+        <div className="text-default-contrast">
+          Your public key.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={6}
+            autoComplete="off"
+            placeholder="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIP5NGa5rgNRNSHnty0xwZmDgQNUTYBySHLfjEvVV+kD"
+            onChange={e => setPubKey(e.target.value)}
+            value={$pubkey} />
+        </div>
+        <div className="h-6" />
+        <div className="font-medium">
+          Private key
+        </div>
+        <div className="text-default-contrast">
+          Your private key.
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={6}
+            autoComplete="off"
+            placeholder={["-----BEGIN OPENSSH PRIVATE KEY-----", "b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDt0nYsbd", "ErGeWyGOH48e51AAAAGAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIIP5NGa5rgNRNSHn", "ty0xwZmDgQNUTYBySHLfjEvVV+kDAAAAoIj24ltpMoyQCmZcgXMvRqXRF0SdQsozyV4yXA", "NqRW3EqcyhwruatrEVuakMzsbQ/TJZBjkZX50svFecQvoeToakGFbOUSr1EmprtGV/nYOw", "w9z1GVdip46pgJw6gcGX33Z8kS/TMT9IMsSzoVk3O/7F/WgiGasQQTwAjnuTWtqmkCzEUC", "pncuvRMmZG3hXbWyXAckezDQNRn2seUsDNwwg=", "-----END OPENSSH PRIVATE KEY-----"].join("\n")}
+            onChange={e => setSigKey(e.target.value)}
+            value={flipped ? $sigkey : $sigkey.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? "Hide" : "Show"}
+          </WideContrastButton>
         </div>
         <div className="h-6" />
         <div className="font-medium">

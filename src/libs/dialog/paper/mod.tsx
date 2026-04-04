@@ -157,7 +157,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className="flex flex-col max-h-[200px] overflow-y-auto text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 opacity-0 data-open:opacity-100 data-open:[translate:var(--l)_var(--t)] data-open:data-[mounting=true]:animate-scale-xywh-in data-[mounting=false]:animate-scale-xywh-out"
+    <dialog className="flex flex-col text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 opacity-0 data-open:opacity-100 data-open:[translate:var(--l)_var(--t)] data-open:data-[mounting=true]:animate-scale-xywh-in data-[mounting=false]:animate-scale-xywh-out"
       data-mounting={mounting}
       onAnimationEnd={onAnimationEnd}
       onMouseDown={onMouseDown}

@@ -12,11 +12,14 @@ export function getRecycleBinOrNull($file: KDBX.Inner.KeePassFile) {
 }
 
 export function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
-  if ($entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
-    return "card"
+  if ($entry.getStringByKeyOrNull("PublicKey")?.getValueOrThrow().get())
+    return "keypair"
 
   if ($entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get())
-    return "crypto"
+    return "seed"
+
+  if ($entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
+    return "card"
 
   return "password"
 }

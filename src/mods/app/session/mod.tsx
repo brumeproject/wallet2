@@ -137,8 +137,15 @@ export function SessionPage() {
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
-          aria-selected={filter === "crypto"}
-          onClick={() => filter === "crypto" ? setFilter(undefined) : setFilter("crypto")}>
+          aria-selected={filter === "keypair"}
+          onClick={() => filter === "keypair" ? setFilter(undefined) : setFilter("keypair")}>
+          <Outline.KeyIcon className="size-5" />
+          Keypairs
+        </button>
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
+          type="button"
+          aria-selected={filter === "seed"}
+          onClick={() => filter === "seed" ? setFilter(undefined) : setFilter("seed")}>
           <Outline.BanknotesIcon className="size-5" />
           Cryptos
         </button>
