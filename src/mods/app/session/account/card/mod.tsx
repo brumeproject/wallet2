@@ -578,14 +578,14 @@ export function CardAccountAddPage() {
               type="button"
               disabled={error != null}
               onClick={encryptAndWriteOrAlert}>
-              {error != null ? error : "Save file"}
+              {error != null ? error : "Save"}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
               onClick={encryptAndSaveOrAlert}>
-              {error != null ? error : "Save file"}
+              {error != null ? error : "Save"}
             </WideOppositeButton>}
         </div>
       </form>

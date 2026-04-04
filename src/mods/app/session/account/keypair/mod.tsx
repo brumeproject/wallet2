@@ -86,6 +86,54 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
   const copyThePassword = useCopy(password)
   const copyTheTotpcode = useCopy(totpcode)
 
+  const savePubKeyOrAlert = useCallback(() => Promise.try(async () => {
+    const content = pubkey || ""
+
+    const file = new File([content], "key.pub", { type: "application/octet-stream" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "key.pub"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+  }).catch(Errors.display), [pubkey])
+
+  const saveSigKeyOrAlert = useCallback(() => Promise.try(async () => {
+    const content = sigkey || ""
+
+    const file = new File([content], "key", { type: "application/octet-stream" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "key"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+  }).catch(Errors.display), [pubkey])
+
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
@@ -171,6 +219,11 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
               {copyThePubKey.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               {copyThePubKey.copied ? "Copied" : "Copy"}
             </WideContrastButton>
+            <WideContrastButton
+              onClick={savePubKeyOrAlert}>
+              <Outline.ArrowDownTrayIcon className="size-5" />
+              Save
+            </WideContrastButton>
           </div>
         </Fragment>}
         {sigkey && <Fragment>
@@ -200,6 +253,11 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
               onClick={copyTheSigKey.copyOrAlert}>
               {copyTheSigKey.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               {copyTheSigKey.copied ? "Copied" : "Copy"}
+            </WideContrastButton>
+            <WideContrastButton
+              onClick={saveSigKeyOrAlert}>
+              <Outline.ArrowDownTrayIcon className="size-5" />
+              Save
             </WideContrastButton>
           </div>
         </Fragment>}
@@ -615,14 +673,14 @@ export function KeypairAccountAddPage() {
               type="button"
               disabled={error != null}
               onClick={encryptAndWriteOrAlert}>
-              {error != null ? error : "Save file"}
+              {error != null ? error : "Save"}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
               onClick={encryptAndSaveOrAlert}>
-              {error != null ? error : "Save file"}
+              {error != null ? error : "Save"}
             </WideOppositeButton>}
         </div>
       </form>

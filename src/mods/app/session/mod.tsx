@@ -350,14 +350,14 @@ export function SessionExportPage() {
               type="button"
               disabled={error != null}
               onClick={pickOrAlert}>
-              {error != null ? error : "Save file"}
+              {error != null ? error : "Save"}
             </WideOppositeButton>}
           {"showSaveFilePicker" in window === false &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
               onClick={saveOrAlert}>
-              {error != null ? error : "Save file"}
+              {error != null ? error : "Save"}
             </WideOppositeButton>}
         </div>
       </form>
