@@ -2,8 +2,8 @@
 
 /// <reference lib="dom"/>
 
-import { Portal } from "@/libs/dialog/paper/mod.tsx"
 import { Events } from "@/libs/events/mod.ts"
+import { Portal } from "@/libs/portal/mod.tsx"
 import { ChildrenProps, DarkProps } from "@/libs/props/mod.ts"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
 import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
