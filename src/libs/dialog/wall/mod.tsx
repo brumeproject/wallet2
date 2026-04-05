@@ -2,6 +2,7 @@
 
 /// <reference lib="dom"/>
 
+import { Portal } from "@/libs/dialog/paper/mod.tsx"
 import { Events } from "@/libs/events/mod.ts"
 import { ChildrenProps, DarkProps } from "@/libs/props/mod.ts"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
@@ -34,20 +35,6 @@ export function Wall(props: ChildrenProps & DarkProps) {
     const element = previous.current
 
     setTimeout(() => element.focus(), 2)
-  }, [])
-
-  const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
-
-  /**
-   * Show the dialog when mounting
-   */
-  const onDialog = useCallback((dialog: Nullable<HTMLDialogElement>) => {
-    setDialog(dialog)
-
-    if (dialog == null)
-      return
-
-    dialog.showModal()
   }, [])
 
   const [mounting, setMounting] = useState(true)
@@ -167,26 +154,29 @@ export function Wall(props: ChildrenProps & DarkProps) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className="h-full w-full max-h-none max-w-none bg-transparent backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[mounting=true]:animate-slideup-in data-[mounting=false]:animate-opacity-out data-[mounting=true]:backdrop:animate-opacity-in data-[mounting=false]:backdrop:animate-opacity-out"
-      data-mounting={mounting}
-      data-theme={dark && "dark"}
-      onAnimationEnd={onAnimationEnd}
-      onMouseDown={onMouseDown}
-      onKeyDown={onKeyDown}
-      onScroll={onScroll}
-      ref={onDialog}>
-      <div className="basis-[100dvh] shrink-0" />
-      <div className="flex flex-col bg-default text-default selection-default rounded-t-3xl shrink-0"
-        onMouseDown={Events.stopPropagation}>
-        <div className="flex items-center justify-center p-4">
-          <div className="w-16 h-2 bg-backdrop rounded-full" />
-        </div>
-        <div className="basis-[100dvh] flex flex-col p-safe overflow-y-auto"
-          ref={setContent}>
-          <button type="button" autoFocus />
-          {children}
+    <Portal>
+      <div className="fixed inset-0 bg-backdrop data-[mounting=true]:animate-opacity-in data-[mounting=false]:animate-opacity-out"
+        data-mounting={mounting} />
+      <div className="fixed inset-0 focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[mounting=true]:animate-slideup-in data-[mounting=false]:animate-opacity-out"
+        data-mounting={mounting}
+        data-theme={dark && "dark"}
+        onAnimationEnd={onAnimationEnd}
+        onMouseDown={onMouseDown}
+        onKeyDown={onKeyDown}
+        onScroll={onScroll}>
+        <div className="basis-[100dvh] shrink-0" />
+        <div className="flex flex-col bg-default text-default selection-default rounded-t-3xl shrink-0"
+          onMouseDown={Events.stopPropagation}>
+          <div className="flex items-center justify-center p-4">
+            <div className="w-16 h-2 bg-backdrop rounded-full" />
+          </div>
+          <div className="basis-[100dvh] flex flex-col p-safe overflow-y-auto"
+            ref={setContent}>
+            <button type="button" autoFocus />
+            {children}
+          </div>
         </div>
       </div>
-    </dialog>
+    </Portal>
   </CloseContext>
 }

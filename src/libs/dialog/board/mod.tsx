@@ -2,6 +2,7 @@
 
 /// <reference lib="dom"/>
 
+import { Portal } from "@/libs/dialog/paper/mod.tsx"
 import { Events } from "@/libs/events/mod.ts"
 import { Nullable } from "@/libs/nullable/mod.ts"
 import { ChildrenProps, DarkProps } from "@/libs/props/mod.ts"
@@ -51,18 +52,12 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
     setTimeout(() => element.focus(), 2)
   }, [])
 
-  const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
-
   /**
    * Compute position and size
    */
-  const onDialog = useCallback((dialog: Nullable<HTMLDialogElement>) => {
-    setDialog(dialog)
-
+  const onDialog = useCallback((dialog: Nullable<HTMLDivElement>) => {
     if (dialog == null)
       return
-
-    dialog.showModal()
 
     requestIdleCallback(() => {
       const w = dialog.offsetWidth
@@ -199,28 +194,32 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
     return null
 
   return <CloseContext value={hide}>
-    <dialog className="h-full w-full max-h-none max-w-none md:p-safe bg-transparent backdrop:bg-transparent data-open:backdrop:bg-backdrop focus-visible:outline-none flex flex-col overflow-y-scroll md:overflow-y-hidden data-[mounted=true]:data-[mounting=true]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] opacity-0 data-open:opacity-100 data-open:data-[mounting=true]:not-md:animate-slideup-in data-open:data-[mounting=true]:md:animate-scale-xywh-in data-[mounting=false]:not-md:animate-opacity-out data-[mounting=false]:md:animate-scale-xywh-out data-open:data-[mounting=true]:backdrop:animate-opacity-in data-[mounting=false]:backdrop:animate-opacity-out"
-      data-mounting={mounting}
-      data-mounted={mounted}
-      data-theme={dark && "dark"}
-      onAnimationEnd={onAnimationEnd}
-      onMouseDown={onMouseDown}
-      onKeyDown={onKeyDown}
-      onScroll={onScroll}
-      ref={onDialog}>
-      <div className="not-md:basis-[100dvh] md:basis-[10dvh] md:grow shrink-0" />
-      <div className="flex flex-col text-default bg-default selection-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip shrink-0"
-        onMouseDown={Events.stopPropagation}>
-        <div className="flex md:hidden items-center justify-center p-4">
-          <div className="w-16 h-2 bg-backdrop rounded-full" />
+    <Portal>
+      <div className="fixed inset-0 bg-backdrop data-[mounting=true]:animate-opacity-in data-[mounting=false]:animate-opacity-out"
+        data-mounting={mounting} />
+      <div className="fixed inset-0 flex flex-col md:p-safe focus-visible:outline-none overflow-y-scroll md:overflow-y-hidden data-[mounted=true]:data-[mounting=true]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] opacity-0 data-open:opacity-100 data-open:data-[mounting=true]:not-md:animate-slideup-in data-open:data-[mounting=true]:md:animate-scale-xywh-in data-[mounting=false]:not-md:animate-opacity-out data-[mounting=false]:md:animate-scale-xywh-out"
+        data-mounting={mounting}
+        data-mounted={mounted}
+        data-theme={dark && "dark"}
+        onAnimationEnd={onAnimationEnd}
+        onMouseDown={onMouseDown}
+        onKeyDown={onKeyDown}
+        onScroll={onScroll}
+        ref={onDialog}>
+        <div className="not-md:basis-[100dvh] md:basis-[10dvh] md:grow shrink-0" />
+        <div className="flex flex-col text-default bg-default selection-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip shrink-0"
+          onMouseDown={Events.stopPropagation}>
+          <div className="flex md:hidden items-center justify-center p-4">
+            <div className="w-16 h-2 bg-backdrop rounded-full" />
+          </div>
+          <div className="not-md:basis-[100dvh] flex flex-col not-md:p-safe"
+            ref={setContent}>
+            <button type="button" autoFocus />
+            {children}
+          </div>
         </div>
-        <div className="not-md:basis-[100dvh] flex flex-col not-md:p-safe"
-          ref={setContent}>
-          <button type="button" autoFocus />
-          {children}
-        </div>
+        <div className="md:basis-[10dvh] md:grow shrink-0" />
       </div>
-      <div className="md:basis-[10dvh] md:grow shrink-0" />
-    </dialog>
+    </Portal>
   </CloseContext>
 }
