@@ -5,7 +5,7 @@ import { ChildrenProps } from "@/libs/props/mod.ts";
 import { usePathContext } from "@hazae41/chemin";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import React, { JSX, KeyboardEvent, MouseEvent, useCallback, useEffect, useRef, useState } from "react";
-import { flushSync } from "react-dom";
+import { createPortal, flushSync } from "react-dom";
 
 React;
 
@@ -47,18 +47,12 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
     setTimeout(() => element.focus(), 2)
   }, [])
 
-  const [dialog, setDialog] = useState<Nullable<HTMLDialogElement>>()
-
   /**
    * Compute position and size
    */
-  const onDialog = useCallback((dialog: Nullable<HTMLDialogElement>) => {
-    setDialog(dialog)
-
+  const onDialog = useCallback((dialog: Nullable<HTMLDivElement>) => {
     if (dialog == null)
       return
-
-    dialog.showModal()
 
     requestIdleCallback(() => {
       const w = dialog.offsetWidth
@@ -111,24 +105,17 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
    * Smoothly close the dialog on outside click
    */
   const onMouseDown = useCallback((e: MouseEvent) => {
-    if (dialog == null)
-      return
-    if (e.target !== dialog)
-      return
-
-    const { x, y } = dialog.getBoundingClientRect()
-
-    const w = dialog.offsetWidth
-    const h = dialog.offsetHeight
-
-    if (e.clientX > x && e.clientX < x + w && e.clientY > y && e.clientY < y + h)
+    /**
+     * Ignore clicks on scrollbar
+     */
+    if (e.clientX > e.currentTarget.clientWidth)
       return
 
     e.preventDefault()
     e.stopPropagation()
 
     hide()
-  }, [dialog, hide])
+  }, [hide])
 
   const [mounted, setMounted] = useState(false)
 
@@ -157,15 +144,18 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
     return null
 
   return <CloseContext value={hide}>
-    <dialog className="flex flex-col text-default bg-default backdrop:bg-transparent focus-visible:outline-none border border-default-contrast rounded-xl p-2 opacity-0 data-open:opacity-100 data-open:[translate:var(--l)_var(--t)] data-open:data-[mounting=true]:animate-scale-xywh-in data-[mounting=false]:animate-scale-xywh-out"
-      data-mounting={mounting}
-      onAnimationEnd={onAnimationEnd}
-      onMouseDown={onMouseDown}
-      onKeyDown={onKeyDown}
-      ref={onDialog}>
-      <button type="button" autoFocus />
-      {children}
-    </dialog>
+    <Portal>
+      <div className="fixed inset-0 flex flex-col"
+        onMouseDown={onMouseDown} />
+      <div className="fixed top-0 left-0 translate-x-(--l) translate-y-(--t) flex flex-col text-default bg-default focus-visible:outline-none border border-default-contrast rounded-xl p-2 opacity-0 data-open:opacity-100 data-open:data-[mounting=true]:animate-scale-xywh-in data-[mounting=false]:animate-scale-xywh-out"
+        data-mounting={mounting}
+        onAnimationEnd={onAnimationEnd}
+        onKeyDown={onKeyDown}
+        ref={onDialog}>
+        <button type="button" autoFocus />
+        {children}
+      </div>
+    </Portal>
   </CloseContext>
 }
 
@@ -206,4 +196,8 @@ export function WideNakedMenuButton(props: ChildrenProps & JSX.IntrinsicElements
       {children}
     </InMenuButton>
   </button>
+}
+
+export function Portal(props: ChildrenProps) {
+  return createPortal(props.children, document.body)
 }
