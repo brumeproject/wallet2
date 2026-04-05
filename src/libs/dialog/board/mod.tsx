@@ -2,9 +2,9 @@
 
 /// <reference lib="dom"/>
 
-import { Portal } from "@/libs/dialog/paper/mod.tsx"
 import { Events } from "@/libs/events/mod.ts"
 import { Nullable } from "@/libs/nullable/mod.ts"
+import { Portal } from "@/libs/portal/mod.tsx"
 import { ChildrenProps, DarkProps } from "@/libs/props/mod.ts"
 import { usePathContext } from "@hazae41/chemin"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"

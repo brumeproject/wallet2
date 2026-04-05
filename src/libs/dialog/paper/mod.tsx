@@ -1,11 +1,12 @@
 // deno-lint-ignore-file no-unused-vars
 
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { Portal } from "@/libs/portal/mod.tsx";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { usePathContext } from "@hazae41/chemin";
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context";
 import React, { JSX, KeyboardEvent, MouseEvent, useCallback, useEffect, useRef, useState } from "react";
-import { createPortal, flushSync } from "react-dom";
+import { flushSync } from "react-dom";
 
 React;
 
@@ -196,8 +197,4 @@ export function WideNakedMenuButton(props: ChildrenProps & JSX.IntrinsicElements
       {children}
     </InMenuButton>
   </button>
-}
-
-export function Portal(props: ChildrenProps) {
-  return createPortal(props.children, document.body)
 }
