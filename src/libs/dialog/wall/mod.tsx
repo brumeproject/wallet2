@@ -155,7 +155,7 @@ export function Wall(props: ChildrenProps & DarkProps) {
 
   return <CloseContext value={hide}>
     <Portal>
-      <div className="fixed inset-0 bg-backdrop data-[mounting=true]:animate-opacity-in data-[mounting=false]:animate-opacity-out"
+      <div className="absolute inset-0 bg-backdrop data-[mounting=true]:animate-opacity-in data-[mounting=false]:animate-opacity-out"
         data-mounting={mounting} />
       <div className="fixed inset-0 focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[mounting=true]:animate-slideup-in data-[mounting=false]:animate-opacity-out"
         data-mounting={mounting}

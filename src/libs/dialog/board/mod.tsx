@@ -195,7 +195,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
 
   return <CloseContext value={hide}>
     <Portal>
-      <div className="fixed inset-0 bg-backdrop data-[mounting=true]:animate-opacity-in data-[mounting=false]:animate-opacity-out"
+      <div className="absolute inset-0 bg-backdrop data-[mounting=true]:animate-opacity-in data-[mounting=false]:animate-opacity-out"
         data-mounting={mounting} />
       <div className="fixed inset-0 flex flex-col md:p-safe focus-visible:outline-none overflow-y-scroll md:overflow-y-hidden data-[mounted=true]:data-[mounting=true]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] opacity-0 data-open:opacity-100 data-open:data-[mounting=true]:not-md:animate-slideup-in data-open:data-[mounting=true]:md:animate-scale-xywh-in data-[mounting=false]:not-md:animate-opacity-out data-[mounting=false]:md:animate-scale-xywh-out"
         data-mounting={mounting}
