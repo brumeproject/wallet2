@@ -495,6 +495,8 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
       document.body.removeChild(a)
 
       URL.revokeObjectURL(url)
+
+      await new Promise(ok => setTimeout(ok, 300))
     }
 
     close(true)
@@ -574,6 +576,8 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
       document.body.removeChild(a)
 
       URL.revokeObjectURL(url)
+
+      await new Promise(ok => setTimeout(ok, 300))
     }
 
     close(true)
@@ -656,6 +660,8 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
       document.body.removeChild(a)
 
       URL.revokeObjectURL(url)
+
+      await new Promise(ok => setTimeout(ok, 300))
     }
 
     close(true)
