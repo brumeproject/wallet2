@@ -55,7 +55,7 @@ const AnUpdateIsAvailable = (origin: string) => ({
 async function upgrade() {
   if (navigator.serviceWorker.controller != null)
     navigator.serviceWorker.addEventListener("controllerchange", () => {
-      console.log("reloading")
+      console.log("Reloading")
       location.reload()
     })
 
