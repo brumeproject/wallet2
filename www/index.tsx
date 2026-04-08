@@ -54,10 +54,7 @@ const AnUpdateIsAvailable = (origin: string) => ({
 
 async function upgrade() {
   if (navigator.serviceWorker.controller != null)
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      console.log("Reloading")
-      location.reload()
-    })
+    navigator.serviceWorker.addEventListener("controllerchange", () => location.reload())
 
   const { registration, update } = await immutable.serviceWorker.register("/service.worker.js", { type: "module", scope: "/", updateViaCache: "all" })
 
