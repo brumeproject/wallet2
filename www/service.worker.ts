@@ -9,9 +9,6 @@ declare const self: ServiceWorkerGlobalScope
 declare const CACHE: string
 declare const FILES: [string, string][]
 
-/**
- * Only cache on production
- */
 if (process.env.NODE_ENV === "production") {
   const cache = new immutable.cache.Cacher(CACHE, new Map(FILES))
 
