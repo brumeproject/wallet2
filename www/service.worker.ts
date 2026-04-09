@@ -14,16 +14,16 @@ if (process.env.NODE_ENV === "production") {
 
   self.addEventListener("install", (event) => {
     /**
-     * Precache new version and auto-activate as the update was already accepted
+     * Precache new version
      */
-    event.waitUntil(cache.precache().then(() => self.skipWaiting()))
+    event.waitUntil(cache.precache())
   })
 
   self.addEventListener("activate", (event) => {
     /**
-     * Take control of all clients and uncache previous versions
+     * Uncache previous versions
      */
-    event.waitUntil(self.clients.claim().then(() => cache.uncache()))
+    event.waitUntil(cache.uncache())
   })
 
   /**
@@ -42,14 +42,14 @@ if (process.env.NODE_ENV === "production") {
 if (process.env.NODE_ENV === "development") {
   self.addEventListener("install", (event) => {
     /**
-     * Auto-activate
+     * Become the active service worker
      */
     event.waitUntil(self.skipWaiting())
   })
 
   self.addEventListener("activate", (event) => {
     /**
-     * Take control of all clients
+     * Claim all clients
      */
     event.waitUntil(self.clients.claim())
   })
