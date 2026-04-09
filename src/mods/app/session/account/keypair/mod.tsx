@@ -91,7 +91,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
 
     const file = new File([content], "key.pub", { type: "application/octet-stream" })
 
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
       await navigator.share({ files: [file] })
     } else {
       const url = URL.createObjectURL(file)
@@ -115,7 +115,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
 
     const file = new File([content], "key", { type: "application/octet-stream" })
 
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
       await navigator.share({ files: [file] })
     } else {
       const url = URL.createObjectURL(file)
@@ -442,7 +442,7 @@ export function KeypairAccountAddPage() {
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
       await navigator.share({ files: [file] })
     } else {
       const url = URL.createObjectURL(file)

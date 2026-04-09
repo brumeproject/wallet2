@@ -479,7 +479,7 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
       await navigator.share({ files: [file] })
     } else {
       const url = URL.createObjectURL(file)
@@ -560,7 +560,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
       await navigator.share({ files: [file] })
     } else {
       const url = URL.createObjectURL(file)
@@ -644,7 +644,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
       await navigator.share({ files: [file] })
     } else {
       const url = URL.createObjectURL(file)
