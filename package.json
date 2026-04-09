@@ -5,8 +5,8 @@
   "scripts": {
     "examine": "deno lint ./src && deno check ./src && deno test ./src",
     "prepack": "deno x glace ./www --out=./out",
-    "produce": "deno x glace ./www --out=./out --watch=./src,./www & deno -RNE ./src/mods/srv/bin.ts",
-    "develop": "deno x glace ./www --out=./out --watch=./src,./www --dev & deno -RNE ./src/mods/srv/bin.ts --dev"
+    "produce": "deno x glace ./www --out=./out & deno -RNE ./src/mods/srv/bin.ts",
+    "develop": "deno x glace ./www --out=./out --dev & deno -RNE ./src/mods/srv/bin.ts --dev"
   },
   "files": [
     "./out"
