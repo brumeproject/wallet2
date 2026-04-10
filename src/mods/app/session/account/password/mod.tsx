@@ -1,6 +1,7 @@
 import { InAnchor } from "@/libs/anchor/mod.tsx";
-import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { InButton, WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
+import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
@@ -15,7 +16,7 @@ import { MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
-import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
+import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, PasswordAccountCard } from "../mod.tsx";
 
@@ -207,8 +208,6 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
   </Fragment>
 }
 
-
-
 export function PasswordAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -222,6 +221,138 @@ export function PasswordAccountAddMenuAnchor() {
     <Outline.LanguageIcon className="size-5" />
     Password
   </WideNakedMenuAnchor>
+}
+
+export function TotpPageAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/totp")
+
+  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <InAnchor>
+      <Outline.QrCodeIcon className="size-5" />
+    </InAnchor>
+  </a>
+}
+export function ScanPage(props: { value: string } & { onChange(value: string): void }) {
+  const { value, onChange } = props
+
+  const close = useCloseContext().getOrThrow()
+
+  const [text, setText] = [value, onChange]
+
+  const onFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => Promise.try(async () => {
+    const file = e.target.files?.item(0)
+
+    if (file == null)
+      return
+
+    const content = await QrCode.decodeFileOrNull(file)
+
+    if (content == null)
+      throw new Error("Could not find QR code")
+
+    setText(content)
+  }).catch(Errors.display), [])
+
+  const onClose = useCallback(() => {
+    close()
+  }, [close])
+
+  const [video, setVideo] = useState<Nullable<HTMLVideoElement>>()
+
+  const [facing, setFacing] = useState<"user" | "environment">("environment")
+
+  const setup = useCallback((signal: AbortSignal) => Promise.try(async () => {
+    using stack = new DisposableStack()
+
+    if (video == null)
+      return
+
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    const cameras = devices.filter(d => d.kind === "videoinput")
+
+    if (cameras.length === 0)
+      return
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing } })
+
+    stack.defer(() => stream.getTracks().forEach(t => t.stop()))
+
+    video.srcObject = stream
+
+    await video.play()
+
+    const canvas = document.createElement("canvas")
+    const context = canvas.getContext("2d", { willReadFrequently: true })
+
+    if (context == null)
+      return
+
+    while (!signal.aborted) {
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+
+      context.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height,)
+
+      const file = new File([imageData.data], "frame.png", { type: "image/png" })
+
+      try {
+        const content = await QrCode.decodeFileOrNull(file)
+
+        if (signal.aborted)
+          break
+
+        if (content != null)
+          setText(content)
+
+        continue
+      } catch (e) {
+        console.warn(e)
+        continue
+      }
+    }
+  }).catch(Errors.display), [facing, video])
+
+  useEffect(() => {
+    const aborter = new AbortController()
+
+    setup(aborter.signal)
+
+    return () => aborter.abort()
+  }, [setup])
+
+  return <div className="flex flex-col grow basis-[800px] p-6">
+    <div className="flex flex-col grow noise rounded-xl relative">
+      <video className="absolute inset-0"
+        ref={setVideo} />
+      <div className="absolute z-10 bottom-0 flex items-center p-4 gap-4">
+        <div className="group relative text-white bg-neutral-500/80 rounded-full p-2  [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-neutral-500/80">
+          <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
+            type="file"
+            accept="image/*"
+            onChange={onFileChange} />
+          <InAnchor>
+            <Outline.PhotoIcon className="size-6" />
+          </InAnchor>
+        </div>
+      </div>
+    </div>
+    <div className="h-4" />
+    <div className="flex items-center">
+      <WideContrastButton
+        onClick={onClose}>
+        <Outline.EyeSlashIcon className="size-5" />
+        Close
+      </WideContrastButton>
+    </div>
+  </div>
 }
 
 export function PasswordMenuAnchor() {
@@ -426,6 +557,10 @@ export function PasswordAccountAddPage() {
         <PathPaper>
           <PasswordMenu value={password} onChange={setPassword} />
         </PathPaper>}
+      {hash.url.pathname === "/totp" &&
+        <PathBoard>
+          <ScanPage value={totpseed} onChange={setTotpSeed} />
+        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
@@ -526,15 +661,7 @@ export function PasswordAccountAddPage() {
                 {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
-            <div className="group relative rounded-full p-1 [&:has(:hover)]:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast [&:has(:focus-visible)]:outline-none">
-              <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
-                type="file"
-                accept="image/*"
-                onChange={onTotpQrcodeChange} />
-              <InAnchor>
-                <Outline.QrCodeIcon className="size-5" />
-              </InAnchor>
-            </div>
+            <TotpPageAnchor />
           </div>
         </div>
         <div className="h-2" />
