@@ -301,13 +301,15 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     if (cameras.length === 0)
       return
 
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, torch: true } } as unknown as MediaStreamConstraints)
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, torch: true } } as unknown as MediaStreamConstraints)
 
-    stack.defer(() => stream.getTracks().forEach(t => t.stop()))
+      stack.defer(() => stream.getTracks().forEach(t => t.stop()))
 
-    video.srcObject = stream
-
-    await video.play()
+      video.srcObject = stream
+    } finally {
+      await video.play()
+    }
 
     const canvas = new OffscreenCanvas(video.videoWidth, video.videoHeight)
     const context = canvas.getContext("2d", { willReadFrequently: true })
