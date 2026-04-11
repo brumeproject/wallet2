@@ -1,4 +1,5 @@
 /// <reference lib="dom" />
+// deno-lint-ignore-file no-process-global
 
 import "@hazae41/symbol-dispose-polyfill";
 
@@ -55,8 +56,68 @@ const AnUpdateIsAvailable = (origin: string) => ({
   da: `En opdatering af ${origin} er tilgængelig. Vil du installere den?`,
 } as const)
 
-async function upgrade() {
+const AnUpdateHasBeenInstalled = (origin: string) => ({
+  en: `An update of ${origin} has been installed. Please refresh the page to use the new version.`,
+  zh: `已安装 ${origin} 的更新。请刷新页面以使用新版本。`,
+  hi: `${origin} का एक अपडेट इंस्टॉल हो गया है। कृपया नए संस्करण का उपयोग करने के लिए पृष्ठ को रिफ्रेश करें।`,
+  es: `Se ha instalado una actualización de ${origin}. Por favor, actualice la página para usar la nueva versión.`,
+  ar: `تم تثبيت تحديث لـ ${origin}. يرجى تحديث الصفحة لاستخدام الإصدار الجديد.`,
+  fr: `Une mise à jour de ${origin} a été installée. Veuillez rafraîchir la page pour utiliser la nouvelle version.`,
+  de: `Ein Update von ${origin} wurde installiert. Bitte aktualisieren Sie die Seite, um die neue Version zu verwenden.`,
+  ru: `Обновление для ${origin} было установлено. Пожалуйста, обновите страницу, чтобы использовать новую версию.`,
+  pt: `Uma atualização de ${origin} foi instalada. Por favor, atualize a página para usar a nova versão.`,
+  ja: `${origin} のアップデートがインストールされました。新しいバージョンを使用するには、ページを更新してください。`,
+  pa: `${origin} ਦਾ ਇੱਕ ਅੱਪਡੇਟ ਇੰਸਟਾਲ ਹੋ ਗਿਆ ਹੈ। कृपया नए संस्करण का उपयोग करने के लिए पृष्ठ को रिफ्रेश करें।`,
+  bn: `${origin} এর একটি আপডেট ইনস্টল করা হয়েছে। নতুন সংস্করণ ব্যবহার করতে कृपया पृष्ठ को रिफ्रेश करें।`,
+  id: `Pembaruan dari ${origin} telah diinstal. Harap segarkan halaman untuk menggunakan versi baru.`,
+  ur: `کے لیے ایک اپ ڈیٹ ${origin} انسٹال ہو گیا ہے۔ نئے ورژن کو استعمال کرنے کے لیے صفحہ کو ریفریش کریں۔`,
+  ms: `Kemas kini untuk ${origin} telah dipasang. Sila segarkan halaman untuk menggunakan versi baru.`,
+  it: `Un aggiornamento per ${origin} è stato installato. Per favore, aggiorna la pagina per usare la nuova versione.`,
+  tr: `${origin} için bir güncelleme yüklendi. Yeni sürümü kullanmak için lütfen sayfayı yenileyin.`,
+  ta: `${origin} க்கான ஒரு புதுப்பிப்பு நிறுவப்பட்டுள்ளது. புதிய பதிப்பைப் பயன்படுத்த பக்கத்தை புதுப்பிக்கவும்.`,
+  te: `${origin} కోసం ఒక అప్‌డేట్ ఇన్‌స్టాల్ చేయబడింది. కొత్త వెర్షన్‌ను ఉపయోగించడానికి దయచేసి పేజీని రిఫ్రెష్ చేయండి.`,
+  ko: `${origin}의 업데이트가 설치되었습니다. 새 버전을 사용하려면 페이지를 새로 고치세요.`,
+  vi: `Một bản cập nhật của ${origin} đã được cài đặt. Vui lòng làm mới trang để sử dụng phiên bản mới.`,
+  pl: `Aktualizacja ${origin} została zainstalowana. Odśwież stronę, aby użyć nowej wersji.`,
+  ro: `O actualizare pentru ${origin} a fost instalată. Vă rugăm să reîmprospătați pagina pentru a utiliza noua versiune.`,
+  nl: `Er is een update van ${origin} geïnstalleerd. Vernieuw de pagina om de nieuwe versie te gebruiken.`,
+  el: `Μια ενημέρωση για το ${origin} έχει εγκατασταθεί. Παρακαλώ ανανεώστε τη σελίδα για να χρησιμοποιήσετε τη νέα έκδοση.`,
+  th: `มีการติดตั้งการอัปเดตของ ${origin} กรุณารีเฟรชหน้าเพื่อใช้เวอร์ชันใหม่`,
+  cs: `Aktualizace pro ${origin} byla nainstalována. Obnovte prosím stránku pro použití nové verze.`,
+  hu: `Elérhető egy frissítés a ${origin} számára. Kérem, frissítse az oldalt az új verzió használatához.`,
+  sv: `En uppdatering av ${origin} har installerats. Vänligen uppdatera sidan för att använda den nya versionen.`,
+  da: `En opdatering af ${origin} er blevet installeret. Opdater venligst siden for at bruge den nye version.`,
+} as const)
+
+async function register() {
   const { registration, update } = await immutable.serviceWorker.register("/service.worker.js", { scope: "/", updateViaCache: "all" })
+
+  const aborter = new AbortController()
+
+  registration.addEventListener("updatefound", () => {
+    const { installing } = registration
+
+    if (installing == null)
+      return
+
+    installing.addEventListener("statechange", async () => {
+      if (installing.state !== "activated")
+        return
+
+      aborter.abort()
+
+      console.debug("A new service worker has been installed")
+
+      if (process.env.NODE_ENV !== "production")
+        return
+
+      await Promise.resolve()
+
+      alert(Lang.match(AnUpdateHasBeenInstalled(location.origin)))
+    }, { signal: aborter.signal })
+
+    console.debug("A new service worker is being installed...")
+  }, { signal: aborter.signal })
 
   if (update == null)
     return registration
@@ -89,7 +150,7 @@ function Body() {
   }, [])
 
   useEffect(() => {
-    upgrade().catch(console.error)
+    register().catch(console.error)
   }, [])
 
   return <ClientContext.Provider value={client}>
@@ -101,8 +162,6 @@ function Body() {
   </ClientContext.Provider>
 }
 
-// @ts-ignore: process not found
-// deno-lint-ignore no-process-global
 if (process.env.PLATFORM === "browser") {
   await new Rewind(document).hydrateOrThrow().then(() => hydrateRoot(document.body, <Body />))
 } else {
