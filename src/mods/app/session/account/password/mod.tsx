@@ -346,6 +346,9 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     return () => aborter.abort()
   }, [captureOrAlert])
 
+  /**
+   * Fix iOS Safari pausing the video after browser prompts
+   */
   useEffect(() => {
     if (video == null)
       return
