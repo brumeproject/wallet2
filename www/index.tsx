@@ -92,8 +92,6 @@ const AnUpdateHasBeenInstalled = (origin: string) => ({
 async function register() {
   const { registration, update } = await immutable.serviceWorker.register("/service.worker.js", { scope: "/", updateViaCache: "all" })
 
-  const aborter = new AbortController()
-
   registration.addEventListener("updatefound", () => {
     const { installing } = registration
 
@@ -104,18 +102,16 @@ async function register() {
       if (installing.state !== "activated")
         return
 
-      aborter.abort()
-
       if (process.env.NODE_ENV !== "production")
         return
 
       await Promise.resolve()
 
       alert(Lang.match(AnUpdateHasBeenInstalled(location.origin)))
-    }, { signal: aborter.signal })
+    }, { passive: true })
 
     console.debug("A new service worker is being installed")
-  }, { signal: aborter.signal })
+  }, { passive: true })
 
   if (update == null)
     return registration
