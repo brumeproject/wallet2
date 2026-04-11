@@ -146,19 +146,13 @@ export function App() {
               Cryptos
             </div>
             <div className="p-4 bg-default-contrast rounded-xl">
-              NFTs
-            </div>
-            <div className="p-4 bg-default-contrast rounded-xl">
               Passwords
             </div>
             <div className="p-4 bg-default-contrast rounded-xl">
+              Keypairs
+            </div>
+            <div className="p-4 bg-default-contrast rounded-xl">
               Credit cards
-            </div>
-            <div className="p-4 bg-default-contrast rounded-xl">
-              Notes
-            </div>
-            <div className="p-4 bg-default-contrast rounded-xl">
-              Files
             </div>
           </div>
           <div className="h-[max(24rem,50dvh)]" />
