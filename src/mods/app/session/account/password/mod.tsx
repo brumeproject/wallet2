@@ -370,7 +370,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
         src="/noise.mp4"
         ref={setVideo} />
       <div className="absolute bottom-0 w-full flex items-center p-4">
-        <div className="group relative text-white bg-neutral-500/50 rounded-full p-2  [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-neutral-500/50">
+        <div className="group relative text-white bg-neutral-500/80 rounded-full p-2  [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-neutral-500/80">
           <input className="absolute z-10 inset-0 opacity-0 cursor-pointer rounded-full"
             type="file"
             accept="image/*"
@@ -380,7 +380,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
           </InAnchor>
         </div>
         <div className="grow" />
-        <button className="group text-white bg-neutral-500/50 rounded-full p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500/50"
+        <button className="group text-white bg-neutral-500/80 rounded-full p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500/80"
           onClick={() => setFacing(x => x === "environment" ? "user" : "environment")}
           type="button">
           <InButton>
