@@ -106,8 +106,6 @@ async function register() {
 
       aborter.abort()
 
-      console.debug("A new service worker has been installed")
-
       if (process.env.NODE_ENV !== "production")
         return
 
@@ -116,7 +114,7 @@ async function register() {
       alert(Lang.match(AnUpdateHasBeenInstalled(location.origin)))
     }, { signal: aborter.signal })
 
-    console.debug("A new service worker is being installed...")
+    console.debug("A new service worker is being installed")
   }, { signal: aborter.signal })
 
   if (update == null)
