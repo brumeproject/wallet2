@@ -301,15 +301,13 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     if (cameras.length === 0)
       return
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, torch: true } } as unknown as MediaStreamConstraints)
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, torch: true } } as unknown as MediaStreamConstraints)
 
-      stack.defer(() => stream.getTracks().forEach(t => t.stop()))
+    stack.defer(() => stream.getTracks().forEach(t => t.stop()))
 
-      video.srcObject = stream
-    } finally {
-      await video.play()
-    }
+    video.srcObject = stream
+
+    await video.play()
 
     const canvas = new OffscreenCanvas(video.videoWidth, video.videoHeight)
     const context = canvas.getContext("2d", { willReadFrequently: true })
@@ -347,6 +345,17 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
     return () => aborter.abort()
   }, [captureOrAlert])
+
+  useEffect(() => {
+    if (video == null)
+      return
+
+    const t = setTimeout(() => {
+      video.play().catch(console.warn)
+    }, 1000)
+
+    return () => clearTimeout(t)
+  }, [video])
 
   return <div className="flex flex-col grow basis-[800px] p-6">
     <h1 className="text-xl font-medium">
