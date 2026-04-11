@@ -348,7 +348,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
   return <div className="flex flex-col grow basis-[800px] p-6">
     <div className="flex flex-col grow noise rounded-xl relative">
-      <video className="h-full w-full object-cover rounded-xl" autoPlay muted playsInline
+      <video className="h-full object-cover rounded-xl" autoPlay muted playsInline
         ref={setVideo} />
       <div className="absolute bottom-0 w-full flex items-center p-4">
         <div className="group relative text-white bg-neutral-500/80 rounded-full p-2  [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-neutral-500/80">
