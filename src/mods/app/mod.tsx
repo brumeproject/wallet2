@@ -11,12 +11,15 @@ import { useStoreContext } from "@/libs/store/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { CloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useEffect, useState } from "react";
+import { preload } from "react-dom";
 import { SessionData, SessionPage, SessionProvider } from "./session/mod.tsx";
 import { UserLoginButton, UserLoginMenu } from "./user/mod.tsx";
 
 React;
 
 export function App() {
+  preload("/noise.mp4", { as: "video" })
+
   const client = useClientContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 

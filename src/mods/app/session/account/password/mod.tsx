@@ -351,12 +351,13 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
       Scan QR code
     </h1>
     <div className="h-6" />
-    <div className="flex flex-col grow noise rounded-xl relative">
-      <video className="h-full object-cover rounded-xl" muted playsInline
+    <div className="flex flex-col grow rounded-xl relative">
+      <video className="h-full object-cover rounded-xl bg-black" muted autoPlay playsInline loop
+        src="/noise.mp4"
         ref={setVideo} />
       <div className="absolute bottom-0 w-full flex items-center p-4">
         <div className="group relative text-white bg-neutral-500/80 rounded-full p-2  [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-neutral-500/80">
-          <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
+          <input className="absolute z-10 inset-0 opacity-0 cursor-pointer rounded-full"
             type="file"
             accept="image/*"
             onChange={onFileChange} />
