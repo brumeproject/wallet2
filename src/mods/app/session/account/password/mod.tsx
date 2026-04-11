@@ -8,7 +8,6 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
-import { QrCode } from "@/libs/qrcode/mod.ts";
 import { capitalize } from "@/libs/string/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
@@ -16,6 +15,7 @@ import { MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
+import jsqr from "jsqr";
 import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, PasswordAccountCard } from "../mod.tsx";
@@ -238,6 +238,7 @@ export function TotpPageAnchor() {
     </InAnchor>
   </a>
 }
+
 export function ScanPage(props: { value: string } & { onChange(value: string): void }) {
   const { value, onChange } = props
 
@@ -245,29 +246,50 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
   const [text, setText] = [value, onChange]
 
+  const onClose = useCallback(() => {
+    close()
+  }, [close])
+
   const onFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => Promise.try(async () => {
+    using stack = new DisposableStack()
+
     const file = e.target.files?.item(0)
 
     if (file == null)
       return
 
-    const content = await QrCode.decodeFileOrNull(file)
+    const bitmap = await createImageBitmap(file)
 
-    if (content == null)
-      throw new Error("Could not find QR code")
+    stack.defer(() => bitmap.close())
 
-    setText(content)
-  }).catch(Errors.display), [])
+    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
 
-  const onClose = useCallback(() => {
+    const context = canvas.getContext("2d")
+
+    if (context == null)
+      return
+
+    await new Promise(requestAnimationFrame)
+
+    context.drawImage(bitmap, 0, 0)
+
+    const { data, width, height } = context.getImageData(0, 0, canvas.width, canvas.height)
+
+    const result = jsqr.default(data, width, height)
+
+    if (!result?.data)
+      return
+
+    setText(result.data)
+
     close()
-  }, [close])
+  }).catch(Errors.display), [])
 
   const [video, setVideo] = useState<Nullable<HTMLVideoElement>>()
 
   const [facing, setFacing] = useState<"user" | "environment">("environment")
 
-  const setup = useCallback((signal: AbortSignal) => Promise.try(async () => {
+  const captureOrAlert = useCallback((signal: AbortSignal) => Promise.try(async () => {
     using stack = new DisposableStack()
 
     if (video == null)
@@ -287,52 +309,48 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
     await video.play()
 
-    const canvas = document.createElement("canvas")
+    const canvas = new OffscreenCanvas(video.videoWidth, video.videoHeight)
     const context = canvas.getContext("2d", { willReadFrequently: true })
 
     if (context == null)
       return
 
     while (!signal.aborted) {
-      canvas.width = video.videoWidth
-      canvas.height = video.videoHeight
+      await new Promise(requestAnimationFrame)
 
       context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height,)
+      const { data, width, height } = context.getImageData(0, 0, canvas.width, canvas.height)
 
-      const file = new File([imageData.data], "frame.png", { type: "image/png" })
+      const result = jsqr.default(data, width, height)
 
-      try {
-        const content = await QrCode.decodeFileOrNull(file)
+      if (signal.aborted)
+        break
 
-        if (signal.aborted)
-          break
-
-        if (content != null)
-          setText(content)
-
+      if (!result?.data)
         continue
-      } catch (e) {
-        console.warn(e)
-        continue
-      }
+
+      setText(result.data)
+
+      close()
+
+      break
     }
   }).catch(Errors.display), [facing, video])
 
   useEffect(() => {
     const aborter = new AbortController()
 
-    setup(aborter.signal)
+    captureOrAlert(aborter.signal)
 
     return () => aborter.abort()
-  }, [setup])
+  }, [captureOrAlert])
 
   return <div className="flex flex-col grow basis-[800px] p-6">
     <div className="flex flex-col grow noise rounded-xl relative">
-      <video className="absolute inset-0"
+      <video className="h-full w-full object-cover rounded-xl" autoPlay muted playsInline
         ref={setVideo} />
-      <div className="absolute z-10 bottom-0 flex items-center p-4 gap-4">
+      <div className="absolute bottom-0 w-full flex items-center p-4">
         <div className="group relative text-white bg-neutral-500/80 rounded-full p-2  [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-neutral-500/80">
           <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
             type="file"
@@ -342,6 +360,14 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
             <Outline.PhotoIcon className="size-6" />
           </InAnchor>
         </div>
+        <div className="grow" />
+        <button className="group text-white bg-neutral-500/80 rounded-full p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500/80"
+          onClick={() => setFacing(x => x === "environment" ? "user" : "environment")}
+          type="button">
+          <InButton>
+            <Outline.ArrowPathIcon className="size-6" />
+          </InButton>
+        </button>
       </div>
     </div>
     <div className="h-4" />
@@ -532,20 +558,6 @@ export function PasswordAccountAddPage() {
   const error = useMemo(() => {
     return
   }, [])
-
-  const onTotpQrcodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => Promise.try(async () => {
-    const file = e.target.files?.item(0)
-
-    if (file == null)
-      return
-
-    const content = await QrCode.decodeFileOrNull(file)
-
-    if (content == null)
-      throw new Error("Could not find QR code")
-
-    setTotpSeed(content)
-  }).catch(Errors.display), [])
 
   return <Fragment>
     <SubpathProvider value={hash}>

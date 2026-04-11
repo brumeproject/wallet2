@@ -1,22 +1,21 @@
-import { InAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
+import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
-import { QrCode } from "@/libs/qrcode/mod.ts";
 import { capitalize } from "@/libs/string/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
-import { PasswordMenu, PasswordMenuAnchor } from "@/mods/app/session/account/password/mod.tsx";
+import { PasswordMenu, PasswordMenuAnchor, ScanPage, TotpPageAnchor } from "@/mods/app/session/account/password/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
-import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, KeypairAccountCard } from "../mod.tsx";
 
@@ -471,20 +470,6 @@ export function KeypairAccountAddPage() {
     return
   }, [pubkey])
 
-  const onTotpQrcodeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => Promise.try(async () => {
-    const file = e.target.files?.item(0)
-
-    if (file == null)
-      return
-
-    const content = await QrCode.decodeFileOrNull(file)
-
-    if (content == null)
-      throw new Error("Could not find QR code")
-
-    setTotpSeed(content)
-  }).catch(Errors.display), [])
-
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/color" &&
@@ -495,6 +480,10 @@ export function KeypairAccountAddPage() {
         <PathPaper>
           <PasswordMenu value={password} onChange={setPassword} />
         </PathPaper>}
+      {hash.url.pathname === "/totp" &&
+        <PathBoard>
+          <ScanPage value={totpseed} onChange={setTotpSeed} />
+        </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
@@ -635,15 +624,7 @@ export function KeypairAccountAddPage() {
                 {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
               </InButton>
             </button>
-            <div className="group relative rounded-full p-1 [&:has(:hover)]:bg-default-double-contrast [&:has(:focus-visible)]:bg-default-double-contrast [&:has(:focus-visible)]:outline-none">
-              <input className="absolute z-10 inset-0 opacity-0 cursor-pointer"
-                type="file"
-                accept="image/*"
-                onChange={onTotpQrcodeChange} />
-              <InAnchor>
-                <Outline.QrCodeIcon className="size-5" />
-              </InAnchor>
-            </div>
+            <TotpPageAnchor />
           </div>
         </div>
         <div className="h-2" />
