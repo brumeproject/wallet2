@@ -1,7 +1,10 @@
 /// <reference lib="dom" />
 
-import "@hazae41/request-idle-callback-polyfill";
 import "@hazae41/symbol-dispose-polyfill";
+
+import "@hazae41/disposable-stack-polyfill";
+
+import "@hazae41/request-idle-callback-polyfill";
 
 import { ClientContext } from "@/libs/client/mod.tsx";
 import { dirs, Lang } from "@/libs/lang/mod.ts";
