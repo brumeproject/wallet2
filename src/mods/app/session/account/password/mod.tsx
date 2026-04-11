@@ -301,7 +301,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     if (cameras.length === 0)
       return
 
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing } })
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, torch: true } } as unknown as MediaStreamConstraints)
 
     stack.defer(() => stream.getTracks().forEach(t => t.stop()))
 
@@ -347,8 +347,12 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
   }, [captureOrAlert])
 
   return <div className="flex flex-col grow basis-[800px] p-6">
+    <h1 className="text-xl font-medium">
+      Scan QR code
+    </h1>
+    <div className="h-6" />
     <div className="flex flex-col grow noise rounded-xl relative">
-      <video className="h-full object-cover rounded-xl" autoPlay muted playsInline
+      <video className="h-full object-cover rounded-xl" muted playsInline
         ref={setVideo} />
       <div className="absolute bottom-0 w-full flex items-center p-4">
         <div className="group relative text-white bg-neutral-500/80 rounded-full p-2  [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-neutral-500/80">
