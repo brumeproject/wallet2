@@ -350,11 +350,11 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     if (video == null)
       return
 
-    const t = setTimeout(() => {
+    const i = setInterval(() => {
       video.play().catch(console.warn)
     }, 1000)
 
-    return () => clearTimeout(t)
+    return () => clearInterval(i)
   }, [video])
 
   return <div className="flex flex-col grow basis-[800px] p-6">
