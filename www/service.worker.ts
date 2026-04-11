@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === "production") {
     /**
      * Precache new version
      */
-    event.waitUntil(cache.precache())
+    event.waitUntil(cache.precache().then(() => self.skipWaiting()))
   })
 
   self.addEventListener("activate", (event) => {
