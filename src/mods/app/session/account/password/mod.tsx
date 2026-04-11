@@ -350,7 +350,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     <h1 className="text-xl font-medium">
       Scan QR code
     </h1>
-    <div className="h-6" />
+    <div className="h-4" />
     <div className="flex flex-col grow rounded-xl relative">
       <video className="h-full object-cover rounded-xl bg-black" muted autoPlay playsInline loop
         src="/noise.mp4"
