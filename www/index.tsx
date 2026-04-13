@@ -93,8 +93,10 @@ async function register() {
   const { registration, update } = await immutable.serviceWorker.register("/service.worker.js", { scope: "/", updateViaCache: "all" })
 
   registration.addEventListener("updatefound", () => {
-    const { installing } = registration
+    const { installing, active } = registration
 
+    if (active == null)
+      return
     if (installing == null)
       return
 
