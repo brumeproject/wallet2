@@ -289,6 +289,8 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
   const [facing, setFacing] = useState<"user" | "environment">("environment")
 
+  const [torch, setTorch] = useState(false)
+
   const captureOrAlert = useCallback((signal: AbortSignal) => Promise.try(async () => {
     using stack = new DisposableStack()
 
@@ -301,7 +303,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     if (cameras.length === 0)
       return
 
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, torch: true } } as unknown as MediaStreamConstraints)
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, torch } } as unknown as MediaStreamConstraints)
 
     stack.defer(() => stream.getTracks().forEach(t => t.stop()))
 
@@ -336,7 +338,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
       break
     }
-  }).catch(Errors.display), [facing, video])
+  }).catch(Errors.display), [facing, video, torch])
 
   useEffect(() => {
     const aborter = new AbortController()
@@ -360,13 +362,13 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     return () => clearInterval(i)
   }, [video])
 
-  return <div className="flex flex-col grow basis-[800px] p-6">
+  return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
       Scan QR code
     </h1>
     <div className="h-4" />
     <div className="flex flex-col grow rounded-xl relative">
-      <video className="h-full object-cover rounded-xl bg-black" muted autoPlay playsInline loop
+      <video className="h-full md:aspect-video object-cover rounded-xl bg-black" muted autoPlay playsInline loop
         src="/noise.mp4"
         ref={setVideo} />
       <div className="absolute bottom-0 w-full flex items-center p-4">
@@ -380,6 +382,14 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
           </InAnchor>
         </div>
         <div className="grow" />
+        <button className="group text-white bg-neutral-500/80 rounded-full p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500/80"
+          onClick={() => setTorch(x => !x)}
+          type="button">
+          <InButton>
+            {torch ? <Outline.BoltSlashIcon className="size-6" /> : <Outline.BoltIcon className="size-6" />}
+          </InButton>
+        </button>
+        <div className="w-2" />
         <button className="group text-white bg-neutral-500/80 rounded-full p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500/80"
           onClick={() => setFacing(x => x === "environment" ? "user" : "environment")}
           type="button">
