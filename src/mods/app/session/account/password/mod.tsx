@@ -287,7 +287,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
   const [video, setVideo] = useState<Nullable<HTMLVideoElement>>()
 
-  const [facing, setFacing] = useState<"user" | "environment">("environment")
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("environment")
 
   const [torch, setTorch] = useState(false)
 
@@ -303,11 +303,13 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     if (cameras.length === 0)
       return
 
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, torch } } as unknown as MediaStreamConstraints)
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode, torch } } as unknown as MediaStreamConstraints)
 
     stack.defer(() => stream.getTracks().forEach(t => t.stop()))
 
     video.srcObject = stream
+
+    stack.defer(() => video.srcObject = null)
 
     await video.play()
 
@@ -338,7 +340,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
       break
     }
-  }).catch(Errors.display), [facing, video, torch])
+  }).catch(Errors.display), [facingMode, video, torch])
 
   useEffect(() => {
     const aborter = new AbortController()
@@ -378,7 +380,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
             accept="image/*"
             onChange={onFileChange} />
           <InAnchor>
-            <Outline.PhotoIcon className="size-6" />
+            <Outline.ArrowUpTrayIcon className="size-6" />
           </InAnchor>
         </div>
         <div className="grow" />
@@ -391,7 +393,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
         </button>
         <div className="w-2" />
         <button className="group text-white bg-neutral-500/80 rounded-full p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500/80"
-          onClick={() => setFacing(x => x === "environment" ? "user" : "environment")}
+          onClick={() => setFacingMode(x => x === "environment" ? "user" : "environment")}
           type="button">
           <InButton>
             <Outline.ArrowPathIcon className="size-6" />
