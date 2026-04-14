@@ -278,7 +278,7 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
           Ethereum address
         </div>
         <div className="text-default-contrast">
-          Your Ethereum (EVM, ERC20) address.
+          Your Ethereum (EVM, ERC20) address.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -303,7 +303,7 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
           Solana address
         </div>
         <div className="text-default-contrast">
-          Your Solana (SVM) address.
+          Your Solana (SVM) address.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -414,7 +414,7 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
           Ethereum private key
         </div>
         <div className="text-default-contrast">
-          Your Ethereum (EVM, ERC20) private key in hexadecimal format.
+          Your Ethereum (EVM, ERC20) private key in hexadecimal format.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -444,7 +444,7 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
           Solana private key
         </div>
         <div className="text-default-contrast">
-          Your Solana (SVM) private key in base58 format.
+          Your Solana (SVM) private key in base58 format.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">

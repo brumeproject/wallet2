@@ -175,7 +175,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             Username
           </div>
           <div className="text-default-contrast">
-            Your username or email.
+            Your username or email.&lrm;
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -201,7 +201,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             Public key
           </div>
           <div className="text-default-contrast">
-            Your public key.
+            Your public key.&lrm;
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -231,7 +231,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             Private key
           </div>
           <div className="text-default-contrast">
-            Your private key.
+            Your private key.&lrm;
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -266,7 +266,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             Password
           </div>
           <div className="text-default-contrast">
-            Your password.
+            Your password.&lrm;
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -300,7 +300,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             One-time passcode
           </div>
           <div className="text-default-contrast">
-            Your time-based one-time passcode.
+            Your time-based one-time passcode.&lrm;
           </div>
           <div className="h-4" />
           <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
@@ -315,7 +315,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             Notes
           </div>
           <div className="text-default-contrast">
-            Any additional information.
+            Any additional information.&lrm;
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -508,7 +508,7 @@ export function KeypairAccountAddPage() {
           Title
         </div>
         <div className="text-default-contrast">
-          A name to identify this account.
+          A name to identify this account.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -526,7 +526,7 @@ export function KeypairAccountAddPage() {
           Username
         </div>
         <div className="text-default-contrast">
-          Your username or email.
+          Your username or email.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -541,7 +541,7 @@ export function KeypairAccountAddPage() {
           Public key
         </div>
         <div className="text-default-contrast">
-          Your public key.
+          Your public key.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -557,7 +557,7 @@ export function KeypairAccountAddPage() {
           Private key
         </div>
         <div className="text-default-contrast">
-          Your private key.
+          Your private key.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -581,7 +581,7 @@ export function KeypairAccountAddPage() {
           Password
         </div>
         <div className="text-default-contrast">
-          Your password.
+          Your password.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -606,7 +606,7 @@ export function KeypairAccountAddPage() {
           One-time passcode
         </div>
         <div className="text-default-contrast">
-          Your time-based one-time passcode.
+          Your time-based one-time passcode.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -637,7 +637,7 @@ export function KeypairAccountAddPage() {
           Notes
         </div>
         <div className="text-default-contrast">
-          Any additional information.
+          Any additional information.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">

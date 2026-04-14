@@ -233,7 +233,7 @@ function UserImportFilePage() {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.
+        Will be used locally for display purposes.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -248,7 +248,7 @@ function UserImportFilePage() {
         File
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file.
+        Your existing KDBX file.&lrm;
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -270,7 +270,7 @@ function UserImportFilePage() {
         Password
       </div>
       <div className="text-default-contrast">
-        Your existing password to decrypt the file.
+        Your existing password to decrypt the file.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -405,7 +405,7 @@ function UserImportFsfhPage() {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.
+        Will be used locally for display purposes.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -420,7 +420,7 @@ function UserImportFsfhPage() {
         File
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file.
+        Your existing KDBX file.&lrm;
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -444,7 +444,7 @@ function UserImportFsfhPage() {
         Password
       </div>
       <div className="text-default-contrast">
-        Your existing password to decrypt the file.
+        Your existing password to decrypt the file.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -629,7 +629,7 @@ function UserCreatePage() {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.
+        Will be used locally for display purposes.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -644,7 +644,7 @@ function UserCreatePage() {
         Password
       </div>
       <div className="text-default-contrast">
-        A password to encrypt the created file.
+        A password to encrypt the created file.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1063,7 +1063,7 @@ function UserReimportFilePage(props: { user: UserData }) {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.
+        Will be used locally for display purposes.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1078,7 +1078,7 @@ function UserReimportFilePage(props: { user: UserData }) {
         File
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file.
+        Your existing KDBX file.&lrm;
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1100,7 +1100,7 @@ function UserReimportFilePage(props: { user: UserData }) {
         Password
       </div>
       <div className="text-default-contrast">
-        Your existing password to decrypt the file.
+        Your existing password to decrypt the file.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1237,7 +1237,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         Name
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.
+        Will be used locally for display purposes.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1252,7 +1252,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         File
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file.
+        Your existing KDBX file.&lrm;
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1276,7 +1276,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         Password
       </div>
       <div className="text-default-contrast">
-        Your existing password to decrypt the file.
+        Your existing password to decrypt the file.&lrm;
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">

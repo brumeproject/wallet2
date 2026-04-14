@@ -182,7 +182,7 @@ export function CryptoAccountAddPage() {
           Title
         </div>
         <div className="text-default-contrast">
-          A name to identify this account.
+          A name to identify this account.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -200,7 +200,7 @@ export function CryptoAccountAddPage() {
           Seed phrase
         </div>
         <div className="text-default-contrast">
-          Your BIP-39 seed phrase.
+          Your BIP-39 seed phrase.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -228,7 +228,7 @@ export function CryptoAccountAddPage() {
           Notes
         </div>
         <div className="text-default-contrast">
-          Any additional information.
+          Any additional information.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col  gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -318,7 +318,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             Notes
           </div>
           <div className="text-default-contrast">
-            Any additional information.
+            Any additional information.&lrm;
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -334,7 +334,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             Subaccounts
           </div>
           <div className="text-default-contrast">
-            Your subaccounts.
+            Your subaccounts.&lrm;
           </div>
           <div className="h-4" />
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
@@ -455,7 +455,7 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
           Seed phrase
         </div>
         <div className="text-default-contrast">
-          Your BIP-39 seed phrase. Use this to recover your funds in most wallets.
+          Your BIP-39 seed phrase. Use this to recover your funds in most wallets.&lrm;
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
