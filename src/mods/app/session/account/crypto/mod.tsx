@@ -283,10 +283,6 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
-  // const subentries = useMemo(() => {
-  //   // return [...$entry.element.querySelectorAll(":scope > Subentry")].map($ => new KDBX.Inner.KeePassFile.Entry($))
-  // }, [$entry])
-
   const [subentries, setSubentries] = useState<string[]>([])
 
   return <Fragment>
