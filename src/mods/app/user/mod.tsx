@@ -8,6 +8,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
+import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
@@ -38,7 +39,38 @@ export function UserLoginButton() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.LockClosedIcon className="size-5" />
-    Login
+    {Lang.match({
+      en: "Start",
+      zh: "开始",
+      hi: "शुरू करें",
+      es: "Comenzar",
+      ar: "ابدأ",
+      fr: "Démarrer",
+      de: "Starten",
+      ru: "Начать",
+      pt: "Iniciar",
+      ja: "開始",
+      pa: "ਸ਼ੁਰੂ ਕਰੋ",
+      bn: "শুরু করুন",
+      id: "Mulai",
+      ur: "شروع کریں",
+      ms: "Mulai",
+      it: "Inizia",
+      tr: "Başla",
+      ta: "தொடக்கம்",
+      te: "ప్రారంభించండి",
+      ko: "시작",
+      vi: "Bắt đầu",
+      pl: "Rozpocznij",
+      ro: "Începe",
+      nl: "Begin",
+      el: "Έναρξη",
+      th: "เริ่มต้น",
+      cs: "Začít",
+      hu: "Indítás",
+      sv: "Starta",
+      da: "Start",
+    })}
   </OppositeAnchor>
 }
 
