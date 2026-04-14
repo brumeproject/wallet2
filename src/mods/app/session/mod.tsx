@@ -91,7 +91,7 @@ export function SessionPage() {
       return searched
 
     return false
-  }), [entries, filter, search, trash])
+  }).reverse(), [entries, filter, search, trash])
 
   const logout = useCallback(() => {
     close()
