@@ -11,10 +11,9 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
-import { ed25519 } from "@noble/curves/ed25519.js";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
-import { base58, base58xmr } from "@scure/base";
+import { base58 } from "@scure/base";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { AccountMenuAnchor, CryptoAccountCard } from "../../mod.tsx";
 
@@ -27,10 +26,6 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
   const hash = useHashSubpath(path)
 
   const coords = useAnchorWithCoords(hash, `/subaccount/${index}`)
-
-  // const title = useMemo(() => {
-  //   return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
-  // }, [$subentry])
 
   const color = useMemo(() => {
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
@@ -141,21 +136,6 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
         <input className="hidden"
           autoComplete="off"
           name="username" />
-        {/* <Fragment>
-          <div className="h-6" />
-          <div className="font-medium">
-            Tokens
-          </div>
-          <div className="text-default-contrast">
-            Your asset balances.
-          </div>
-          <div className="h-4" />
-          <div className="flex flex-col border border-default-contrast items-center rounded-xl p-6 gap-2">
-            <GenericAccountCard title="Ether" subtitle={["= 0.00 ETH", "≈ 0.00 USD"].join("\n")} color="indigo" type="Ethereum" icon={<Outline.CubeIcon className="size-5" />} />
-            <GenericAccountCard title="Solana" subtitle={["= 0.00 SOL", "≈ 0.00 USD"].join("\n")} color="purple" type="Solana" icon={<Outline.CubeIcon className="size-5" />} />
-            <GenericAccountCard title="Monero" subtitle={["= 0.00 XMR", "≈ 0.00 USD"].join("\n")} color="orange" type="Monero" icon={<Outline.CubeIcon className="size-5" />} />
-          </div>
-        </Fragment> */}
       </form>
     </div>
   </Fragment>
@@ -268,81 +248,8 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
     getSolanaOrThrow().then(setSolana).catch(console.error)
   }, [getSolanaOrThrow])
 
-  const [bobine, setBobine] = useState<Nullable<string>>()
-
-  const getBobineOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
-    const xsig = await seed.derive(`m/44'/1'/${index}'/0'/0'`)
-    const upub = await Ed25519.publish(xsig.key)
-
-    const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", upub))
-
-    return `0x${hash.toHex()}`
-  }, [seedphrase, index])
-
-  useEffect(() => {
-    getBobineOrThrow().then(setBobine).catch(console.error)
-  }, [getBobineOrThrow])
-
-  const [monero, setMonero] = useState<Nullable<string>>()
-
-  const getMoneroOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
-    const xsig = await seed.derive(`m/44'/128'/${index}'`)
-
-    const sigspreAsRaw = xsig.key
-    const sigspreAsHex = sigspreAsRaw.toReversed().toHex()
-    const sigspreAsNum = BigInt("0x" + sigspreAsHex)
-
-    const sigskeyAsNum = sigspreAsNum % ed25519.Point.Fn.ORDER
-    const sigskeyAsHex = sigskeyAsNum.toString(16).padStart(64, "0")
-    const sigskeyAsRaw = Uint8Array.fromHex(sigskeyAsHex).toReversed()
-
-    const sigvpreAsRaw = keccak_256(sigskeyAsRaw)
-    const sigvpreAsHex = sigvpreAsRaw.toReversed().toHex()
-    const sigvpreAsNum = BigInt("0x" + sigvpreAsHex)
-
-    const sigvkeyAsNum = sigvpreAsNum % ed25519.Point.Fn.ORDER
-    const sigvkeyAsHex = sigvkeyAsNum.toString(16).padStart(64, "0")
-    const sigvkeyAsRaw = Uint8Array.fromHex(sigvkeyAsHex).toReversed()
-
-    const pubskeyAsRaw = ed25519.Point.BASE.multiply(sigskeyAsNum).toBytes()
-    const pubvkeyAsRaw = ed25519.Point.BASE.multiply(sigvkeyAsNum).toBytes()
-
-    const concat0 = new Uint8Array(1 + pubskeyAsRaw.length + pubvkeyAsRaw.length)
-
-    const cursor0 = new Cursor(concat0)
-    cursor0.writeUint8OrThrow(0x12)
-    cursor0.writeOrThrow(pubskeyAsRaw)
-    cursor0.writeOrThrow(pubvkeyAsRaw)
-
-    const checksum = keccak_256(concat0).subarray(0, 4)
-
-    const concat1 = new Uint8Array(concat0.length + checksum.length)
-
-    const cursor1 = new Cursor(concat1)
-    cursor1.writeOrThrow(concat0)
-    cursor1.writeOrThrow(checksum)
-
-    return base58xmr.encode(concat1)
-  }, [seedphrase, index])
-
-  useEffect(() => {
-    getMoneroOrThrow().then(setMonero).catch(console.error)
-  }, [getMoneroOrThrow])
-
   const copyTheEthereum = useCopy(ethereum)
   const copyTheSolana = useCopy(solana)
-  const copyTheBobine = useCopy(bobine)
-  const copyTheMonero = useCopy(monero)
 
   return <div className="flex flex-col grow p-6">
     <div className="flex items-center justify-between">
@@ -415,56 +322,6 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
           </WideContrastButton>
         </div>
       </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Bobine address
-        </div>
-        <div className="text-default-contrast">
-          Your Bobine address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={bobine || ""} />
-        </div>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <WideContrastButton
-            onClick={copyTheBobine.copyOrAlert}>
-            {copyTheBobine.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            {copyTheBobine.copied ? "Copied" : "Copy"}
-          </WideContrastButton>
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Monero address
-        </div>
-        <div className="text-default-contrast">
-          Your Monero address.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => e.currentTarget.select()}
-            value={monero || ""} />
-        </div>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <WideContrastButton
-            onClick={copyTheMonero.copyOrAlert}>
-            {copyTheMonero.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            {copyTheMonero.copied ? "Copied" : "Copy"}
-          </WideContrastButton>
-        </div>
-      </Fragment>
     </form>
   </div>
 }
@@ -527,73 +384,8 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
     getSolanaOrThrow().then(setSolana).catch(console.error)
   }, [getSolanaOrThrow])
 
-  const [bobine, setBobine] = useState<Nullable<string>>()
-
-  const getBobineOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
-    const xsig = await seed.derive(`m/44'/1'/${index}'/0'/0'`)
-    const upub = await Ed25519.publish(xsig.key)
-
-    const concat = new Uint8Array(xsig.key.length + upub.length)
-
-    const cursor = new Cursor(concat)
-    cursor.writeOrThrow(xsig.key)
-    cursor.writeOrThrow(upub)
-
-    return `0x${concat.toHex()}`
-  }, [seedphrase, index])
-
-  useEffect(() => {
-    getBobineOrThrow().then(setBobine).catch(console.error)
-  }, [getBobineOrThrow])
-
-  const [monero, setMonero] = useState<Nullable<readonly [string, string, string, string]>>()
-
-  const getMoneroOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
-    const xsig = await seed.derive(`m/44'/128'/${index}'`)
-
-    const sigspreAsRaw = xsig.key
-    const sigspreAsHex = sigspreAsRaw.toReversed().toHex()
-    const sigspreAsNum = BigInt("0x" + sigspreAsHex)
-
-    const sigskeyAsNum = sigspreAsNum % ed25519.Point.Fn.ORDER
-    const sigskeyAsHex = sigskeyAsNum.toString(16).padStart(64, "0")
-    const sigskeyAsRaw = Uint8Array.fromHex(sigskeyAsHex).toReversed()
-
-    const sigvpreAsRaw = keccak_256(sigskeyAsRaw)
-    const sigvpreAsHex = sigvpreAsRaw.toReversed().toHex()
-    const sigvpreAsNum = BigInt("0x" + sigvpreAsHex)
-
-    const sigvkeyAsNum = sigvpreAsNum % ed25519.Point.Fn.ORDER
-    const sigvkeyAsHex = sigvkeyAsNum.toString(16).padStart(64, "0")
-    const sigvkeyAsRaw = Uint8Array.fromHex(sigvkeyAsHex).toReversed()
-
-    const pubskeyAsRaw = ed25519.Point.BASE.multiply(sigskeyAsNum).toBytes()
-    const pubvkeyAsRaw = ed25519.Point.BASE.multiply(sigvkeyAsNum).toBytes()
-
-    return [sigskeyAsRaw.toHex(), sigvkeyAsRaw.toHex(), pubskeyAsRaw.toHex(), pubvkeyAsRaw.toHex()] as const
-  }, [seedphrase, index])
-
-  useEffect(() => {
-    getMoneroOrThrow().then(setMonero).catch(console.error)
-  }, [getMoneroOrThrow])
-
   const copyTheEthereum = useCopy(ethereum)
   const copyTheSolana = useCopy(solana)
-  const copyTheBobine = useCopy(bobine)
-  const copyTheMonero0 = useCopy(monero?.[0])
-  const copyTheMonero1 = useCopy(monero?.[1])
-  const copyTheMonero2 = useCopy(monero?.[2])
-  const copyTheMonero3 = useCopy(monero?.[3])
 
   return <div className="flex flex-col grow p-6">
     <div className="flex items-center justify-between">
@@ -673,156 +465,6 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
             onClick={copyTheSolana.copyOrAlert}>
             {copyTheSolana.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
             {copyTheSolana.copied ? "Copied" : "Copy"}
-          </WideContrastButton>
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Bobine private key
-        </div>
-        <div className="text-default-contrast">
-          Your Bobine private key in hexadecimal format.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? bobine?.valueOf() : bobine?.replaceAll(/./g, "•")} />
-        </div>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <WideContrastButton
-            onClick={() => setFlipped(x => !x)}>
-            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-            {flipped ? "Hide" : "Show"}
-          </WideContrastButton>
-          <WideContrastButton
-            onClick={copyTheBobine.copyOrAlert}>
-            {copyTheBobine.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            {copyTheBobine.copied ? "Copied" : "Copy"}
-          </WideContrastButton>
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Monero private spending key
-        </div>
-        <div className="text-default-contrast">
-          Your Monero private spending key in hexadecimal format.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? monero?.[0] : monero?.[0]?.replaceAll(/./g, "•")} />
-        </div>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <WideContrastButton
-            onClick={() => setFlipped(x => !x)}>
-            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-            {flipped ? "Hide" : "Show"}
-          </WideContrastButton>
-          <WideContrastButton
-            onClick={copyTheMonero0.copyOrAlert}>
-            {copyTheMonero0.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            {copyTheMonero0.copied ? "Copied" : "Copy"}
-          </WideContrastButton>
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Monero private viewing key
-        </div>
-        <div className="text-default-contrast">
-          Your Monero private viewing key in hexadecimal format.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? monero?.[1] : monero?.[1]?.replaceAll(/./g, "•")} />
-        </div>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <WideContrastButton
-            onClick={() => setFlipped(x => !x)}>
-            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-            {flipped ? "Hide" : "Show"}
-          </WideContrastButton>
-          <WideContrastButton
-            onClick={copyTheMonero1.copyOrAlert}>
-            {copyTheMonero1.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            {copyTheMonero1.copied ? "Copied" : "Copy"}
-          </WideContrastButton>
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Monero public spending key
-        </div>
-        <div className="text-default-contrast">
-          Your Monero public spending key in hexadecimal format.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? monero?.[2] : monero?.[2]?.replaceAll(/./g, "•")} />
-        </div>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <WideContrastButton
-            onClick={() => setFlipped(x => !x)}>
-            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-            {flipped ? "Hide" : "Show"}
-          </WideContrastButton>
-          <WideContrastButton
-            onClick={copyTheMonero2.copyOrAlert}>
-            {copyTheMonero2.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            {copyTheMonero2.copied ? "Copied" : "Copy"}
-          </WideContrastButton>
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Monero public viewing key
-        </div>
-        <div className="text-default-contrast">
-          Your Monero public viewing key in hexadecimal format.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={2}
-            readOnly
-            onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? monero?.[3] : monero?.[3]?.replaceAll(/./g, "•")} />
-        </div>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <WideContrastButton
-            onClick={() => setFlipped(x => !x)}>
-            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-            {flipped ? "Hide" : "Show"}
-          </WideContrastButton>
-          <WideContrastButton
-            onClick={copyTheMonero3.copyOrAlert}>
-            {copyTheMonero3.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            {copyTheMonero3.copied ? "Copied" : "Copy"}
           </WideContrastButton>
         </div>
       </Fragment>

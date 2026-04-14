@@ -12,10 +12,8 @@ import { capitalize } from "@/libs/string/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { BitcoinSeedPhrase, MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
-import { Ed25519SeedKey } from "@hazae41/clade";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
-import { ed25519 } from "@noble/curves/ed25519.js";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
 import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, CryptoAccountCard } from "../mod.tsx";
@@ -434,33 +432,7 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
   }, [$entry])
 
-  const [moneroseedphrase, setMoneroSeedphrase] = useState<Nullable<string>>()
-
-  const getMoneroSeedphraseOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
-    const xsig = await seed.derive("m/44'/128'/0'")
-
-    const sigspreAsRaw = xsig.key
-    const sigspreAsHex = sigspreAsRaw.toReversed().toHex()
-    const sigspreAsNum = BigInt("0x" + sigspreAsHex)
-
-    const sigskeyAsNum = sigspreAsNum % ed25519.Point.Fn.ORDER
-    const sigskeyAsHex = sigskeyAsNum.toString(16).padStart(64, "0")
-    const sigskeyAsRaw = Uint8Array.fromHex(sigskeyAsHex).toReversed()
-
-    return MoneroSeedPhrase.encode(sigskeyAsRaw)
-  }, [seedphrase])
-
-  useEffect(() => {
-    getMoneroSeedphraseOrThrow().then(setMoneroSeedphrase).catch(console.error)
-  }, [getMoneroSeedphraseOrThrow])
-
   const copyTheSeedPhrase = useCopy(seedphrase)
-  const copyTheMoneroSeedPhrase = useCopy(moneroseedphrase)
 
   return <div className="flex flex-col grow p-6">
     <div className="flex items-center justify-between">
@@ -508,36 +480,6 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
             onClick={copyTheSeedPhrase.copyOrAlert}>
             {copyTheSeedPhrase.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
             {copyTheSeedPhrase.copied ? "Copied" : "Copy"}
-          </WideContrastButton>
-        </div>
-      </Fragment>
-      <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          Seed phrase (Monero)
-        </div>
-        <div className="text-default-contrast">
-          Your Monero seed phrase (derived from your BIP-39 seed phrase). Use this to recover your funds in Monero wallets.
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
-            rows={3}
-            readOnly
-            onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? moneroseedphrase?.valueOf() : moneroseedphrase?.replaceAll(/./g, "•")} />
-        </div>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <WideContrastButton
-            onClick={() => setFlipped(x => !x)}>
-            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-            {flipped ? "Hide" : "Show"}
-          </WideContrastButton>
-          <WideContrastButton
-            onClick={copyTheMoneroSeedPhrase.copyOrAlert}>
-            {copyTheMoneroSeedPhrase.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            {copyTheMoneroSeedPhrase.copied ? "Copied" : "Copy"}
           </WideContrastButton>
         </div>
       </Fragment>
