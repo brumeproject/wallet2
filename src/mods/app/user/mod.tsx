@@ -542,7 +542,38 @@ function UserImportFilePage() {
           </div>}
         {file == null &&
           <div className="po-2">
-            Pick or drop file here
+            {Lang.match({
+              en: "Pick or drop file here",
+              zh: "在此处选择或拖放文件",
+              hi: "यहां फ़ाइल चुनें या ड्रॉप करें",
+              es: "Seleccione o suelte el archivo aquí",
+              ar: "اختر أو اسقط الملف هنا",
+              fr: "Choisissez ou déposez le fichier ici",
+              de: "Datei hier auswählen oder ablegen",
+              ru: "Выберите или перетащите файл сюда",
+              pt: "Escolha ou solte o arquivo aqui",
+              ja: "ここでファイルを選択またはドロップ",
+              pa: "ਇੱਥੇ ਫਾਇਲ ਚੁਣੋ ਜਾਂ ਡਰੌਪ ਕਰੋ",
+              bn: "এখানে ফাইল নির্বাচন করুন বা ড্রপ করুন",
+              id: "Pilih atau jatuhkan file di sini",
+              ur: "فائل یہاں منتخب کریں یا ڈراپ کریں",
+              ms: "Pilih atau jatuhkan file di sini",
+              it: "Scegli o trascina il file qui",
+              tr: "Dosyayı buraya seçin veya bırakın",
+              ta: "கோப்பை இங்கே தேர்ந்தெடுக்கவும் அல்லது விடவும்",
+              te: "ఫైల్‌ను ఇక్కడ ఎంచుకోండి లేదా డ్రాప్ చేయండి",
+              ko: "여기에 파일을 선택하거나 드롭하세요",
+              vi: "Chọn hoặc thả tệp ở đây",
+              pl: "Wybierz lub upuść plik tutaj",
+              ro: "Alegeți sau aruncați fișierul aici",
+              nl: "Kies of drop het bestand hier",
+              el: "Επιλέξτε ή ρίξτε το αρχείο εδώ",
+              th: "เลือกหรือวางไฟล์ที่นี่",
+              cs: "Vyberte nebo přetáhněte soubor sem",
+              hu: "Válassza ki vagy dobja ide a fájlt",
+              sv: "Välj eller släpp filen här",
+              da: "Vælg eller slip filen her",
+            })}
           </div>}
       </div>
       <div className="h-6" />
@@ -871,7 +902,38 @@ function UserImportFsfhPage() {
           </div>}
         {fsfh == null &&
           <div className="po-2">
-            Pick or drop file here
+            {Lang.match({
+              en: "Pick or drop file here",
+              zh: "在此处选择或拖放文件",
+              hi: "यहां फ़ाइल चुनें या ड्रॉप करें",
+              es: "Seleccione o suelte el archivo aquí",
+              ar: "اختر أو اسقط الملف هنا",
+              fr: "Choisissez ou déposez le fichier ici",
+              de: "Datei hier auswählen oder ablegen",
+              ru: "Выберите или перетащите файл сюда",
+              pt: "Escolha ou solte o arquivo aqui",
+              ja: "ここでファイルを選択またはドロップ",
+              pa: "ਇੱਥੇ ਫਾਇਲ ਚੁਣੋ ਜਾਂ ਡਰੌਪ ਕਰੋ",
+              bn: "এখানে ফাইল নির্বাচন করুন বা ড্রপ করুন",
+              id: "Pilih atau jatuhkan file di sini",
+              ur: "فائل یہاں منتخب کریں یا ڈراپ کریں",
+              ms: "Pilih atau jatuhkan file di sini",
+              it: "Scegli o trascina il file qui",
+              tr: "Dosyayı buraya seçin veya bırakın",
+              ta: "கோப்பை இங்கே தேர்ந்தெடுக்கவும் அல்லது விடவும்",
+              te: "ఫైల్‌ను ఇక్కడ ఎంచుకోండి లేదా డ్రాప్ చేయండి",
+              ko: "여기에 파일을 선택하거나 드롭하세요",
+              vi: "Chọn hoặc thả tệp ở đây",
+              pl: "Wybierz lub upuść plik tutaj",
+              ro: "Alegeți sau aruncați fișierul aici",
+              nl: "Kies of drop het bestand hier",
+              el: "Επιλέξτε ή ρίξτε το αρχείο εδώ",
+              th: "เลือกหรือวางไฟล์ที่นี่",
+              cs: "Vyberte nebo přetáhněte soubor sem",
+              hu: "Válassza ki vagy dobja ide a fájlt",
+              sv: "Välj eller släpp filen här",
+              da: "Vælg eller slip filen her",
+            })}
           </div>}
       </div>
       <div className="h-6" />
@@ -1744,7 +1806,38 @@ function UserReimportFilePage(props: { user: UserData }) {
           </div>}
         {file == null &&
           <div className="po-2">
-            Pick or drop file here
+            {Lang.match({
+              en: "Pick or drop file here",
+              zh: "在此处选择或拖放文件",
+              hi: "यहां फ़ाइल चुनें या ड्रॉप करें",
+              es: "Seleccione o suelte el archivo aquí",
+              ar: "اختر أو اسقط الملف هنا",
+              fr: "Choisissez ou déposez le fichier ici",
+              de: "Datei hier auswählen oder ablegen",
+              ru: "Выберите или перетащите файл сюда",
+              pt: "Escolha ou solte o arquivo aqui",
+              ja: "ここでファイルを選択またはドロップ",
+              pa: "ਇੱਥੇ ਫਾਇਲ ਚੁਣੋ ਜਾਂ ਡਰੌਪ ਕਰੋ",
+              bn: "এখানে ফাইল নির্বাচন করুন বা ড্রপ করুন",
+              id: "Pilih atau jatuhkan file di sini",
+              ur: "فائل یہاں منتخب کریں یا ڈراپ کریں",
+              ms: "Pilih atau jatuhkan file di sini",
+              it: "Scegli o trascina il file qui",
+              tr: "Dosyayı buraya seçin veya bırakın",
+              ta: "கோப்பை இங்கே தேர்ந்தெடுக்கவும் அல்லது விடவும்",
+              te: "ఫైల్‌ను ఇక్కడ ఎంచుకోండి లేదా డ్రాప్ చేయండి",
+              ko: "여기에 파일을 선택하거나 드롭하세요",
+              vi: "Chọn hoặc thả tệp ở đây",
+              pl: "Wybierz lub upuść plik tutaj",
+              ro: "Alegeți sau aruncați fișierul aici",
+              nl: "Kies of drop het bestand hier",
+              el: "Επιλέξτε ή ρίξτε το αρχείο εδώ",
+              th: "เลือกหรือวางไฟล์ที่นี่",
+              cs: "Vyberte nebo přetáhněte soubor sem",
+              hu: "Válassza ki vagy dobja ide a fájlt",
+              sv: "Välj eller släpp filen här",
+              da: "Vælg eller slip filen her",
+            })}
           </div>}
       </div>
       <div className="h-6" />
@@ -2044,7 +2137,38 @@ function UserReimportFsfhPage(props: { user: UserData }) {
           </div>}
         {fsfh == null &&
           <div className="po-2">
-            Pick or drop file here
+            {Lang.match({
+              en: "Pick or drop file here",
+              zh: "在此处选择或拖放文件",
+              hi: "यहां फ़ाइल चुनें या ड्रॉप करें",
+              es: "Seleccione o suelte el archivo aquí",
+              ar: "اختر أو اسقط الملف هنا",
+              fr: "Choisissez ou déposez le fichier ici",
+              de: "Datei hier auswählen oder ablegen",
+              ru: "Выберите или перетащите файл сюда",
+              pt: "Escolha ou solte o arquivo aqui",
+              ja: "ここでファイルを選択またはドロップ",
+              pa: "ਇੱਥੇ ਫਾਇਲ ਚੁਣੋ ਜਾਂ ਡਰੌਪ ਕਰੋ",
+              bn: "এখানে ফাইল নির্বাচন করুন বা ড্রপ করুন",
+              id: "Pilih atau jatuhkan file di sini",
+              ur: "فائل یہاں منتخب کریں یا ڈراپ کریں",
+              ms: "Pilih atau jatuhkan file di sini",
+              it: "Scegli o trascina il file qui",
+              tr: "Dosyayı buraya seçin veya bırakın",
+              ta: "கோப்பை இங்கே தேர்ந்தெடுக்கவும் அல்லது விடவும்",
+              te: "ఫైల్‌ను ఇక్కడ ఎంచుకోండి లేదా డ్రాప్ చేయండి",
+              ko: "여기에 파일을 선택하거나 드롭하세요",
+              vi: "Chọn hoặc thả tệp ở đây",
+              pl: "Wybierz lub upuść plik tutaj",
+              ro: "Alegeți sau aruncați fișierul aici",
+              nl: "Kies of drop het bestand hier",
+              el: "Επιλέξτε ή ρίξτε το αρχείο εδώ",
+              th: "เลือกหรือวางไฟล์ที่นี่",
+              cs: "Vyberte nebo přetáhněte soubor sem",
+              hu: "Válassza ki vagy dobja ide a fájlt",
+              sv: "Välj eller släpp filen här",
+              da: "Vælg eller slip filen her",
+            })}
           </div>}
       </div>
       <div className="h-6" />
