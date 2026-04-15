@@ -1305,7 +1305,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
           </div>
           {user.name}
         </div>
-        <div className="w-8" />
+        <div className="w-8 grow" />
         <div className="flex items-center gap-2">
           <UserMenuButton user={user} />
         </div>
