@@ -128,7 +128,38 @@ function UserAddButton() {
     <div className="rounded-full size-7 flex justify-center items-center border-2 border-dashed border-default-contrast">
       <Outline.PlusIcon className="size-4" />
     </div>
-    Add user
+    {Lang.match({
+      en: "Add user",
+      zh: "添加用户",
+      hi: "उपयोगकर्ता जोड़ें",
+      es: "Agregar usuario",
+      ar: "إضافة مستخدم",
+      fr: "Ajouter un utilisateur",
+      de: "Benutzer hinzufügen",
+      ru: "Добавить пользователя",
+      pt: "Adicionar usuário",
+      ja: "ユーザーを追加",
+      pa: "ਉਪਭੋਗਤਾ ਸ਼ਾਮਲ ਕਰੋ",
+      bn: "ব্যবহারকারী যোগ করুন",
+      id: "Tambah pengguna",
+      ur: "صارف شامل کریں",
+      ms: "Tambah pengguna",
+      it: "Aggiungi utente",
+      tr: "Kullanıcı ekle",
+      ta: "பயனரைச் சேர்க்கவும்",
+      te: "వినియోగదారుని జోడించండి",
+      ko: "사용자 추가",
+      vi: "Thêm người dùng",
+      pl: "Dodaj użytkownika",
+      ro: "Adaugă utilizator",
+      nl: "Gebruiker toevoegen",
+      el: "Προσθήκη χρήστη",
+      th: "เพิ่มผู้ใช้",
+      cs: "Přidat uživatele",
+      hu: "Felhasználó hozzáadása",
+      sv: "Lägg till användare",
+      da: "Tilføj bruger",
+    })}
   </WideNakedMenuAnchor>
 }
 
@@ -168,7 +199,38 @@ function UserCreateButton() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.SparklesIcon className="size-5" />
-    Create user
+    {Lang.match({
+      en: "Create user",
+      zh: "创建用户",
+      hi: "उपयोगकर्ता बनाएं",
+      es: "Crear usuario",
+      ar: "إنشاء مستخدم",
+      fr: "Créer un utilisateur",
+      de: "Benutzer erstellen",
+      ru: "Создать пользователя",
+      pt: "Criar usuário",
+      ja: "ユーザーを作成",
+      pa: "ਉਪਭੋਗਤਾ ਬਣਾਓ",
+      bn: "ব্যবহারকারী তৈরি করুন",
+      id: "Buat pengguna",
+      ur: "صارف بنائیں",
+      ms: "Buat pengguna",
+      it: "Crea utente",
+      tr: "Kullanıcı oluştur",
+      ta: "பயனரை உருவாக்கவும்",
+      te: "వినియోగదారుని సృష్టించండి",
+      ko: "사용자 만들기",
+      vi: "Tạo người dùng",
+      pl: "Utwórz użytkownika",
+      ro: "Creează utilizator",
+      nl: "Maak gebruiker",
+      el: "Δημιουργία χρήστη",
+      th: "สร้างผู้ใช้",
+      cs: "Vytvořit uživatele",
+      hu: "Felhasználó létrehozása",
+      sv: "Skapa användare",
+      da: "Opret bruger",
+    })}
   </WideNakedMenuAnchor>
 }
 
@@ -183,7 +245,38 @@ function UserImportButton() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.ArrowDownOnSquareIcon className="size-5" />
-    Import user
+    {Lang.match({
+      en: "Import user",
+      zh: "导入用户",
+      hi: "उपयोगकर्ता आयात करें",
+      es: "Importar usuario",
+      ar: "استيراد مستخدم",
+      fr: "Importer un utilisateur",
+      de: "Benutzer importieren",
+      ru: "Импортировать пользователя",
+      pt: "Importar usuário",
+      ja: "ユーザーをインポート",
+      pa: "ਉਪਭੋਗਤਾ ਆਯਾਤ ਕਰੋ",
+      bn: "ব্যবহারকারী আমদানি করুন",
+      id: "Impor pengguna",
+      ur: "صارف درآمد کریں",
+      ms: "Impor pengguna",
+      it: "Importa utente",
+      tr: "Kullanıcı içe aktar",
+      ta: "பயனரை இறக்குமதி செய்யவும்",
+      te: "వినియోగదారుని దిగుమతి చేయండి",
+      ko: "사용자 가져오기",
+      vi: "Nhập người dùng",
+      pl: "Importuj użytkownika",
+      ro: "Importă utilizator",
+      nl: "Importeer gebruiker",
+      el: "Εισαγωγή χρήστη",
+      th: "นำเข้าผู้ใช้",
+      cs: "Importovat uživatele",
+      hu: "Felhasználó importálása",
+      sv: "Importera användare",
+      da: "Importer bruger",
+    })}
   </WideNakedMenuAnchor>
 }
 
@@ -253,7 +346,38 @@ function UserImportFilePage() {
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
-      Import user
+      {Lang.match({
+        en: "Import user",
+        zh: "导入用户",
+        hi: "उपयोगकर्ता आयात करें",
+        es: "Importar usuario",
+        ar: "استيراد مستخدم",
+        fr: "Importer un utilisateur",
+        de: "Benutzer importieren",
+        ru: "Импортировать пользователя",
+        pt: "Importar usuário",
+        ja: "ユーザーをインポート",
+        pa: "ਉਪਭੋਗਤਾ ਆਯਾਤ ਕਰੋ",
+        bn: "ব্যবহারকারী আমদানি করুন",
+        id: "Impor pengguna",
+        ur: "صارف درآمد کریں",
+        ms: "Impor pengguna",
+        it: "Importa utente",
+        tr: "Kullanıcı içe aktar",
+        ta: "பயனரை இறக்குமதி செய்யவும்",
+        te: "వినియోగదారుని దిగుమతి చేయండి",
+        ko: "사용자 가져오기",
+        vi: "Nhập người dùng",
+        pl: "Importuj użytkownika",
+        ro: "Importă utilizator",
+        nl: "Importeer gebruiker",
+        el: "Εισαγωγή χρήστη",
+        th: "นำเข้าผู้ใช้",
+        cs: "Importovat uživatele",
+        hu: "Felhasználó importálása",
+        sv: "Importera användare",
+        da: "Importer bruger",
+      })}
     </h1>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
@@ -262,10 +386,72 @@ function UserImportFilePage() {
         name="username" />
       <div className="h-6" />
       <div className="font-medium">
-        Name
+        {Lang.match({
+          en: "Name",
+          zh: "名称",
+          hi: "नाम",
+          es: "Nombre",
+          ar: "اسم",
+          fr: "Nom",
+          de: "Name",
+          ru: "Имя",
+          pt: "Nome",
+          ja: "名前",
+          pa: "ਨਾਮ",
+          bn: "নাম",
+          id: "Nama",
+          ur: "نام",
+          ms: "Nama",
+          it: "Nome",
+          tr: "İsim",
+          ta: "பெயர்",
+          te: "పేరు",
+          ko: "이름",
+          vi: "Tên",
+          pl: "Nazwa",
+          ro: "Nume",
+          nl: "Naam",
+          el: "Όνομα",
+          th: "ชื่อ",
+          cs: "Jméno",
+          hu: "Név",
+          sv: "Namn",
+          da: "Navn",
+        })}
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.&lrm;
+        {Lang.match({
+          en: "Will be used locally for display purposes.",
+          zh: "将被本地使用，仅用于显示。",
+          hi: "स्थानीय रूप से प्रदर्शन उद्देश्यों के लिए उपयोग किया जाएगा।",
+          es: "Se usará localmente para fines de visualización.",
+          ar: "سيتم استخدامه محليًا لأغراض العرض.",
+          fr: "Sera utilisé localement à des fins d'affichage.",
+          de: "Wird lokal für Anzeigezwecke verwendet.",
+          ru: "Будет использоваться локально для отображения.",
+          pt: "Será usado localmente para fins de exibição.",
+          ja: "表示目的でローカルに使用されます。",
+          pa: "ਡਿਸਪਲੇਅ ਦੇ ਉਦੇਸ਼ਾਂ ਲਈ ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਵਰਤਿਆ ਜਾਵੇਗਾ।",
+          bn: "প্রদর্শন উদ্দেশ্যে স্থানীয়ভাবে ব্যবহৃত হবে।",
+          id: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          ur: "ڈسپلے کے مقاصد کے لیے مقامی طور پر استعمال کیا جائے گا۔",
+          ms: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          it: "Sarà usato localmente per scopi di visualizzazione.",
+          tr: "Görüntüleme amaçları için yerel olarak kullanılacaktır.",
+          ta: "காட்சிப்படுத்தும் நோக்கங்களுக்காக உள்ளூரில் பயன்படுத்தப்படும்.",
+          te: "ప్రదర్శన లక్ష్యాల కోసం స్థానికంగా ఉపయోగించబడుతుంది.",
+          ko: "디스플레이 목적으로 로컬에서 사용됩니다.",
+          vi: "Sẽ được sử dụng cục bộ cho mục đích hiển thị.",
+          pl: "Będzie używany lokalnie do celów wyświetlania.",
+          ro: "Va fi folosit local pentru scopuri de afișare.",
+          nl: "Zal lokaal worden gebruikt voor weergavedoeleinden.",
+          el: "Θα χρησιμοποιείται τοπικά για σκοπούς εμφάνισης.",
+          th: "จะใช้ในพื้นที่สำหรับวัตถุประสงค์ในการแสดงผล",
+          cs: "Bude používán lokálně pro zobrazení.",
+          hu: "Helyileg lesz használva megjelenítési célokra.",
+          sv: "Kommer att användas lokalt för visningsändamål.",
+          da: "Vil blive brugt lokalt til visningsformål.",
+        })}
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -277,10 +463,72 @@ function UserImportFilePage() {
       </div>
       <div className="h-6" />
       <div className="font-medium">
-        File
+        {Lang.match({
+          en: "File",
+          zh: "文件",
+          hi: "फ़ाइल",
+          es: "Archivo",
+          ar: "ملف",
+          fr: "Fichier",
+          de: "Datei",
+          ru: "Файл",
+          pt: "Arquivo",
+          ja: "ファイル",
+          pa: "ਫਾਇਲ",
+          bn: "ফাইল",
+          id: "Berkas",
+          ur: "فائل",
+          ms: "Berkas",
+          it: "File",
+          tr: "Dosya",
+          ta: "கோப்பு",
+          te: "ఫైల్",
+          ko: "파일",
+          vi: "Tệp",
+          pl: "Plik",
+          ro: "Fișier",
+          nl: "Bestand",
+          el: "Αρχείο",
+          th: "ไฟล์",
+          cs: "Soubor",
+          hu: "Fájl",
+          sv: "Fil",
+          da: "Fil",
+        })}
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file.&lrm;
+        {Lang.match({
+          en: "Your existing KDBX file.",
+          zh: "您现有的 KDBX 文件。",
+          hi: "आपकी मौजूदा KDBX फ़ाइल।",
+          es: "Tu archivo KDBX existente.",
+          ar: "ملف KDBX الحالي الخاص بك.",
+          fr: "Votre fichier KDBX existant.",
+          de: "Ihre vorhandene KDBX-Datei.",
+          ru: "Ваш существующий файл KDBX.",
+          pt: "Seu arquivo KDBX existente.",
+          ja: "既存の KDBX ファイル。",
+          pa: "ਤੁਹਾਡੀ ਮੌਜੂਦਾ KDBX ਫਾਇਲ।",
+          bn: "আপনার বিদ্যমান KDBX ফাইল।",
+          id: "File KDBX Anda yang ada.",
+          ur: "آپ کی موجودہ KDBX فائل۔",
+          ms: "File KDBX Anda yang ada.",
+          it: "Il tuo file KDBX esistente.",
+          tr: "Mevcut KDBX dosyanız.",
+          ta: "உங்கள் தற்போதைய KDBX கோப்பு.",
+          te: "మీ ప్రస్తుత KDBX ఫైల్.",
+          ko: "기존 KDBX 파일입니다.",
+          vi: "Tệp KDBX hiện có của bạn.",
+          pl: "Twój istniejący plik KDBX.",
+          ro: "Fișierul KDBX existent.",
+          nl: "Uw bestaande KDBX-bestand.",
+          el: "Το υπάρχον αρχείο KDBX σας.",
+          th: "ไฟล์ KDBX ที่มีอยู่ของคุณ",
+          cs: "Váš stávající soubor KDBX.",
+          hu: "A meglévő KDBX fájlod.",
+          sv: "Din befintliga KDBX-fil.",
+          da: "Din eksisterende KDBX-fil.",
+        })}
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -425,7 +673,38 @@ function UserImportFsfhPage() {
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
-      Import user
+      {Lang.match({
+        en: "Import user",
+        zh: "导入用户",
+        hi: "उपयोगकर्ता आयात करें",
+        es: "Importar usuario",
+        ar: "استيراد مستخدم",
+        fr: "Importer un utilisateur",
+        de: "Benutzer importieren",
+        ru: "Импортировать пользователя",
+        pt: "Importar usuário",
+        ja: "ユーザーをインポート",
+        pa: "ਉਪਭੋਗਤਾ ਆਯਾਤ ਕਰੋ",
+        bn: "ব্যবহারকারী আমদানি করুন",
+        id: "Impor pengguna",
+        ur: "صارف درآمد کریں",
+        ms: "Impor pengguna",
+        it: "Importa utente",
+        tr: "Kullanıcı içe aktar",
+        ta: "பயனரை இறக்குமதி செய்யவும்",
+        te: "వినియోగదారుని దిగుమతి చేయండి",
+        ko: "사용자 가져오기",
+        vi: "Nhập người dùng",
+        pl: "Importuj użytkownika",
+        ro: "Importă utilizator",
+        nl: "Importeer gebruiker",
+        el: "Εισαγωγή χρήστη",
+        th: "นำเข้าผู้ใช้",
+        cs: "Importovat uživatele",
+        hu: "Felhasználó importálása",
+        sv: "Importera användare",
+        da: "Importer bruger",
+      })}
     </h1>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
@@ -434,10 +713,72 @@ function UserImportFsfhPage() {
         name="username" />
       <div className="h-6" />
       <div className="font-medium">
-        Name
+        {Lang.match({
+          en: "Name",
+          zh: "名称",
+          hi: "नाम",
+          es: "Nombre",
+          ar: "اسم",
+          fr: "Nom",
+          de: "Name",
+          ru: "Имя",
+          pt: "Nome",
+          ja: "名前",
+          pa: "ਨਾਮ",
+          bn: "নাম",
+          id: "Nama",
+          ur: "نام",
+          ms: "Nama",
+          it: "Nome",
+          tr: "İsim",
+          ta: "பெயர்",
+          te: "పేరు",
+          ko: "이름",
+          vi: "Tên",
+          pl: "Nazwa",
+          ro: "Nume",
+          nl: "Naam",
+          el: "Όνομα",
+          th: "ชื่อ",
+          cs: "Jméno",
+          hu: "Név",
+          sv: "Namn",
+          da: "Navn",
+        })}
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.&lrm;
+        {Lang.match({
+          en: "Will be used locally for display purposes.",
+          zh: "将被本地使用，仅用于显示。",
+          hi: "स्थानीय रूप से प्रदर्शन उद्देश्यों के लिए उपयोग किया जाएगा।",
+          es: "Se usará localmente para fines de visualización.",
+          ar: "سيتم استخدامه محليًا لأغراض العرض.",
+          fr: "Sera utilisé localement à des fins d'affichage.",
+          de: "Wird lokal für Anzeigezwecke verwendet.",
+          ru: "Будет использоваться локально для отображения.",
+          pt: "Será usado localmente para fins de exibição.",
+          ja: "表示目的でローカルに使用されます。",
+          pa: "ਡਿਸਪਲੇਅ ਦੇ ਉਦੇਸ਼ਾਂ ਲਈ ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਵਰਤਿਆ ਜਾਵੇਗਾ।",
+          bn: "প্রদর্শন উদ্দেশ্যে স্থানীয়ভাবে ব্যবহৃত হবে।",
+          id: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          ur: "ڈسپلے کے مقاصد کے لیے مقامی طور پر استعمال کیا جائے گا۔",
+          ms: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          it: "Sarà usato localmente per scopi di visualizzazione.",
+          tr: "Görüntüleme amaçları için yerel olarak kullanılacaktır.",
+          ta: "காட்சிப்படுத்தும் நோக்கங்களுக்காக உள்ளூரில் பயன்படுத்தப்படும்.",
+          te: "ప్రదర్శన లక్ష్యాల కోసం స్థానికంగా ఉపయోగించబడుతుంది.",
+          ko: "디스플레이 목적으로 로컬에서 사용됩니다.",
+          vi: "Sẽ được sử dụng cục bộ cho mục đích hiển thị.",
+          pl: "Będzie używany lokalnie do celów wyświetlania.",
+          ro: "Va fi folosit local pentru scopuri de afișare.",
+          nl: "Zal lokaal worden gebruikt voor weergavedoeleinden.",
+          el: "Θα χρησιμοποιείται τοπικά για σκοπούς εμφάνισης.",
+          th: "จะใช้ในพื้นที่สำหรับวัตถุประสงค์ในการแสดงผล",
+          cs: "Bude používán lokálně pro zobrazení.",
+          hu: "Helyileg lesz használva megjelenítési célokra.",
+          sv: "Kommer att användas lokalt för visningsändamål.",
+          da: "Vil blive brugt lokalt til visningsformål.",
+        })}
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -449,10 +790,72 @@ function UserImportFsfhPage() {
       </div>
       <div className="h-6" />
       <div className="font-medium">
-        File
+        {Lang.match({
+          en: "File",
+          zh: "文件",
+          hi: "फ़ाइल",
+          es: "Archivo",
+          ar: "ملف",
+          fr: "Fichier",
+          de: "Datei",
+          ru: "Файл",
+          pt: "Arquivo",
+          ja: "ファイル",
+          pa: "ਫਾਇਲ",
+          bn: "ফাইল",
+          id: "Berkas",
+          ur: "فائل",
+          ms: "Berkas",
+          it: "File",
+          tr: "Dosya",
+          ta: "கோப்பு",
+          te: "ఫైల్",
+          ko: "파일",
+          vi: "Tệp",
+          pl: "Plik",
+          ro: "Fișier",
+          nl: "Bestand",
+          el: "Αρχείο",
+          th: "ไฟล์",
+          cs: "Soubor",
+          hu: "Fájl",
+          sv: "Fil",
+          da: "Fil",
+        })}
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file.&lrm;
+        {Lang.match({
+          en: "Your existing KDBX file.",
+          zh: "您现有的 KDBX 文件。",
+          hi: "आपकी मौजूदा KDBX फ़ाइल।",
+          es: "Tu archivo KDBX existente.",
+          ar: "ملف KDBX الحالي الخاص بك.",
+          fr: "Votre fichier KDBX existant.",
+          de: "Ihre vorhandene KDBX-Datei.",
+          ru: "Ваш существующий файл KDBX.",
+          pt: "Seu arquivo KDBX existente.",
+          ja: "既存の KDBX ファイル。",
+          pa: "ਤੁਹਾਡੀ ਮੌਜੂਦਾ KDBX ਫਾਇਲ।",
+          bn: "আপনার বিদ্যমান KDBX ফাইল।",
+          id: "File KDBX Anda yang ada.",
+          ur: "آپ کی موجودہ KDBX فائل۔",
+          ms: "File KDBX Anda yang ada.",
+          it: "Il tuo file KDBX esistente.",
+          tr: "Mevcut KDBX dosyanız.",
+          ta: "உங்கள் தற்போதைய KDBX கோப்பு.",
+          te: "మీ ప్రస్తుత KDBX ఫైల్.",
+          ko: "기존 KDBX 파일입니다.",
+          vi: "Tệp KDBX hiện có của bạn.",
+          pl: "Twój istniejący plik KDBX.",
+          ro: "Fișierul KDBX existent.",
+          nl: "Uw bestaande KDBX-bestand.",
+          el: "Το υπάρχον αρχείο KDBX σας.",
+          th: "ไฟล์ KDBX ที่มีอยู่ของคุณ",
+          cs: "Váš stávající soubor KDBX.",
+          hu: "A meglévő KDBX fájlod.",
+          sv: "Din befintliga KDBX-fil.",
+          da: "Din eksisterende KDBX-fil.",
+        })}
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -649,7 +1052,38 @@ function UserCreatePage() {
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
-      Create user
+      {Lang.match({
+        en: "Create user",
+        zh: "创建用户",
+        hi: "उपयोगकर्ता बनाएं",
+        es: "Crear usuario",
+        ar: "إنشاء مستخدم",
+        fr: "Créer un utilisateur",
+        de: "Benutzer erstellen",
+        ru: "Создать пользователя",
+        pt: "Criar usuário",
+        ja: "ユーザーを作成",
+        pa: "ਉਪਭੋਗਤਾ ਬਣਾਓ",
+        bn: "ব্যবহারকারী তৈরি করুন",
+        id: "Buat pengguna",
+        ur: "صارف بنائیں",
+        ms: "Buat pengguna",
+        it: "Crea utente",
+        tr: "Kullanıcı oluştur",
+        ta: "பயனரை உருவாக்கவும்",
+        te: "వినియోగదారుని సృష్టించండి",
+        ko: "사용자 만들기",
+        vi: "Tạo người dùng",
+        pl: "Utwórz użytkownika",
+        ro: "Creează utilizator",
+        nl: "Maak gebruiker",
+        el: "Δημιουργία χρήστη",
+        th: "สร้างผู้ใช้",
+        cs: "Vytvořit uživatele",
+        hu: "Felhasználó létrehozása",
+        sv: "Skapa användare",
+        da: "Opret bruger",
+      })}
     </h1>
     <form className="grow flex flex-col"
       onSubmit={Events.preventDefault}>
@@ -658,10 +1092,72 @@ function UserCreatePage() {
         name="username" />
       <div className="h-6" />
       <div className="font-medium">
-        Name
+        {Lang.match({
+          en: "Name",
+          zh: "名称",
+          hi: "नाम",
+          es: "Nombre",
+          ar: "اسم",
+          fr: "Nom",
+          de: "Name",
+          ru: "Имя",
+          pt: "Nome",
+          ja: "名前",
+          pa: "ਨਾਮ",
+          bn: "নাম",
+          id: "Nama",
+          ur: "نام",
+          ms: "Nama",
+          it: "Nome",
+          tr: "İsim",
+          ta: "பெயர்",
+          te: "పేరు",
+          ko: "이름",
+          vi: "Tên",
+          pl: "Nazwa",
+          ro: "Nume",
+          nl: "Naam",
+          el: "Όνομα",
+          th: "ชื่อ",
+          cs: "Jméno",
+          hu: "Név",
+          sv: "Namn",
+          da: "Navn",
+        })}
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.&lrm;
+        {Lang.match({
+          en: "Will be used locally for display purposes.",
+          zh: "将被本地使用，仅用于显示。",
+          hi: "स्थानीय रूप से प्रदर्शन उद्देश्यों के लिए उपयोग किया जाएगा।",
+          es: "Se usará localmente para fines de visualización.",
+          ar: "سيتم استخدامه محليًا لأغراض العرض.",
+          fr: "Sera utilisé localement à des fins d'affichage.",
+          de: "Wird lokal für Anzeigezwecke verwendet.",
+          ru: "Будет использоваться локально для отображения.",
+          pt: "Será usado localmente para fins de exibição.",
+          ja: "表示目的でローカルに使用されます。",
+          pa: "ਡਿਸਪਲੇਅ ਦੇ ਉਦੇਸ਼ਾਂ ਲਈ ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਵਰਤਿਆ ਜਾਵੇਗਾ।",
+          bn: "প্রদর্শন উদ্দেশ্যে স্থানীয়ভাবে ব্যবহৃত হবে।",
+          id: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          ur: "ڈسپلے کے مقاصد کے لیے مقامی طور پر استعمال کیا جائے گا۔",
+          ms: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          it: "Sarà usato localmente per scopi di visualizzazione.",
+          tr: "Görüntüleme amaçları için yerel olarak kullanılacaktır.",
+          ta: "காட்சிப்படுத்தும் நோக்கங்களுக்காக உள்ளூரில் பயன்படுத்தப்படும்.",
+          te: "ప్రదర్శన లక్ష్యాల కోసం స్థానికంగా ఉపయోగించబడుతుంది.",
+          ko: "디스플레이 목적으로 로컬에서 사용됩니다.",
+          vi: "Sẽ được sử dụng cục bộ cho mục đích hiển thị.",
+          pl: "Będzie używany lokalnie do celów wyświetlania.",
+          ro: "Va fi folosit local pentru scopuri de afișare.",
+          nl: "Zal lokaal worden gebruikt voor weergavedoeleinden.",
+          el: "Θα χρησιμοποιείται τοπικά για σκοπούς εμφάνισης.",
+          th: "จะใช้ในพื้นที่สำหรับวัตถุประสงค์ในการแสดงผล",
+          cs: "Bude používán lokálně pro zobrazení.",
+          hu: "Helyileg lesz használva megjelenítési célokra.",
+          sv: "Kommer att användas lokalt för visningsändamål.",
+          da: "Vil blive brugt lokalt til visningsformål.",
+        })}
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1092,10 +1588,72 @@ function UserReimportFilePage(props: { user: UserData }) {
         name="username" />
       <div className="h-6" />
       <div className="font-medium">
-        Name
+        {Lang.match({
+          en: "Name",
+          zh: "名称",
+          hi: "नाम",
+          es: "Nombre",
+          ar: "اسم",
+          fr: "Nom",
+          de: "Name",
+          ru: "Имя",
+          pt: "Nome",
+          ja: "名前",
+          pa: "ਨਾਮ",
+          bn: "নাম",
+          id: "Nama",
+          ur: "نام",
+          ms: "Nama",
+          it: "Nome",
+          tr: "İsim",
+          ta: "பெயர்",
+          te: "పేరు",
+          ko: "이름",
+          vi: "Tên",
+          pl: "Nazwa",
+          ro: "Nume",
+          nl: "Naam",
+          el: "Όνομα",
+          th: "ชื่อ",
+          cs: "Jméno",
+          hu: "Név",
+          sv: "Namn",
+          da: "Navn",
+        })}
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.&lrm;
+        {Lang.match({
+          en: "Will be used locally for display purposes.",
+          zh: "将被本地使用，仅用于显示。",
+          hi: "स्थानीय रूप से प्रदर्शन उद्देश्यों के लिए उपयोग किया जाएगा।",
+          es: "Se usará localmente para fines de visualización.",
+          ar: "سيتم استخدامه محليًا لأغراض العرض.",
+          fr: "Sera utilisé localement à des fins d'affichage.",
+          de: "Wird lokal für Anzeigezwecke verwendet.",
+          ru: "Будет использоваться локально для отображения.",
+          pt: "Será usado localmente para fins de exibição.",
+          ja: "表示目的でローカルに使用されます。",
+          pa: "ਡਿਸਪਲੇਅ ਦੇ ਉਦੇਸ਼ਾਂ ਲਈ ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਵਰਤਿਆ ਜਾਵੇਗਾ।",
+          bn: "প্রদর্শন উদ্দেশ্যে স্থানীয়ভাবে ব্যবহৃত হবে।",
+          id: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          ur: "ڈسپلے کے مقاصد کے لیے مقامی طور پر استعمال کیا جائے گا۔",
+          ms: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          it: "Sarà usato localmente per scopi di visualizzazione.",
+          tr: "Görüntüleme amaçları için yerel olarak kullanılacaktır.",
+          ta: "காட்சிப்படுத்தும் நோக்கங்களுக்காக உள்ளூரில் பயன்படுத்தப்படும்.",
+          te: "ప్రదర్శన లక్ష్యాల కోసం స్థానికంగా ఉపయోగించబడుతుంది.",
+          ko: "디스플레이 목적으로 로컬에서 사용됩니다.",
+          vi: "Sẽ được sử dụng cục bộ cho mục đích hiển thị.",
+          pl: "Będzie używany lokalnie do celów wyświetlania.",
+          ro: "Va fi folosit local pentru scopuri de afișare.",
+          nl: "Zal lokaal worden gebruikt voor weergavedoeleinden.",
+          el: "Θα χρησιμοποιείται τοπικά για σκοπούς εμφάνισης.",
+          th: "จะใช้ในพื้นที่สำหรับวัตถุประสงค์ในการแสดงผล",
+          cs: "Bude používán lokálně pro zobrazení.",
+          hu: "Helyileg lesz használva megjelenítési célokra.",
+          sv: "Kommer att användas lokalt för visningsändamål.",
+          da: "Vil blive brugt lokalt til visningsformål.",
+        })}
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1107,10 +1665,72 @@ function UserReimportFilePage(props: { user: UserData }) {
       </div>
       <div className="h-6" />
       <div className="font-medium">
-        File
+        {Lang.match({
+          en: "File",
+          zh: "文件",
+          hi: "फ़ाइल",
+          es: "Archivo",
+          ar: "ملف",
+          fr: "Fichier",
+          de: "Datei",
+          ru: "Файл",
+          pt: "Arquivo",
+          ja: "ファイル",
+          pa: "ਫਾਇਲ",
+          bn: "ফাইল",
+          id: "Berkas",
+          ur: "فائل",
+          ms: "Berkas",
+          it: "File",
+          tr: "Dosya",
+          ta: "கோப்பு",
+          te: "ఫైల్",
+          ko: "파일",
+          vi: "Tệp",
+          pl: "Plik",
+          ro: "Fișier",
+          nl: "Bestand",
+          el: "Αρχείο",
+          th: "ไฟล์",
+          cs: "Soubor",
+          hu: "Fájl",
+          sv: "Fil",
+          da: "Fil",
+        })}
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file.&lrm;
+        {Lang.match({
+          en: "Your existing KDBX file.",
+          zh: "您现有的 KDBX 文件。",
+          hi: "आपकी मौजूदा KDBX फ़ाइल।",
+          es: "Tu archivo KDBX existente.",
+          ar: "ملف KDBX الحالي الخاص بك.",
+          fr: "Votre fichier KDBX existant.",
+          de: "Ihre vorhandene KDBX-Datei.",
+          ru: "Ваш существующий файл KDBX.",
+          pt: "Seu arquivo KDBX existente.",
+          ja: "既存の KDBX ファイル。",
+          pa: "ਤੁਹਾਡੀ ਮੌਜੂਦਾ KDBX ਫਾਇਲ।",
+          bn: "আপনার বিদ্যমান KDBX ফাইল।",
+          id: "File KDBX Anda yang ada.",
+          ur: "آپ کی موجودہ KDBX فائل۔",
+          ms: "File KDBX Anda yang ada.",
+          it: "Il tuo file KDBX esistente.",
+          tr: "Mevcut KDBX dosyanız.",
+          ta: "உங்கள் தற்போதைய KDBX கோப்பு.",
+          te: "మీ ప్రస్తుత KDBX ఫైల్.",
+          ko: "기존 KDBX 파일입니다.",
+          vi: "Tệp KDBX hiện có của bạn.",
+          pl: "Twój istniejący plik KDBX.",
+          ro: "Fișierul KDBX existent.",
+          nl: "Uw bestaande KDBX-bestand.",
+          el: "Το υπάρχον αρχείο KDBX σας.",
+          th: "ไฟล์ KDBX ที่มีอยู่ของคุณ",
+          cs: "Váš stávající soubor KDBX.",
+          hu: "A meglévő KDBX fájlod.",
+          sv: "Din befintliga KDBX-fil.",
+          da: "Din eksisterende KDBX-fil.",
+        })}
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1266,10 +1886,72 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         name="username" />
       <div className="h-6" />
       <div className="font-medium">
-        Name
+        {Lang.match({
+          en: "Name",
+          zh: "名称",
+          hi: "नाम",
+          es: "Nombre",
+          ar: "اسم",
+          fr: "Nom",
+          de: "Name",
+          ru: "Имя",
+          pt: "Nome",
+          ja: "名前",
+          pa: "ਨਾਮ",
+          bn: "নাম",
+          id: "Nama",
+          ur: "نام",
+          ms: "Nama",
+          it: "Nome",
+          tr: "İsim",
+          ta: "பெயர்",
+          te: "పేరు",
+          ko: "이름",
+          vi: "Tên",
+          pl: "Nazwa",
+          ro: "Nume",
+          nl: "Naam",
+          el: "Όνομα",
+          th: "ชื่อ",
+          cs: "Jméno",
+          hu: "Név",
+          sv: "Namn",
+          da: "Navn",
+        })}
       </div>
       <div className="text-default-contrast">
-        Will be used locally for display purposes.&lrm;
+        {Lang.match({
+          en: "Will be used locally for display purposes.",
+          zh: "将被本地使用，仅用于显示。",
+          hi: "स्थानीय रूप से प्रदर्शन उद्देश्यों के लिए उपयोग किया जाएगा।",
+          es: "Se usará localmente para fines de visualización.",
+          ar: "سيتم استخدامه محليًا لأغراض العرض.",
+          fr: "Sera utilisé localement à des fins d'affichage.",
+          de: "Wird lokal für Anzeigezwecke verwendet.",
+          ru: "Будет использоваться локально для отображения.",
+          pt: "Será usado localmente para fins de exibição.",
+          ja: "表示目的でローカルに使用されます。",
+          pa: "ਡਿਸਪਲੇਅ ਦੇ ਉਦੇਸ਼ਾਂ ਲਈ ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਵਰਤਿਆ ਜਾਵੇਗਾ।",
+          bn: "প্রদর্শন উদ্দেশ্যে স্থানীয়ভাবে ব্যবহৃত হবে।",
+          id: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          ur: "ڈسپلے کے مقاصد کے لیے مقامی طور پر استعمال کیا جائے گا۔",
+          ms: "Akan digunakan secara lokal untuk tujuan tampilan.",
+          it: "Sarà usato localmente per scopi di visualizzazione.",
+          tr: "Görüntüleme amaçları için yerel olarak kullanılacaktır.",
+          ta: "காட்சிப்படுத்தும் நோக்கங்களுக்காக உள்ளூரில் பயன்படுத்தப்படும்.",
+          te: "ప్రదర్శన లక్ష్యాల కోసం స్థానికంగా ఉపయోగించబడుతుంది.",
+          ko: "디스플레이 목적으로 로컬에서 사용됩니다.",
+          vi: "Sẽ được sử dụng cục bộ cho mục đích hiển thị.",
+          pl: "Będzie używany lokalnie do celów wyświetlania.",
+          ro: "Va fi folosit local pentru scopuri de afișare.",
+          nl: "Zal lokaal worden gebruikt voor weergavedoeleinden.",
+          el: "Θα χρησιμοποιείται τοπικά για σκοπούς εμφάνισης.",
+          th: "จะใช้ในพื้นที่สำหรับวัตถุประสงค์ในการแสดงผล",
+          cs: "Bude používán lokálně pro zobrazení.",
+          hu: "Helyileg lesz használva megjelenítési célokra.",
+          sv: "Kommer att användas lokalt för visningsändamål.",
+          da: "Vil blive brugt lokalt til visningsformål.",
+        })}
       </div>
       <div className="h-4" />
       <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -1281,10 +1963,72 @@ function UserReimportFsfhPage(props: { user: UserData }) {
       </div>
       <div className="h-6" />
       <div className="font-medium">
-        File
+        {Lang.match({
+          en: "File",
+          zh: "文件",
+          hi: "फ़ाइल",
+          es: "Archivo",
+          ar: "ملف",
+          fr: "Fichier",
+          de: "Datei",
+          ru: "Файл",
+          pt: "Arquivo",
+          ja: "ファイル",
+          pa: "ਫਾਇਲ",
+          bn: "ফাইল",
+          id: "Berkas",
+          ur: "فائل",
+          ms: "Berkas",
+          it: "File",
+          tr: "Dosya",
+          ta: "கோப்பு",
+          te: "ఫైల్",
+          ko: "파일",
+          vi: "Tệp",
+          pl: "Plik",
+          ro: "Fișier",
+          nl: "Bestand",
+          el: "Αρχείο",
+          th: "ไฟล์",
+          cs: "Soubor",
+          hu: "Fájl",
+          sv: "Fil",
+          da: "Fil",
+        })}
       </div>
       <div className="text-default-contrast">
-        Your existing KDBX file.&lrm;
+        {Lang.match({
+          en: "Your existing KDBX file.",
+          zh: "您现有的 KDBX 文件。",
+          hi: "आपकी मौजूदा KDBX फ़ाइल।",
+          es: "Tu archivo KDBX existente.",
+          ar: "ملف KDBX الحالي الخاص بك.",
+          fr: "Votre fichier KDBX existant.",
+          de: "Ihre vorhandene KDBX-Datei.",
+          ru: "Ваш существующий файл KDBX.",
+          pt: "Seu arquivo KDBX existente.",
+          ja: "既存の KDBX ファイル。",
+          pa: "ਤੁਹਾਡੀ ਮੌਜੂਦਾ KDBX ਫਾਇਲ।",
+          bn: "আপনার বিদ্যমান KDBX ফাইল।",
+          id: "File KDBX Anda yang ada.",
+          ur: "آپ کی موجودہ KDBX فائل۔",
+          ms: "File KDBX Anda yang ada.",
+          it: "Il tuo file KDBX esistente.",
+          tr: "Mevcut KDBX dosyanız.",
+          ta: "உங்கள் தற்போதைய KDBX கோப்பு.",
+          te: "మీ ప్రస్తుత KDBX ఫైల్.",
+          ko: "기존 KDBX 파일입니다.",
+          vi: "Tệp KDBX hiện có của bạn.",
+          pl: "Twój istniejący plik KDBX.",
+          ro: "Fișierul KDBX existent.",
+          nl: "Uw bestaande KDBX-bestand.",
+          el: "Το υπάρχον αρχείο KDBX σας.",
+          th: "ไฟล์ KDBX ที่มีอยู่ของคุณ",
+          cs: "Váš stávající soubor KDBX.",
+          hu: "A meglévő KDBX fájlod.",
+          sv: "Din befintliga KDBX-fil.",
+          da: "Din eksisterende KDBX-fil.",
+        })}
       </div>
       <div className="h-4" />
       <div className="relative bg-default-contrast rounded-xl [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">

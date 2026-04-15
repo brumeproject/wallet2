@@ -6,7 +6,7 @@ import { Events } from "@/libs/events/mod.ts"
 import { Portal } from "@/libs/portal/mod.tsx"
 import { ChildrenProps, DarkProps } from "@/libs/props/mod.ts"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
-import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import React, { KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { Nullable } from "../../nullable/mod.ts"
 
@@ -20,6 +20,12 @@ React;
 export function Wall(props: ChildrenProps & DarkProps) {
   const close = useCloseContext().getOrThrow()
   const { dark, children } = props
+
+  const [state, setState] = useState<"delaying" | "mounting" | "mounted" | "unmounting" | "unmounted">("delaying")
+
+  useEffect(() => {
+    setState("mounting")
+  }, [])
 
   const previous = useRef(document.activeElement)
 
@@ -37,13 +43,11 @@ export function Wall(props: ChildrenProps & DarkProps) {
     setTimeout(() => element.focus(), 2)
   }, [])
 
-  const [mounting, setMounting] = useState(true)
-
   /**
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setMounting(false)
+    setState("unmounting")
 
     if (!force)
       return
@@ -80,32 +84,30 @@ export function Wall(props: ChildrenProps & DarkProps) {
     hide()
   }, [hide])
 
-  const [mounted, setMounted] = useState(false)
-
   /**
-   * Sync mounted state with mounting state on animation end
+   * Switch state on animation end
    */
-  const onAnimationEnd = useCallback((e: AnimationEvent) => {
-    flushSync(() => setMounted(mounting))
-  }, [mounting])
+  const onAnimationEnd = useCallback(() => {
+    if (state === "mounting")
+      flushSync(() => setState("mounted"))
+    if (state === "unmounting")
+      flushSync(() => setState("unmounted"))
+    return
+  }, [state])
 
   /**
-   * Close when both mounting and mounted are false
+   * Close when unmounted
    */
   useEffect(() => {
-    if (mounting)
-      return
-    if (mounted)
+    if (state !== "unmounted")
       return
     close()
-  }, [mounting, mounted])
+  }, [state, close])
 
   /**
    * Sync theme-color with dark mode
    */
   useLayoutEffect(() => {
-    if (!mounting)
-      return
     if (!dark)
       return
 
@@ -122,7 +124,7 @@ export function Wall(props: ChildrenProps & DarkProps) {
     color.setAttribute("content", "#000000")
 
     return () => color.setAttribute("content", original)
-  }, [mounting, dark])
+  }, [dark])
 
   /**
    * Swipe down to close
@@ -147,18 +149,17 @@ export function Wall(props: ChildrenProps & DarkProps) {
     return () => clearTimeout(timeout)
   }, [content])
 
-  /**
-   * Unmount when animation is finished
-   */
-  if (!mounting && !mounted)
+  if (state === "delaying")
+    return null
+  if (state === "unmounted")
     return null
 
   return <CloseContext value={hide}>
     <Portal>
-      <div className="absolute inset-0 bg-backdrop data-[mounting=true]:animate-opacity-in data-[mounting=false]:animate-opacity-out"
-        data-mounting={mounting} />
-      <div className="fixed inset-0 focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[mounting=true]:animate-slideup-in data-[mounting=false]:animate-opacity-out"
-        data-mounting={mounting}
+      <div className="absolute inset-0 bg-backdrop data-[state=mounting]:animate-opacity-in data-[state=unmounting]:animate-opacity-out"
+        data-state={state} />
+      <div className="fixed inset-0 focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=mounting]:animate-slideup-in data-[state=unmounting]:animate-opacity-out"
+        data-state={state}
         data-theme={dark && "dark"}
         onAnimationEnd={onAnimationEnd}
         onMouseDown={onMouseDown}

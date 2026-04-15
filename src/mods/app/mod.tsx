@@ -1390,10 +1390,72 @@ function SettingsPage() {
         name="username" />
       <div className="h-6" />
       <div className="font-medium">
-        Custom app display
+        {Lang.match({
+          en: "App display",
+          zh: "应用显示",
+          hi: "ऐप प्रदर्शन",
+          es: "Pantalla de la aplicación",
+          ar: "عرض التطبيق",
+          fr: "Affichage de l'application",
+          de: "App-Anzeige",
+          ru: "Отображение приложения",
+          pt: "Exibição do aplicativo",
+          ja: "アプリの表示",
+          pa: "ਐਪ ਡਿਸਪਲੇਅ",
+          bn: "অ্যাপ প্রদর্শন",
+          id: "Tampilan aplikasi",
+          ur: "ایپ ڈسپلے",
+          ms: "Tampilan aplikasi",
+          it: "Visualizzazione dell'app",
+          tr: "Uygulama görüntüsü",
+          ta: "அப் காட்சி",
+          te: "యాప్ ప్రదర్శన",
+          ko: "앱 디스플레이",
+          vi: "Hiển thị ứng dụng",
+          pl: "Wyświetlanie aplikacji",
+          ro: "Afișajul aplicației",
+          nl: "App-weergave",
+          el: "Εμφάνιση εφαρμογής",
+          th: "การแสดงผลแอป",
+          cs: "Zobrazení aplikace",
+          hu: "Alkalmazás megjelenítése",
+          sv: "Appvisning",
+          da: "App-visning",
+        })}
       </div>
       <div className="text-default-contrast">
-        Custom name and icon to hide the app.&lrm;
+        {Lang.match({
+          en: "Custom name and icon to hide the app.",
+          zh: "自定义名称和图标以隐藏应用程序。",
+          hi: "ऐप को छिपाने के लिए कस्टम नाम और आइकन।",
+          es: "Nombre e ícono personalizados para ocultar la aplicación.",
+          ar: "اسم مخصص وأيقونة لإخفاء التطبيق.",
+          fr: "Nom et icône personnalisés pour masquer l'application.",
+          de: "Benutzerdefinierter Name und Symbol zum Verstecken der App.",
+          ru: "Пользовательское имя и значок для скрытия приложения.",
+          pt: "Nome e ícone personalizados para ocultar o aplicativo.",
+          ja: "アプリを隠すためのカスタム名とアイコン。",
+          pa: "ਐਪ ਨੂੰ ਛੁਪਾਉਣ ਲਈ ਕਸਟਮ ਨਾਮ ਅਤੇ ਆਈਕਨ।",
+          bn: "অ্যাপটি লুকানোর জন্য কাস্টম নাম এবং আইকন।",
+          id: "Nama dan ikon khusus untuk menyembunyikan aplikasi.",
+          ur: "ایپ کو چھپانے کے لیے کسٹم نام اور آئیکن۔",
+          ms: "Nama dan ikon khusus untuk menyembunyikan aplikasi.",
+          it: "Nome e icona personalizzati per nascondere l'app.",
+          tr: "Uygulamayı gizlemek için özel ad ve simge.",
+          ta: "அப் மறைக்க தனிப்பயன் பெயர் மற்றும் ஐகான்.",
+          te: "యాప్‌ను దాచడానికి కస్టమ్ పేరు మరియు చిహ్నం.",
+          ko: "앱을 숨기기 위한 사용자 지정 이름 및 아이콘입니다.",
+          vi: "Tên và biểu tượng tùy chỉnh để ẩn ứng dụng.",
+          pl: "Niestandardowa nazwa i ikona do ukrycia aplikacji.",
+          ro: "Nume și pictogramă personalizate pentru a ascunde aplicația.",
+          nl: "Aangepaste naam en pictogram om de app te verbergen.",
+          el: "Προσαρμοσμένο όνομα και εικονίδιο για να κρύψετε την εφαρμογή.",
+          th: "ชื่อและไอคอนที่กำหนดเองเพื่อซ่อนแอป",
+          cs: "Vlastní název a ikona pro skrytí aplikace.",
+          hu: "Egyéni név és ikon az alkalmazás elrejtéséhez.",
+          sv: "Anpassat namn och ikon för att dölja appen.",
+          da: "Brugerdefineret navn og ikon for at skjule appen.",
+        })}
       </div>
       <div className="h-4" />
       <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">

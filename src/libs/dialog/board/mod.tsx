@@ -8,7 +8,7 @@ import { Portal } from "@/libs/portal/mod.tsx"
 import { ChildrenProps, DarkProps } from "@/libs/props/mod.ts"
 import { usePathContext } from "@hazae41/chemin"
 import { CloseContext, useCloseContext } from "@hazae41/react-close-context"
-import React, { AnimationEvent, KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import React, { KeyboardEvent, MouseEvent, UIEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 
 React;
@@ -35,6 +35,12 @@ export function PathBoard(props: ChildrenProps & DarkProps) {
 export function Board(props: ChildrenProps & DarkProps & { x: number, y: number }) {
   const close = useCloseContext().getOrThrow()
   const { dark, children, x, y } = props
+
+  const [state, setState] = useState<"delaying" | "rendering" | "mounting" | "mounted" | "unmounting" | "unmounted">("delaying")
+
+  useEffect(() => {
+    setState("rendering")
+  }, [])
 
   const previous = useRef(document.activeElement)
 
@@ -69,17 +75,15 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
       dialog.style.setProperty("--w", `${w}px`)
       dialog.style.setProperty("--h", `${h}px`)
 
-      dialog.setAttribute("data-open", "true")
+      flushSync(() => setState("mounting"))
     }, { timeout: 100 })
   }, [x, y])
-
-  const [mounting, setMounting] = useState(true)
 
   /**
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setMounting(false)
+    setState("unmounting")
 
     if (!force)
       return
@@ -116,32 +120,30 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
     hide()
   }, [hide])
 
-  const [mounted, setMounted] = useState(false)
-
   /**
-   * Sync mounted state with mounting state on animation end
+   * Switch state on animation end
    */
-  const onAnimationEnd = useCallback((e: AnimationEvent) => {
-    flushSync(() => setMounted(mounting))
-  }, [mounting])
+  const onAnimationEnd = useCallback(() => {
+    if (state === "mounting")
+      flushSync(() => setState("mounted"))
+    if (state === "unmounting")
+      flushSync(() => setState("unmounted"))
+    return
+  }, [state])
 
   /**
-   * Close when both mounting and mounted are false
+   * Close when unmounted
    */
   useEffect(() => {
-    if (mounting)
-      return
-    if (mounted)
+    if (state !== "unmounted")
       return
     close()
-  }, [mounting, mounted])
+  }, [state, close])
 
   /**
    * Sync theme-color with dark mode
    */
   useLayoutEffect(() => {
-    if (!mounting)
-      return
     if (!dark)
       return
 
@@ -158,7 +160,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
     color.setAttribute("content", "#000000")
 
     return () => color.setAttribute("content", original)
-  }, [mounting, dark])
+  }, [dark])
 
   /**
    * Swipe down to close
@@ -187,19 +189,17 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
     return () => clearTimeout(timeout)
   }, [content])
 
-  /**
-   * Unmount when animation is finished
-   */
-  if (!mounting && !mounted)
+  if (state === "delaying")
+    return null
+  if (state === "unmounted")
     return null
 
   return <CloseContext value={hide}>
     <Portal>
-      <div className="absolute inset-0 bg-backdrop data-[mounting=true]:animate-opacity-in data-[mounting=false]:animate-opacity-out"
-        data-mounting={mounting} />
-      <div className="fixed inset-0 flex flex-col md:p-safe focus-visible:outline-none overflow-y-scroll md:overflow-y-hidden data-[mounted=true]:data-[mounting=true]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] opacity-0 data-open:opacity-100 data-open:data-[mounting=true]:not-md:animate-slideup-in data-open:data-[mounting=true]:md:animate-scale-xywh-in data-[mounting=false]:not-md:animate-opacity-out data-[mounting=false]:md:animate-scale-xywh-out"
-        data-mounting={mounting}
-        data-mounted={mounted}
+      <div className="absolute inset-0 bg-backdrop data-[state=rendering]:opacity-0 data-[state=mounting]:animate-opacity-in data-[state=unmounting]:animate-opacity-out"
+        data-state={state} />
+      <div className="fixed inset-0 flex flex-col md:p-safe focus-visible:outline-none overflow-y-scroll md:overflow-y-hidden data-[state=mounted]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=rendering]:opacity-0 data-[state=mounting]:not-md:animate-slideup-in data-[state=mounting]:md:animate-scale-xywh-in data-[state=unmounting]:not-md:animate-opacity-out data-[state=unmounting]:md:animate-scale-xywh-out"
+        data-state={state}
         data-theme={dark && "dark"}
         onAnimationEnd={onAnimationEnd}
         onMouseDown={onMouseDown}

@@ -32,6 +32,12 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
   const close = useCloseContext().getOrThrow()
   const { children, x, y } = props
 
+  const [state, setState] = useState<"delaying" | "rendering" | "mounting" | "mounted" | "unmounting" | "unmounted">("delaying")
+
+  useEffect(() => {
+    setState("rendering")
+  }, [])
+
   const previous = useRef(document.activeElement)
 
   /**
@@ -71,17 +77,15 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
       dialog.style.setProperty("--l", `${l}px`)
       dialog.style.setProperty("--t", `${t}px`)
 
-      dialog.setAttribute("data-open", "true")
+      flushSync(() => setState("mounting"))
     }, { timeout: 100 })
   }, [x, y])
-
-  const [mounting, setMounting] = useState(true)
 
   /**
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setMounting(false)
+    setState("unmounting")
 
     if (!force)
       return
@@ -118,38 +122,37 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
     hide()
   }, [hide])
 
-  const [mounted, setMounted] = useState(false)
-
   /**
-   * Sync mounted state with mounting state on animation end
+   * Switch state on animation end
    */
   const onAnimationEnd = useCallback(() => {
-    flushSync(() => setMounted(mounting))
-  }, [mounting])
+    if (state === "mounting")
+      flushSync(() => setState("mounted"))
+    if (state === "unmounting")
+      flushSync(() => setState("unmounted"))
+    return
+  }, [state])
 
   /**
-   * Close when both mounting and mounted are false
+   * Close when unmounted
    */
   useEffect(() => {
-    if (mounting)
-      return
-    if (mounted)
+    if (state !== "unmounted")
       return
     close()
-  }, [mounting, mounted])
+  }, [state, close])
 
-  /**
-   * Unmount when animation is finished
-   */
-  if (!mounting && !mounted)
+  if (state === "delaying")
+    return null
+  if (state === "unmounted")
     return null
 
   return <CloseContext value={hide}>
     <Portal>
       <div className="fixed inset-0 flex flex-col"
         onMouseDown={onMouseDown} />
-      <div className="fixed top-0 left-0 translate-x-(--l) translate-y-(--t) flex flex-col text-default bg-default focus-visible:outline-none border border-default-contrast rounded-xl p-2 opacity-0 data-open:opacity-100 data-open:data-[mounting=true]:animate-scale-xywh-in data-[mounting=false]:animate-scale-xywh-out"
-        data-mounting={mounting}
+      <div className="fixed top-0 left-0 translate-x-(--l) translate-y-(--t) flex flex-col text-default bg-default focus-visible:outline-none border border-default-contrast rounded-xl p-2 data-[state=rendering]:opacity-0 data-[state=mounting]:animate-scale-xywh-in data-[state=unmounting]:animate-scale-xywh-out"
+        data-state={state}
         onAnimationEnd={onAnimationEnd}
         onKeyDown={onKeyDown}
         ref={onDialog}>
