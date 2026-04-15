@@ -21,10 +21,10 @@ export function Wall(props: ChildrenProps & DarkProps) {
   const close = useCloseContext().getOrThrow()
   const { dark, children } = props
 
-  const [state, setState] = useState<"delaying" | "mounting" | "mounted" | "unmounting" | "unmounted">("delaying")
+  const [state, setState] = useState<"delayed" | "opening" | "opened" | "closing" | "closed">("delayed")
 
   useEffect(() => {
-    setState("mounting")
+    setState("opening")
   }, [])
 
   const previous = useRef(document.activeElement)
@@ -47,7 +47,7 @@ export function Wall(props: ChildrenProps & DarkProps) {
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setState("unmounting")
+    setState("closing")
 
     if (!force)
       return
@@ -88,18 +88,18 @@ export function Wall(props: ChildrenProps & DarkProps) {
    * Switch state on animation end
    */
   const onAnimationEnd = useCallback(() => {
-    if (state === "mounting")
-      flushSync(() => setState("mounted"))
-    if (state === "unmounting")
-      flushSync(() => setState("unmounted"))
+    if (state === "opening")
+      flushSync(() => setState("opened"))
+    if (state === "closing")
+      flushSync(() => setState("closed"))
     return
   }, [state])
 
   /**
-   * Close when unmounted
+   * Close when closed
    */
   useEffect(() => {
-    if (state !== "unmounted")
+    if (state !== "closed")
       return
     close()
   }, [state, close])
@@ -149,16 +149,16 @@ export function Wall(props: ChildrenProps & DarkProps) {
     return () => clearTimeout(timeout)
   }, [content])
 
-  if (state === "delaying")
+  if (state === "delayed")
     return null
-  if (state === "unmounted")
+  if (state === "closed")
     return null
 
   return <CloseContext value={hide}>
     <Portal>
-      <div className="absolute inset-0 bg-backdrop data-[state=mounting]:animate-opacity-in data-[state=unmounting]:animate-opacity-out"
+      <div className="absolute inset-0 bg-backdrop data-[state=opening]:animate-opacity-in data-[state=closing]:animate-opacity-out"
         data-state={state} />
-      <div className="fixed inset-0 focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=mounting]:animate-slideup-in data-[state=unmounting]:animate-opacity-out"
+      <div className="fixed inset-0 focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=opening]:animate-slideup-in data-[state=closing]:animate-opacity-out"
         data-state={state}
         data-theme={dark && "dark"}
         onAnimationEnd={onAnimationEnd}

@@ -32,7 +32,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
   const close = useCloseContext().getOrThrow()
   const { children, x, y } = props
 
-  const [state, setState] = useState<"delaying" | "rendering" | "mounting" | "mounted" | "unmounting" | "unmounted">("delaying")
+  const [state, setState] = useState<"delayed" | "rendering" | "opening" | "opened" | "closing" | "closed">("delayed")
 
   useEffect(() => {
     setState("rendering")
@@ -77,7 +77,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
       dialog.style.setProperty("--l", `${l}px`)
       dialog.style.setProperty("--t", `${t}px`)
 
-      flushSync(() => setState("mounting"))
+      flushSync(() => setState("opening"))
     }, { timeout: 100 })
   }, [x, y])
 
@@ -85,7 +85,7 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setState("unmounting")
+    setState("closing")
 
     if (!force)
       return
@@ -126,32 +126,32 @@ export function Paper(props: ChildrenProps & { x: number; y: number }) {
    * Switch state on animation end
    */
   const onAnimationEnd = useCallback(() => {
-    if (state === "mounting")
-      flushSync(() => setState("mounted"))
-    if (state === "unmounting")
-      flushSync(() => setState("unmounted"))
+    if (state === "opening")
+      flushSync(() => setState("opened"))
+    if (state === "closing")
+      flushSync(() => setState("closed"))
     return
   }, [state])
 
   /**
-   * Close when unmounted
+   * Close when closed
    */
   useEffect(() => {
-    if (state !== "unmounted")
+    if (state !== "closed")
       return
     close()
   }, [state, close])
 
-  if (state === "delaying")
+  if (state === "delayed")
     return null
-  if (state === "unmounted")
+  if (state === "closed")
     return null
 
   return <CloseContext value={hide}>
     <Portal>
       <div className="fixed inset-0 flex flex-col"
         onMouseDown={onMouseDown} />
-      <div className="fixed top-0 left-0 translate-x-(--l) translate-y-(--t) flex flex-col text-default bg-default focus-visible:outline-none border border-default-contrast rounded-xl p-2 data-[state=rendering]:opacity-0 data-[state=mounting]:animate-scale-xywh-in data-[state=unmounting]:animate-scale-xywh-out"
+      <div className="fixed top-0 left-0 translate-x-(--l) translate-y-(--t) flex flex-col text-default bg-default focus-visible:outline-none border border-default-contrast rounded-xl p-2 data-[state=rendering]:opacity-0 data-[state=opening]:animate-scale-xywh-in data-[state=closing]:animate-scale-xywh-out"
         data-state={state}
         onAnimationEnd={onAnimationEnd}
         onKeyDown={onKeyDown}

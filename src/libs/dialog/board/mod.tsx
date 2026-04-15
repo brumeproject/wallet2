@@ -36,7 +36,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
   const close = useCloseContext().getOrThrow()
   const { dark, children, x, y } = props
 
-  const [state, setState] = useState<"delaying" | "rendering" | "mounting" | "mounted" | "unmounting" | "unmounted">("delaying")
+  const [state, setState] = useState<"delayed" | "rendering" | "opening" | "opened" | "closing" | "closed">("delayed")
 
   useEffect(() => {
     setState("rendering")
@@ -75,7 +75,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
       dialog.style.setProperty("--w", `${w}px`)
       dialog.style.setProperty("--h", `${h}px`)
 
-      flushSync(() => setState("mounting"))
+      flushSync(() => setState("opening"))
     }, { timeout: 100 })
   }, [x, y])
 
@@ -83,7 +83,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
    * Smoothly close the dialog
    */
   const hide = useCallback((force?: boolean) => {
-    setState("unmounting")
+    setState("closing")
 
     if (!force)
       return
@@ -124,18 +124,18 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
    * Switch state on animation end
    */
   const onAnimationEnd = useCallback(() => {
-    if (state === "mounting")
-      flushSync(() => setState("mounted"))
-    if (state === "unmounting")
-      flushSync(() => setState("unmounted"))
+    if (state === "opening")
+      flushSync(() => setState("opened"))
+    if (state === "closing")
+      flushSync(() => setState("closed"))
     return
   }, [state])
 
   /**
-   * Close when unmounted
+   * Close when closed
    */
   useEffect(() => {
-    if (state !== "unmounted")
+    if (state !== "closed")
       return
     close()
   }, [state, close])
@@ -189,16 +189,16 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
     return () => clearTimeout(timeout)
   }, [content])
 
-  if (state === "delaying")
+  if (state === "delayed")
     return null
-  if (state === "unmounted")
+  if (state === "closed")
     return null
 
   return <CloseContext value={hide}>
     <Portal>
-      <div className="absolute inset-0 bg-backdrop data-[state=rendering]:opacity-0 data-[state=mounting]:animate-opacity-in data-[state=unmounting]:animate-opacity-out"
+      <div className="absolute inset-0 bg-backdrop data-[state=rendering]:opacity-0 data-[state=opening]:animate-opacity-in data-[state=closing]:animate-opacity-out"
         data-state={state} />
-      <div className="fixed inset-0 flex flex-col md:p-safe focus-visible:outline-none overflow-y-scroll md:overflow-y-hidden data-[state=mounted]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=rendering]:opacity-0 data-[state=mounting]:not-md:animate-slideup-in data-[state=mounting]:md:animate-scale-xywh-in data-[state=unmounting]:not-md:animate-opacity-out data-[state=unmounting]:md:animate-scale-xywh-out"
+      <div className="fixed inset-0 flex flex-col md:p-safe focus-visible:outline-none overflow-y-scroll md:overflow-y-hidden data-[state=opened]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=rendering]:opacity-0 data-[state=opening]:not-md:animate-slideup-in data-[state=opening]:md:animate-scale-xywh-in data-[state=closing]:not-md:animate-opacity-out data-[state=closing]:md:animate-scale-xywh-out"
         data-state={state}
         data-theme={dark && "dark"}
         onAnimationEnd={onAnimationEnd}
