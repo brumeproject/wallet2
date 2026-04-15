@@ -1,5 +1,5 @@
 import { Nullable } from "@/libs/nullable/mod.ts";
-import React, { MouseEvent, ReactNode, useCallback, useState } from "react";
+import React, { ReactNode, useCallback, useState } from "react";
 import { flushSync } from "react-dom";
 
 React;
@@ -14,7 +14,7 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
     flushSync(() => setVisible(control))
   }, [control])
 
-  const onClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+  const onClick = useCallback(() => {
     setControl(!control)
   }, [control, setControl])
 
