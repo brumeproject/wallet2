@@ -122,7 +122,7 @@ export namespace Lang {
     const served = langs[document.documentElement.lang]
 
     if (served != null)
-      return record[served]
+      return "⁦" + record[served] + "⁩"
 
     return record["en"]
   }
