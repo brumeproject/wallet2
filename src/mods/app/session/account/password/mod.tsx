@@ -116,10 +116,10 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
         {username && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
-            Username
+            {Lang.match({ en: "Username", zh: "用户名", hi: "उपयोगकर्ता नाम", es: "Nombre de usuario", ar: "اسم المستخدم", fr: "Nom d'utilisateur", de: "Nutzername", ru: "Имя пользователя", pt: "Nome de usuário", ja: "ユーザー名", pa: "ਉਪਭੋਗਤਾ ਨਾਮ", bn: "ব্যবহারকারীর নাম", id: "Nama pengguna", ur: "صارف نام", ms: "Nama pengguna", it: "Nome utente", tr: "Kullanıcı adı", ta: "பயனர்பெயர்", te: "వినియోగదారు పేరు", ko: "사용자 이름", vi: "Tên đăng nhập", pl: "Nazwa użytkownika", ro: "Nume de utilizator", nl: "Gebruikersnaam", el: "Όνομα χρήστη", th: "ชื่อผู้ใช้", cs: "Uživatelské jméno", hu: "Felhasználónév", sv: "Användarnamn", da: "Brugernavn" })}
           </div>
           <div className="text-default-contrast">
-            Your username or email.&lrm;
+            {Lang.match({ en: "Your username or email.", zh: "您的用户名或电子邮件。", hi: "आपका उपयोगकर्ता नाम या ईमेल।", es: "Su nombre de usuario o correo electrónico.", ar: "اسم المستخدم أو البريد الإلكتروني الخاص بك.", fr: "Votre nom d'utilisateur ou e-mail.", de: "Ihr Benutzername oder Ihre E-Mail.", ru: "Ваше имя пользователя или электронная почта.", pt: "Seu nome de usuário ou e-mail.", ja: "あなたのユーザー名またはメールアドレス。", pa: "ਤੁਹਾਡਾ ਉਪਭੋਗਤਾ ਨਾਮ ਜਾਂ ਈਮੇਲ।", bn: "আপনার ব্যবহারকারীর নাম বা ইমেল।", id: "Nama pengguna atau email Anda.", ur: "آپ کا صارف نام یا ای میل۔", ms: "Nama pengguna atau e-mel anda.", it: "Il tuo nome utente o email.", tr: "Kullanıcı adınız veya e-posta adresiniz.", ta: "உங்கள் பயனர்பெயர் அல்லது மின்னஞ்சல்.", te: "మీ వినియోగదారు పేరు లేదా ఇమెయిల్.", ko: "사용자 이름 또는 이메일.", vi: "Tên người dùng hoặc email của bạn.", pl: "Twoja nazwa użytkownika lub e-mail.", ro: "Numele de utilizator sau e-mailul dvs.", nl: "Uw gebruikersnaam of e-mail.", el: "Το όνομα χρήστη ή το email σας.", th: "ชื่อผู้ใช้หรืออีเมลของคุณ.", cs: "Vaše uživatelské jméno nebo e-mail.", hu: "Felhasználóneved vagy e-mail címed.", sv: "Ditt användarnamn eller e-post.", da: "Dit brugernavn eller e-mail." })}
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -142,10 +142,10 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
         {password && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
-            Password
+            {Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata sandi", ur: "پاس ورڈ", ms: "Kata laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός πρόσβασης", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
           </div>
           <div className="text-default-contrast">
-            Your password.&lrm;
+            {Lang.match({ en: "Your password.", zh: "您的密码。", hi: "आपका पासवर्ड।", es: "Su contraseña.", ar: "كلمة المرور الخاصة بك.", fr: "Votre mot de passe.", de: "Ihr Passwort.", ru: "Ваш пароль.", pt: "Sua senha.", ja: "あなたのパスワード。", pa: "ਤੁਹਾਡਾ ਪਾਸਵਰਡ।", bn: "আপনার পাসওয়ার্ড।", id: "Kata sandi Anda.", ur: "آپ کا پاس ورڈ۔", ms: "Kata laluan anda.", it: "La tua password.", tr: "Parolanız.", ta: "உங்கள் கடவுச்சொல்.", te: "మీ పాస్వర్డ్.", ko: "귀하의 비밀번호.", vi: "Mật khẩu của bạn.", pl: "Twoje hasło.", ro: "Parola dvs.", nl: "Uw wachtwoord.", el: "Ο κωδικός πρόσβασής σας.", th: "รหัสผ่านของคุณ.", cs: "Vaše heslo.", hu: "A jelszavad.", sv: "Ditt lösenord.", da: "Din adgangskode." })}
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -176,10 +176,10 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
         {totpseed && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
-            One-time passcode
+            {Lang.match({ en: "One-time passcode", zh: "一次性密码", hi: "वन-टाइम पासकोड", es: "Código de un solo uso", ar: "رمز المرور لمرة واحدة", fr: "Code à usage unique", de: "Einmalpasswort", ru: "Одноразовый пароль", pt: "Código de uso único", ja: "ワンタイムパスコード", pa: "ਵਨ-ਟਾਈਮ ਪਾਸਕੋਡ", bn: "একবারের পাসকোড", id: "Kode sekali pakai", ur: "ایک وقت کا پاس کوڈ", ms: "Kod sekali pakai", it: "Codice monouso", tr: "Tek kullanımlık şifre", ta: "ஒரு முறை கடவுச்சொல்", te: "ఒకసారి ఉపయోగించే పాస్‌కోడ్", ko: "일회용 패스코드", vi: "Mã một lần sử dụng", pl: "Jednorazowy kod dostępu", ro: "Parolă de unică folosință", nl: "Eenmalige toegangscode", el: "Κωδικός μίας χρήσης", th: "รหัสผ่านครั้งเดียว", cs: "Jednorázový přístupový kód", hu: "Egyszer használatos jelszó", sv: "Engångslösenord", da: "Engangskode" })}
           </div>
           <div className="text-default-contrast">
-            Your time-based one-time passcode.&lrm;
+            {Lang.match({ en: "Your time-based one-time passcode.", zh: "您的基于时间的一次性密码。", hi: "आपका समय-आधारित वन-टाइम पासकोड।", es: "Su código de un solo uso basado en el tiempo.", ar: "رمز المرور لمرة واحدة المستند إلى الوقت الخاص بك.", fr: "Votre code à usage unique basé sur le temps.", de: "Ihr zeitbasiertes Einmalpasswort.", ru: "Ваш одноразовый пароль на основе времени.", pt: "Seu código de uso único baseado no tempo.", ja: "あなたの時間ベースのワンタイムパスコード。", pa: "ਤੁਹਾਡਾ ਸਮੇਂ-ਅਧਾਰਿਤ ਵਨ-ਟਾਈਮ ਪਾਸਕੋਡ।", bn: "আপনার সময়-ভিত্তিক একবারের পাসকোড।", id: "Kode sekali pakai berbasis waktu Anda.", ur: "آپ کا وقت پر مبنی ایک وقت کا پاس کوڈ۔", ms: "Kod sekali pakai berasaskan masa anda.", it: "Il tuo codice monouso basato sul tempo.", tr: "Zaman tabanlı tek kullanımlık şifreniz.", ta: "உங்கள் நேர அடிப்படையிலான ஒருமுறை கடவுச்சொல்.", te: "మీ సమయ ఆధారిత ఒకసారి ఉపయోగించే పాస్‌కోడ్.", ko: "귀하의 시간 기반 일회용 패스코드.", vi: "Mã một lần sử dụng dựa trên thời gian của bạn.", pl: "Twój czasowy jednorazowy kod dostępu.", ro: "Codul dvs. de unică folosință bazat pe timp.", nl: "Uw tijdgebaseerde eenmalige toegangscode.", el: "Ο κωδικός μίας χρήσης βάσει χρόνου σας.", th: "รหัสผ่านครั้งเดียวตามเวลาของคุณ.", cs: "Váš časově omezený jednorázový kód.", hu: "Az Ön időalapú egyszer használatos jelszava.", sv: "Din tidsbaserade engångskod.", da: "Din tidsbaserede engangskode." })}
           </div>
           <div className="h-4" />
           <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-6xl font-mono tracking-widest"
@@ -191,10 +191,10 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
         {notes && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
-            Notes
+            {Lang.match({ en: "Notes", zh: "备注", hi: "नोट्स", es: "Notas", ar: "ملاحظات", fr: "Notes", de: "Notizen", ru: "Заметки", pt: "Notas", ja: "ノート", pa: "ਨੋਟਸ", bn: "নোটস", id: "Catatan", ur: "نوٹس", ms: "Catatan", it: "Note", tr: "Notlar", ta: "குறிப்புகள்", te: "గమనికలు", ko: "노트", vi: "Ghi chú", pl: "Notatki", ro: "Note", nl: "Notities", el: "Σημειώσεις", th: "บันทึกย่อ", cs: "Poznámky", hu: "Jegyzetek", sv: "Anteckningar", da: "Noter" })}
           </div>
           <div className="text-default-contrast">
-            Any additional information.&lrm;
+            {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ.", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -220,7 +220,7 @@ export function PasswordAccountAddMenuAnchor() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.LanguageIcon className="size-5" />
-    Password
+    {Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata sandi", ur: "پاس ورڈ", ms: "Kata laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός πρόσβασης", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
   </WideNakedMenuAnchor>
 }
 
@@ -367,7 +367,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
   return <div className="flex flex-col grow p-6">
     <h1 className="text-xl font-medium">
-      Scan QR code
+      {Lang.match({ en: "Scan QR code", zh: "扫描二维码", hi: "क्यूआर कोड स्कैन करें", es: "Escanear código QR", ar: "مسح رمز الاستجابة السريعة", fr: "Scanner le code QR", de: "QR-Code scannen", ru: "Сканировать QR-код", pt: "Escanear código QR", ja: "QRコードをスキャンする", pa: "QR ਕੋਡ ਸਕੈਨ ਕਰੋ", bn: "QR কোড স্ক্যান করুন", id: "Pindai kode QR", ur: "کیو آر کوڈ اسکین کریں", ms: "Imbas kode QR", it: "Scansiona codice QR", tr: "QR kodunu tara", ta: "QR குறியீட்டை ஸ்கேன் செய்யவும்", te: "QR కోడ్ స్కాన్ చేయండి", ko: "QR 코드 스캔하기", vi: "Quét mã QR", pl: "Skanuj kod QR", ro: "Scanează codul QR", nl: "Scan QR-code", el: "Σάρωση κωδικού QR", th: "สแกนรหัส QR", cs: "Skenovat QR kód", hu: "QR-kód beolvasása", sv: "Skanna QR-kod", da: "Scan QR-kode" })}
     </h1>
     <div className="h-4" />
     <div className="flex flex-col grow rounded-xl relative">
@@ -407,7 +407,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
       <WideContrastButton
         onClick={onClose}>
         <Outline.EyeSlashIcon className="size-5" />
-        Close
+        {Lang.match({ en: "Close", zh: "关闭", hi: "बंद करें", es: "Cerrar", ar: "قريب", fr: "Fermer", de: "Schließen", ru: "Закрыть", pt: "Fechar", ja: "閉じる", pa: "ਬੰਦ ਕਰੋ", bn: "বন্ধ করুন", id: "Tutup", ur: "بند کریں", ms: "Tutup", it: "Chiudi", tr: "Kapat", ta: "மூடு", te: "మూసివేయి", ko: "닫기", vi: "Đóng lại", pl: "Zamknij", ro: "Închideți", nl: "Sluiten", el: "Κλείσιμο", th: "ปิด", cs: "Zavřít", hu: "Bezárás", sv: "Stänga", da: "Luk" })}
       </WideContrastButton>
     </div>
   </div>
@@ -463,17 +463,17 @@ export function PasswordMenu(props: { value: string } & { onChange(value: string
     <WideNakedMenuButton
       onClick={onDigicodeClick}>
       <Outline.HashtagIcon className="size-5" />
-      Digicode
+      {Lang.match({ en: "Digicode", zh: "数字密码", hi: "डिजीकोड", es: "Código digital", ar: "الرمز الرقمي", fr: "Digicode", de: "Digicode", ru: "Цифровой код", pt: "Digicode", ja: "デジコード", pa: "ਡਿਗੀਕੋਡ", bn: "ডিজিকোড", id: "Digicode", ur: "ڈیجی کوڈ", ms: "Digicode", it: "Digicode", tr: "Dijikod", ta: "டிஜிகோடு", te: "డిజికోడ్", ko: "디지코드", vi: "Mã kỹ thuật số", pl: "Kod cyfrowy", ro: "Cod digital", nl: "Digicode", el: "Ψηφιακός κώδικας", th: "รหัสดิจิทัล", cs: "Digitální kód", hu: "Digitális kód", sv: "Digikod", da: "Digikode" })}
     </WideNakedMenuButton>
     <WideNakedMenuButton
       onClick={onPasswordClick}>
       <Outline.LanguageIcon className="size-5" />
-      Password
+      {Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata sandi", ur: "پاس ورڈ", ms: "Kata laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός πρόσβασης", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
     </WideNakedMenuButton>
     <WideNakedMenuButton
       onClick={onPassphraseClick}>
       <Outline.ChatBubbleOvalLeftEllipsisIcon className="size-5" />
-      Passphrase
+      {Lang.match({ en: "Passphrase", zh: "密码短语", hi: "पासफ़्रेज़", es: "Frase de contraseña", ar: "عبارة المرور", fr: "Phrase de passe", de: "Passphrase", ru: "Парольная фраза", pt: "Frase de senha", ja: "パスフレーズ", pa: "ਪਾਸਫਰੇਜ਼", bn: "পাসফ্রেজ", id: "Frasa sandi", ur: "پاس فریز", ms: "Frasa kata laluan", it: "Frase di accesso", tr: "Parola öbeği", ta: "கடவுச்சொல் வாக்கியம்", te: "పాస్ఫ్రేజ్", ko: "암호 구문", vi: "Cụm từ mật khẩu", pl: "Fraza hasła", ro: "Fraza de parolă", nl: "Wachtwoordzin", el: "Φράση πρόσβασης", th: "วลีรหัสผ่าน", cs: "Heslová fráze", hu: "Jelszó kifejezés", sv: "Lösenordsfras", da: "Adgangskodefrase" })}
     </WideNakedMenuButton>
   </div>
 }
@@ -608,7 +608,7 @@ export function PasswordAccountAddPage() {
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        Add password account
+        {Lang.match({ en: "Add password account", zh: "添加密码账户", hi: "पासवर्ड खाता जोड़ें", es: "Agregar cuenta de contraseña", ar: "إضافة حساب كلمة المرور", fr: "Ajouter un compte de mot de passe", de: "Passwortkonto hinzufügen", ru: "Добавить пароль аккаунта", pt: "Adicionar conta de senha", ja: "パスワードアカウントを追加", pa: "ਪਾਸਵਰਡ ਖਾਤਾ ਸ਼ਾਮਲ ਕਰੋ", bn: "পাসওয়ার্ড অ্যাকাউন্ট যোগ করুন", id: "Tambahkan akun kata sandi", ur: "پاس ورڈ اکاؤنٹ شامل کریں", ms: "Tambah akun kata laluan", it: "Aggiungi account password", tr: "Parola hesabı ekle", ta: "கடவுச்சொல் கணக்கைச் சேர்க்கவும்", te: "పాస్వర్డ్ ఖాతాను జోడించండి", ko: "비밀번호 계정 추가하기", vi: "Thêm tài khoản mật khẩu", pl: "Dodaj konto hasła", ro: "Adăugați contul de parolă", nl: "Wachtwoordaccount toevoegen", el: "Προσθήκη λογαριασμού κωδικού πρόσβασης", th: "เพิ่มบัญชีรหัสผ่าน", cs: "Přidat heslo účtu", hu: "Jelszó fiók hozzáadása", sv: "Lägg till lösenordskonto", da: "Tilføj adgangskodekonto" })}
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
@@ -626,10 +626,10 @@ export function PasswordAccountAddPage() {
           name="username" />
         <div className="h-6" />
         <div className="font-medium">
-          Title
+          {Lang.match({ en: "Title", zh: "标题", hi: "शीर्षक", es: "Título", ar: "العنوان", fr: "Titre", de: "Titel", ru: "Заголовок", pt: "Título", ja: "タイトル", pa: "ਸਿਰਲੇਖ", bn: "শিরোনাম", id: "Judul", ur: "عنوان", ms: "Tajuk", it: "Titolo", tr: "Başlık", ta: "தலைப்பு", te: "శీర్షిక", ko: "제목", vi: "Tiêu đề", pl: "Tytuł", ro: "Titlu", nl: "Titel", el: "Τίτλος", th: "ชื่อเรื่อง", cs: "Název", hu: "Cím", sv: "Titel", da: "Titel" })}
         </div>
         <div className="text-default-contrast">
-          A name to identify this account.&lrm;
+          {Lang.match({ en: "A name to identify this account.", zh: "用于识别此账户的名称。", hi: "इस खाते की पहचान करने के लिए एक नाम।", es: "Un nombre para identificar esta cuenta.", ar: "اسم لتحديد هذا الحساب.", fr: "Un nom pour identifier ce compte.", de: "Ein Name zur Identifizierung dieses Kontos.", ru: "Имя для идентификации этой учетной записи.", pt: "Um nome para identificar esta conta.", ja: "このアカウントを識別するための名前。", pa: "ਇਸ ਖਾਤੇ ਦੀ ਪਛਾਣ ਕਰਨ ਲਈ ਇੱਕ ਨਾਮ।", bn: "এই অ্যাকাউন্টটি সনাক্ত করার জন্য একটি নাম।", id: "Nama untuk mengidentifikasi akun ini.", ur: "اس اکاؤنٹ کی شناخت کے لیے ایک نام۔", ms: "Nama untuk mengenal pasti akaun ini.", it: "Un nome per identificare questo account.", tr: "Bu hesabı tanımlamak için bir ad.", ta: "இந்த கணக்கை அடையாளம் காண ஒரு பெயர்.", te: "ఈ ఖాతాను గుర్తించడానికి ఒక పేరు.", ko: "이 계정을 식별하기 위한 이름입니다.", vi: "Một tên để xác định tài khoản này.", pl: "Nazwa do identyfikacji tego konta.", ro: "Un nume pentru a identifica acest cont.", nl: "Een naam om dit account te identificeren.", el: "Ένα όνομα για να αναγνωρίσετε αυτόν τον λογαριασμό.", th: "ชื่อเพื่อระบุบัญชีนี้", cs: "Název pro identifikaci tohoto účtu.", hu: "Egy név ennek a fióknak az azonosításához.", sv: "Ett namn för att identifiera detta konto.", da: "Et navn til at identificere denne konto." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -644,10 +644,10 @@ export function PasswordAccountAddPage() {
         </div>
         <div className="h-6" />
         <div className="font-medium">
-          Username
+          {Lang.match({ en: "Username", zh: "用户名", hi: "उपयोगकर्ता नाम", es: "Nombre de usuario", ar: "اسم المستخدم", fr: "Nom d'utilisateur", de: "Benutzername", ru: "Имя пользователя", pt: "Nome de usuário", ja: "ユーザー名", pa: "ਉਪਭੋਗਤਾ ਨਾਮ", bn: "ব্যবহারকারীর নাম", id: "Nama pengguna", ur: "صارف نام", ms: "Nama pengguna", it: "Nome utente", tr: "Kullanıcı adı", ta: "பயனர் பெயர்", te: "వినియోగదారు పేరు", ko: "사용자 이름", vi: "Tên người dùng", pl: "Nazwa użytkownika", ro: "Nume de utilizator", nl: "Gebruikersnaam", el: "Όνομα χρήστη", th: "ชื่อผู้ใช้", cs: "Uživatelské jméno", hu: "Felhasználónév", sv: "Användarnamn", da: "Brugernavn" })}
         </div>
         <div className="text-default-contrast">
-          Your username or email.&lrm;
+          {Lang.match({ en: "Your username or email.", zh: "您的用户名或电子邮件。", hi: "आपका उपयोगकर्ता नाम या ईमेल।", es: "Tu nombre de usuario o correo electrónico.", ar: "اسم المستخدم أو البريد الإلكتروني الخاص بك.", fr: "Votre nom d'utilisateur ou e-mail.", de: "Ihr Benutzername oder Ihre E-Mail.", ru: "Ваше имя пользователя или электронная почта.", pt: "Seu nome de usuário ou e-mail.", ja: "あなたのユーザー名またはメールアドレス。", pa: "ਤੁਹਾਡਾ ਉਪਭੋਗਤਾ ਨਾਮ ਜਾਂ ਈਮੇਲ।", bn: "আপনার ব্যবহারকারীর নাম বা ইমেল।", id: "Nama pengguna atau email Anda.", ur: "آپ کا صارف نام یا ای میل۔", ms: "Nama pengguna atau e-mel anda.", it: "Il tuo nome utente o email.", tr: "Kullanıcı adınız veya e-posta adresiniz.", ta: "உங்கள் பயனர் பெயர் அல்லது மின்னஞ்சல்.", te: "మీ వినియోగదారు పేరు లేదా ఇమెయిల్.", ko: "사용자 이름 또는 이메일.", vi: "Tên người dùng hoặc email của bạn.", pl: "Twoja nazwa użytkownika lub e-mail.", ro: "Numele de utilizator sau e-mailul dvs.", nl: "Uw gebruikersnaam of e-mail.", el: "Το όνομα χρήστη ή το email σας.", th: "ชื่อผู้ใช้หรืออีเมลของคุณ", cs: "Vaše uživatelské jméno nebo e-mail.", hu: "A felhasználóneved vagy e-mailed.", sv: "Ditt användarnamn eller e-post.", da: "Dit brugernavn eller e-mail." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -659,10 +659,10 @@ export function PasswordAccountAddPage() {
         </div>
         <div className="h-6" />
         <div className="font-medium">
-          Password
+          {Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata sandi", ur: "پاس ورڈ", ms: "Kata laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός πρόσβασης", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
         </div>
         <div className="text-default-contrast">
-          Your password.&lrm;
+          {Lang.match({ en: "Your password.", zh: "您的密码。", hi: "आपका पासवर्ड।", es: "Tu contraseña.", ar: "كلمة المرور الخاصة بك.", fr: "Votre mot de passe.", de: "Ihr Passwort.", ru: "Ваш пароль.", pt: "Sua senha.", ja: "あなたのパスワード。", pa: "ਤੁਹਾਡਾ ਪਾਸਵਰਡ।", bn: "আপনার পাসওয়ার্ড।", id: "Kata sandi Anda.", ur: "آپ کا پاس ورڈ۔", ms: "Kata laluan anda.", it: "La tua password.", tr: "Parolanız.", ta: "உங்கள் கடவுச்சொல்.", te: "మీ పాస్వర్డ్.", ko: "귀하의 비밀번호.", vi: "Mật khẩu của bạn.", pl: "Twoje hasło.", ro: "Parola dvs.", nl: "Uw wachtwoord.", el: "Ο κωδικός πρόσβασής σας.", th: "รหัสผ่านของคุณ", cs: "Vaše heslo.", hu: "A jelszavad.", sv: "Ditt lösenord.", da: "Din adgangskode." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -684,10 +684,10 @@ export function PasswordAccountAddPage() {
         </div>
         <div className="h-6" />
         <div className="font-medium">
-          One-time passcode
+          {Lang.match({ en: "One-time passcode", zh: "一次性密码", hi: "वन-टाइम पासकोड", es: "Código de un solo uso", ar: "رمز المرور لمرة واحدة", fr: "Code à usage unique", de: "Einmal-Passcode", ru: "Одноразовый пароль", pt: "Código de uso único", ja: "ワンタイムパスコード", pa: "ਇੱਕ ਵਾਰੀ ਪਾਸਕੋਡ", bn: "একবারের পাসকোড", id: "Kode sekali pakai", ur: "ایک وقت کا پاس کوڈ", ms: "Kod sekali pakai", it: "Codice monouso", tr: "Tek kullanımlık şifre", ta: "ஒரு முறை கடவுச்சொல்", te: "ఒకసారి పాస్కోడ్", ko: "일회용 패스코드", vi: "Mật mã một lần", pl: "Jednorazowy kod dostępu", ro: "Parolă de unică folosință", nl: "Eenmalige toegangscode", el: "Κωδικός πρόσβασης μίας χρήσης", th: "รหัสผ่านใช้ครั้งเดียว", cs: "Jednorázový přístupový kód", hu: "Egyszer használatos jelszó", sv: "Engångslösenord", da: "Engangskode" })}
         </div>
         <div className="text-default-contrast">
-          Your time-based one-time passcode.&lrm;
+          {Lang.match({ en: "Your time-based one-time passcode.", zh: "您的基于时间的一次性密码。", hi: "आपका समय-आधारित वन-टाइम पासकोड।", es: "Tu código de un solo uso basado en el tiempo.", ar: "رمز المرور لمرة واحدة المستند إلى الوقت الخاص بك.", fr: "Votre code à usage unique basé sur le temps.", de: "Ihr zeitbasierter Einmal-Passcode.", ru: "Ваш одноразовый пароль на основе времени.", pt: "Seu código de uso único baseado no tempo.", ja: "あなたの時間ベースのワンタイムパスコード。", pa: "ਤੁਹਾਡਾ ਸਮੇਂ-ਅਧਾਰਿਤ ਇੱਕ ਵਾਰੀ ਪਾਸਕੋਡ।", bn: "আপনার সময়-ভিত্তিক একবারের পাসকোড।", id: "Kode sekali pakai berbasis waktu Anda.", ur: "آپ کا وقت پر مبنی ایک وقت کا پاس کوڈ۔", ms: "Kod sekali pakai berasaskan masa anda.", it: "Il tuo codice monouso basato sul tempo.", tr: "Zaman tabanlı tek kullanımlık şifreniz.", ta: "உங்கள் நேர அடிப்படையிலான ஒருமுறை கடவுச்சொல்.", te: "మీ సమయ ఆధారిత ఒకసారి పాస్కోడ్.", ko: "귀하의 시간 기반 일회용 비밀번호.", vi: "Mã một lần dựa trên thời gian của bạn.", pl: "Twój czasowy jednorazowy kod dostępu.", ro: "Codul dvs. de unică folosință bazat pe timp.", nl: "Uw tijdgebaseerde eenmalige toegangscode.", el: "Ο χρονικά βασισμένος κωδικός πρόσβασής σας.", th: "รหัสผ่านใช้ครั้งเดียวตามเวลา", cs: "Váš časově založený jednorázový přístupový kód.", hu: "Az időalapú egyszer használatos jelszavad.", sv: "Din tidsbaserade engångskod.", da: "Din tidsbaserede engangskode." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -715,16 +715,16 @@ export function PasswordAccountAddPage() {
           value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
         <div className="h-6" />
         <div className="font-medium">
-          Notes
+          {Lang.match({ en: "Notes", zh: "备注", hi: "नोट्स", es: "Notas", ar: "ملاحظات", fr: "Remarques", de: "Notizen", ru: "Заметки", pt: "Notas", ja: "ノート", pa: "ਨੋਟਸ", bn: "নোটস", id: "Catatan", ur: "نوٹس", ms: "Catatan", it: "Note", tr: "Notlar", ta: "குறிப்புகள்", te: "గమనికలు", ko: "노트", vi: "Ghi chú", pl: "Notatki", ro: "Note", nl: "Notities", el: "Σημειώσεις", th: "บันทึกย่อ", cs: "Poznámky", hu: "Jegyzetek", sv: "Anteckningar", da: "Noter" })}
         </div>
         <div className="text-default-contrast">
-          Any additional information.&lrm;
+          {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Zusätzliche Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Jakiekolwiek dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ.", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <textarea className="w-full resize-none focus-visible:outline-none"
             rows={6}
-            placeholder="I use this account for..."
+            placeholder={Lang.match({ en: "I use this account for...", zh: "我使用这个账户来……", hi: "मैं इस खाते का उपयोग करता हूं...", es: "Uso esta cuenta para...", ar: "أستخدم هذا الحساب ل...", fr: "J'utilise ce compte pour...", de: "Ich benutze dieses Konto für...", ru: "Я использую эту учетную запись для...", pt: "Eu uso esta conta para...", ja: "このアカウントは...のために使用します", pa: "ਮੈਂ ਇਸ ਖਾਤੇ ਨੂੰ ... ਲਈ ਵਰਤਦਾ ਹਾਂ", bn: "আমি এই অ্যাকাউন্টটি ... জন্য ব্যবহার করি", id: "Saya menggunakan akun ini untuk...", ur: "میں اس اکاؤنٹ کو ... کے لیے استعمال کرتا ہوں", ms: "Saya menggunakan akun ini untuk...", it: "Uso questo account per...", tr: "Bu hesabı ... için kullanıyorum", ta: "நான் இந்த கணக்கை ... க்காக பயன்படுத்துகிறேன்", te: "నేను ఈ ఖాతాను ... కోసం ఉపయోగిస్తున్నాను", ko: "이 계정을 ...에 사용합니다.", vi: "Tôi sử dụng tài khoản này cho...", pl: "Używam tego konta do...", ro: "Folosesc acest cont pentru...", nl: "Ik gebruik dit account voor...", el: "Χρησιμοποιώ αυτόν τον λογαριασμό για...", th: "ฉันใช้บัญชีนี้สำหรับ...", cs: "Používám tento účet pro...", hu: "Ezt a fiókot arra használom, hogy...", sv: "Jag använder det här kontot för...", da: "Jeg bruger denne konto til..." })}
             onChange={e => setNotes(e.target.value)}
             value={$notes} />
         </div>
@@ -735,14 +735,14 @@ export function PasswordAccountAddPage() {
               type="button"
               disabled={error != null}
               onClick={encryptAndWriteOrAlert}>
-              {error != null ? error : "Save"}
+              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
               onClick={encryptAndSaveOrAlert}>
-              {error != null ? error : "Save"}
+              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
         </div>
       </form>
