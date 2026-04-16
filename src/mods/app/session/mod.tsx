@@ -7,6 +7,7 @@ import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryType, getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
+import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { Writable } from "@hazae41/binary";
@@ -110,7 +111,7 @@ export function SessionPage() {
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
       <h1 className="text-2xl font-medium">
-        Your accounts
+        {Lang.match({ en: "Your accounts", zh: "你的账户", hi: "आपके खाते", es: "Tus cuentas", ar: "حساباتك", fr: "Vos comptes", de: "Deine Konten", ru: "Ваши аккаунты", pt: "Suas contas", ja: "あなたのアカウント", pa: "ਤੁਹਾਡੇ ਖਾਤੇ", bn: "আপনার অ্যাকাউন্টগুলি", id: "Akun Anda", ur: "آپ کے اکاؤنٹس", ms: "Akun Anda", it: "I tuoi account", tr: "Hesaplarınız", ta: "உங்கள் கணக்குகள்", te: "మీ ఖాతాలు", ko: "당신의 계정들", vi: "Tài khoản của bạn", pl: "Twoje konta", ro: "Conturile tale", nl: "Jouw accounts", el: "Οι λογαριασμοί σας", th: "บัญชีของคุณ", cs: "Vaše účty", hu: "Fiókjaid", sv: "Dina konton", da: "Dine konti" })}
       </h1>
       <div className="h-6 shrink-0" />
       <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
@@ -133,35 +134,35 @@ export function SessionPage() {
           aria-selected={filter === "password"}
           onClick={() => filter === "password" ? setFilter(undefined) : setFilter("password")}>
           <Outline.LanguageIcon className="size-5" />
-          Passwords
+          {Lang.match({ en: "Passwords", zh: "密码", hi: "पासवर्ड", es: "Contraseñas", ar: "كلمات المرور", fr: "Mots de passe", de: "Passwörter", ru: "Пароли", pt: "Senhas", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata Sandi", ur: "پاس ورڈز", ms: "Kata Laluan", it: "Password", tr: "Parolalar", ta: "கடவுச்சொற்கள்", te: "పాస్వర్డ్లు", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasła", ro: "Parole", nl: "Wachtwoorden", el: "Κωδικοί πρόσβασης", th: "รหัสผ่าน", cs: "Hesla", hu: "Jelszavak", sv: "Lösenord", da: "Adgangskoder" })}
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "keypair"}
           onClick={() => filter === "keypair" ? setFilter(undefined) : setFilter("keypair")}>
           <Outline.KeyIcon className="size-5" />
-          Keypairs
+          {Lang.match({ en: "Keypairs", zh: "密钥对", hi: "की जोड़ी", es: "Pares de claves", ar: "أزواج المفاتيح", fr: "Paires de clés", de: "Schlüsselpaar", ru: "Ключевые пары", pt: "Pares de chaves", ja: "キーペア", pa: "ਕੀ ਜੋੜੇ", bn: "কী জোড়া", id: "Pasangan Kunci", ur: "کلیدی جوڑے", ms: "Pasangan Kunci", it: "Coppie di chiavi", tr: "Anahtar çiftleri", ta: "முக்கிய ஜோடிகள்", te: "కీ జంటలు", ko: "키 쌍", vi: "Cặp khóa", pl: "Pary kluczy", ro: "Perechi de chei", nl: "Sleutelpaar", el: "Ζεύγη κλειδιών", th: "คู่กุญแจ", cs: "Páry klíčů", hu: "Kulcspárok", sv: "Nyckelpar", da: "Nøglepar" })}
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "seed"}
           onClick={() => filter === "seed" ? setFilter(undefined) : setFilter("seed")}>
           <Outline.BanknotesIcon className="size-5" />
-          Cryptos
+          {Lang.match({ en: "Cryptos", zh: "加密货币", hi: "क्रिप्टो", es: "Criptomonedas", ar: "العملات المشفرة", fr: "Cryptos", de: "Kryptos", ru: "Криптовалюты", pt: "Criptomoedas", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Criptovalute", tr: "Kriptolar", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Kryptowaluty", ro: "Criptomonede", nl: "Cryptos", el: "Κρυπτονομίσματα", th: "สกุลเงินดิจิทัล", cs: "Kryptoměny", hu: "Kriptók", sv: "Kryptovalutor", da: "Kryptovalutaer" })}
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "card"}
           onClick={() => filter === "card" ? setFilter(undefined) : setFilter("card")}>
           <Outline.CreditCardIcon className="size-5" />
-          Cards
+          {Lang.match({ en: "Cards", zh: "卡片", hi: "कार्ड", es: "Tarjetas", ar: "بطاقات", fr: "Cartes", de: "Karten", ru: "Карты", pt: "Cartões", ja: "カード", pa: "ਕਾਰਡ", bn: "কার্ড", id: "Kartu", ur: "کارڈز", ms: "Kad", it: "Carte", tr: "Kartlar", ta: "கார்டுகள்", te: "కార్డులు", ko: "카드", vi: "Thẻ", pl: "Karty", ro: "Carduri", nl: "Kaarten", el: "Κάρτες", th: "บัตร", cs: "Karty", hu: "Kártyák", sv: "Kort", da: "Kort" })}
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "trash"}
           onClick={() => filter === "trash" ? setFilter(undefined) : setFilter("trash")}>
           <Outline.TrashIcon className="size-5" />
-          Trash
+          {Lang.match({ en: "Trash", zh: "垃圾桶", hi: "कचरा", es: "Papelera", ar: "سلة المهملات", fr: "Corbeille", de: "Papierkorb", ru: "Корзина", pt: "Lixeira", ja: "ゴミ箱", pa: "ਕਚਰਾ", bn: "ট্র্যাশ", id: "Sampah", ur: "کچرا", ms: "Tong Sampah", it: "Cestino", tr: "Çöp", ta: "குப்பை", te: "ట్రాష్", ko: "휴지통", vi: "Thùng rác", pl: "Kosz", ro: "Coș de gunoi", nl: "Prullenbak", el: "Κάδος απορριμμάτων", th: "ถังขยะ", cs: "Koš", hu: "Szemetes", sv: "Papperskorg", da: "Papirkurv" })}
         </button>
       </div>
       <div className="h-4 shrink-0" />
@@ -171,7 +172,7 @@ export function SessionPage() {
           <Outline.MagnifyingGlassIcon className="size-5" />
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            placeholder="Search"
+            placeholder={Lang.match({ en: "Search", zh: "搜索", hi: "खोज", es: "Buscar", ar: "بحث", fr: "Rechercher", de: "Suche", ru: "Поиск", pt: "Pesquisar", ja: "検索", pa: "ਖੋਜ", bn: "অনুসন্ধান", id: "Cari", ur: "تلاش کریں", ms: "Cari", it: "Cerca", tr: "Ara", ta: "தேடு", te: "శోధించండి", ko: "검색", vi: "Tìm kiếm", pl: "Szukaj", ro: "Caută", nl: "Zoeken", el: "Αναζήτηση", th: "ค้นหา", cs: "Hledat", hu: "Keresés", sv: "Sökning", da: "Søg" })}
             onChange={e => setSearch(e.target.value)}
             ref={useAutoFocus()}
             value={search || ""} />
@@ -217,13 +218,13 @@ function SessionMenu(props: { logout(): void }) {
     <div className="flex flex-col text-left gap-2">
       <WideNakedMenuButton>
         <Outline.GlobeAltIcon className="size-5" />
-        Connections
+        {Lang.match({ en: "Connections", zh: "连接", hi: "कनेक्शन", es: "Conexiones", ar: "اتصالات", fr: "Connexions", de: "Verbindungen", ru: "Подключения", pt: "Conexões", ja: "接続", pa: "ਕਨੈਕਸ਼ਨ", bn: "সংযোগ", id: "Koneksi", ur: "کنیکشنز", ms: "Sambungan", it: "Connessioni", tr: "Bağlantılar", ta: "இணைப்புகள்", te: "కనెక్షన్లు", ko: "연결", vi: "Kết nối", pl: "Połączenia", ro: "Conexiuni", nl: "Verbinden", el: "Συνδέσεις", th: "การเชื่อมต่อ", cs: "Připojení", hu: "Kapcsolatok", sv: "Anslutningar", da: "Forbindelser" })}
       </WideNakedMenuButton>
       <SessionExportAnchor />
       <WideNakedMenuButton
         onClick={logout}>
         <Outline.LockClosedIcon className="size-5" />
-        Logout
+        {Lang.match({ en: "Logout", zh: "登出", hi: "लॉग आउट", es: "Cerrar sesión", ar: "تسجيل الخروج", fr: "Se déconnecter", de: "Abmelden", ru: "Выйти", pt: "Sair", ja: "ログアウト", pa: "ਲੌਗ ਆਉਟ", bn: "লগ আউট", id: "Keluar", ur: "لاگ آؤٹ", ms: "Log Keluar", it: "Disconnettersi", tr: "Çıkış Yap", ta: "வெளியேறு", te: "లాగ్ అవుట్", ko: "로그아웃", vi: "Đăng xuất", pl: "Wyloguj się", ro: "Deconectare", nl: "Uitloggen", el: "Αποσύνδεση", th: "ออกจากระบบ", cs: "Odhlásit se", hu: "Kijelentkezés", sv: "Logga ut", da: "Log ud" })}
       </WideNakedMenuButton>
     </div>
   </Fragment>
@@ -240,7 +241,7 @@ export function SessionExportAnchor() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.ArrowUpOnSquareIcon className="size-5" />
-    Export
+    {Lang.match({ en: "Export", zh: "导出", hi: "निर्यात", es: "Exportar", ar: "تصدير", fr: "Exporter", de: "Exportieren", ru: "Экспорт", pt: "Exportar", ja: "エクスポート", pa: "ਨਿਰਯਾਤ", bn: "রপ্তানি", id: "Ekspor", ur: "برآمد کریں", ms: "Eksport", it: "Esporta", tr: "Dışa Aktar", ta: "ஏற்றுமதி", te: "ఎగుమతి", ko: "내보내기", vi: "Xuất", pl: "Eksportuj", ro: "Export", nl: "Exporteren", el: "Εξαγωγή", th: "ส่งออก", cs: "Exportovat", hu: "Exportálás", sv: "Exportera", da: "Eksporter" })}
   </WideNakedMenuAnchor>
 }
 
@@ -305,14 +306,14 @@ export function SessionExportPage() {
 
   const error = useMemo(() => {
     if (!pass.length)
-      return "Password is required"
+      return Lang.match({ en: "Password is required", zh: "密码是必需的", hi: "पासवर्ड आवश्यक है", es: "Se requiere contraseña", ar: "كلمة المرور مطلوبة", fr: "Le mot de passe est requis", de: "Passwort ist erforderlich", ru: "Требуется пароль", pt: "Senha é obrigatória", ja: "パスワードは必須です", pa: "ਪਾਸਵਰਡ ਦੀ ਲੋੜ ਹੈ", bn: "পাসওয়ার্ড প্রয়োজন", id: "Kata sandi diperlukan", ur: "پاس ورڈ ضروری ہے", ms: "Kata sandi diperlukan", it: "La password è obbligatoria", tr: "Parola gerekli", ta: "கடவுச்சொல் தேவை", te: "పాస్వర్డ్ అవసరం", ko: "비밀번호가 필요합니다", vi: "Mật khẩu là bắt buộc", pl: "Hasło jest wymagane", ro: "Parola este necesară", nl: "Wachtwoord is verplicht", el: "Απαιτείται κωδικός πρόσβασης", th: "รหัสผ่านจำเป็นต้องใช้", cs: "Heslo je povinné", hu: "Jelszó szükséges", sv: "Lösenord krävs", da: "Adgangskode er påkrævet" })
     return
   }, [pass])
 
   return <Fragment>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        Export user
+        {Lang.match({ en: "Export user", zh: "导出用户", hi: "उपयोगकर्ता निर्यात करें", es: "Exportar usuario", ar: "تصدير المستخدم", fr: "Exporter l'utilisateur", de: "Benutzer exportieren", ru: "Экспорт пользователя", pt: "Exportar usuário", ja: "ユーザーをエクスポート", pa: "ਉਪਭੋਗਤਾ ਨਿਰਯਾਤ ਕਰੋ", bn: "ব্যবহারকারী রপ্তানি করুন", id: "Ekspor pengguna", ur: "صارف برآمد کریں", ms: "Ekspor pengguna", it: "Esporta utente", tr: "Kullanıcıyı dışa aktar", ta: "பயனரை ஏற்றுமதி செய்யவும்", te: "వినియోగదారుని ఎగుమతి చేయండి", ko: "사용자 내보내기", vi: "Xuất người dùng", pl: "Eksportuj użytkownika", ro: "Exportă utilizatorul", nl: "Gebruiker exporteren", el: "Εξαγωγή χρήστη", th: "ส่งออกผู้ใช้", cs: "Exportovat uživatele", hu: "Felhasználó exportálása", sv: "Exportera användare", da: "Eksporter bruger" })}
       </h1>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -321,10 +322,10 @@ export function SessionExportPage() {
           name="username" />
         <div className="h-6" />
         <div className="font-medium">
-          Password
+          {Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata sandi", ur: "پاس ورڈ", ms: "Kata sandi", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός πρόσβασης", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
         </div>
         <div className="text-default-contrast">
-          A password to encrypt the exported file.&lrm;
+          {Lang.match({ en: "A password to encrypt the exported file.", zh: "用于加密导出文件的密码。", hi: "निर्यात की गई फ़ाइल को एन्क्रिप्ट करने के लिए एक पासवर्ड।", es: "Una contraseña para encriptar el archivo exportado.", ar: "كلمة مرور لتشفير الملف المصدر.", fr: "Un mot de passe pour chiffrer le fichier exporté.", de: "Ein Passwort zum Verschlüsseln der exportierten Datei.", ru: "Пароль для шифрования экспортируемого файла.", pt: "Uma senha para criptografar o arquivo exportado.", ja: "エクスポートされたファイルを暗号化するためのパスワード。", pa: "ਨਿਰਯਾਤ ਕੀਤੀ ਫਾਈਲ ਨੂੰ ਇੰਕ੍ਰਿਪਟ ਕਰਨ ਲਈ ਇੱਕ ਪਾਸਵਰਡ।", bn: "রপ্তানি করা ফাইলটি এনক্রিপ্ট করার জন্য একটি পাসওয়ার্ড।", id: "Kata sandi untuk mengenkripsi file yang diekspor.", ur: "برآمد شدہ فائل کو خفیہ کرنے کے لیے ایک پاس ورڈ۔", ms: "Kata sandi untuk menyulitkan fail yang dieksport.", it: "Una password per crittografare il file esportato.", tr: "Dışa aktarılan dosyayı şifrelemek için bir parola.", ta: "ஏற்றுமதி செய்யப்பட்ட கோப்பை குறியாக்கம் செய்ய ஒரு கடவுச்சொல்.", te: "ఎగుమతి చేసిన ఫైల్‌ను గుప్తీకరించడానికి ఒక పాస్వర్డ్.", ko: "내보낸 파일을 암호화하기 위한 비밀번호.", vi: "Mật khẩu để mã hóa tệp xuất.", pl: "Hasło do zaszyfrowania eksportowanego pliku.", ro: "O parolă pentru a cripta fișierul exportat.", nl: "Een wachtwoord om het geëxporteerde bestand te versleutelen.", el: "Ένας κωδικός πρόσβασης για την κρυπτογράφηση του εξαγόμενου αρχείου.", th: "รหัสผ่านเพื่อเข้ารหัสไฟล์ที่ส่งออก.", cs: "Heslo pro šifrování exportovaného souboru.", hu: "Egy jelszó az exportált fájl titkosításához.", sv: "Ett lösenord för att kryptera den exporterade filen.", da: "En adgangskode til at kryptere den eksporterede fil." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -350,14 +351,14 @@ export function SessionExportPage() {
               type="button"
               disabled={error != null}
               onClick={pickOrAlert}>
-              {error != null ? error : "Save"}
+              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
           {"showSaveFilePicker" in window === false &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
               onClick={saveOrAlert}>
-              {error != null ? error : "Save"}
+              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
         </div>
       </form>
