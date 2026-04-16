@@ -2,10 +2,11 @@ import { InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
-import { WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
+import { WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
+import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { KeypairAccountAddMenuAnchor, KeypairAccountAddPage, KeypairAccountPage } from "@/mods/app/session/account/keypair/mod.tsx";
 import { Writable } from "@hazae41/binary";
@@ -14,7 +15,7 @@ import * as KDBX from "@hazae41/kdbx";
 import React, { Fragment, useCallback, useMemo } from "react";
 import { useSessionContext } from "../mod.tsx";
 import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";
-import { CryptoAccountAddPage, CryptoAccountPage } from "./crypto/mod.tsx";
+import { CryptoAccountAddMenuAnchor, CryptoAccountAddPage, CryptoAccountPage } from "./crypto/mod.tsx";
 import { PasswordAccountAddMenuAnchor, PasswordAccountAddPage, PasswordAccountPage } from "./password/mod.tsx";
 
 React;
@@ -145,7 +146,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
       <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
-        {getEntryTitle($entry) || "Untitled"}
+        {getEntryTitle($entry) || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
       </div>
       <div className="h-2" />
       <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
@@ -172,25 +173,25 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           if (type === "password")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.LanguageIcon className="size-5" />
-              Password
+              {Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata Sandi", ur: "پاس ورڈ", ms: "Kata Laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
             </div>
 
           if (type === "keypair")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.KeyIcon className="size-5" />
-              Keypair
+              {Lang.match({ en: "Keypair", zh: "密钥对", hi: "कीपेयार", es: "Par de claves", ar: "زوج المفاتيح", fr: "Paire de clés", de: "Schlüsselpaar", ru: "Ключевая пара", pt: "Par de chaves", ja: "キーペア", pa: "ਕੀਪੇਅਰ", bn: "কীপেয়ার", id: "Pasangan Kunci", ur: "کلیدی جوڑا", ms: "Pasangan Kunci", it: "Coppia di chiavi", tr: "Anahtar çifti", ta: "கீபேர்", te: "కీపేర్", ko: "키페어", vi: "Cặp khóa", pl: "Para kluczy", ro: "Pereche de chei", nl: "Sleutelpaar", el: "Ζεύγος κλειδιών", th: "คู่กุญแจ", cs: "Klíčový pár", hu: "Kulcspár", sv: "Nyckelpar", da: "Nøglepar" })}
             </div>
 
           if (type === "seed")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
-              Crypto
+              {Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
             </div>
 
           if (type === "card")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.CreditCardIcon className="size-5" />
-              Card
+              {Lang.match({ en: "Card", zh: "卡片", hi: "कार्ड", es: "Tarjeta", ar: "بطاقة", fr: "Carte", de: "Karte", ru: "Карта", pt: "Cartão", ja: "カード", pa: "ਕਾਰਡ", bn: "কার্ড", id: "Kartu", ur: "کارڈ", ms: "Kad", it: "Carta", tr: "Kart", ta: "கார்டு", te: "కార్డు", ko: "카드", vi: "Thẻ", pl: "Karta", ro: "Card", nl: "Kaart", el: "Κάρτα", th: "บัตร", cs: "Karta", hu: "Kártya", sv: "Kort", da: "Kort" })}
             </div>
 
           return null
@@ -204,7 +205,7 @@ export function CryptoAccountCard(props: { color: Nullable<string> } & { title: 
   const { color, title, subtitle, index, flip, onFlipChange } = props
 
   return <FlipCard
-    type="Crypto"
+    type={Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
     title={title}
     subtitle={subtitle}
     color={color}
@@ -218,7 +219,7 @@ export function PasswordAccountCard(props: { color: Nullable<string> } & { title
   const { color, title, username, flip, onFlipChange } = props
 
   return <FlipCard
-    type="Password"
+    type={Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata Sandi", ur: "پاس ورڈ", ms: "Kata Laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
     title={title}
     subtitle={username}
     color={color}
@@ -231,7 +232,7 @@ export function CardAccountCard(props: { color: Nullable<string> } & { title: Nu
   const { color, title, number, flip, onFlipChange } = props
 
   return <FlipCard
-    type="Card"
+    type={Lang.match({ en: "Card", zh: "卡片", hi: "कार्ड", es: "Tarjeta", ar: "بطاقة", fr: "Carte", de: "Karte", ru: "Карта", pt: "Cartão", ja: "カード", pa: "ਕਾਰਡ", bn: "কার্ড", id: "Kartu", ur: "کارڈ", ms: "Kad", it: "Carta", tr: "Kart", ta: "கார்டு", te: "కార్డు", ko: "카드", vi: "Thẻ", pl: "Karta", ro: "Card", nl: "Kaart", el: "Κάρτα", th: "บัตร", cs: "Karta", hu: "Kártya", sv: "Kort", da: "Kort" })}
     title={title}
     subtitle={number}
     color={color}
@@ -244,7 +245,7 @@ export function KeypairAccountCard(props: { color: Nullable<string> } & { title:
   const { color, title, username, flip, onFlipChange } = props
 
   return <FlipCard
-    type="Keypair"
+    type={Lang.match({ en: "Keypair", zh: "密钥对", hi: "कीपेयार", es: "Par de claves", ar: "زوج المفاتيح", fr: "Paire de clés", de: "Schlüsselpaar", ru: "Ключевая пара", pt: "Par de chaves", ja: "キーペア", pa: "ਕੀਪੇਅਰ", bn: "কীপেয়ার", id: "Pasangan Kunci", ur: "کلیدی جوڑا", ms: "Pasangan Kunci", it: "Coppia di chiavi", tr: "Anahtar çifti", ta: "கீபேர்", te: "కీపేర్", ko: "키페어", vi: "Cặp khóa", pl: "Para kluczy", ro: "Pereche de chei", nl: "Sleutelpaar", el: "Ζεύγος κλειδιών", th: "คู่กุญแจ", cs: "Klíčový pár", hu: "Kulcspár", sv: "Nyckelpar", da: "Nøglepar" })}
     title={title}
     subtitle={username}
     color={color}
@@ -265,7 +266,7 @@ export function AccountAddButton() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.PlusIcon className="size-5" />
-    Add account
+    {Lang.match({ en: "Add account", zh: "添加账户", hi: "खाता जोड़ें", es: "Agregar cuenta", ar: "إضافة حساب", fr: "Ajouter un compte", de: "Konto hinzufügen", ru: "Добавить аккаунт", pt: "Adicionar conta", ja: "アカウントを追加", pa: "ਖਾਤਾ ਸ਼ਾਮਲ ਕਰੋ", bn: "অ্যাকাউন্ট যোগ করুন", id: "Tambahkan akun", ur: "اکاؤنٹ شامل کریں", ms: "Tambah akaun", it: "Aggiungi account", tr: "Hesap ekle", ta: "கணக்கைச் சேர்க்கவும்", te: "ఖాతాను జోడించండి", ko: "계정 추가", vi: "Thêm tài khoản", pl: "Dodaj konto", ro: "Adaugă cont", nl: "Account toevoegen", el: "Προσθήκη λογαριασμού", th: "เพิ่มบัญชี", cs: "Přidat účet", hu: "Fiók hozzáadása", sv: "Lägg till konto", da: "Tilføj konto" })}
   </OppositeAnchor>
 }
 
@@ -299,21 +300,6 @@ export function AccountAddMenu() {
       <CardAccountAddMenuAnchor />
     </div>
   </Fragment>
-}
-
-export function CryptoAccountAddMenuAnchor() {
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const coords = useAnchorWithCoords(hash, "/crypto")
-
-  return <WideNakedMenuAnchor
-    href={coords.url.hash}
-    onClick={coords.onClick}
-    onKeyDown={coords.onKeyDown}>
-    <Outline.BanknotesIcon className="size-5" />
-    Crypto
-  </WideNakedMenuAnchor>
 }
 
 export function ColorAnchor(props: { color?: Nullable<string> }) {
@@ -510,14 +496,14 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
         type="button"
         onClick={encryptAndWriteOrAlert}>
         <Outline.TrashIcon className="size-5" />
-        Trash
+        {Lang.match({ en: "Trash", zh: "丢弃", hi: "कूड़ेदान", es: "Papelera", ar: "سلة المهملات", fr: "Corbeille", de: "Papierkorb", ru: "Корзина", pt: "Lixeira", ja: "ゴミ箱", pa: "ਕੂੜੇਦਾਨ", bn: "ট্র্যাশ", id: "Sampah", ur: "کوڑے دان", ms: "Tong sampah", it: "Cestino", tr: "Çöp Kutusu", ta: "குப்பை பெட்டி", te: "ట్రాష్ బిన్", ko: "휴지통", vi: "Thùng rác", pl: "Kosz na śmieci", ro: "Coș de gunoi", nl: "Prullenbak", el: "Κάδος απορριμμάτων", th: "ถังขยะ", cs: "Koš na odpadky", hu: "Szemetesláda", sv: "Papperskorg", da: "Skraldespand" })}
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
       <WideNakedMenuButton
         type="button"
         onClick={encryptAndSaveOrAlert}>
         <Outline.TrashIcon className="size-5" />
-        Trash
+        {Lang.match({ en: "Trash", zh: "丢弃", hi: "कूड़ेदान", es: "Papelera", ar: "سلة المهملات", fr: "Corbeille", de: "Papierkorb", ru: "Корзина", pt: "Lixeira", ja: "ゴミ箱", pa: "ਕੂੜੇਦਾਨ", bn: "ট্র্যাশ", id: "Sampah", ur: "کوڑے دان", ms: "Tong sampah", it: "Cestino", tr: "Çöp Kutusu", ta: "குப்பை பெட்டி", te: "ట్రాష్ బిన్", ko: "휴지통", vi: "Thùng rác", pl: "Kosz na śmieci", ro: "Coș de gunoi", nl: "Prullenbak", el: "Κάδος απορριμμάτων", th: "ถังขยะ", cs: "Koš na odpadky", hu: "Szemetesláda", sv: "Papperskorg", da: "Skraldespand" })}
       </WideNakedMenuButton>}
   </Fragment>
 }
@@ -591,14 +577,14 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
         type="button"
         onClick={encryptAndWriteOrAlert}>
         <Outline.TrashIcon className="size-5" />
-        Untrash
+        {Lang.match({ en: "Untrash", zh: "恢复", hi: "पुनः प्राप्त करें", es: "Restaurar", ar: "استعادة", fr: "Restaurer", de: "Wiederherstellen", ru: "Восстановить", pt: "Restaurar", ja: "復元", pa: "ਪੁਨਰ ਪ੍ਰਾਪਤ ਕਰੋ", bn: "পুনরুদ্ধার", id: "Pulihkan", ur: "بحال کریں", ms: "Pulihkan", it: "Ripristina", tr: "Geri Yükle", ta: "மீட்டெடுக்கவும்", te: "పునరుద్ధరించు", ko: "복원", vi: "Khôi phục", pl: "Przywróć", ro: "Restabilește", nl: "Herstellen", el: "Επαναφορά", th: "กู้คืน", cs: "Obnovit", hu: "Visszaállítás", sv: "Återställ", da: "Gendan" })}
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
       <WideNakedMenuButton
         type="button"
         onClick={encryptAndSaveOrAlert}>
         <Outline.TrashIcon className="size-5" />
-        Untrash
+        {Lang.match({ en: "Untrash", zh: "恢复", hi: "पुनः प्राप्त करें", es: "Restaurar", ar: "استعادة", fr: "Restaurer", de: "Wiederherstellen", ru: "Восстановить", pt: "Restaurar", ja: "復元", pa: "ਪੁਨਰ ਪ੍ਰਾਪਤ ਕਰੋ", bn: "পুনরুদ্ধার", id: "Pulihkan", ur: "بحال کریں", ms: "Pulihkan", it: "Ripristina", tr: "Geri Yükle", ta: "மீட்டெடுக்கவும்", te: "పునరుద్ధరించు", ko: "복원", vi: "Khôi phục", pl: "Przywróć", ro: "Restabilește", nl: "Herstellen", el: "Επαναφορά", th: "กู้คืน", cs: "Obnovit", hu: "Visszaállítás", sv: "Återställ", da: "Gendan" })}
       </WideNakedMenuButton>}
   </Fragment>
 }
@@ -617,7 +603,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
   }, [session, $entry])
 
   const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
-    if (!confirm("Are you sure you want to permanently delete this account?"))
+    if (!confirm(Lang.match({ en: "Are you sure you want to permanently delete this account?", zh: "您确定要永久删除此账户吗？", hi: "क्या आप वाकई इस खाते को स्थायी रूप से हटाना चाहते हैं?", es: "¿Está seguro de que desea eliminar permanentemente esta cuenta?", ar: "هل أنت متأكد أنك تريد حذف هذا الحساب نهائيًا؟", fr: "Êtes-vous sûr de vouloir supprimer définitivement ce compte ?", de: "Sind Sie sicher, dass Sie dieses Konto dauerhaft löschen möchten?", ru: "Вы уверены, что хотите навсегда удалить эту учетную запись?", pt: "Tem certeza de que deseja excluir permanentemente esta conta?", ja: "このアカウントを完全に削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਖਾਤੇ ਨੂੰ ਸਥਾਈ रूप से हटाना चाहते हैं?", bn: "আপনি কি সত্যিই এই অ্যাকাউন্টটি স্থায়ীভাবে মুছে ফেলতে চান?", id: "Apakah Anda yakin ingin menghapus akun ini secara permanen?", ur: "کیا آپ واقعی اس اکاؤنٹ کو مستقل طور پر حذف کرنا چاہتے ہیں؟", ms: "Adakah anda pasti mahu memadam akaun ini secara kekal?", it: "Sei sicuro di voler eliminare definitivamente questo account?", tr: "Bu hesabı kalıcı olarak silmek istediğinizden emin misiniz?", ta: "இந்த கணக்கை நிரந்தரமாக நீக்க விரும்புகிறீர்களா?", te: "మీరు ఈ ఖాతాను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?", ko: "이 계정을 영구적으로 삭제하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này không?", pl: "Czy na pewno chcesz trwale usunąć to konto?", ro: "Sigur doriți să ștergeți definitiv acest cont?", nl: "Weet je zeker dat je dit account permanent wilt verwijderen?", el: "Είστε σίγουροι ότι θέλετε να διαγράψετε οριστικά αυτόν τον λογαριασμό;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้อย่างถาวร?", cs: "Opravdu chcete tento účet trvale smazat?", hu: "Biztos benne, hogy véglegesen törölni szeretné ezt a fiókot?", sv: "Är du säker på att du vill ta bort det här kontot permanent?", da: "Er du sikker på, at du vil slette denne konto permanent?" })))
       return
 
     const fsfh = session.value.user.fsfh
@@ -637,7 +623,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
   }).catch(Errors.display), [encryptOrThrow, close])
 
   const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
-    if (!confirm("Are you sure you want to permanently delete this account?"))
+    if (!confirm(Lang.match({ en: "Are you sure you want to permanently delete this account?", zh: "您确定要永久删除此账户吗？", hi: "क्या आप वाकई इस खाते को स्थायी रूप से हटाना चाहते हैं?", es: "¿Está seguro de que desea eliminar permanentemente esta cuenta?", ar: "هل أنت متأكد أنك تريد حذف هذا الحساب نهائيًا؟", fr: "Êtes-vous sûr de vouloir supprimer définitivement ce compte ?", de: "Sind Sie sicher, dass Sie dieses Konto dauerhaft löschen möchten?", ru: "Вы уверены, что хотите навсегда удалить эту учетную запись?", pt: "Tem certeza de que deseja excluir permanentemente esta conta?", ja: "このアカウントを完全に削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਖਾਤੇ ਨੂੰ ਸਥਾਈ रूप से हटाना चाहते हैं?", bn: "আপনি কি সত্যিই এই অ্যাকাউন্টটি স্থায়ীভাবে মুছে ফেলতে চান?", id: "Apakah Anda yakin ingin menghapus akun ini secara permanen?", ur: "کیا آپ واقعی اس اکاؤنٹ کو مستقل طور پر حذف کرنا چاہتے ہیں؟", ms: "Adakah anda pasti mahu memadam akaun ini secara kekal?", it: "Sei sicuro di voler eliminare definitivamente questo account?", tr: "Bu hesabı kalıcı olarak silmek istediğinizden emin misiniz?", ta: "இந்த கணக்கை நிரந்தரமாக நீக்க விரும்புகிறீர்களா?", te: "మీరు ఈ ఖాతాను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?", ko: "이 계정을 영구적으로 삭제하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này không?", pl: "Czy na pewno chcesz trwale usunąć to konto?", ro: "Sigur doriți să ștergeți definitiv acest cont?", nl: "Weet je zeker dat je dit account permanent wilt verwijderen?", el: "Είστε σίγουροι ότι θέλετε να διαγράψετε οριστικά αυτόν τον λογαριασμό;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้อย่างถาวร?", cs: "Opravdu chcete tento účet trvale smazat?", hu: "Biztos benne, hogy véglegesen törölni szeretné ezt a fiókot?", sv: "Är du säker på att du vill ta bort det här kontot permanent?", da: "Er du sikker på, at du vil slette denne konto permanent?" })))
       return
 
     const content = await encryptOrThrow()
@@ -675,14 +661,14 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
         type="button"
         onClick={encryptAndWriteOrAlert}>
         <Outline.ScissorsIcon className="size-5" />
-        Delete
+        {Lang.match({ en: "Delete", zh: "删除", hi: "हटाएं", es: "Eliminar", ar: "حذف", fr: "Supprimer", de: "Löschen", ru: "Удалить", pt: "Excluir", ja: "削除", pa: "ਹਟਾਓ", bn: "মুছে ফেলুন", id: "Hapus", ur: "حذف کریں", ms: "Padam", it: "Elimina", tr: "Sil", ta: "அழிக்கவும்", te: "తొలగించు", ko: "삭제", vi: "Xóa", pl: "Usuń", ro: "Șterge", nl: "Verwijderen", el: "Διαγραφή", th: "ลบ", cs: "Smazat", hu: "Törlés", sv: "Radera", da: "Slet" })}
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
       <WideNakedMenuButton
         type="button"
         onClick={encryptAndSaveOrAlert}>
         <Outline.ScissorsIcon className="size-5" />
-        Delete
+        {Lang.match({ en: "Delete", zh: "删除", hi: "हटाएं", es: "Eliminar", ar: "حذف", fr: "Supprimer", de: "Löschen", ru: "Удалить", pt: "Excluir", ja: "削除", pa: "ਹਟਾਓ", bn: "মুছে ফেলুন", id: "Hapus", ur: "حذف کریں", ms: "Padam", it: "Elimina", tr: "Sil", ta: "அழிக்கவும்", te: "తొలగించు", ko: "삭제", vi: "Xóa", pl: "Usuń", ro: "Șterge", nl: "Verwijderen", el: "Διαγραφή", th: "ลบ", cs: "Smazat", hu: "Törlés", sv: "Radera", da: "Slet" })}
       </WideNakedMenuButton>}
   </Fragment>
 }

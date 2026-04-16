@@ -7,6 +7,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
+import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { capitalize } from "@/libs/string/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
@@ -94,7 +95,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     <div className="flex flex-col grow p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-medium">
-          Password account
+          {Lang.match({ en: "Password account", zh: "密码账户", hi: "पासवर्ड खाता", es: "Cuenta de contraseña", ar: "حساب كلمة المرور", fr: "Compte de mot de passe", de: "Passwortkonto", ru: "Учетная запись пароля", pt: "Conta de senha", ja: "パスワードアカウント", pa: "ਪਾਸਵਰਡ ਖਾਤਾ", bn: "পাসওয়ার্ড অ্যাকাউন্ট", id: "Akun Kata Sandi", ur: "پاس ورڈ اکاؤنٹ", ms: "Akaun Kata Laluan", it: "Account password", tr: "Parola hesabı", ta: "கடவுச்சொல் கணக்கு", te: "పాస్వర్డ్ ఖాతా", ko: "비밀번호 계정", vi: "Tài khoản mật khẩu", pl: "Konto hasła", ro: "Cont de parolă", nl: "Wachtwoordaccount", el: "Λογαριασμός κωδικού πρόσβασης", th: "บัญชีรหัสผ่าน", cs: "Účet hesla", hu: "Jelszó fiók", sv: "Lösenordskonto", da: "Adgangskodekonto" })}
         </h1>
         <AccountMenuAnchor />
       </div>
