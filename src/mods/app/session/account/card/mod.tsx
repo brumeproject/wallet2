@@ -487,7 +487,7 @@ export function CardAccountAddPage() {
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            placeholder="John Doe"
+            placeholder="Satoshi Nakamoto"
             onChange={e => setHol(e.target.value)}
             value={$hol} />
         </div>
