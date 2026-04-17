@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-process-global require-await
+// deno-lint-ignore-file no-process-global
 
 /// <reference lib="webworker" />
 
