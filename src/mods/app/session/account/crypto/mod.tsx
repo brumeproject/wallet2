@@ -149,9 +149,9 @@ export function CryptoAccountAddPage() {
 
   const error = useMemo(() => {
     if (!seedphrase.length)
-      return "Seed phrase is required"
+      return Lang.match({ en: "Seed phrase is required", zh: "助记词是必需的", hi: "सीड वाक्य आवश्यक है", es: "La frase semilla es obligatoria", ar: "عبارة البذور مطلوبة", fr: "La phrase de récupération est requise", de: "Seed-Phrase ist erforderlich", ru: "Требуется сид-фраза", pt: "A frase semente é obrigatória", ja: "シードフレーズは必須です", pa: "ਸੀਡ ਫਰੇਜ਼ ਦੀ ਲੋੜ ਹੈ", bn: "সিড বাক্য প্রয়োজন", id: "Frasa seed diperlukan", ur: "سیڈ فریز ضروری ہے", ms: "Frasa seed diperlukan", it: "La frase seed è obbligatoria", tr: "Seed cümlesi gereklidir", ta: "சீட் வாக்கியம் தேவை", te: "సీడ్ వాక్యం అవసరం", ko: "시드 구문이 필요합니다", vi: "Cụm từ seed là bắt buộc", pl: "Fraza seed jest wymagana", ro: "Fraza seed este obligatorie", nl: "Seed-phrase is verplicht", el: "Η φράση σπόρου είναι υποχρεωτική", th: "วลีเมล็ดพันธุ์เป็นสิ่งจำเป็น", cs: "Seed phrase je povinná", hu: "A seed kifejezés kötelező", sv: "Seed phrase är obligatorisk", da: "Seed phrase er påkrævet" })
     if (!valid)
-      return "Seed phrase is invalid"
+      return Lang.match({ en: "Seed phrase is invalid", zh: "助记词无效", hi: "सीड वाक्य अमान्य है", es: "La frase semilla no es válida", ar: "عبارة البذور غير صالحة", fr: "La phrase de récupération est invalide", de: "Seed-Phrase ist ungültig", ru: "Сид-фраза недействительна", pt: "A frase semente é inválida", ja: "シードフレーズが無効です", pa: "ਸੀਡ ਫਰੇਜ਼ ਅਵੈਧ ਹੈ", bn: "সিড বাক্য অবৈধ", id: "Frasa seed tidak valid", ur: "سیڈ فریز غیر معتبر ہے", ms: "Frasa seed tidak sah", it: "La frase seed non è valida", tr: "Seed cümlesi geçersiz", ta: "சீட் வாக்கியம் தவறானது", te: "సీడ్ వాక్యం చెల్లదు", ko: "시드 구문이 유효하지 않습니다", vi: "Cụm từ seed không hợp lệ", pl: "Fraza seed jest nieprawidłowa", ro: "Fraza seed este invalidă", nl: "Seed-phrase is ongeldig", el: "Η φράση σπόρου δεν είναι έγκυρη", th: "วลีเมล็ดพันธุ์ไม่ถูกต้อง", cs: "Seed phrase je neplatná", hu: "A seed kifejezés érvénytelen", sv: "Seed phrase är ogiltig", da: "Seed phrase er ugyldig" })
     return
   }, [seedphrase, valid])
 
@@ -164,7 +164,7 @@ export function CryptoAccountAddPage() {
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        Add crypto account
+        {Lang.match({ en: "Add crypto account", zh: "添加加密账户", hi: "क्रिप्टो खाता जोड़ें", es: "Agregar cuenta de cripto", ar: "إضافة حساب تشفير", fr: "Ajouter un compte crypto", de: "Krypto-Konto hinzufügen", ru: "Добавить крипто-аккаунт", pt: "Adicionar conta cripto", ja: "暗号通貨アカウントを追加", pa: "ਕ੍ਰਿਪਟੋ ਖਾਤਾ ਸ਼ਾਮਲ ਕਰੋ", bn: "ক্রিপ্টো অ্যাকাউন্ট যোগ করুন", id: "Tambahkan akun kripto", ur: "کرپٹو اکاؤنٹ شامل کریں", ms: "Tambahkan akun kripto", it: "Aggiungi account cripto", tr: "Kripto hesabı ekle", ta: "கிரிப்டோ கணக்கு சேர்க்கவும்", te: "క్రిప్టో ఖాతా జోడించండి", ko: "암호화폐 계정 추가", vi: "Thêm tài khoản crypto", pl: "Dodaj konto krypto", ro: "Adaugă cont crypto", nl: "Crypto-account toevoegen", el: "Προσθήκη λογαριασμού κρυπτογράφησης", th: "เพิ่มบัญชีคริปโต", cs: "Přidat krypto účet", hu: "Kripto fiók hozzáadása", sv: "Lägg till krypto-konto", da: "Tilføj krypto-konto" })}
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
@@ -181,10 +181,10 @@ export function CryptoAccountAddPage() {
           name="username" />
         <div className="h-6" />
         <div className="font-medium">
-          Title
+          {Lang.match({ en: "Title", zh: "标题", hi: "शीर्षक", es: "Título", ar: "العنوان", fr: "Titre", de: "Titel", ru: "Название", pt: "Título", ja: "タイトル", pa: "ਸਿਰਲੇਖ", bn: "শিরোনাম", id: "Judul", ur: "عنوان", ms: "Judul", it: "Titolo", tr: "Başlık", ta: "தலைப்பு", te: "శీర్షిక", ko: "제목", vi: "Tiêu đề", pl: "Tytuł", ro: "Titlu", nl: "Titel", el: "Τίτλος", th: "หัวข้อเรื่อง", cs: "Název", hu: "Cím", sv: "Titel", da: "Titel" })}
         </div>
         <div className="text-default-contrast">
-          A name to identify this account.&lrm;
+          {Lang.match({ en: "A name to identify this account.", zh: "用于识别此账户的名称。", hi: "इस खाते की पहचान करने के लिए एक नाम।", es: "Un nombre para identificar esta cuenta.", ar: "اسم لتحديد هذا الحساب.", fr: "Un nom pour identifier ce compte.", de: "Ein Name zur Identifizierung dieses Kontos.", ru: "Имя для идентификации этого аккаунта.", pt: "Um nome para identificar esta conta.", ja: "このアカウントを識別するための名前。", pa: "ਇਸ ਖਾਤੇ ਦੀ ਪਛਾਣ ਕਰਨ ਲਈ ਇੱਕ ਨਾਮ।", bn: "এই অ্যাকাউন্টটি সনাক্ত করার জন্য একটি নাম।", id: "Nama untuk mengidentifikasi akun ini.", ur: "اس اکاؤنٹ کی شناخت کے لیے ایک نام۔", ms: "Nama untuk mengenal pasti akaun ini.", it: "Un nome per identificare questo account.", tr: "Bu hesabı tanımlamak için bir ad.", ta: "இந்த கணக்கை அடையாளம் காண ஒரு பெயர்.", te: "ఈ ఖాతాను గుర్తించడానికి ఒక పేరు.", ko: "이 계정을 식별하기 위한 이름.", vi: "Một tên để xác định tài khoản này.", pl: "Nazwa do identyfikacji tego konta.", ro: "Un nume pentru a identifica acest cont.", nl: "Een naam om dit account te identificeren.", el: "Ένα όνομα για να αναγνωρίσετε αυτόν τον λογαριασμό.", th: "ชื่อเพื่อระบุบัญชีนี้", cs: "Název pro identifikaci tohoto účtu.", hu: "Egy név ennek a fióknak az azonosításához.", sv: "Ett namn för att identifiera detta konto.", da: "Et navn til at identificere denne konto." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -199,10 +199,10 @@ export function CryptoAccountAddPage() {
         </div>
         <div className="h-6" />
         <div className="font-medium">
-          Seed phrase
+          {Lang.match({ en: "Seed phrase", zh: "助记词", hi: "सीड वाक्य", es: "Frase semilla", ar: "عبارة البذور", fr: "Phrase de récupération", de: "Seed-Phrase", ru: "Сид-фраза", pt: "Frase semente", ja: "シードフレーズ", pa: "ਸੀਡ ਫਰੇਜ਼", bn: "সিড বাক্য", id: "Frasa seed", ur: "سیڈ فریز", ms: "Frasa seed", it: "Frase seed", tr: "Seed cümlesi", ta: "சீட் வாக்கியம்", te: "సీడ్ వాక్యం", ko: "시드 구문", vi: "Cụm từ seed", pl: "Fraza seed", ro: "Fraza seed", nl: "Seed-phrase", el: "Φράση σπόρου", th: "วลีเมล็ดพันธุ์", cs: "Seed phrase", hu: "Seed kifejezés", sv: "Seed phrase", da: "Seed phrase" })}
         </div>
         <div className="text-default-contrast">
-          Your BIP-39 seed phrase.&lrm;
+          {Lang.match({ en: "Your BIP-39 seed phrase.", zh: "您的 BIP-39 助记词。", hi: "आपका BIP-39 सीड वाक्य।", es: "Su frase semilla BIP-39.", ar: "عبارة البذور BIP-39 الخاصة بك.", fr: "Votre phrase de récupération BIP-39.", de: "Ihre BIP-39 Seed-Phrase.", ru: "Ваша BIP-39 сид-фраза.", pt: "Sua frase semente BIP-39.", ja: "あなたの BIP-39 シードフレーズ。", pa: "ਤੁਹਾਡਾ BIP-39 ਸੀਡ ਫਰੇਜ਼।", bn: "আপনার BIP-39 সিড বাক্য।", id: "Frasa seed BIP-39 Anda.", ur: "آپ کا BIP-39 سیڈ فریز۔", ms: "Frasa seed BIP-39 anda.", it: "La tua frase seed BIP-39.", tr: "BIP-39 seed cümleniz.", ta: "உங்கள் BIP-39 சீட் வாக்கியம்.", te: "మీ BIP-39 సీడ్ వాక్యం.", ko: "귀하의 BIP-39 시드 구문.", vi: "Cụm từ seed BIP-39 của bạn.", pl: "Twoja fraza seed BIP-39.", ro: "Fraza seed BIP-39 a dvs.", nl: "Uw BIP-39 seed phrase.", el: "Η φράση σπόρου BIP-39 σας.", th: "วลีเมล็ดพันธุ์ BIP-39 ของคุณ.", cs: "Vaše BIP-39 seed phrase.", hu: "Az Ön BIP-39 seed kifejezése.", sv: "Din BIP-39 seed phrase.", da: "Din BIP-39 seed phrase." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -217,27 +217,27 @@ export function CryptoAccountAddPage() {
           <WideContrastButton
             onClick={() => setFlipped(x => !x)}>
             {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-            {flipped ? "Hide" : "Show"}
+            {flipped ? Lang.match({ en: "Hide", zh: "隐藏", hi: "छिपाएं", es: "Ocultar", ar: "إخفاء", fr: "Cacher", de: "Verbergen", ru: "Скрыть", pt: "Esconder", ja: "隠す", pa: "ਛੁਪਾਓ", bn: "লুকান", id: "Sembunyikan", ur: "چھپائیں", ms: "Sembunyikan", it: "Nascondi", tr: "Gizle", ta: "மறை", te: "దాచు", ko: "숨기기", vi: "Ẩn", pl: "Ukryj", ro: "Ascundeți", nl: "Verbergen", el: "Κρύβω", th: "ซ่อน", cs: "Skrýt", hu: "Elrejtés", sv: "Dölj", da: "Skjul" }) : Lang.match({ en: "Show", zh: "显示", hi: "दिखाएं", es: "Mostrar", ar: "إظهار", fr: "Afficher", de: "Anzeigen", ru: "Показать", pt: "Mostrar", ja: "表示する", pa: "ਦਿਖਾਓ", bn: "দেখান", id: "Tampilkan", ur: "دکھائیں", ms: "Tampilkan", it: "Mostra", tr: "Göster", ta: "காட்டு", te: "తెరచు", ko: "보이기", vi: "Hiển thị", pl: "Pokaż", ro: "Afișați", nl: "Tonen", el: "Εμφάνιση ", th: "แสดง ", cs: "Zobrazit ", hu: "Megjelenítés ", sv: "Visa ", da: "Vis" })}
           </WideContrastButton>
           <WideContrastButton
             onClick={onGenerateClick}>
             <Outline.SparklesIcon className="size-5" />
-            Generate
+            {Lang.match({ en: "Generate", zh: "生成", hi: "उत्पन्न करें", es: "Generar", ar: "توليد", fr: "Générer", de: "Generieren", ru: "Создать", pt: "Gerar", ja: "生成", pa: "ਤਿਆਰ ਕਰੋ", bn: "উত্পন্ন করুন", id: "Hasilkan", ur: "تخلیق کریں", ms: "Hasilkan", it: "Genera", tr: "Oluştur", ta: "உருவாக்கு", te: "సృష్టించు", ko: "생성", vi: "Tạo", pl: "Generuj", ro: "Generează", nl: "Genereren", el: "Δημιουργία", th: "สร้าง", cs: "Generovat", hu: "Generálás", sv: "Generera", da: "Generer" })}
           </WideContrastButton>
         </div>
         <div className="h-6" />
         <div className="font-medium">
-          Notes
+          {Lang.match({ en: "Notes", zh: "备注", hi: "नोट्स", es: "Notas", ar: "ملاحظات", fr: "Notes", de: "Notizen", ru: "Заметки", pt: "Notas", ja: "ノート", pa: "ਨੋਟਸ", bn: "নোটস", id: "Catatan", ur: "نوٹس", ms: "Nota", it: "Note", tr: "Notlar", ta: "குறிப்புகள்", te: "గమనికలు", ko: "노트", vi: "Ghi chú", pl: "Notatki", ro: "Note", nl: "Notities", el: "Σημειώσεις", th: "บันทึก", cs: "Poznámky", hu: "Jegyzetek", sv: "Anteckningar", da: "Noter" })}
         </div>
         <div className="text-default-contrast">
-          Any additional information.&lrm;
+          {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ.", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col  gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <textarea className="w-full resize-none focus-visible:outline-none"
             rows={6}
             autoComplete="off"
-            placeholder="I use this account for..."
+            placeholder={Lang.match({ en: "I use this account for...", zh: "我使用这个账户来...", hi: "मैं इस खाते का उपयोग करता हूं...", es: "Uso esta cuenta para...", ar: "أستخدم هذا الحساب لـ...", fr: "J'utilise ce compte pour...", de: "Ich benutze dieses Konto für...", ru: "Я использую этот аккаунт для...", pt: "Eu uso esta conta para...", ja: "このアカウントは...のために使用します", pa: "ਮੈਂ ਇਸ ਖਾਤੇ ਨੂੰ... ਲਈ ਵਰਤਦਾ ਹਾਂ", bn: "আমি এই অ্যাকাউন্টটি... জন্য ব্যবহার করি", id: "Saya menggunakan akun ini untuk...", ur: "میں اس اکاؤنٹ کو... کے لیے استعمال کرتا ہوں", ms: "Saya menggunakan akun ini untuk...", it: "Uso questo account per...", tr: "Bu hesabı... için kullanıyorum", ta: "நான் இந்த கணக்கை... க்காக பயன்படுத்துகிறேன்", te: "నేను ఈ ఖాతాను... కోసం ఉపయోగిస్తున్నాను", ko: "이 계정을...에 사용합니다", vi: "Tôi sử dụng tài khoản này cho...", pl: "Używam tego konta do...", ro: "Folosesc acest cont pentru...", nl: "Ik gebruik dit account voor...", el: "Χρησιμοποιώ αυτόν τον λογαριασμό για...", th: "ฉันใช้บัญชีนี้สำหรับ...", cs: "Používám tento účet pro...", hu: "Ezt a fiókot arra használom, hogy...", sv: "Jag använder det här kontot för...", da: "Jeg bruger denne konto til..." })}
             onChange={e => setNotes(e.target.value)}
             value={$notes} />
         </div>
@@ -248,14 +248,14 @@ export function CryptoAccountAddPage() {
               type="button"
               disabled={error != null}
               onClick={encryptAndWriteOrAlert}>
-              {error != null ? error : "Save"}
+              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
               onClick={encryptAndSaveOrAlert}>
-              {error != null ? error : "Save"}
+              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
             </WideOppositeButton>}
         </div>
       </form>
@@ -297,7 +297,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     <div className="flex flex-col grow p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-medium">
-          Crypto account
+          {Lang.match({ en: "Crypto account", zh: "加密账户", hi: "क्रिप्टो खाता", es: "Cuenta de cripto", ar: "حساب تشفير", fr: "Compte crypto", de: "Krypto-Konto", ru: "Крипто-аккаунт", pt: "Conta cripto", ja: "暗号通貨アカウント", pa: "ਕ੍ਰਿਪਟੋ ਖਾਤਾ", bn: "ক্রিপ্টো অ্যাকাউন্ট", id: "Akun kripto", ur: "کرپٹو اکاؤنٹ", ms: "Akun kripto", it: "Account cripto", tr: "Kripto hesabı", ta: "கிரிப்டோ கணக்கு", te: "క్రిప్టో ఖాతా", ko: "암호화폐 계정", vi: "Tài khoản crypto", pl: "Konto krypto", ro: "Cont crypto", nl: "Crypto-account", el: "Λογαριασμός κρυπτογράφησης", th: "บัญชีคริปโต", cs: "Krypto účet", hu: "Kripto fiók", sv: "Krypto-konto", da: "Krypto-konto" })}
         </h1>
         <AccountMenuAnchor />
       </div>
@@ -317,10 +317,10 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         {notes && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
-            Notes
+            {Lang.match({ en: "Notes", zh: "备注", hi: "नोट्स", es: "Notas", ar: "ملاحظات", fr: "Notes", de: "Notizen", ru: "Заметки", pt: "Notas", ja: "ノート", pa: "ਨੋਟਸ", bn: "নোটস", id: "Catatan", ur: "نوٹس", ms: "Nota", it: "Note", tr: "Notlar", ta: "குறிப்புகள்", te: "గమనికలు", ko: "노트", vi: "Ghi chú", pl: "Notatki", ro: "Note", nl: "Notities", el: "Σημειώσεις", th: "บันทึก", cs: "Poznámky", hu: "Jegyzetek", sv: "Anteckningar", da: "Noter" })}
           </div>
           <div className="text-default-contrast">
-            Any additional information.&lrm;
+            {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ.", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -333,10 +333,10 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <Fragment>
           <div className="h-6" />
           <div className="font-medium">
-            Subaccounts
+            {Lang.match({ en: "Subaccounts", zh: "子账户", hi: "उप खाते", es: "Subcuentas", ar: "الحسابات الفرعية", fr: "Sous-comptes", de: "Unterkonten", ru: "Субаккаунты", pt: "Subcontas", ja: "サブアカウント", pa: "ਸਬਅਕਾਊਂਟ", bn: "সাবঅ্যাকাউন্ট", id: "Subakun", ur: "ذیلی اکاؤنٹس", ms: "Subakun", it: "Sottoaccount", tr: "Alt hesaplar", ta: "உப கணக்குகள்", te: "ఉప ఖాతాలు", ko: "하위 계정", vi: "Tài khoản phụ", pl: "Subkonta", ro: "Subconturi", nl: "Subaccounts", el: "Υπολογαριασμοί", th: "บัญชีย่อย", cs: "Subúčty", hu: "Alszámlák", sv: "Subkonton", da: "Subkonti" })}
           </div>
           <div className="text-default-contrast">
-            Your subaccounts.&lrm;
+            {Lang.match({ en: "Your subaccounts.", zh: "您的子账户。", hi: "आपके उप खाते।", es: "Sus subcuentas.", ar: "حساباتك الفرعية.", fr: "Vos sous-comptes.", de: "Ihre Unterkonten.", ru: "Ваши субаккаунты.", pt: "Suas subcontas.", ja: "あなたのサブアカウント。", pa: "ਤੁਹਾਡੇ ਸਬਅਕਾਊਂਟ।", bn: "আপনার সাবঅ্যাকাউন্ট।", id: "Subakun Anda.", ur: "آپ کے ذیلی اکاؤنٹس۔", ms: "Subakun Anda.", it: "I tuoi sottoaccount.", tr: "Alt hesaplarınız.", ta: "உங்கள் உப கணக்குகள்.", te: "మీ ఉప ఖాతాలు.", ko: "귀하의 하위 계정입니다.", vi: "Các tài khoản phụ của bạn.", pl: "Twoje subkonta.", ro: "Subconturile dvs.", nl: "Uw subaccounts.", el: "Οι υπολογαριασμοί σας.", th: "บัญชีย่อยของคุณ", cs: "Vaše subúčty.", hu: "Az Ön alszámlái.", sv: "Dina subkonton.", da: "Dine subkonti." })}
           </div>
           <div className="h-4" />
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
@@ -373,7 +373,7 @@ export function CryptoAccountExportMenuAnchor() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.ArrowUpOnSquareIcon className="size-5" />
-    Export
+    {Lang.match({ en: "Export", zh: "导出", hi: "निर्यात", es: "Exportar", ar: "تصدير", fr: "Exporter", de: "Exportieren", ru: "Экспорт", pt: "Exportar", ja: "エクスポート", pa: "ਨਿਰਯਾਤ", bn: "রপ্তানি", id: "Ekspor", ur: "برآمد کریں", ms: "Ekspor", it: "Esporta", tr: "Dışa aktar", ta: "ஏற்றுமதி", te: "ఎగుమతి", ko: "내보내기", vi: "Xuất khẩu", pl: "Eksportuj", ro: "Exportați", nl: "Exporteren", el: "Εξαγωγή ", th: "ส่งออก ", cs: "Exportovat ", hu: "Exportálás ", sv: "Exportera ", da: "Eksporter" })}
   </WideNakedMenuAnchor>
 }
 
@@ -435,7 +435,7 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
   return <div className="flex flex-col grow p-6">
     <div className="flex items-center justify-between">
       <h1 className="text-xl font-medium">
-        Export crypto account
+        {Lang.match({ en: "Export crypto account", zh: "导出加密账户", hi: "क्रिप्टो खाता निर्यात करें", es: "Exportar cuenta de cripto", ar: "تصدير حساب التشفير", fr: "Exporter le compte crypto", de: "Krypto-Konto exportieren", ru: "Экспорт крипто-аккаунта", pt: "Exportar conta cripto", ja: "暗号通貨アカウントをエクスポート", pa: "ਕ੍ਰਿਪਟੋ ਖਾਤਾ ਐਕਸਪੋਰਟ ਕਰੋ", bn: "ক্রিপ্টো অ্যাকাউন্ট রপ্তানি করুন", id: "Ekspor akun kripto", ur: "کرپٹو اکاؤنٹ برآمد کریں", ms: "Ekspor akun kripto", it: "Esporta account cripto", tr: "Kripto hesabını dışa aktar", ta: "கிரிப்டோ கணக்கை ஏற்றுமதி செய்யவும்", te: "క్రిప్టో ఖాతాను ఎగుమతి చేయండి", ko: "암호화폐 계정 내보내기", vi: "Xuất tài khoản crypto", pl: "Eksportuj konto krypto", ro: "Exportați contul crypto", nl: "Crypto-account exporteren", el: "Εξαγωγή λογαριασμού κρυπτογράφησης ", th: "ส่งออกบัญชีคริปโต ", cs: "Exportovat krypto účet ", hu: "Kripto fiók exportálása ", sv: "Exportera krypto-konto ", da: "Eksporter krypto-konto" })}
       </h1>
     </div>
     <div className="h-6" />
@@ -454,10 +454,10 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
       <Fragment>
         <div className="h-6" />
         <div className="font-medium">
-          Seed phrase
+          {Lang.match({ en: "Seed phrase", zh: "助记词", hi: "सीड वाक्य", es: "Frase semilla", ar: "عبارة البذور", fr: "Phrase de récupération", de: "Seed-Phrase", ru: "Сид-фраза", pt: "Frase semente", ja: "シードフレーズ", pa: "ਸੀਡ ਫਰੇਜ਼", bn: "সিড বাক্য", id: "Frasa seed", ur: "سیڈ فریز", ms: "Frasa seed", it: "Frase seed", tr: "Seed cümlesi", ta: "சீட் வாக்கியம்", te: "సీడ్ వాక్యం", ko: "시드 구문", vi: "Cụm từ seed", pl: "Fraza seed", ro: "Fraza seed", nl: "Seed-phrase", el: "Φράση σπόρου ", th: "วลีเมล็ดพันธุ์ ", cs: "Seed phrase ", hu: "Seed kifejezés ", sv: "Seed phrase ", da: "Seed phrase" })}
         </div>
         <div className="text-default-contrast">
-          Your BIP-39 seed phrase. Use this to recover your funds in most wallets.&lrm;
+          {Lang.match({ en: "Your BIP-39 seed phrase. Use this to recover your funds in most wallets.", zh: "您的 BIP-39 助记词。使用此助记词可以在大多数钱包中恢复您的资金。", hi: "आपका BIP-39 सीड वाक्य। इसका उपयोग अधिकांश वॉलेट में अपने फंड को पुनर्प्राप्त करने के लिए करें।", es: "Su frase semilla BIP-39. Úsela para recuperar sus fondos en la mayoría de las billeteras.", ar: "عبارة البذور BIP-39 الخاصة بك. استخدمها لاستعادة أموالك في معظم المحافظ.", fr: "Votre phrase de récupération BIP-39. Utilisez-la pour récupérer vos fonds dans la plupart des portefeuilles.", de: "Ihre BIP-39-Seed-Phrase. Verwenden Sie diese, um Ihre Gelder in den meisten Wallets wiederherzustellen.", ru: "Ваша BIP-39 сид-фраза. Используйте её для восстановления средств в большинстве кошельков.", pt: "Sua frase semente BIP-39. Use-a para recuperar seus fundos na maioria das carteiras.", ja: "あなたの BIP-39 シードフレーズ。これを使用して、ほとんどのウォレットで資金を回復します。", pa: "ਤੁਹਾਡਾ BIP-39 ਸੀਡ ਫਰੇਜ਼। ਇਸਦਾ ਉਪਯੋਗ ਕਰਕੇ ਆਪਣੇ ਫੰਡ ਨੂੰ ਜ਼ਿਆਦਾਤਰ ਵੌਲੇਟ ਵਿੱਚ ਬਹਾਲ ਕਰੋ।", bn: "আপনার BIP-39 সিড বাক্য। এটি ব্যবহার করে আপনার তহবিলগুলি বেশিরভাগ ওয়ালেটে পুনরুদ্ধার করুন।", id: "Frasa seed BIP-39 Anda. Gunakan ini untuk memulihkan dana Anda di sebagian besar dompet.", ur: "آپ کا BIP-39 سیڈ فریز۔ اس کا استعمال زیادہ تر والٹس میں اپنے فنڈز کو بازیافت کرنے کے لیے کریں۔", ms: "Frasa seed BIP-39 anda. Gunakan ini untuk memulihkan dana anda di kebanyakan dompet.", it: "La tua frase seed BIP-39. Usala per recuperare i tuoi fondi nella maggior parte dei portafogli.", tr: "BIP-39 seed cümleniz. Bunu çoğu cüzdanda fonlarınızı kurtarmak için kullanın.", ta: "உங்கள் BIP-39 சீட் வாக்கியம். இதைப் பயன்படுத்தி உங்கள் நிதியை பெரும்பாலான வாலெட்டுகளில் மீட்டெடுக்கவும்.", te: "మీ BIP-39 సీడ్ వాక్యం. దీన్ని ఉపయోగించి మీ నిధులను ఎక్కువ వాలెట్లలో పునరుద్ధరించండి.", ko: "귀하의 BIP-39 시드 구문. 대부분의 지갑에서 자금을 복구하는 데 사용하십시오.", vi: "Cụm từ seed BIP-39 của bạn. Sử dụng nó để khôi phục quỹ của bạn trong hầu hết các ví.", pl: "Twoja fraza seed BIP-39. Użyj jej, aby odzyskać środki w większości portfeli.", ro: "Fraza seed BIP-39 a dvs. Folosiți-o pentru a vă recupera fondurile în majoritatea portofelelor.", nl: "Uw BIP-39 seed phrase. Gebruik dit om uw fondsen in de meeste wallets te herstellen.", el: "Η φράση σπόρου BIP-39 σας. Χρησιμοποιήστε την για να ανακτήσετε τα κεφάλαιά σας στις περισσότερες πορτοφόλια.", th: "วลีเมล็ดพันธุ์ BIP-39 ของคุณ ใช้สิ่งนี้เพื่อกู้คืนเงินของคุณในกระเป๋าสตางค์ส่วนใหญ่", cs: "Vaše BIP-39 seed phrase. Použijte ji k obnovení prostředků ve většině peněženek.", hu: "Az Ön BIP-39 seed kifejezése. Használja ezt a legtöbb pénztárcában a pénzeszközök visszaállításához.", sv: "Din BIP-39 seed phrase. Använd den för att återställa dina medel i de flesta plånböcker.", da: "Din BIP-39 seed phrase. Brug den til at gendanne dine midler i de fleste tegnebøger." })}
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -472,12 +472,12 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
           <WideContrastButton
             onClick={() => setFlipped(x => !x)}>
             {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-            {flipped ? "Hide" : "Show"}
+            {flipped ? Lang.match({ en: "Hide", zh: "隐藏", hi: "छिपाएं", es: "Ocultar", ar: "إخفاء", fr: "Masquer", de: "Verbergen", ru: "Скрыть", pt: "Ocultar", ja: "非表示", pa: "ਛੁਪਾਓ", bn: "লুকান", id: "Sembunyikan", ur: "چھپائیں", ms: "Sembunyikan", it: "Nascondi", tr: "Gizle", ta: "மறை", te: "దాచు", ko: "숨기기", vi: "Ẩn", pl: "Ukryj", ro: "Ascunde", nl: "Verbergen", el: "Απόκρυψη", th: "ซ่อน", cs: "Skrýt", hu: "Elrejt", sv: "Dölj", da: "Skjul" }) : Lang.match({ en: "Show", zh: "显示", hi: "दिखाएं", es: "Mostrar", ar: "إظهار", fr: "Afficher", de: "Anzeigen", ru: "Показать", pt: "Mostrar", ja: "表示", pa: "ਦਿਖਾਓ", bn: "প্রদর্শন", id: "Tampilkan", ur: "دکھائیں", ms: "Tunjukkan", it: "Mostra", tr: "Göster", ta: "காட்டு", te: "చూపించు", ko: "보이기", vi: "Hiển thị", pl: "Pokaż", ro: "Afișează", nl: "Tonen", el: "Εμφάνιση", th: "แสดง", cs: "Zobrazit", hu: "Mutasd", sv: "Visa", da: "Vis" })}
           </WideContrastButton>
           <WideContrastButton
             onClick={copyTheSeedPhrase.copyOrAlert}>
             {copyTheSeedPhrase.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-            {copyTheSeedPhrase.copied ? "Copied" : "Copy"}
+            {copyTheSeedPhrase.copied ? Lang.match({ en: "Copied", zh: "已复制", hi: "कॉपी किया गया", es: "Copiado", ar: "تم النسخ", fr: "Copié", de: "Kopiert", ru: "Скопировано", pt: "Copiado", ja: "コピーしました", pa: "ਨਕਲ ਕੀਤਾ", bn: "কপি করা হয়েছে", id: "Disalin", ur: "کاپی کیا گیا", ms: "Disalin", it: "Copiato", tr: "Kopyalandı", ta: "நகலெடுக்கப்பட்டது", te: "నకలించబడింది", ko: "복사됨", vi: "Đã sao chép", pl: "Skopiowano", ro: "Copiat", nl: "Gekopieerd", el: "Αντιγράφηκε ", th: "คัดลอกแล้ว ", cs: "Zkopírováno ", hu: "Másolva ", sv: "Kopierat ", da: "Kopieret" }) : Lang.match({ en: "Copy", zh: "复制", hi: "कॉपी करें", es: "Copiar", ar: "نسخ", fr: "Copier", de: "Kopieren", ru: "Копировать", pt: "Copiar", ja: "コピー", pa: "ਨਕਲ ਕਰੋ", bn: "কপি করুন", id: "Salin", ur: "کاپی کریں", ms: "Salin", it: "Copia", tr: "Kopyala", ta: "நகலெடுக்கவும்", te: "నకలించు", ko: "복사", vi: "Sao chép", pl: "Kopiuj", ro: "Copiați", nl: "Kopiëren", el: "Αντιγραφή ", th: "คัดลอก ", cs: "Kopírovat ", hu: "Másolás ", sv: "Kopiera ", da: "Kopier" })}
           </WideContrastButton>
         </div>
       </Fragment>
