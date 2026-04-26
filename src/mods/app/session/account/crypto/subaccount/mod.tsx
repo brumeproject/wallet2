@@ -1,8 +1,9 @@
-import { WideContrastButton } from "@/libs/button/mod.tsx";
+import { InButton, WideContrastButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
+import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
@@ -12,6 +13,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
+import { WalletConnect, WcPairParams, WcSessionData } from "@hazae41/latrine";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
@@ -108,6 +110,86 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
 
+  const seedphrase = useMemo(() => {
+    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const [sessions, setSessions] = useState<WcSessionData[]>([])
+
+  const connectOrAlert = useCallback(() => Promise.try(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+    const upub = secp256k1.getPublicKey(xsig.key, false)
+
+    const address = `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
+
+    const url = prompt("WalletConnect URI")
+
+    if (url == null)
+      return
+
+    const peer = WcPairParams.parse(url)
+    const self = { name: "Brume Wallet", description: "The secure and private wallet", url: "http://wallet.brume.tech", icons: [] }
+
+    const namespaces = {
+      eip155: {
+        chains: [1].map(chainId => `eip155:${chainId}`),
+        methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v4"],
+        events: ["chainChanged", "accountsChanged"],
+        accounts: [1].map(chainId => `eip155:${chainId}:${address}`)
+      }
+    }
+
+    const client = await WalletConnect.open(crypto.getRandomValues(new Uint8Array(32)), "c6c9bacd35afa3eb9e6cccf6d8464395")
+
+    const session = await WalletConnect.respond(client, () => true, { peer, self, namespaces }, AbortSignal.timeout(5000))
+
+    session.addEventListener("request", event => {
+      const { chainId, request } = event.data
+
+      console.log({ chainId, request })
+
+      if (request.method === "personal_sign") {
+        const [message, account] = request.params as [string, string]
+
+        if (account !== address)
+          return
+
+        event.stopImmediatePropagation()
+        event.respondWith(onPersonalSign(message))
+
+        return
+      }
+
+      return
+    })
+
+    const onPersonalSign = async (message: string) => {
+      const msgraw = Uint8Array.fromHex(message.slice(2).padStart(64, "0"))
+      const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
+
+      const cursor = new Cursor(new Uint8Array(prefix.length + msgraw.length))
+      cursor.writeOrThrow(prefix)
+      cursor.writeOrThrow(msgraw)
+
+      const digest = keccak_256(cursor.bytes)
+      const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false })
+
+      return `0x${sigraw.toHex()}`
+    }
+
+    await session.subscribe()
+
+    await session.fetch()
+
+    const settled = await session.settled
+
+    setSessions(x => [...x, settled])
+  }).catch(Errors.display), [seedphrase, index])
+
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
@@ -137,6 +219,33 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
         <input className="hidden"
           autoComplete="off"
           name="username" />
+        <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            {Lang.match({ en: "Sessions", zh: "会话", hi: "सत्र", es: "Sesiones", ar: "الجلسات", fr: "Sessions", de: "Sitzungen", ru: "Сессии", pt: "Sessões", ja: "セッション", pa: "ਸੈਸ਼ਨ", bn: "সেশন", id: "Sesi", ur: "سیشنز", ms: "Sesi", it: "Sessioni", tr: "Oturumlar", ta: "அமர்வுகள்", te: "సెషన్లు", ko: "세션", vi: "Phiên", pl: "Sesje", ro: "Sesiuni", nl: "Sessies", el: "Συνεδρίες ", th: "เซสชัน ", cs: "Sezení ", hu: "Munkamenetek ", sv: "Sessioner ", da: "Sessioner" })}
+          </div>
+          <div className="text-default-contrast">
+            {Lang.match({ en: "Your WalletConnect sessions.", zh: "您的 WalletConnect 会话。", hi: "आपके WalletConnect सत्र।", es: "Tus sesiones de WalletConnect.", ar: "جلسات WalletConnect الخاصة بك.", fr: "Vos sessions WalletConnect.", de: "Ihre WalletConnect-Sitzungen.", ru: "Ваши сессии WalletConnect.", pt: "Suas sessões do WalletConnect.", ja: "あなたのWalletConnectセッション。", pa: "ਤੁਹਾਡੇ WalletConnect ਸੈਸ਼ਨ।", bn: "আপনার WalletConnect সেশন।", id: "Sesi WalletConnect Anda.", ur: "آپ کے WalletConnect سیشنز۔", ms: "Sesi WalletConnect Anda.", it: "Le tue sessioni di WalletConnect.", tr: "WalletConnect oturumlarınız.", ta: "உங்கள் WalletConnect அமர்வுகள்.", te: "మీ WalletConnect సెషన్లు.", ko: "귀하의 WalletConnect 세션입니다.", vi: "Các phiên của bạn trên WalletConnect.", pl: "Twoje sesje WalletConnect.", ro: "Sesiunile dvs. de pe WalletConnect.", nl: "Uw WalletConnect-sessies.", el: "Οι συνεδρίες σας στο WalletConnect. ", th: "เซสชันของคุณบน WalletConnect. ", cs: "Vaše sezení na WalletConnect. ", hu: "A WalletConnect munkamenetei. ", sv: "Dina sessioner på WalletConnect. ", da: "Dine sessioner på WalletConnect." })}
+          </div>
+          <div className="h-4" />
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+            <div className="flex flex-col"
+              style={{ "height": `${180 + (sessions.length * 60)}px` }}>
+              {sessions.map((data, index) =>
+                <Fragment key={index}>
+                  <CryptoSubaccountAnchor $entry={$entry} name={data.peer.name} index={index} />
+                </Fragment>)}
+              <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+                style={{ "transform": `translateY(-${sessions.length * 120}px)` }}
+                onClick={connectOrAlert}
+                type="button">
+                <InButton>
+                  <Outline.PlusIcon className="size-8" />
+                </InButton>
+              </button>
+            </div>
+          </div>
+        </Fragment>
       </form>
     </div>
   </Fragment>

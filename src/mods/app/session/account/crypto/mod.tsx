@@ -1,5 +1,4 @@
-import { InAnchor } from "@/libs/anchor/mod.tsx";
-import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { InButton, WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -350,9 +349,9 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                 style={{ "transform": `translateY(-${subentries.length * 120}px)` }}
                 onClick={() => setSubentries(x => [...x, capitalize(MoneroSeedPhrase.generate().split(" ")[0])])}
                 type="button">
-                <InAnchor>
+                <InButton>
                   <Outline.PlusIcon className="size-8" />
-                </InAnchor>
+                </InButton>
               </button>
             </div>
           </div>
