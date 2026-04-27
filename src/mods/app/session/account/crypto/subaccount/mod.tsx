@@ -13,7 +13,6 @@ import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
-import { RpcError } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { WalletConnect, WcPairParams, WcSessionData, WcSessionRequestParams } from "@hazae41/latrine";
 import { DataRespondableEvent } from "@hazae41/plume";
@@ -198,9 +197,6 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     }
 
     const onPersonalSign = async (message: string) => {
-      if (!confirm(`Do you want to sign this message:\n\n${message}`))
-        throw new RpcError(4001, "User rejected the request")
-
       const msgraw = Uint8Array.fromHex(message.slice(2).padStart(64, "0"))
       const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
 
