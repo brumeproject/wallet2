@@ -1,4 +1,5 @@
 import { InButton, WideContrastButton } from "@/libs/button/mod.tsx";
+import { ChainData } from "@/libs/chainlist/mod.ts";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -124,44 +125,9 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     if (!res.ok)
       throw new Error(await res.text(), { cause: res })
 
-    const json = await res.json() as Array<{
-      readonly name: string,
-      readonly chain: string,
-      readonly icon: string
-      readonly rpc: Array<{
-        readonly url: string,
-        readonly tracking: string
-        readonly isOpenSource: boolean
-      }>
-      readonly features: Array<{
-        readonly name: string
-      }>
-      readonly faucets: Array<unknown>
-      readonly nativeCurrency: {
-        readonly name: string,
-        readonly symbol: string,
-        readonly decimals: number
-      }
-      readonly infoURL: string,
-      readonly shortName: string,
-      readonly chainId: number,
-      readonly networkId: number,
-      readonly slip44: number,
-      readonly ens: {
-        readonly registry: string
-      }
-      readonly explorers: Array<{
-        readonly name: string,
-        readonly url: string,
-        readonly icon: string,
-        readonly standard: string
-      }>
-      readonly tvl: number
-      readonly chainSlug: string
-      readonly isTestnet: boolean
-    }>
+    const chainlist = await res.json() as Array<ChainData>
 
-    return json.filter(x => x.rpc.find(x => {
+    return chainlist.filter(x => x.rpc.find(x => {
       try {
         const url = new URL(x.url)
 
