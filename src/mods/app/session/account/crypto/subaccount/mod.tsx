@@ -12,6 +12,7 @@ import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
+import { RpcError } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { WalletConnect, WcPairParams, WcSessionData, WcSessionRequestParams } from "@hazae41/latrine";
 import { DataRespondableEvent } from "@hazae41/plume";
@@ -117,6 +118,66 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
   const [sessions, setSessions] = useState<WcSessionData[]>([])
 
+  const fetchChainsOrThrow = useCallback(async () => {
+    const res = await fetch("https://chainlist.org/rpcs.json")
+
+    if (!res.ok)
+      throw new Error(await res.text(), { cause: res })
+
+    const json = await res.json() as Array<{
+      readonly name: string,
+      readonly chain: string,
+      readonly icon: string
+      readonly rpc: Array<{
+        readonly url: string,
+        readonly tracking: string
+        readonly isOpenSource: boolean
+      }>
+      readonly features: Array<{
+        readonly name: string
+      }>
+      readonly faucets: Array<unknown>
+      readonly nativeCurrency: {
+        readonly name: string,
+        readonly symbol: string,
+        readonly decimals: number
+      }
+      readonly infoURL: string,
+      readonly shortName: string,
+      readonly chainId: number,
+      readonly networkId: number,
+      readonly slip44: number,
+      readonly ens: {
+        readonly registry: string
+      }
+      readonly explorers: Array<{
+        readonly name: string,
+        readonly url: string,
+        readonly icon: string,
+        readonly standard: string
+      }>
+      readonly tvl: number
+      readonly chainSlug: string
+      readonly isTestnet: boolean
+    }>
+
+    return json.filter(x => x.rpc.find(x => {
+      try {
+        const url = new URL(x.url)
+
+        if (url.protocol !== "https:")
+          return false
+
+        if (!url.origin.endsWith(".publicnode.com"))
+          return false
+
+        return true
+      } catch {
+        return false
+      }
+    })).map(x => x.chainId)
+  }, [])
+
   const connectOrAlert = useCallback(() => Promise.try(async () => {
     if (seedphrase == null)
       return
@@ -135,12 +196,14 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     const peer = WcPairParams.parse(url)
     const self = { name: "Brume Wallet", description: "The secure and private wallet", url: "http://wallet.brume.tech", icons: [] }
 
+    const chains = await fetchChainsOrThrow()
+
     const namespaces = {
       eip155: {
-        chains: [1].map(chainId => `eip155:${chainId}`),
+        chains: chains.map(chainId => `eip155:${chainId}`),
         methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v4"],
         events: ["chainChanged", "accountsChanged"],
-        accounts: [1].map(chainId => `eip155:${chainId}:${address}`)
+        accounts: chains.map(chainId => `eip155:${chainId}:${address}`)
       }
     }
 
@@ -156,7 +219,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       if (request.method === "personal_sign") {
         const [message, account] = request.params as [string, string]
 
-        if (account !== address)
+        if (account.toLowerCase() !== address.toLowerCase())
           return
 
         event.stopImmediatePropagation()
@@ -169,6 +232,9 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     }
 
     const onPersonalSign = async (message: string) => {
+      if (!confirm(`Do you want to sign this message:\n\n${message}`))
+        throw new RpcError(4001, "User rejected the request")
+
       const msgraw = Uint8Array.fromHex(message.slice(2).padStart(64, "0"))
       const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
 
@@ -182,7 +248,10 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       return `0x${sigraw.toHex()}`
     }
 
-    session.addEventListener("request", onRequest)
+    const cleaner = new AbortController()
+    const { signal } = cleaner
+
+    session.addEventListener("request", onRequest, { signal })
 
     await session.subscribe()
 
@@ -190,7 +259,9 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const settled = await session.settled
 
-    session.addEventListener("close", () => setSessions(x => x.filter(y => y !== settled)))
+    session.addEventListener("close", cleaner.abort, { signal })
+
+    signal.addEventListener("abort", () => setSessions(x => x.filter(y => y !== settled)), { signal })
 
     setSessions(x => [...x, settled])
   }).catch(Errors.display), [seedphrase, index])
