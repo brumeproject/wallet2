@@ -183,13 +183,14 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     }
 
     session.addEventListener("request", onRequest)
-    session.addEventListener("close", console.log)
 
     await session.subscribe()
 
     await session.fetch()
 
     const settled = await session.settled
+
+    session.addEventListener("close", () => setSessions(x => x.filter(y => y !== settled)))
 
     setSessions(x => [...x, settled])
   }).catch(Errors.display), [seedphrase, index])
