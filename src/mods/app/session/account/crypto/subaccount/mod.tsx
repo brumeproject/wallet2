@@ -1,10 +1,8 @@
-import { InButton, WideContrastButton } from "@/libs/button/mod.tsx";
-import { ChainData } from "@/libs/chainlist/mod.ts";
+import { WideContrastButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
-import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
@@ -14,8 +12,6 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
-import { WalletConnect, WcPairParams, WcSessionData, WcSessionRequestParams } from "@hazae41/latrine";
-import { DataRespondableEvent } from "@hazae41/plume";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
@@ -116,117 +112,117 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
   }, [$entry])
 
-  const [sessions, setSessions] = useState<WcSessionData[]>([])
+  // const [sessions, setSessions] = useState<WcSessionData[]>([])
 
-  const fetchChainsOrThrow = useCallback(async () => {
-    const res = await fetch("https://chainlist.org/rpcs.json")
+  // const fetchChainsOrThrow = useCallback(async () => {
+  //   const res = await fetch("https://chainlist.org/rpcs.json")
 
-    if (!res.ok)
-      throw new Error(await res.text(), { cause: res })
+  //   if (!res.ok)
+  //     throw new Error(await res.text(), { cause: res })
 
-    const chainlist = await res.json() as Array<ChainData>
+  //   const chainlist = await res.json() as Array<ChainData>
 
-    return chainlist.filter(x => x.rpc.find(x => {
-      try {
-        const url = new URL(x.url)
+  //   return chainlist.filter(x => x.rpc.find(x => {
+  //     try {
+  //       const url = new URL(x.url)
 
-        if (url.protocol !== "https:")
-          return false
+  //       if (url.protocol !== "https:")
+  //         return false
 
-        if (!url.origin.endsWith(".publicnode.com"))
-          return false
+  //       if (!url.origin.endsWith(".publicnode.com"))
+  //         return false
 
-        return true
-      } catch {
-        return false
-      }
-    })).map(x => x.chainId)
-  }, [])
+  //       return true
+  //     } catch {
+  //       return false
+  //     }
+  //   })).map(x => x.chainId)
+  // }, [])
 
-  const connectOrAlert = useCallback(() => Promise.try(async () => {
-    if (seedphrase == null)
-      return
+  // const connectOrAlert = useCallback(() => Promise.try(async () => {
+  //   if (seedphrase == null)
+  //     return
 
-    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
-    const upub = secp256k1.getPublicKey(xsig.key, false)
+  //   const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+  //   const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+  //   const upub = secp256k1.getPublicKey(xsig.key, false)
 
-    const address = `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
+  //   const address = `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
 
-    const url = prompt("WalletConnect URI")
+  //   const url = prompt("WalletConnect URI")
 
-    if (url == null)
-      return
+  //   if (url == null)
+  //     return
 
-    const peer = WcPairParams.parse(url)
-    const self = { name: "Brume Wallet", description: "The secure and private wallet", url: "http://wallet.brume.tech", icons: [] }
+  //   const peer = WcPairParams.parse(url)
+  //   const self = { name: "Brume Wallet", description: "The secure and private wallet", url: "http://wallet.brume.tech", icons: [] }
 
-    const chains = await fetchChainsOrThrow()
+  //   const chains = await fetchChainsOrThrow()
 
-    const namespaces = {
-      eip155: {
-        chains: chains.map(chainId => `eip155:${chainId}`),
-        methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v4"],
-        events: ["chainChanged", "accountsChanged"],
-        accounts: chains.map(chainId => `eip155:${chainId}:${address}`)
-      }
-    }
+  //   const namespaces = {
+  //     eip155: {
+  //       chains: chains.map(chainId => `eip155:${chainId}`),
+  //       methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v4"],
+  //       events: ["chainChanged", "accountsChanged"],
+  //       accounts: chains.map(chainId => `eip155:${chainId}:${address}`)
+  //     }
+  //   }
 
-    const client = await WalletConnect.open(crypto.getRandomValues(new Uint8Array(32)), "c6c9bacd35afa3eb9e6cccf6d8464395")
+  //   const client = await WalletConnect.open(crypto.getRandomValues(new Uint8Array(32)), "c6c9bacd35afa3eb9e6cccf6d8464395")
 
-    const session = await WalletConnect.respond(client, () => true, { peer, self, namespaces }, AbortSignal.timeout(5000))
+  //   const session = await WalletConnect.respond(client, () => true, { peer, self, namespaces }, AbortSignal.timeout(5000))
 
-    const onRequest = (event: DataRespondableEvent<WcSessionRequestParams<unknown>, unknown>) => {
-      const { chainId, request } = event.data
+  //   const onRequest = (event: DataRespondableEvent<WcSessionRequestParams<unknown>, unknown>) => {
+  //     const { chainId, request } = event.data
 
-      console.log({ chainId, request })
+  //     console.log({ chainId, request })
 
-      if (request.method === "personal_sign") {
-        const [message, account] = request.params as [string, string]
+  //     if (request.method === "personal_sign") {
+  //       const [message, account] = request.params as [string, string]
 
-        if (account.toLowerCase() !== address.toLowerCase())
-          return
+  //       if (account.toLowerCase() !== address.toLowerCase())
+  //         return
 
-        event.stopImmediatePropagation()
-        event.respondWith(onPersonalSign(message))
+  //       event.stopImmediatePropagation()
+  //       event.respondWith(onPersonalSign(message))
 
-        return
-      }
+  //       return
+  //     }
 
-      return
-    }
+  //     return
+  //   }
 
-    const onPersonalSign = async (message: string) => {
-      const msgraw = Uint8Array.fromHex(message.slice(2).padStart(64, "0"))
-      const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
+  //   const onPersonalSign = async (message: string) => {
+  //     const msgraw = Uint8Array.fromHex(message.slice(2).padStart(64, "0"))
+  //     const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
 
-      const cursor = new Cursor(new Uint8Array(prefix.length + msgraw.length))
-      cursor.writeOrThrow(prefix)
-      cursor.writeOrThrow(msgraw)
+  //     const cursor = new Cursor(new Uint8Array(prefix.length + msgraw.length))
+  //     cursor.writeOrThrow(prefix)
+  //     cursor.writeOrThrow(msgraw)
 
-      const digest = keccak_256(cursor.bytes)
-      const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false })
+  //     const digest = keccak_256(cursor.bytes)
+  //     const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false })
 
-      return `0x${sigraw.toHex()}`
-    }
+  //     return `0x${sigraw.toHex()}`
+  //   }
 
-    const cleaner = new AbortController()
-    const { signal } = cleaner
+  //   const cleaner = new AbortController()
+  //   const { signal } = cleaner
 
-    session.addEventListener("request", onRequest, { signal })
+  //   session.addEventListener("request", onRequest, { signal })
 
-    await session.subscribe()
+  //   await session.subscribe()
 
-    await session.fetch()
+  //   await session.fetch()
 
-    const settled = await session.settled
+  //   const settled = await session.settled
 
-    session.addEventListener("close", cleaner.abort, { signal })
+  //   session.addEventListener("close", cleaner.abort, { signal })
 
-    signal.addEventListener("abort", () => setSessions(x => x.filter(y => y !== settled)), { signal })
+  //   signal.addEventListener("abort", () => setSessions(x => x.filter(y => y !== settled)), { signal })
 
-    setSessions(x => [...x, settled])
-  }).catch(Errors.display), [seedphrase, index])
+  //   setSessions(x => [...x, settled])
+  // }).catch(Errors.display), [seedphrase, index])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -267,7 +263,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           </div>
           <div className="h-4" />
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-            <div className="flex flex-col"
+            {/* <div className="flex flex-col"
               style={{ "height": `${180 + (sessions.length * 60)}px` }}>
               {sessions.map((data, index) =>
                 <Fragment key={index}>
@@ -281,7 +277,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
                   <Outline.PlusIcon className="size-8" />
                 </InButton>
               </button>
-            </div>
+            </div> */}
           </div>
         </Fragment>
       </form>
