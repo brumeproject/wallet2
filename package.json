@@ -24,7 +24,7 @@
     "@hazae41/disposable-stack-polyfill": "^2.0.5",
     "@hazae41/immutable": "^2.1.3",
     "@hazae41/jsonrpc": "^1.1.11",
-    "@hazae41/kdbx": "^0.2.15",
+    "@hazae41/kdbx": "^0.2.16",
     "@hazae41/labase": "^1.0.31",
     "@hazae41/latrine": "^2.1.0",
     "@hazae41/pendule": "^1.0.0",
