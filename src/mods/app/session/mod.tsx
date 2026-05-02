@@ -21,6 +21,12 @@ import { AccountAddButtonInGrid, AccountAddMenu, AccountCardInGrid } from "./acc
 
 React;
 
+export interface SessionInit {
+  readonly user: UserData
+  readonly comp: Uint8Array<ArrayBuffer>
+  readonly data: Uint8Array<ArrayBuffer>
+}
+
 export interface SessionData {
   readonly user: UserData
   readonly comp: KDBX.CompositeKey

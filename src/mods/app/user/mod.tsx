@@ -17,7 +17,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { DragEvent, Fragment, KeyboardEvent, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { SessionData } from "../session/mod.tsx";
+import { SessionInit } from "../session/mod.tsx";
 
 React;
 
@@ -43,7 +43,7 @@ export function UserLoginButton() {
   </OppositeAnchor>
 }
 
-export function UserLoginMenu(props: { login(session: SessionData): void }) {
+export function UserLoginMenu(props: { login(session: SessionInit): void }) {
   const { login } = props
 
   const store = useStoreContext().getOrThrow()
@@ -685,7 +685,7 @@ function UserCreatePage() {
   </div>
 }
 
-function UserItem(props: { user: UserData } & { login(session: SessionData): void }) {
+function UserItem(props: { user: UserData } & { login(session: SessionInit): void }) {
   const { user, login } = props
 
   const path = usePathContext().getOrThrow()
@@ -725,7 +725,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
   </Fragment>
 }
 
-function UserLoginPage(props: { user: UserData } & { login(session: SessionData): void }) {
+function UserLoginPage(props: { user: UserData } & { login(session: SessionInit): void }) {
   const { user, login } = props
 
   const close = useCloseContext().getOrThrow()
@@ -758,7 +758,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, comp: composite, kdbx: decrypted })
+    login({ user, comp: composite.value.bytes, data })
 
     close()
   }).catch(Errors.display), [user, login, file1, pass, close])
@@ -777,7 +777,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, comp: composite, kdbx: decrypted })
+    login({ user, comp: composite.value.bytes, data })
 
     close()
   }).catch(Errors.display), [user, login, file2, auth, close])
@@ -815,7 +815,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, comp: composite, kdbx: decrypted })
+    login({ user, comp: composite.value.bytes, data })
 
     close()
   }).catch(Errors.display), [user, login, pass, close])
@@ -839,7 +839,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     console.log(decrypted.inner.content.value.document)
 
-    login({ user, comp: composite, kdbx: decrypted })
+    login({ user, comp: composite.value.bytes, data })
 
     close()
   }).catch(Errors.display), [user, login, auth, close])

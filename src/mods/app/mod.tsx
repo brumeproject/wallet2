@@ -1,17 +1,23 @@
 import { ContrastAnchor } from "@/libs/anchor/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
+import { useController } from "@/libs/controller/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper } from "@/libs/dialog/paper/mod.tsx";
 import { Wall } from "@/libs/dialog/wall/mod.tsx";
+import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { Peer } from "@/libs/peer/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
+import { Readable, Unknown } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
+import { RpcRequestPreinit } from "@hazae41/jsonrpc";
+import * as KDBX from "@hazae41/kdbx";
 import { CloseContext } from "@hazae41/react-close-context";
 import React, { ChangeEvent, Fragment, useCallback, useEffect, useState } from "react";
-import { SessionData, SessionPage, SessionProvider } from "./session/mod.tsx";
+import { SessionData, SessionInit, SessionPage, SessionProvider } from "./session/mod.tsx";
 import { UserLoginButton, UserLoginMenu } from "./user/mod.tsx";
 
 React;
@@ -22,6 +28,67 @@ export function App() {
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
+
+  const controller = useController()
+
+  const [background, setBackground] = useState<Nullable<Peer>>()
+
+  const openOrThrow = useCallback(async () => {
+    if (controller == null)
+      return
+
+    const { port1, port2 } = new MessageChannel()
+
+    const background = new Peer(port1)
+
+    const onLogin = async (request: RpcRequestPreinit<unknown>) => {
+      const [{ user, comp, data }] = request.params as [SessionInit]
+
+      const composite = new KDBX.CompositeKey(new Unknown(comp))
+      const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
+      const decrypted = await encrypted.decryptOrThrow(composite)
+
+      setSession({ user, comp: composite, kdbx: decrypted })
+    }
+
+    const onLogout = () => {
+      setSession(undefined)
+    }
+
+    background.addEventListener("request", (event) => {
+      const request = event.data
+
+      if (request.method === "login")
+        return event.respondWith(onLogin(request))
+      if (request.method === "logout")
+        return event.respondWith(onLogout())
+
+    }, { signal: background.closing })
+
+    controller.postMessage(null, [port2])
+
+    background.open()
+
+    console.log(background)
+
+    setBackground(background)
+  }, [controller])
+
+  useEffect(() => {
+    openOrThrow().catch(console.error)
+  }, [openOrThrow])
+
+  useEffect(() => () => {
+    background?.close()
+  }, [background])
+
+  useEffect(() => {
+    const f = () => background?.close()
+
+    addEventListener("beforeunload", f)
+
+    return () => removeEventListener("beforeunload", f)
+  }, [background])
 
   const [appname, setAppName] = useState<Nullable<string>>()
 
@@ -87,13 +154,19 @@ export function App() {
 
   const [session, setSession] = useState<SessionData>()
 
-  const login = useCallback((session: SessionData) => {
-    setSession(session)
-  }, [])
+  const login = useCallback((session: SessionInit) => Promise.try(async () => {
+    console.log("login", background)
+    await background?.request({
+      method: "login",
+      params: [session]
+    }).then(r => r.getOrThrow())
+  }).catch(Errors.display), [background])
 
-  const logout = useCallback(() => {
-    setSession(undefined)
-  }, [])
+  const logout = useCallback(() => Promise.try(async () => {
+    await background?.request({
+      method: "logout"
+    }).then(r => r.getOrThrow())
+  }).catch(Errors.display), [background])
 
   return <Fragment>
     <CloseContext.Provider value={logout}>
