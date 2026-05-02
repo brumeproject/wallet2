@@ -16,7 +16,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { RpcRequestPreinit } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { CloseContext } from "@hazae41/react-close-context";
-import React, { ChangeEvent, Fragment, useCallback, useEffect, useState } from "react";
+import React, { ChangeEvent, Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { SessionData, SessionInit, SessionPage, SessionProvider } from "./session/mod.tsx";
 import { UserLoginButton, UserLoginMenu } from "./user/mod.tsx";
 
@@ -44,6 +44,9 @@ export function App() {
     const onLogin = async (request: RpcRequestPreinit<unknown>) => {
       const [{ user, comp, data }] = request.params as [SessionInit]
 
+      if (sessionRef.current != null)
+        return
+
       const composite = new KDBX.CompositeKey(new Unknown(comp))
       const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
       const decrypted = await encrypted.decryptOrThrow(composite)
@@ -59,17 +62,14 @@ export function App() {
       const request = event.data
 
       if (request.method === "login")
-        return event.respondWith(onLogin(request))
+        return event.respondWith(Promise.resolve().then(() => onLogin(request)))
       if (request.method === "logout")
-        return event.respondWith(onLogout())
+        return event.respondWith(Promise.resolve().then(() => onLogout()))
 
+      return
     }, { signal: background.closing })
 
     controller.postMessage(null, [port2])
-
-    background.open()
-
-    console.log(background)
 
     setBackground(background)
   }, [controller])
@@ -77,6 +77,10 @@ export function App() {
   useEffect(() => {
     openOrThrow().catch(console.error)
   }, [openOrThrow])
+
+  useEffect(() => {
+    background?.open()
+  }, [background])
 
   useEffect(() => () => {
     background?.close()
@@ -89,6 +93,30 @@ export function App() {
 
     return () => removeEventListener("beforeunload", f)
   }, [background])
+
+  const resumeOrThrow = useCallback(async () => {
+    if (background == null)
+      return
+
+    const session = await background.request<SessionInit>({
+      method: "resume"
+    }).then(r => r.getOrThrow())
+
+    if (session == null)
+      return
+
+    const { user, comp, data } = session
+
+    const composite = new KDBX.CompositeKey(new Unknown(comp))
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    setSession({ user, comp: composite, kdbx: decrypted })
+  }, [background])
+
+  useEffect(() => {
+    resumeOrThrow().catch(console.error)
+  }, [resumeOrThrow])
 
   const [appname, setAppName] = useState<Nullable<string>>()
 
@@ -154,8 +182,19 @@ export function App() {
 
   const [session, setSession] = useState<SessionData>()
 
+  const sessionRef = useRef<Nullable<SessionData>>(null)
+
+  sessionRef.current = session
+
   const login = useCallback((session: SessionInit) => Promise.try(async () => {
-    console.log("login", background)
+    const { user, comp, data } = session
+
+    const composite = new KDBX.CompositeKey(new Unknown(comp))
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    setSession({ user, comp: composite, kdbx: decrypted })
+
     await background?.request({
       method: "login",
       params: [session]
@@ -163,6 +202,8 @@ export function App() {
   }).catch(Errors.display), [background])
 
   const logout = useCallback(() => Promise.try(async () => {
+    setSession(undefined)
+
     await background?.request({
       method: "logout"
     }).then(r => r.getOrThrow())

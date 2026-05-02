@@ -41,8 +41,6 @@ export class Peer extends EventTarget {
   #onMessage(event: MessageEvent) {
     const message = event.data as RpcMessageInit
 
-    console.log(message)
-
     if ("method" in message)
       this.#onRequest(message).catch(console.error)
     else

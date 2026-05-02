@@ -43,7 +43,7 @@ export function UserLoginButton() {
   </OppositeAnchor>
 }
 
-export function UserLoginMenu(props: { login(session: SessionInit): void }) {
+export function UserLoginMenu(props: { login(session: SessionInit): Promise<void> }) {
   const { login } = props
 
   const store = useStoreContext().getOrThrow()
@@ -685,7 +685,7 @@ function UserCreatePage() {
   </div>
 }
 
-function UserItem(props: { user: UserData } & { login(session: SessionInit): void }) {
+function UserItem(props: { user: UserData } & { login(session: SessionInit): Promise<void> }) {
   const { user, login } = props
 
   const path = usePathContext().getOrThrow()
@@ -725,7 +725,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionInit): voi
   </Fragment>
 }
 
-function UserLoginPage(props: { user: UserData } & { login(session: SessionInit): void }) {
+function UserLoginPage(props: { user: UserData } & { login(session: SessionInit): Promise<void> }) {
   const { user, login } = props
 
   const close = useCloseContext().getOrThrow()
@@ -751,14 +751,9 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionInit)
       return
 
     const data = new Uint8Array(await file1.arrayBuffer())
+    const comp = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, comp: composite.value.bytes, data })
+    await login({ user, comp: comp.value.bytes, data })
 
     close()
   }).catch(Errors.display), [user, login, file1, pass, close])
@@ -770,14 +765,9 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionInit)
       return
 
     const data = new Uint8Array(await file2.arrayBuffer())
+    const comp = new KDBX.CompositeKey(new Unknown(auth))
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const composite = new KDBX.CompositeKey(new Unknown(auth))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, comp: composite.value.bytes, data })
+    await login({ user, comp: comp.value.bytes, data })
 
     close()
   }).catch(Errors.display), [user, login, file2, auth, close])
@@ -808,14 +798,9 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionInit)
 
     const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
+    const comp = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, comp: composite.value.bytes, data })
+    await login({ user, comp: comp.value.bytes, data })
 
     close()
   }).catch(Errors.display), [user, login, pass, close])
@@ -832,14 +817,9 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionInit)
 
     const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
+    const comp = new KDBX.CompositeKey(new Unknown(stored))
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const composite = new KDBX.CompositeKey(new Unknown(stored))
-    const decrypted = await encrypted.decryptOrThrow(composite)
-
-    console.log(decrypted.inner.content.value.document)
-
-    login({ user, comp: composite.value.bytes, data })
+    await login({ user, comp: comp.value.bytes, data })
 
     close()
   }).catch(Errors.display), [user, login, auth, close])

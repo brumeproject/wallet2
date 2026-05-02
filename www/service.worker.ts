@@ -83,8 +83,6 @@ self.addEventListener("message", async (event) => {
 
   const peer = new Peer(event.ports[0])
 
-  console.log(peer)
-
   const onClose = () => {
     peer.close()
   }
@@ -116,9 +114,12 @@ self.addEventListener("message", async (event) => {
       return event.respondWith(onClose())
 
     if (request.method === "login")
-      return event.respondWith(onLogin(request))
+      return event.respondWith(Promise.resolve(onLogin(request)))
     if (request.method === "logout")
-      return event.respondWith(onLogout(request))
+      return event.respondWith(Promise.resolve(onLogout(request)))
+
+    if (request.method === "resume")
+      return event.respondWith(current)
 
     return
   }, { signal: peer.closing })
@@ -130,12 +131,4 @@ self.addEventListener("message", async (event) => {
   peers.add(peer)
 
   peer.open()
-
-  if (current == null)
-    return
-
-  await peer.request({
-    method: "login",
-    params: [current],
-  }).then(r => r.getOrThrow())
 })
