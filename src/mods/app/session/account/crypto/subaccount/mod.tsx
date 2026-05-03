@@ -13,7 +13,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
-import { IrnClient, WalletConnect, WcMetadata, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult, WcSessionRequestParams, WcUserRejectedError } from "@hazae41/latrine";
+import { IrnClient, WalletConnect, WcMetadata, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult, WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
@@ -216,12 +216,12 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
         const [message, account] = request.params as [string, string]
 
         if (account.toLowerCase() !== address.toLowerCase())
-          throw new WcUserRejectedError()
+          throw new WcUnsupportedAccountsError()
 
         return onPersonalSign(message)
       }
 
-      throw new WcUserRejectedError()
+      throw new WcUnsupportedMethodsError()
     }
 
     const onPersonalSign = async (message: string) => {
