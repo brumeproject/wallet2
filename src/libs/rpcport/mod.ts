@@ -2,7 +2,7 @@ import { RpcCounter, RpcInvalidRequestError, RpcMessageInit, RpcRequestInit, Rpc
 import { DataEvent, DataRespondableEvent } from "@hazae41/plume";
 import { Result } from "@hazae41/result-and-option";
 
-export interface PeerEventMap {
+export interface RpcPortEventMap {
   close: CloseEvent
 
   request: DataRespondableEvent<RpcRequestPreinit<unknown>, unknown>
@@ -10,7 +10,7 @@ export interface PeerEventMap {
   response: DataEvent<RpcResponseInit>
 }
 
-export class Peer extends EventTarget {
+export class RpcPort extends EventTarget {
 
   readonly #closed = new AbortController()
 
@@ -26,7 +26,7 @@ export class Peer extends EventTarget {
     return
   }
 
-  override addEventListener<K extends keyof PeerEventMap>(type: K, listener: (e: PeerEventMap[K]) => void, options?: AddEventListenerOptions): void
+  override addEventListener<K extends keyof RpcPortEventMap>(type: K, listener: (e: RpcPortEventMap[K]) => void, options?: AddEventListenerOptions): void
 
   override addEventListener(type: string, callback: (e: Event) => void, options?: AddEventListenerOptions): void
 
@@ -39,14 +39,15 @@ export class Peer extends EventTarget {
   }
 
   #onMessage(event: MessageEvent) {
-    const message = event.data as RpcMessageInit
+    const message = event.data as RpcMessageInit | string
+
+    if (typeof message === "string")
+      return this.close(message)
 
     if ("method" in message)
-      this.#onRequest(message).catch(console.error)
-    else
-      this.#onResponse(message).catch(console.error)
+      return this.#onRequest(message).catch(console.error)
 
-    return
+    return this.#onResponse(message).catch(console.error)
   }
 
   async #onRequest(request: RpcRequestInit<unknown>) {
@@ -84,6 +85,8 @@ export class Peer extends EventTarget {
     this.dispatchEvent(subevent)
 
     this.#closed.abort(reason)
+
+    this.port.postMessage(reason)
 
     this.port.close()
   }

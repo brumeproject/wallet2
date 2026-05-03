@@ -2,10 +2,8 @@
 
 /// <reference lib="webworker" />
 
-import { Nullable } from "@/libs/nullable/mod.ts";
-import { Peer } from "@/libs/peer/mod.ts";
+import { RpcPort } from "@/libs/rpcport/mod.ts";
 import { immutable } from "@hazae41/immutable";
-import { RpcRequestPreinit } from "@hazae41/jsonrpc";
 
 declare const self: ServiceWorkerGlobalScope
 
@@ -58,22 +56,7 @@ if (process.env.NODE_ENV === "development") {
   })
 }
 
-export interface UserData {
-  readonly uuid: string
-  readonly name: string
-  readonly fsfh?: Nullable<FileSystemFileHandle>
-  readonly auth?: Nullable<Uint8Array<ArrayBuffer>>
-}
-
-export interface SessionInit {
-  readonly user: UserData
-  readonly comp: Uint8Array<ArrayBuffer>
-  readonly data: Uint8Array<ArrayBuffer>
-}
-
-let current: Nullable<SessionInit> = null
-
-const peers = new Set<Peer>()
+const foregrounds = new Set<RpcPort>()
 
 self.addEventListener("message", async (event) => {
   if (event.origin !== self.origin)
@@ -81,54 +64,17 @@ self.addEventListener("message", async (event) => {
   if (event.source instanceof WindowClient === false)
     return
 
-  const peer = new Peer(event.ports[0])
+  const foreground = new RpcPort(event.ports[0])
 
-  const onClose = () => {
-    peer.close()
-  }
-
-  const onLogin = async (request: RpcRequestPreinit<unknown>) => {
-    const [session] = request.params as [SessionInit]
-
-    current = session
-
-    for (const peer of peers)
-      peer.request({ method: "login", params: [session] }).then(r => r.getOrThrow()).catch(console.error)
-
+  foreground.addEventListener("request", (event) => {
     return
-  }
+  }, { signal: foreground.closing })
 
-  const onLogout = async (request: RpcRequestPreinit<unknown>) => {
-    current = null
+  foreground.addEventListener("close", () => {
+    foregrounds.delete(foreground)
+  }, { signal: foreground.closing })
 
-    for (const peer of peers)
-      peer.request({ method: "logout" }).then(r => r.getOrThrow()).catch(console.error)
+  foregrounds.add(foreground)
 
-    return
-  }
-
-  peer.addEventListener("request", (event) => {
-    const request = event.data
-
-    if (request.method === "close")
-      return event.respondWith(onClose())
-
-    if (request.method === "login")
-      return event.respondWith(Promise.resolve(onLogin(request)))
-    if (request.method === "logout")
-      return event.respondWith(Promise.resolve(onLogout(request)))
-
-    if (request.method === "resume")
-      return event.respondWith(current)
-
-    return
-  }, { signal: peer.closing })
-
-  peer.addEventListener("close", () => {
-    peers.delete(peer)
-  }, { signal: peer.closing })
-
-  peers.add(peer)
-
-  peer.open()
+  foreground.open()
 })

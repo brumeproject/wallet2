@@ -17,7 +17,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { DragEvent, Fragment, KeyboardEvent, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { SessionInit } from "../session/mod.tsx";
+import { SessionData } from "../session/mod.tsx";
 
 React;
 
@@ -43,7 +43,7 @@ export function UserLoginButton() {
   </OppositeAnchor>
 }
 
-export function UserLoginMenu(props: { login(session: SessionInit): Promise<void> }) {
+export function UserLoginMenu(props: { login(session: SessionData): void }) {
   const { login } = props
 
   const store = useStoreContext().getOrThrow()
@@ -685,7 +685,7 @@ function UserCreatePage() {
   </div>
 }
 
-function UserItem(props: { user: UserData } & { login(session: SessionInit): Promise<void> }) {
+function UserItem(props: { user: UserData } & { login(session: SessionData): void }) {
   const { user, login } = props
 
   const path = usePathContext().getOrThrow()
@@ -725,7 +725,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionInit): Pro
   </Fragment>
 }
 
-function UserLoginPage(props: { user: UserData } & { login(session: SessionInit): Promise<void> }) {
+function UserLoginPage(props: { user: UserData } & { login(session: SessionData): void }) {
   const { user, login } = props
 
   const close = useCloseContext().getOrThrow()
@@ -751,9 +751,12 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionInit)
       return
 
     const data = new Uint8Array(await file1.arrayBuffer())
-    const comp = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
-    await login({ user, comp: comp.value.bytes, data })
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, file1, pass, close])
@@ -765,9 +768,12 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionInit)
       return
 
     const data = new Uint8Array(await file2.arrayBuffer())
-    const comp = new KDBX.CompositeKey(new Unknown(auth))
 
-    await login({ user, comp: comp.value.bytes, data })
+    const composite = new KDBX.CompositeKey(new Unknown(auth))
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, file2, auth, close])
@@ -798,9 +804,12 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionInit)
 
     const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
-    const comp = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
-    await login({ user, comp: comp.value.bytes, data })
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, pass, close])
@@ -817,9 +826,12 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionInit)
 
     const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
-    const comp = new KDBX.CompositeKey(new Unknown(stored))
 
-    await login({ user, comp: comp.value.bytes, data })
+    const composite = new KDBX.CompositeKey(new Unknown(stored))
+    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decryptOrThrow(composite)
+
+    login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, auth, close])
