@@ -262,6 +262,8 @@ export function CryptoAccountAddPage() {
   </Fragment>
 }
 
+const alphabet = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliett", "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango", "uniform", "victor", "whiskey", "xray", "yankee", "zulu"]
+
 export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
@@ -285,6 +287,10 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [$entry])
 
   const [subentries, setSubentries] = useState<string[]>([])
+
+  const push = useCallback(() => {
+    setSubentries([...subentries, capitalize(alphabet[subentries.length % alphabet.length])])
+  }, [subentries])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -347,7 +353,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                 </Fragment>)}
               <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
                 style={{ "transform": `translateY(-${subentries.length * 120}px)` }}
-                onClick={() => setSubentries(x => [...x, capitalize(MoneroSeedPhrase.generate().split(" ")[0])])}
+                onClick={push}
                 type="button">
                 <InButton>
                   <Outline.PlusIcon className="size-8" />
