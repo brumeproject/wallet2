@@ -1,4 +1,5 @@
-import { WideContrastButton } from "@/libs/button/mod.tsx";
+import { InButton, WideContrastButton } from "@/libs/button/mod.tsx";
+import { ChainData } from "@/libs/chainlist/mod.ts";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -12,6 +13,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
+import { IrnClient, WalletConnect, WcMetadata, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult, WcSessionRequestParams, WcUserRejectedError } from "@hazae41/latrine";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
@@ -19,6 +21,8 @@ import React, { Fragment, useCallback, useEffect, useMemo, useState } from "reac
 import { AccountMenuAnchor, CryptoAccountCard } from "../../mod.tsx";
 
 React;
+
+
 
 export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
   const { $entry, name, index } = props
@@ -112,117 +116,164 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
   }, [$entry])
 
-  // const [sessions, setSessions] = useState<WcSessionData[]>([])
+  const updateOrThrow = useCallback(async () => {
+    const res = await fetch("https://chainlist.org/rpcs.json")
 
-  // const fetchChainsOrThrow = useCallback(async () => {
-  //   const res = await fetch("https://chainlist.org/rpcs.json")
+    if (!res.ok)
+      throw new Error(await res.text(), { cause: res })
 
-  //   if (!res.ok)
-  //     throw new Error(await res.text(), { cause: res })
+    const chainlist = await res.json() as Array<ChainData>
 
-  //   const chainlist = await res.json() as Array<ChainData>
+    return chainlist.filter(x => x.rpc.find(x => {
+      try {
+        const url = new URL(x.url)
 
-  //   return chainlist.filter(x => x.rpc.find(x => {
-  //     try {
-  //       const url = new URL(x.url)
+        if (url.protocol !== "https:")
+          return false
 
-  //       if (url.protocol !== "https:")
-  //         return false
+        if (!url.origin.endsWith(".publicnode.com"))
+          return false
 
-  //       if (!url.origin.endsWith(".publicnode.com"))
-  //         return false
+        return true
+      } catch {
+        return false
+      }
+    })).map(x => x.chainId)
+  }, [])
 
-  //       return true
-  //     } catch {
-  //       return false
-  //     }
-  //   })).map(x => x.chainId)
-  // }, [])
+  const [sessions, setSessions] = useState<[WcSession, WcMetadata][]>([])
 
-  // const connectOrAlert = useCallback(() => Promise.try(async () => {
-  //   if (seedphrase == null)
-  //     return
+  const respondOrThrow = useCallback(async (signal = new AbortController().signal) => {
+    if (seedphrase == null)
+      return
 
-  //   const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-  //   const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
-  //   const upub = secp256k1.getPublicKey(xsig.key, false)
+    const url = prompt("WalletConnect URI")
 
-  //   const address = `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
+    if (url == null)
+      return
 
-  //   const url = prompt("WalletConnect URI")
+    await using stack = new AsyncDisposableStack()
 
-  //   if (url == null)
-  //     return
+    const cleaner = new AbortController()
+    stack.defer(() => cleaner.abort())
 
-  //   const peer = WcPairParams.parse(url)
-  //   const self = { name: "Brume Wallet", description: "The secure and private wallet", url: "http://wallet.brume.tech", icons: [] }
+    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+    const upub = secp256k1.getPublicKey(xsig.key, false)
 
-  //   const chains = await fetchChainsOrThrow()
+    const address = `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
 
-  //   const namespaces = {
-  //     eip155: {
-  //       chains: chains.map(chainId => `eip155:${chainId}`),
-  //       methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v4"],
-  //       events: ["chainChanged", "accountsChanged"],
-  //       accounts: chains.map(chainId => `eip155:${chainId}:${address}`)
-  //     }
-  //   }
+    const jwk = crypto.getRandomValues(new Uint8Array(32))
 
-  //   const client = await WalletConnect.open(crypto.getRandomValues(new Uint8Array(32)), "c6c9bacd35afa3eb9e6cccf6d8464395")
+    const client = await IrnClient.open(WalletConnect.RELAY, jwk, "c6c9bacd35afa3eb9e6cccf6d8464395")
 
-  //   const session = await WalletConnect.respond(client, () => true, { peer, self, namespaces }, AbortSignal.timeout(5000))
+    const pairing = await WcPairing.from(client, WcPairingParams.parse(url))
 
-  //   const onRequest = (event: DataRespondableEvent<WcSessionRequestParams<unknown>, unknown>) => {
-  //     const { chainId, request } = event.data
+    const proposed = Promise.withResolvers<WcSessionProposeParams>()
+    stack.defer(() => proposed.reject())
+    proposed.promise.catch(() => { })
 
-  //     console.log({ chainId, request })
+    const responded = Promise.withResolvers<WcSessionProposeResult>()
+    stack.defer(() => responded.reject())
+    responded.promise.catch(() => { })
 
-  //     if (request.method === "personal_sign") {
-  //       const [message, account] = request.params as [string, string]
+    pairing.addEventListener("propose", event => {
+      const proposal = event.data
 
-  //       if (account.toLowerCase() !== address.toLowerCase())
-  //         return
+      proposed.resolve(proposal)
 
-  //       event.stopImmediatePropagation()
-  //       event.respondWith(onPersonalSign(message))
+      event.respondWith(responded.promise)
+    }, { signal: cleaner.signal })
 
-  //       return
-  //     }
+    const upgraded = Promise.withResolvers<WcSession>()
+    stack.defer(() => upgraded.reject())
+    upgraded.promise.catch(() => { })
 
-  //     return
-  //   }
+    pairing.addEventListener("upgrade", event => upgraded.resolve(event.data), { signal: cleaner.signal })
+    pairing.addEventListener("close", upgraded.reject, { signal: cleaner.signal })
+    signal.addEventListener("abort", upgraded.reject, { signal: cleaner.signal })
 
-  //   const onPersonalSign = async (message: string) => {
-  //     const msgraw = Uint8Array.fromHex(message.slice(2).padStart(64, "0"))
-  //     const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
+    await pairing.open()
 
-  //     const cursor = new Cursor(new Uint8Array(prefix.length + msgraw.length))
-  //     cursor.writeOrThrow(prefix)
-  //     cursor.writeOrThrow(msgraw)
+    stack.defer(async () => await pairing.close())
+    stack.defer(async () => await pairing.delete())
 
-  //     const digest = keccak_256(cursor.bytes)
-  //     const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false })
+    const proposal = await proposed.promise
 
-  //     return `0x${sigraw.toHex()}`
-  //   }
+    if (!confirm(`Do you want to connect to ${proposal.proposer.metadata.name}?`))
+      responded.reject(new WcUserRejectedError())
 
-  //   const cleaner = new AbortController()
-  //   const { signal } = cleaner
+    responded.resolve(await pairing.respond(proposal))
 
-  //   session.addEventListener("request", onRequest, { signal })
+    await responded.promise
 
-  //   await session.subscribe()
+    const session = await upgraded.promise
 
-  //   await session.fetch()
+    const onRequest = (params: WcSessionRequestParams<unknown>) => {
+      const { chainId, request } = params
 
-  //   const settled = await session.settled
+      if (request.method === "personal_sign") {
+        const [message, account] = request.params as [string, string]
 
-  //   session.addEventListener("close", cleaner.abort, { signal })
+        if (account.toLowerCase() !== address.toLowerCase())
+          throw new WcUserRejectedError()
 
-  //   signal.addEventListener("abort", () => setSessions(x => x.filter(y => y !== settled)), { signal })
+        return onPersonalSign(message)
+      }
 
-  //   setSessions(x => [...x, settled])
-  // }).catch(Errors.display), [seedphrase, index])
+      throw new WcUserRejectedError()
+    }
+
+    const onPersonalSign = async (message: string) => {
+      const msgraw = Uint8Array.fromHex(message.slice(2).padStart(64, "0"))
+      const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
+
+      const cursor = new Cursor(new Uint8Array(prefix.length + msgraw.length))
+      cursor.writeOrThrow(prefix)
+      cursor.writeOrThrow(msgraw)
+
+      const digest = keccak_256(cursor.bytes)
+      const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false })
+
+      return `0x${sigraw.toHex()}`
+    }
+
+    session.addEventListener("request", event => event.respondWith(onRequest(event.data)), { signal: session.closing })
+    session.addEventListener("close", () => setSessions(x => x.filter(y => y[0] !== session)), { signal: session.closing })
+
+    await session.open()
+
+    let success = false
+
+    stack.defer(async () => success ? undefined : await session.close())
+    stack.defer(async () => success ? undefined : await session.delete())
+
+    const relay = session.channel.client.relay
+
+    const { requiredNamespaces, optionalNamespaces } = proposal
+
+    const chains = await updateOrThrow()
+
+    const namespaces = {
+      eip155: {
+        chains: chains.map(chainId => `eip155:${chainId}`),
+        methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v4"],
+        events: ["chainChanged", "accountsChanged"],
+        accounts: chains.map(chainId => `eip155:${chainId}:${address}`)
+      }
+    }
+
+    const metadata = { name: "Brume Wallet", description: "The secure and private wallet", url: "http://wallet.brume.tech", icons: [] }
+    const controller = { publicKey: new Uint8Array(await crypto.subtle.exportKey("raw", pairing.keypair.publicKey)).toHex(), metadata }
+
+    const expiry = Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60)
+
+    await session.settle({ relay, namespaces, requiredNamespaces, optionalNamespaces, pairingTopic: pairing.channel.topic, controller, expiry })
+
+    success = true
+
+    setSessions(x => [...x, [session, proposal.proposer.metadata]])
+  }, [])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -263,21 +314,21 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           </div>
           <div className="h-4" />
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-            {/* <div className="flex flex-col"
+            <div className="flex flex-col"
               style={{ "height": `${180 + (sessions.length * 60)}px` }}>
               {sessions.map((data, index) =>
                 <Fragment key={index}>
-                  <CryptoSessionAnchor $entry={$entry} name={data.peer.name} index={index} />
+                  <CryptoSessionAnchor $entry={$entry} name={data[1].name} index={index} />
                 </Fragment>)}
               <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
                 style={{ "transform": `translateY(-${sessions.length * 120}px)` }}
-                onClick={connectOrAlert}
+                onClick={() => respondOrThrow()}
                 type="button">
                 <InButton>
                   <Outline.PlusIcon className="size-8" />
                 </InButton>
               </button>
-            </div> */}
+            </div>
           </div>
         </Fragment>
       </form>

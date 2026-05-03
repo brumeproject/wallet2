@@ -286,7 +286,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
-  const [subentries, setSubentries] = useState<string[]>([])
+  const [subentries, setSubentries] = useState<string[]>([capitalize(alphabet[0])])
 
   const push = useCallback(() => {
     setSubentries([...subentries, capitalize(alphabet[subentries.length % alphabet.length])])
