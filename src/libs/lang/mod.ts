@@ -118,7 +118,7 @@ export namespace Lang {
     return "en"
   }
 
-  export function match(record: Record<Lang, string>) {
+  export function match<T>(record: Record<Lang, T>) {
     const served = langs[document.documentElement.lang]
 
     if (served != null)

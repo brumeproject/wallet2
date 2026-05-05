@@ -262,7 +262,38 @@ export function CryptoAccountAddPage() {
   </Fragment>
 }
 
-const alphabet = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliett", "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango", "uniform", "victor", "whiskey", "xray", "yankee", "zulu"]
+const Alphabet = {
+  en: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  zh: ["阿尔法", "贝塔", "伽马", "德尔塔", "伊普西龙", "泽塔", "埃塔", "西塔", "约塔", "卡帕", "拉姆达", "缪", "纽", "克西", "奥米克戎", "派", "柔", "西格玛", "陶", "乌普西龙", "菲", "凯", "普西", "欧米茄"],
+  hi: ["अल्फा", "बीटा", "गामा", "डेल्टा", "एप्सिलॉन", "ज़ेटा", "एटा", "थीटा", "आईओटा", "कप्पा", "लैम्ब्डा", "म्यू", "न्यू", "क्षी", "ओमिक्रॉन", "पाई", "रोहू", "सिग्मा", "ताऊ", "उप्सिलॉन", "फाई", "ची", "प्सी", "ओमेगा"],
+  es: ["alfa", "beta", "gamma", "delta", "épsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicrón", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  ar: ["ألفا", "بيتا", "جاما", "دلتا", "إبسيلون", "زيتا", "إيتا", "ثيتا", "يوتا", "كابا", "لامدا", "موو", "نوو", "كسيي", "أوميكرون", "باي", "رو", "سيغما", "تاو", "أبسيلون", "فاي", "تشي", "بسي", "أوميغا"],
+  fr: ["alpha", "bêta", "gamma", "delta", "epsilon", "zêta", "êta", "thêta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "oméga"],
+  de: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  ru: ["альфа", "бета", "гамма", "дельта", "эпсилон", "дзета", "эта", "тета", "йота", "каппа", "лямбда", "мю", "ню", "кси", "омикрон", "пи", "ро", "сигма", "тау", "ипсилон", "фи", "хи", "пси", "омега"],
+  pt: ["alfa", "beta", "gama", "delta", "épsilon", "zeta", "eta", "teta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  ja: ["アルファ", "ベータ", "ガンマ", "デルタ", "イプシロン", "ゼータ", "エータ", "シータ", "イオタ", "カッパ", "ラムダ", "ミュー", "ニュー", "クシー", "オミクロン", "パイ", "ロー", "シグマ", "タウ", "ウプシロン", "ファイ", "カイ", "プサイ", "オメガ"],
+  pa: ["ਅਲਫਾ", "ਬੀਟਾ", "ਗਾਮਾ", "ਡੈਲਟਾ", "ਐਪਸਿਲਨ", "ਜ਼ੇਟਾ", "ਏਟਾ", "ਥੀਟਾ", "ਆਈਓਟਾ", "ਕੱਪਾ", "ਲੈਮਡਾ", "ਮਿਊ", "ਨਿਊ", "ਕਸੀ", "ਓਮਿਕਰੋਨ", "ਪਾਈ", "ਰੋਹੂ", "ਸਿਗਮਾ", "ਤਾਉ", "ਉਪਸਿਲਨ", "ਫਾਈ", "ਚੀ", "ਪਸਾਈ", "ਓਮੇਗਾ"],
+  bn: ["আলফা", "বেটা", "গামা", "ডেল্টা", "এপসিলন", "জেটা", "এটা", "থিটা", "আইওটা", "কাপ্পা", "ল্যাম্বডা", "মিউ", "নিউ", "ক্সি", "ওমিক্রন", "পাই", "রো", "সিগমা", "তাউ", "উপসিলন", "ফাই", "চি", "প্সি", "ওমেগা"],
+  id: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  ur: ["الفا", "بیٹا", "گاما", "ڈیلٹا", "ایپسیلون", "زیٹا", "ایٹا", "تھیٹا", "آئیوٹا", "کاپا", "لامبدا", "میو", "نیو", "کسی", "ومیکرون", "پائی", "رو", "سیگما", "تاؤ", "اپسیلون", "فائی", "چی", "پسی", "اومیگا"],
+  ms: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  it: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  tr: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  ta: ["அல்ஃபா", "பீட்டா", "காமா", "டெல்டா", "எப்சிலான்", "ஜீட்டா", "ஏட்டா", "தீட்டா", "ஐயோட்டா", "காப்பா", "லாம்டா", "மியூ", "ன்யூ", "க்ஸி", "ஓமிக்ரோன்", "பை", "ரோ", "சிக்மா", "தாவ்", "உப்சிலான்", "பை", "சி", "ப்ஸை", "ஓமேகா"],
+  te: ["అల్ఫా", "బీటా", "గామా", "డెల్టా", "ఎప్సిలాన్", "జీటా", "ఏటా", "తీటా", "ఐయోటా", "కప్పా", "లామ్డా", "మ్యూ", "న్యూ", "క్సి", "ఒమిక్రాన్", "పై", "రో", "సిగ్మా", "తావ్", "ఉప్సిలాన్", "ఫై", "చి", "ప్సై", "ఓమెగా"],
+  ko: ["알파", "베타", "감마", "델타", "엡실론", "제타", "에타", "세타", "아이오타", "카파", "람다", "뮤", "뉴", "크시", "오미크론", "파이", "로", "시그마", "타우", "업실론", "파이", "치", "프사이", "오메가"],
+  vi: ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  pl: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  ro: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  nl: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  el: ["άλφα", "βήτα", "γάμμα", "δέλτα", "έψιλον", "ζήτα", "ήτα", "θήτα", "ιώτα", "κάππα", "λάμδα", "μυ", "νυ", "ξι", "ομικρόν", "πι", "ρώ", "σίγμα", "ταυ", "ύψιλον", "φι", "χι", "ψι", "ωμέγα"],
+  th: ["อัลฟา", "เบต้า", "แกมมา", "เดลต้า", "อีปซิลอน", "ซีต้า", "เอต้า", "ธีต้า", "ไอโอตา", "คัปปา", "แลมบ์ดา", "มิว", "นิว", "คซี", "โอมิครอน", "ไพ", "โร", "ซิกมา", "เทา", "อัพไซลอน", "ไฟ", "ชี", "พไซ", "โอเมก้า"],
+  cs: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  hu: ["alfa", "béta", "gamma", "delta", "epsilon", "zéta", "éta", "théta", "ióta", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  sv: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+  da: ["alfa", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"],
+}
 
 export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
@@ -286,10 +317,15 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
-  const [subentries, setSubentries] = useState<string[]>([capitalize(alphabet[0])])
+  const [subentries, setSubentries] = useState<string[]>([capitalize(Lang.match(Alphabet)[0])])
 
   const push = useCallback(() => {
-    setSubentries([...subentries, capitalize(alphabet[subentries.length % alphabet.length])])
+    const alphabet = Lang.match(Alphabet)
+
+    const index = subentries.length % alphabet.length
+    const entry = capitalize(alphabet[index])
+
+    setSubentries([...subentries, entry])
   }, [subentries])
 
   return <Fragment>
