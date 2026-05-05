@@ -1,4 +1,4 @@
-import { InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
+import { InOther, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
@@ -30,9 +30,9 @@ export function AccountAddButtonInGrid() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <InAnchor>
+    <InOther>
       <Outline.PlusIcon className="size-8" />
-    </InAnchor>
+    </InOther>
   </a>
 }
 
@@ -314,7 +314,7 @@ export function ColorAnchor(props: { color?: Nullable<string> }) {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <InAnchor>
+    <InOther>
       <div className="size-5 rounded-full bg-opposite
         data-[color=red]:bg-red-400 
         data-[color=orange]:bg-orange-400 
@@ -351,7 +351,7 @@ export function ColorAnchor(props: { color?: Nullable<string> }) {
         in-dark:data-[color=pink]:bg-pink-500
         in-dark:data-[color=rose]:bg-rose-500"
         data-color={color} />
-    </InAnchor>
+    </InOther>
   </a>
 }
 
@@ -424,9 +424,9 @@ export function AccountMenuAnchor() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <InAnchor>
+    <InOther>
       <Outline.EllipsisVerticalIcon className="size-6" />
-    </InAnchor>
+    </InOther>
   </a>
 }
 

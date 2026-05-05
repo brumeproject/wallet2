@@ -1,24 +1,29 @@
-import { InButton, WideContrastButton } from "@/libs/button/mod.tsx";
+import { InButton, WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { ChainData } from "@/libs/chainlist/mod.ts";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
+import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
-import { BitcoinSeedPhrase } from "@hazae41/broca";
+import { capitalize } from "@/libs/string/mod.ts";
+import { useSessionContext } from "@/mods/app/session/mod.tsx";
+import { Writable } from "@hazae41/binary";
+import { BitcoinSeedPhrase, MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
 import { IrnClient, WalletConnect, WcMetadata, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult, WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
+import { useCloseContext } from "@hazae41/react-close-context";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { AccountMenuAnchor, CryptoAccountCard } from "../../mod.tsx";
+import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { AccountMenuAnchor, ColorAnchor, ColorMenu, CryptoAccountCard } from "../../mod.tsx";
 
 React;
 
@@ -331,6 +336,232 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
             </div>
           </div>
         </Fragment>
+      </form>
+    </div>
+  </Fragment>
+}
+
+export function CryptoSessionAddPage() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const close = useCloseContext().getOrThrow()
+
+  const session = useSessionContext().getOrThrow()
+
+  const [flipped, setFlipped] = useState(false)
+
+  const seedword = useMemo(() => {
+    return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
+  }, [])
+
+  const [$title, setTitle] = useState("")
+
+  const [$seedphrase, setSeedPhrase] = useState("")
+
+  const [$notes, setNotes] = useState("")
+
+  const title = useDeferredValue($title || seedword)
+
+  const [color, setColor] = useState<Nullable<string>>(["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "pink", "rose"][Math.floor(Math.random() * 16)])
+
+  const seedphrase = useDeferredValue($seedphrase)
+
+  const notes = useDeferredValue($notes)
+
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx, comp } = session.value
+
+    const $file = kdbx.inner.content.value
+    const $root = $file.getRootOrThrow()
+
+    const $group = $root.getDirectGroupByIndexOrThrow(0)
+    const $entry = $group.addEntryOrThrow()
+
+    $entry.addStringOrThrow("Title", title)
+
+    if (color)
+      $entry.addStringOrThrow("Color", color)
+
+    if (seedphrase)
+      $entry.addStringOrThrow("SeedPhrase", seedphrase, true)
+
+    if (notes)
+      $entry.addStringOrThrow("Notes", notes)
+
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+  }, [session, title, color, seedphrase, notes])
+
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = session.value.user.fsfh
+
+    if (fsfh == null)
+      return
+
+    const content = await encryptOrThrow()
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    session.update()
+
+    close()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+    const content = await encryptOrThrow()
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    session.update()
+
+    close()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const onGenerateClick = useCallback(() => Promise.try(async () => {
+    setSeedPhrase(await BitcoinSeedPhrase.generate(256))
+  }).catch(Errors.display), [])
+
+  const [valid, setValid] = useState(false)
+
+  const getValidOrThrow = useCallback(async () => {
+    return await BitcoinSeedPhrase.validate(seedphrase)
+  }, [seedphrase])
+
+  useEffect(() => {
+    getValidOrThrow().then(setValid).catch(console.error)
+  }, [getValidOrThrow])
+
+  const error = useMemo(() => {
+    if (!seedphrase.length)
+      return Lang.match({ en: "Seed phrase is required", zh: "助记词是必需的", hi: "सीड वाक्य आवश्यक है", es: "La frase semilla es obligatoria", ar: "عبارة البذور مطلوبة", fr: "La phrase de récupération est requise", de: "Seed-Phrase ist erforderlich", ru: "Требуется сид-фраза", pt: "A frase semente é obrigatória", ja: "シードフレーズは必須です", pa: "ਸੀਡ ਫਰੇਜ਼ ਦੀ ਲੋੜ ਹੈ", bn: "সিড বাক্য প্রয়োজন", id: "Frasa seed diperlukan", ur: "سیڈ فریز ضروری ہے", ms: "Frasa seed diperlukan", it: "La frase seed è obbligatoria", tr: "Seed cümlesi gereklidir", ta: "சீட் வாக்கியம் தேவை", te: "సీడ్ వాక్యం అవసరం", ko: "시드 구문이 필요합니다", vi: "Cụm từ seed là bắt buộc", pl: "Fraza seed jest wymagana", ro: "Fraza seed este obligatorie", nl: "Seed-phrase is verplicht", el: "Η φράση σπόρου είναι υποχρεωτική", th: "วลีเมล็ดพันธุ์เป็นสิ่งจำเป็น", cs: "Seed phrase je povinná", hu: "A seed kifejezés kötelező", sv: "Seed phrase är obligatorisk", da: "Seed phrase er påkrævet" })
+    if (!valid)
+      return Lang.match({ en: "Seed phrase is invalid", zh: "助记词无效", hi: "सीड वाक्य अमान्य है", es: "La frase semilla no es válida", ar: "عبارة البذور غير صالحة", fr: "La phrase de récupération est invalide", de: "Seed-Phrase ist ungültig", ru: "Сид-фраза недействительна", pt: "A frase semente é inválida", ja: "シードフレーズが無効です", pa: "ਸੀਡ ਫਰੇਜ਼ ਅਵੈਧ ਹੈ", bn: "সিড বাক্য অবৈধ", id: "Frasa seed tidak valid", ur: "سیڈ فریز غیر معتبر ہے", ms: "Frasa seed tidak sah", it: "La frase seed non è valida", tr: "Seed cümlesi geçersiz", ta: "சீட் வாக்கியம் தவறானது", te: "సీడ్ వాక్యం చెల్లదు", ko: "시드 구문이 유효하지 않습니다", vi: "Cụm từ seed không hợp lệ", pl: "Fraza seed jest nieprawidłowa", ro: "Fraza seed este invalidă", nl: "Seed-phrase is ongeldig", el: "Η φράση σπόρου δεν είναι έγκυρη", th: "วลีเมล็ดพันธุ์ไม่ถูกต้อง", cs: "Seed phrase je neplatná", hu: "A seed kifejezés érvénytelen", sv: "Seed phrase är ogiltig", da: "Seed phrase er ugyldig" })
+    return
+  }, [seedphrase, valid])
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/color" &&
+        <PathPaper>
+          <ColorMenu ok={setColor} />
+        </PathPaper>}
+    </SubpathProvider>
+    <div className="flex flex-col grow p-6">
+      <h1 className="text-xl font-medium">
+        {Lang.match({ en: "Add crypto account", zh: "添加加密账户", hi: "क्रिप्टो खाता जोड़ें", es: "Agregar cuenta de cripto", ar: "إضافة حساب تشفير", fr: "Ajouter un compte crypto", de: "Krypto-Konto hinzufügen", ru: "Добавить крипто-аккаунт", pt: "Adicionar conta cripto", ja: "暗号通貨アカウントを追加", pa: "ਕ੍ਰਿਪਟੋ ਖਾਤਾ ਸ਼ਾਮਲ ਕਰੋ", bn: "ক্রিপ্টো অ্যাকাউন্ট যোগ করুন", id: "Tambahkan akun kripto", ur: "کرپٹو اکاؤنٹ شامل کریں", ms: "Tambahkan akun kripto", it: "Aggiungi account cripto", tr: "Kripto hesabı ekle", ta: "கிரிப்டோ கணக்கு சேர்க்கவும்", te: "క్రిప్టో ఖాతా జోడించండి", ko: "암호화폐 계정 추가", vi: "Thêm tài khoản crypto", pl: "Dodaj konto krypto", ro: "Adaugă cont crypto", nl: "Crypto-account toevoegen", el: "Προσθήκη λογαριασμού κρυπτογράφησης", th: "เพิ่มบัญชีคริปโต", cs: "Přidat krypto účet", hu: "Kripto fiók hozzáadása", sv: "Lägg till krypto-konto", da: "Tilføj krypto-konto" })}
+      </h1>
+      <div className="h-6" />
+      <div className="flex items-center justify-center">
+        <CryptoAccountCard
+          title={title}
+          color={color}
+          flip={flipped}
+          onFlipChange={setFlipped} />
+      </div>
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
+        <input className="hidden"
+          autoComplete="off"
+          name="username" />
+        <div className="h-6" />
+        <div className="font-medium">
+          {Lang.match({ en: "Title", zh: "标题", hi: "शीर्षक", es: "Título", ar: "العنوان", fr: "Titre", de: "Titel", ru: "Название", pt: "Título", ja: "タイトル", pa: "ਸਿਰਲੇਖ", bn: "শিরোনাম", id: "Judul", ur: "عنوان", ms: "Judul", it: "Titolo", tr: "Başlık", ta: "தலைப்பு", te: "శీర్షిక", ko: "제목", vi: "Tiêu đề", pl: "Tytuł", ro: "Titlu", nl: "Titel", el: "Τίτλος", th: "หัวข้อเรื่อง", cs: "Název", hu: "Cím", sv: "Titel", da: "Titel" })}
+        </div>
+        <div className="text-default-contrast">
+          {Lang.match({ en: "A name to identify this account.", zh: "用于识别此账户的名称。", hi: "इस खाते की पहचान करने के लिए एक नाम।", es: "Un nombre para identificar esta cuenta.", ar: "اسم لتحديد هذا الحساب.", fr: "Un nom pour identifier ce compte.", de: "Ein Name zur Identifizierung dieses Kontos.", ru: "Имя для идентификации этого аккаунта.", pt: "Um nome para identificar esta conta.", ja: "このアカウントを識別するための名前。", pa: "ਇਸ ਖਾਤੇ ਦੀ ਪਛਾਣ ਕਰਨ ਲਈ ਇੱਕ ਨਾਮ।", bn: "এই অ্যাকাউন্টটি সনাক্ত করার জন্য একটি নাম।", id: "Nama untuk mengidentifikasi akun ini.", ur: "اس اکاؤنٹ کی شناخت کے لیے ایک نام۔", ms: "Nama untuk mengenal pasti akaun ini.", it: "Un nome per identificare questo account.", tr: "Bu hesabı tanımlamak için bir ad.", ta: "இந்த கணக்கை அடையாளம் காண ஒரு பெயர்.", te: "ఈ ఖాతాను గుర్తించడానికి ఒక పేరు.", ko: "이 계정을 식별하기 위한 이름.", vi: "Một tên để xác định tài khoản này.", pl: "Nazwa do identyfikacji tego konta.", ro: "Un nume pentru a identifica acest cont.", nl: "Een naam om dit account te identificeren.", el: "Ένα όνομα για να αναγνωρίσετε αυτόν τον λογαριασμό.", th: "ชื่อเพื่อระบุบัญชีนี้", cs: "Název pro identifikaci tohoto účtu.", hu: "Egy név ennek a fióknak az azonosításához.", sv: "Ett namn för att identifiera detta konto.", da: "Et navn til at identificere denne konto." })}
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <input className="w-full focus-visible:outline-none"
+            autoComplete="off"
+            placeholder={seedword}
+            onChange={e => setTitle(e.target.value)}
+            value={$title} />
+          <div className="flex items-center gap-2">
+            <ColorAnchor color={color} />
+          </div>
+        </div>
+        <div className="h-6" />
+        <div className="font-medium">
+          {Lang.match({ en: "Seed phrase", zh: "助记词", hi: "सीड वाक्य", es: "Frase semilla", ar: "عبارة البذور", fr: "Phrase de récupération", de: "Seed-Phrase", ru: "Сид-фраза", pt: "Frase semente", ja: "シードフレーズ", pa: "ਸੀਡ ਫਰੇਜ਼", bn: "সিড বাক্য", id: "Frasa seed", ur: "سیڈ فریز", ms: "Frasa seed", it: "Frase seed", tr: "Seed cümlesi", ta: "சீட் வாக்கியம்", te: "సీడ్ వాక్యం", ko: "시드 구문", vi: "Cụm từ seed", pl: "Fraza seed", ro: "Fraza seed", nl: "Seed-phrase", el: "Φράση σπόρου", th: "วลีเมล็ดพันธุ์", cs: "Seed phrase", hu: "Seed kifejezés", sv: "Seed phrase", da: "Seed phrase" })}
+        </div>
+        <div className="text-default-contrast">
+          {Lang.match({ en: "Your BIP-39 seed phrase.", zh: "您的 BIP-39 助记词。", hi: "आपका BIP-39 सीड वाक्य।", es: "Su frase semilla BIP-39.", ar: "عبارة البذور BIP-39 الخاصة بك.", fr: "Votre phrase de récupération BIP-39.", de: "Ihre BIP-39 Seed-Phrase.", ru: "Ваша BIP-39 сид-фраза.", pt: "Sua frase semente BIP-39.", ja: "あなたの BIP-39 シードフレーズ。", pa: "ਤੁਹਾਡਾ BIP-39 ਸੀਡ ਫਰੇਜ਼।", bn: "আপনার BIP-39 সিড বাক্য।", id: "Frasa seed BIP-39 Anda.", ur: "آپ کا BIP-39 سیڈ فریز۔", ms: "Frasa seed BIP-39 anda.", it: "La tua frase seed BIP-39.", tr: "BIP-39 seed cümleniz.", ta: "உங்கள் BIP-39 சீட் வாக்கியம்.", te: "మీ BIP-39 సీడ్ వాక్యం.", ko: "귀하의 BIP-39 시드 구문.", vi: "Cụm từ seed BIP-39 của bạn.", pl: "Twoja fraza seed BIP-39.", ro: "Fraza seed BIP-39 a dvs.", nl: "Uw BIP-39 seed phrase.", el: "Η φράση σπόρου BIP-39 σας.", th: "วลีเมล็ดพันธุ์ BIP-39 ของคุณ.", cs: "Vaše BIP-39 seed phrase.", hu: "Az Ön BIP-39 seed kifejezése.", sv: "Din BIP-39 seed phrase.", da: "Din BIP-39 seed phrase." })}
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full focus-visible:outline-none"
+            rows={3}
+            autoComplete="off"
+            onChange={e => setSeedPhrase(e.target.value)}
+            value={flipped ? $seedphrase : $seedphrase.replaceAll(/./g, "•")} />
+        </div>
+        <div className="h-2" />
+        <div className="flex items-center gap-2">
+          <WideContrastButton
+            onClick={() => setFlipped(x => !x)}>
+            {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+            {flipped ? Lang.match({ en: "Hide", zh: "隐藏", hi: "छिपाएं", es: "Ocultar", ar: "إخفاء", fr: "Cacher", de: "Verbergen", ru: "Скрыть", pt: "Esconder", ja: "隠す", pa: "ਛੁਪਾਓ", bn: "লুকান", id: "Sembunyikan", ur: "چھپائیں", ms: "Sembunyikan", it: "Nascondi", tr: "Gizle", ta: "மறை", te: "దాచు", ko: "숨기기", vi: "Ẩn", pl: "Ukryj", ro: "Ascundeți", nl: "Verbergen", el: "Κρύβω", th: "ซ่อน", cs: "Skrýt", hu: "Elrejtés", sv: "Dölj", da: "Skjul" }) : Lang.match({ en: "Show", zh: "显示", hi: "दिखाएं", es: "Mostrar", ar: "إظهار", fr: "Afficher", de: "Anzeigen", ru: "Показать", pt: "Mostrar", ja: "表示する", pa: "ਦਿਖਾਓ", bn: "দেখান", id: "Tampilkan", ur: "دکھائیں", ms: "Tampilkan", it: "Mostra", tr: "Göster", ta: "காட்டு", te: "తెరచు", ko: "보이기", vi: "Hiển thị", pl: "Pokaż", ro: "Afișați", nl: "Tonen", el: "Εμφάνιση ", th: "แสดง ", cs: "Zobrazit ", hu: "Megjelenítés ", sv: "Visa ", da: "Vis" })}
+          </WideContrastButton>
+          <WideContrastButton
+            onClick={onGenerateClick}>
+            <Outline.SparklesIcon className="size-5" />
+            {Lang.match({ en: "Generate", zh: "生成", hi: "उत्पन्न करें", es: "Generar", ar: "توليد", fr: "Générer", de: "Generieren", ru: "Создать", pt: "Gerar", ja: "生成", pa: "ਤਿਆਰ ਕਰੋ", bn: "উত্পন্ন করুন", id: "Hasilkan", ur: "تخلیق کریں", ms: "Hasilkan", it: "Genera", tr: "Oluştur", ta: "உருவாக்கு", te: "సృష్టించు", ko: "생성", vi: "Tạo", pl: "Generuj", ro: "Generează", nl: "Genereren", el: "Δημιουργία", th: "สร้าง", cs: "Generovat", hu: "Generálás", sv: "Generera", da: "Generer" })}
+          </WideContrastButton>
+        </div>
+        <div className="h-6" />
+        <div className="font-medium">
+          {Lang.match({ en: "Notes", zh: "备注", hi: "नोट्स", es: "Notas", ar: "ملاحظات", fr: "Notes", de: "Notizen", ru: "Заметки", pt: "Notas", ja: "ノート", pa: "ਨੋਟਸ", bn: "নোটস", id: "Catatan", ur: "نوٹس", ms: "Nota", it: "Note", tr: "Notlar", ta: "குறிப்புகள்", te: "గమనికలు", ko: "노트", vi: "Ghi chú", pl: "Notatki", ro: "Note", nl: "Notities", el: "Σημειώσεις", th: "บันทึก", cs: "Poznámky", hu: "Jegyzetek", sv: "Anteckningar", da: "Noter" })}
+        </div>
+        <div className="text-default-contrast">
+          {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ.", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col  gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full resize-none focus-visible:outline-none"
+            rows={6}
+            autoComplete="off"
+            placeholder={Lang.match({ en: "I use this account for...", zh: "我使用这个账户来...", hi: "मैं इस खाते का उपयोग करता हूं...", es: "Uso esta cuenta para...", ar: "أستخدم هذا الحساب لـ...", fr: "J'utilise ce compte pour...", de: "Ich benutze dieses Konto für...", ru: "Я использую этот аккаунт для...", pt: "Eu uso esta conta para...", ja: "このアカウントは...のために使用します", pa: "ਮੈਂ ਇਸ ਖਾਤੇ ਨੂੰ... ਲਈ ਵਰਤਦਾ ਹਾਂ", bn: "আমি এই অ্যাকাউন্টটি... জন্য ব্যবহার করি", id: "Saya menggunakan akun ini untuk...", ur: "میں اس اکاؤنٹ کو... کے لیے استعمال کرتا ہوں", ms: "Saya menggunakan akun ini untuk...", it: "Uso questo account per...", tr: "Bu hesabı... için kullanıyorum", ta: "நான் இந்த கணக்கை... க்காக பயன்படுத்துகிறேன்", te: "నేను ఈ ఖాతాను... కోసం ఉపయోగిస్తున్నాను", ko: "이 계정을...에 사용합니다", vi: "Tôi sử dụng tài khoản này cho...", pl: "Używam tego konta do...", ro: "Folosesc acest cont pentru...", nl: "Ik gebruik dit account voor...", el: "Χρησιμοποιώ αυτόν τον λογαριασμό για...", th: "ฉันใช้บัญชีนี้สำหรับ...", cs: "Používám tento účet pro...", hu: "Ezt a fiókot arra használom, hogy...", sv: "Jag använder det här kontot för...", da: "Jeg bruger denne konto til..." })}
+            onChange={e => setNotes(e.target.value)}
+            value={$notes} />
+        </div>
+        <div className="h-8" />
+        <div className="flex items-center flex-wrap-reverse gap-2">
+          {session.value.user.fsfh != null &&
+            <WideOppositeButton
+              type="button"
+              disabled={error != null}
+              onClick={encryptAndWriteOrAlert}>
+              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
+            </WideOppositeButton>}
+          {session.value.user.fsfh == null &&
+            <WideOppositeButton
+              type="button"
+              disabled={error != null}
+              onClick={encryptAndSaveOrAlert}>
+              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
+            </WideOppositeButton>}
+        </div>
       </form>
     </div>
   </Fragment>

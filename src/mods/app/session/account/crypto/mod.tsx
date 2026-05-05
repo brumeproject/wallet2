@@ -1,3 +1,4 @@
+import { InOther } from "@/libs/anchor/mod.tsx";
 import { InButton, WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
@@ -387,14 +388,22 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                 <Fragment key={index}>
                   <CryptoSubaccountAnchor $entry={$entry} name={name} index={index} />
                 </Fragment>)}
-              <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-                style={{ "transform": `translateY(-${subentries.length * 120}px)` }}
-                onClick={push}
-                type="button">
-                <InButton>
-                  <Outline.PlusIcon className="size-8" />
-                </InButton>
-              </button>
+              {subentries.length !== Lang.match(Alphabet).length &&
+                <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+                  style={{ "transform": `translateY(-${subentries.length * 120}px)` }}
+                  onClick={push}
+                  type="button">
+                  <InButton>
+                    <Outline.PlusIcon className="size-8" />
+                  </InButton>
+                </button>}
+              {subentries.length === Lang.match(Alphabet).length &&
+                <div className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none transition-transform"
+                  style={{ "transform": `translateY(-${subentries.length * 120}px)` }}>
+                  <InOther>
+                    <Outline.TrophyIcon className="size-8" />
+                  </InOther>
+                </div>}
             </div>
           </div>
         </Fragment>

@@ -3,7 +3,7 @@ import { ChildrenProps } from "../props/mod.ts";
 
 React;
 
-export function InAnchor(props: ChildrenProps) {
+export function InOther(props: ChildrenProps) {
   const { children } = props
 
   return <div className="h-full w-full flex justify-center items-center gap-2 select-none group-not-aria-disabled:group-active:scale-90 transition-transform">
@@ -17,9 +17,9 @@ export function OppositeAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"]
   return <a className="group po-2 bg-opposite text-opposite rounded-xl not-aria-disabled:hover:bg-opposite-double-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-opposite aria-disabled:opacity-50"
     aria-disabled={disabled}
     {...rest}>
-    <InAnchor>
+    <InOther>
       {children}
-    </InAnchor>
+    </InOther>
   </a>
 }
 
@@ -29,8 +29,8 @@ export function ContrastAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"]
   return <a className="group po-2 bg-default-contrast rounded-xl not-aria-disabled:hover:bg-default-double-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-disabled:opacity-50"
     aria-disabled={disabled}
     {...rest}>
-    <InAnchor>
+    <InOther>
       {children}
-    </InAnchor>
+    </InOther>
   </a>
 }

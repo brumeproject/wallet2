@@ -1,4 +1,4 @@
-import { InAnchor } from "@/libs/anchor/mod.tsx";
+import { InOther } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
@@ -198,9 +198,9 @@ function SessionMenuButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <InAnchor>
+    <InOther>
       <Outline.EllipsisVerticalIcon className="size-5" />
-    </InAnchor>
+    </InOther>
   </a>
 }
 

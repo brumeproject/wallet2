@@ -1,4 +1,4 @@
-import { InAnchor } from "@/libs/anchor/mod.tsx";
+import { InOther } from "@/libs/anchor/mod.tsx";
 import { InButton, WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
@@ -234,9 +234,9 @@ export function TotpPageAnchor() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <InAnchor>
+    <InOther>
       <Outline.QrCodeIcon className="size-5" />
-    </InAnchor>
+    </InOther>
   </a>
 }
 
@@ -380,9 +380,9 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
             type="file"
             accept="image/*"
             onChange={onFileChange} />
-          <InAnchor>
+          <InOther>
             <Outline.ArrowUpTrayIcon className="size-6" />
-          </InAnchor>
+          </InOther>
         </div>
         <div className="grow" />
         <button className="group text-white bg-neutral-500/80 rounded-full p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500/80"
@@ -423,9 +423,9 @@ export function PasswordMenuAnchor() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <InAnchor>
+    <InOther>
       <Outline.SparklesIcon className="size-5" />
-    </InAnchor>
+    </InOther>
   </a>
 }
 

@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-window
 
-import { InAnchor, OppositeAnchor } from "@/libs/anchor/mod.tsx";
+import { InOther, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
@@ -932,9 +932,9 @@ function UserMenuButton(props: { user: UserData }) {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <InAnchor>
+    <InOther>
       <Outline.EllipsisVerticalIcon className="size-6" />
-    </InAnchor>
+    </InOther>
   </a>
 }
 
