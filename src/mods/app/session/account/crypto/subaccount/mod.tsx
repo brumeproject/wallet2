@@ -10,15 +10,14 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
-import { capitalize } from "@/libs/string/mod.ts";
 import { ScanPage } from "@/mods/app/session/account/password/mod.tsx";
 import { useSessionContext } from "@/mods/app/session/mod.tsx";
-import { BitcoinSeedPhrase, MoneroSeedPhrase } from "@hazae41/broca";
+import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
-import { IrnClient, WalletConnect, WcMetadata, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult, WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
+import { IrnClient, WalletConnect, WcMetadata, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult, WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError } from "@hazae41/latrine";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
@@ -145,6 +144,30 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     })).map(x => x.chainId)
   }, [])
 
+  const getEthereumOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+    const upub = secp256k1.getPublicKey(xsig.key, false)
+
+    return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
+  }, [seedphrase, index])
+
+  const getSolanaOrThrow = useCallback(async () => {
+    if (seedphrase == null)
+      return
+
+    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+
+    const xsig = await seed.derive(`m/44'/501'/${index}'/0'`)
+    const upub = await Ed25519.publish(xsig.key)
+
+    return base58.encode(upub)
+  }, [seedphrase, index])
+
   const [sessions, setSessions] = useState<{ title: string, session: WcSession, metadata: WcMetadata }[]>([])
 
   const respondOrThrow = useCallback(async (title: string, url: string, signal = new AbortController().signal) => {
@@ -156,11 +179,15 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     const cleaner = new AbortController()
     stack.defer(() => cleaner.abort())
 
-    const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
-    const upub = secp256k1.getPublicKey(xsig.key, false)
+    const ethereum = await getEthereumOrThrow()
 
-    const address = `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
+    if (ethereum == null)
+      return
+
+    const solana = await getSolanaOrThrow()
+
+    if (solana == null)
+      return
 
     const jwk = crypto.getRandomValues(new Uint8Array(32))
 
@@ -199,8 +226,8 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const proposal = await proposed.promise
 
-    if (!confirm(`Do you want to connect to ${proposal.proposer.metadata.name}?`))
-      responded.reject(new WcUserRejectedError())
+    // if (!confirm(`Do you want to connect to ${proposal.proposer.metadata.name}?`))
+    //   responded.reject(new WcUserRejectedError())
 
     responded.resolve(await pairing.respond(proposal))
 
@@ -214,16 +241,28 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       if (request.method === "personal_sign") {
         const [message, account] = request.params as [string, string]
 
-        if (account.toLowerCase() !== address.toLowerCase())
+        if (account.toLowerCase() !== ethereum.toLowerCase())
           throw new WcUnsupportedAccountsError()
 
         return onPersonalSign(message)
+      }
+
+      if (request.method === "solana_signMessage") {
+        const { message, pubkey } = request.params as { message: string, pubkey: string }
+
+        if (pubkey !== solana)
+          throw new WcUnsupportedAccountsError()
+
+        return onSolanaSignMessage(message)
       }
 
       throw new WcUnsupportedMethodsError()
     }
 
     const onPersonalSign = async (message: string) => {
+      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+      const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+
       const msgraw = Uint8Array.fromHex(message.slice(2).padStart(64, "0"))
       const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
 
@@ -235,6 +274,16 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false })
 
       return `0x${sigraw.toHex()}`
+    }
+
+    const onSolanaSignMessage = async (message: string) => {
+      const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+      const xsig = await seed.derive(`m/44'/501'/${index}'/0'`)
+
+      const msgraw = new Uint8Array(base58.decode(message))
+      const sigraw = new Uint8Array(await Ed25519.sign(xsig.key, msgraw))
+
+      return { signature: base58.encode(sigraw) }
     }
 
     session.addEventListener("request", event => event.respondWith(onRequest(event.data)), { signal: session.closing })
@@ -255,10 +304,44 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const namespaces = {
       eip155: {
-        chains: chains.map(chainId => `eip155:${chainId}`),
-        methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v4"],
-        events: ["chainChanged", "accountsChanged"],
-        accounts: chains.map(chainId => `eip155:${chainId}:${address}`)
+        chains: chains.map(chainId =>
+          `eip155:${chainId}`
+        ),
+        methods: [
+          "eth_sendTransaction",
+          "personal_sign",
+          "eth_signTypedData",
+          "eth_signTypedData_v4"
+        ],
+        events: [
+          "chainChanged",
+          "accountsChanged"
+        ],
+        accounts: chains.map(chainId =>
+          `eip155:${chainId}:${ethereum}`
+        )
+      },
+      solana: {
+        chains: [
+          "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ"
+        ],
+        methods: [
+          "solana_signMessage",
+          "solana_signTransaction",
+          "solana_requestAccounts",
+          "solana_getAccounts",
+          "solana_signAllTransactions",
+          "solana_signAndSendTransaction"
+        ],
+        events: [
+          "accountsChanged",
+          "chainChanged"
+        ],
+        accounts: [
+          `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:${solana}`,
+          `solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ:${solana}`
+        ]
       }
     }
 
@@ -363,17 +446,13 @@ export function CryptoSessionAddPage(props: { color?: string } & { respond(title
 
   const [flipped, setFlipped] = useState(false)
 
-  const seedword = useMemo(() => {
-    return capitalize(MoneroSeedPhrase.generate().split(" ")[0])
-  }, [])
-
   const [$title, setTitle] = useState("")
 
   const [$url, setUrl] = useState("")
 
   const [$notes, setNotes] = useState("")
 
-  const title = useDeferredValue($title || seedword)
+  const title = useDeferredValue($title || "Untitled")
 
   const url = useDeferredValue($url)
 
@@ -489,7 +568,6 @@ export function CryptoSessionAddPage(props: { color?: string } & { respond(title
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            placeholder={seedword}
             onChange={e => setTitle(e.target.value)}
             value={$title} />
         </div>
