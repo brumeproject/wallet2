@@ -222,10 +222,6 @@ function SessionMenu(props: { logout(): void }) {
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
-      <WideNakedMenuButton>
-        <Outline.GlobeAltIcon className="size-5" />
-        {Lang.match({ en: "Connections", zh: "连接", hi: "कनेक्शन", es: "Conexiones", ar: "اتصالات", fr: "Connexions", de: "Verbindungen", ru: "Подключения", pt: "Conexões", ja: "接続", pa: "ਕਨੈਕਸ਼ਨ", bn: "সংযোগ", id: "Koneksi", ur: "کنیکشنز", ms: "Sambungan", it: "Connessioni", tr: "Bağlantılar", ta: "இணைப்புகள்", te: "కనెక్షన్లు", ko: "연결", vi: "Kết nối", pl: "Połączenia", ro: "Conexiuni", nl: "Verbinden", el: "Συνδέσεις", th: "การเชื่อมต่อ", cs: "Připojení", hu: "Kapcsolatok", sv: "Anslutningar", da: "Forbindelser" })}
-      </WideNakedMenuButton>
       <SessionExportAnchor />
       <WideNakedMenuButton
         onClick={logout}>

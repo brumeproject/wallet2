@@ -483,7 +483,7 @@ export function KeypairAccountAddPage() {
         </PathPaper>}
       {hash.url.pathname === "/totp" &&
         <PathBoard>
-          <ScanPage value={totpseed} onChange={setTotpSeed} />
+          <ScanPage value={$totpseed} onChange={setTotpSeed} />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
