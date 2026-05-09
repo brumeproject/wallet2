@@ -27,13 +27,17 @@ import { AccountMenuAnchor, CryptoAccountCard } from "../../mod.tsx";
 
 React;
 
-export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
-  const { $entry, name, index } = props
+export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
+  const { $entry, index } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
   const coords = useAnchorWithCoords(hash, `/subaccount/${index}`)
+
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
 
   const color = useMemo(() => {
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
@@ -43,7 +47,7 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
     <SubpathProvider value={hash}>
       {hash.url.pathname === `/subaccount/${index}` &&
         <PathBoard>
-          <CryptoSubaccountPage $entry={$entry} name={name} index={index} />
+          <CryptoSubaccountPage $entry={$entry} index={index} />
         </PathBoard>}
     </SubpathProvider>
     <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
@@ -89,7 +93,7 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
       onKeyDown={coords.onKeyDown}>
       <div className="flex items-center justify-between">
         <div className="font-medium text-xl">
-          {name}
+          {title}
         </div>
         <div className="font-medium text-xl text-default-half-contrast">
           #{index + 1}
@@ -99,8 +103,8 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
   </Fragment>
 }
 
-export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
-  const { $entry, name, index } = props
+export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
+  const { $entry, index } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -361,11 +365,11 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
         <PathPaper>
-          <CryptoSubaccountMenu $entry={$entry} name={name} index={index} />
+          <CryptoSubaccountMenu $entry={$entry} index={index} />
         </PathPaper>}
       {hash.url.pathname === "/session" &&
         <PathBoard>
-          <CryptoSessionAddPage color={color} respond={respondOrThrow} />
+          <CryptoSessionAddPage $entry={$entry} index={index} respond={respondOrThrow} />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
@@ -378,8 +382,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       <div className="h-6" />
       <div className="flex flex-col items-center justify-center">
         <CryptoAccountCard
-          title={name}
-          subtitle={title}
+          title={title}
           color={color}
           index={index}
           flip={flipped}
@@ -404,9 +407,9 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
               style={{ "height": `${180 + (sessions.length * 60)}px` }}>
               {sessions.map((data, index) =>
                 <Fragment key={index}>
-                  <CryptoSessionAnchor $entry={$entry} name={data.title} index={index} />
+                  <CryptoSessionAnchor $entry={$entry} index={index} />
                 </Fragment>)}
-              <CryptoSessionAddAnchor index={sessions.length} />
+              <CryptoSessionAddAnchor count={sessions.length} />
             </div>
           </div>
         </Fragment>
@@ -415,8 +418,8 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   </Fragment>
 }
 
-export function CryptoSessionAddAnchor(props: { index: number }) {
-  const { index } = props
+export function CryptoSessionAddAnchor(props: { count: number }) {
+  const { count } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -424,7 +427,7 @@ export function CryptoSessionAddAnchor(props: { index: number }) {
   const coords = useAnchorWithCoords(hash, "/session")
 
   return <a className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-    style={{ "transform": `translateY(-${index * 120}px)` }}
+    style={{ "transform": `translateY(-${count * 120}px)` }}
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -434,8 +437,8 @@ export function CryptoSessionAddAnchor(props: { index: number }) {
   </a>
 }
 
-export function CryptoSessionAddPage(props: { color?: string } & { respond(title: string, url: string): Promise<void> }) {
-  const { color, respond } = props
+export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number } & { respond(title: string, url: string): Promise<void> }) {
+  const { $entry, index, respond } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -446,13 +449,21 @@ export function CryptoSessionAddPage(props: { color?: string } & { respond(title
 
   const [flipped, setFlipped] = useState(false)
 
+  const subtitle = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
   const [$title, setTitle] = useState("")
 
   const [$url, setUrl] = useState("")
 
   const [$notes, setNotes] = useState("")
 
-  const title = useDeferredValue($title || "Untitled")
+  const title = useDeferredValue($title || "Uniswap")
 
   const url = useDeferredValue($url)
 
@@ -548,7 +559,9 @@ export function CryptoSessionAddPage(props: { color?: string } & { respond(title
       <div className="flex items-center justify-center">
         <CryptoAccountCard
           title={title}
+          subtitle={subtitle}
           color={color}
+          index={index}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
@@ -568,6 +581,7 @@ export function CryptoSessionAddPage(props: { color?: string } & { respond(title
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
+            placeholder="Uniswap"
             onChange={e => setTitle(e.target.value)}
             value={$title} />
         </div>
@@ -650,8 +664,12 @@ export function UrlPageAnchor() {
   </a>
 }
 
-export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
-  const { $entry, name, index } = props
+export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
+  const { $entry, index } = props
+
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
 
   const color = useMemo(() => {
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
@@ -698,7 +716,7 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
       data-color={color}>
       <div className="flex items-center justify-between">
         <div className="font-medium text-xl">
-          {name}
+          {title}
         </div>
         <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
           <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
@@ -739,8 +757,8 @@ export function CryptoSubaccountExportMenuAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
-  const { $entry, name, index } = props
+export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
+  const { $entry, index } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -749,11 +767,11 @@ export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Ent
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/address" &&
         <PathBoard>
-          <CryptoSubaccountAddressPage $entry={$entry} name={name} index={index} />
+          <CryptoSubaccountAddressPage $entry={$entry} index={index} />
         </PathBoard>}
       {hash.url.pathname === "/export" &&
         <PathBoard>
-          <CryptoSubaccountExportPage $entry={$entry} name={name} index={index} />
+          <CryptoSubaccountExportPage $entry={$entry} index={index} />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
@@ -763,8 +781,8 @@ export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Ent
   </Fragment>
 }
 
-export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
-  const { $entry, name, index } = props
+export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
+  const { $entry, index } = props
 
   const [flipped, setFlipped] = useState(false)
 
@@ -828,8 +846,7 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
     <div className="h-6" />
     <div className="flex flex-col items-center justify-center">
       <CryptoAccountCard
-        title={name}
-        subtitle={title}
+        title={title}
         color={color}
         index={index}
         flip={flipped}
@@ -894,8 +911,8 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
   </div>
 }
 
-export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { name: string } & { index: number }) {
-  const { $entry, name, index } = props
+export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
+  const { $entry, index } = props
 
   const [flipped, setFlipped] = useState(false)
 
@@ -964,8 +981,7 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
     <div className="h-6" />
     <div className="flex flex-col items-center justify-center">
       <CryptoAccountCard
-        title={name}
-        subtitle={title}
+        title={title}
         color={color}
         index={index}
         flip={flipped}
