@@ -321,11 +321,9 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       solana: {
         accounts: [
           `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:${solana}`,
-          `solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ:${solana}`
         ],
         chains: [
           "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-          "solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ"
         ],
         methods: [
           "solana_signMessage",
