@@ -333,7 +333,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       }
     }
 
-    const metadata = { name: "Brume Wallet", description: "The secure and private wallet", url: "http://wallet.brume.tech", icons: [] }
+    const metadata = { name: "Brume Wallet", description: "The secure and private wallet", url: "http://wallet.brume.tech", icons: ["http://wallet.brume.tech/appicon.png"] }
     const controller = { publicKey: new Uint8Array(await crypto.subtle.exportKey("raw", pairing.keypair.publicKey)).toHex(), metadata }
 
     const expiry = Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60)
