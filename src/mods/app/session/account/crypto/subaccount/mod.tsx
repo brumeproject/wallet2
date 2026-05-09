@@ -230,9 +230,6 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const proposal = await proposed.promise
 
-    // if (!confirm(`Do you want to connect to ${proposal.proposer.metadata.name}?`))
-    //   responded.reject(new WcUserRejectedError())
-
     responded.resolve(await pairing.respond(proposal))
 
     await responded.promise
