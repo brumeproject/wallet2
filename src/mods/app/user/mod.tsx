@@ -15,6 +15,7 @@ import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
+import { Result } from "@hazae41/result-and-option";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";
 import React, { DragEvent, Fragment, KeyboardEvent, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { SessionData } from "../session/mod.tsx";
@@ -181,25 +182,11 @@ function UserImportFilePage() {
 
     await encrypted.decryptOrThrow(composite)
 
-    if (!confirm(Lang.match({ en: "Do you want to create a passkey?", zh: "您想要创建一个通行密钥吗？", hi: "क्या आप एक पासकी बनाना चाहते हैं?", es: "¿Desea crear una clave de acceso?", ar: "هل تريد إنشاء مفتاح مرور؟", fr: "Voulez-vous créer une clé d'accès ?", de: "Möchten Sie einen Passkey erstellen?", ru: "Вы хотите создать ключ доступа?", pt: "Você quer criar uma chave de acesso?", ja: "パスキーを作成しますか？", pa: "ਕੀ ਤੁਸੀਂ ਇੱਕ ਪਾਸਕੀ ਬਣਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?", bn: "আপনি কি একটি পাসকি তৈরি করতে চান?", id: "Apakah Anda ingin membuat passkey?", ur: "کیا آپ پاسکی بنانا چاہتے ہیں؟", ms: "Apakah Anda ingin membuat passkey?", it: "Vuoi creare una chiave di accesso?", tr: "Bir geçiş anahtarı oluşturmak istiyor musunuz?", ta: "நீங்கள் ஒரு பாஸ்கி உருவாக்க விரும்புகிறீர்களா?", te: "మీరు పాస్కీని సృష్టించాలనుకుంటున్నారా?", ko: "패스키를 생성하시겠습니까?", vi: "Bạn có muốn tạo passkey không?", pl: "Czy chcesz utworzyć klucz dostępu?", ro: "Doriți să creați o cheie de acces?", nl: "Wilt u een toegangssleutel maken?", el: "Θέλετε να δημιουργήσετε ένα κλειδί πρόσβασης;", th: "คุณต้องการสร้างรหัสผ่านหรือไม่", cs: "Chcete vytvořit přístupový klíč?", hu: "Szeretne létrehozni egy hozzáférési kulcsot?", sv: "Vill du skapa en passnyckel?", da: "Vil du oprette en adgangsnøgle?" }))) {
-      const uuid = crypto.randomUUID()
-
-      const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-      const fresh = [...stale, { uuid, name } satisfies UserData]
-
-      await store.value.getOrThrow().setOrThrow("users", fresh)
-
-      store.update()
-
-      close()
-
-      return
-    }
-
     const uuid = crypto.randomUUID()
 
-    const auth = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    const auth = await Result.runAndWrap(async () => {
+      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    }).then(r => r.inspectErrSync(console.log).getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
@@ -353,25 +340,11 @@ function UserImportFsfhPage() {
 
     await encrypted.decryptOrThrow(composite)
 
-    if (!confirm(Lang.match({ en: "Do you want to create a passkey?", zh: "您想要创建一个通行密钥吗？", hi: "क्या आप एक पासकी बनाना चाहते हैं?", es: "¿Desea crear una clave de acceso?", ar: "هل تريد إنشاء مفتاح مرور؟", fr: "Voulez-vous créer une clé d'accès ?", de: "Möchten Sie einen Passkey erstellen?", ru: "Вы хотите создать ключ доступа?", pt: "Você quer criar uma chave de acesso?", ja: "パスキーを作成しますか？", pa: "ਕੀ ਤੁਸੀਂ ਇੱਕ ਪਾਸਕੀ ਬਣਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?", bn: "আপনি কি একটি পাসকি তৈরি করতে চান?", id: "Apakah Anda ingin membuat passkey?", ur: "کیا آپ پاسکی بنانا چاہتے ہیں؟", ms: "Apakah Anda ingin membuat passkey?", it: "Vuoi creare una chiave di accesso?", tr: "Bir geçiş anahtarı oluşturmak istiyor musunuz?", ta: "நீங்கள் ஒரு பாஸ்கி உருவாக்க விரும்புகிறீர்களா?", te: "మీరు పాస్కీని సృష్టించాలనుకుంటున్నారా?", ko: "패스키를 생성하시겠습니까?", vi: "Bạn có muốn tạo passkey không?", pl: "Czy chcesz utworzyć klucz dostępu?", ro: "Doriți să creați o cheie de acces?", nl: "Wilt u een toegangssleutel maken?", el: "Θέλετε να δημιουργήσετε ένα κλειδί πρόσβασης;", th: "คุณต้องการสร้างรหัสผ่านหรือไม่", cs: "Chcete vytvořit přístupový klíč?", hu: "Szeretne létrehozni egy hozzáférési kulcsot?", sv: "Vill du skapa en passnyckel?", da: "Vil du oprette en adgangsnøgle?" }))) {
-      const uuid = crypto.randomUUID()
-
-      const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-      const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
-
-      await store.value.getOrThrow().setOrThrow("users", fresh)
-
-      store.update()
-
-      close()
-
-      return
-    }
-
     const uuid = crypto.randomUUID()
 
-    const auth = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    const auth = await Result.runAndWrap(async () => {
+      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    }).then(r => r.inspectErrSync(console.log).getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
@@ -540,7 +513,9 @@ function UserCreatePage() {
     return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, derived)
   }, [])
 
-  const encryptOrThrow = useCallback(async () => {
+  const pickOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
+
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     const inner = innerizeOrThrow()
@@ -549,13 +524,7 @@ function UserCreatePage() {
     const decrypted = new KDBX.Database.Decrypted(outer, inner)
     const encrypted = await decrypted.encryptOrThrow(composite)
 
-    return Writable.writeToBytesOrThrow(encrypted)
-  }, [pass, innerizeOrThrow, outerizeOrThrow])
-
-  const pickOrAlert = useCallback(() => Promise.try(async () => {
-    const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
-
-    const content = await encryptOrThrow()
+    const content = Writable.writeToBytesOrThrow(encrypted)
 
     const writable = await fsfh.createWritable()
     await writable.write(content)
@@ -563,19 +532,31 @@ function UserCreatePage() {
 
     const uuid = crypto.randomUUID()
 
+    const auth = await Result.runAndWrap(async () => {
+      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    }).then(r => r.inspectErrSync(console.log).getOrNull())
+
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    const fresh = [...stale, { uuid, name, fsfh } satisfies UserData]
+    const fresh = [...stale, { uuid, name, fsfh, auth } satisfies UserData]
 
     await store.value.getOrThrow().setOrThrow("users", fresh)
 
     store.update()
 
     close()
-  }).catch(Errors.display), [store, encryptOrThrow, close])
+  }).catch(Errors.display), [store, pass, innerizeOrThrow, outerizeOrThrow, close])
 
   const saveOrAlert = useCallback(() => Promise.try(async () => {
-    const content = await encryptOrThrow()
+    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+
+    const inner = innerizeOrThrow()
+    const outer = await outerizeOrThrow(composite)
+
+    const decrypted = new KDBX.Database.Decrypted(outer, inner)
+    const encrypted = await decrypted.encryptOrThrow(composite)
+
+    const content = Writable.writeToBytesOrThrow(encrypted)
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
@@ -599,16 +580,20 @@ function UserCreatePage() {
 
     const uuid = crypto.randomUUID()
 
+    const auth = await Result.runAndWrap(async () => {
+      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    }).then(r => r.inspectErrSync(console.log).getOrNull())
+
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
-    const fresh = [...stale, { uuid, name } satisfies UserData]
+    const fresh = [...stale, { uuid, name, auth } satisfies UserData]
 
     await store.value.getOrThrow().setOrThrow("users", fresh)
 
     store.update()
 
     close()
-  }).catch(Errors.display), [store, encryptOrThrow, close])
+  }).catch(Errors.display), [store, pass, innerizeOrThrow, outerizeOrThrow, close])
 
   const error = useMemo(() => {
     if (!pass.length)
@@ -1003,25 +988,11 @@ function UserReimportFilePage(props: { user: UserData }) {
 
     await encrypted.decryptOrThrow(composite)
 
-    if (!confirm(Lang.match({ en: "Do you want to create a passkey?", zh: "您想创建一个通行密钥吗？", hi: "क्या आप एक पासकी बनाना चाहते हैं?", es: "¿Desea crear una clave de acceso?", ar: "هل تريد إنشاء مفتاح مرور؟", fr: "Voulez-vous créer une clé d'accès ?", de: "Möchten Sie einen Passkey erstellen?", ru: "Вы хотите создать ключ доступа?", pt: "Você quer criar uma chave de acesso?", ja: "パスキーを作成しますか？", pa: "ਕੀ ਤੁਸੀਂ ਇੱਕ ਪਾਸਕੀ ਬਣਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?", bn: "আপনি কি একটি পাসকি তৈরি করতে চান?", id: "Apakah Anda ingin membuat passkey?", ur: "کیا آپ پاسکی بنانا چاہتے ہیں؟", ms: "Apakah Anda ingin membuat passkey?", it: "Vuoi creare una passkey?", tr: "Bir geçiş anahtarı oluşturmak ister misiniz?", ta: "நீங்கள் ஒரு பாஸ்கி உருவாக்க விரும்புகிறீர்களா?", te: "మీరు పాస్కీని సృష్టించాలనుకుంటున్నారా?", ko: "패스키를 생성하시겠습니까?", vi: "Bạn có muốn tạo một passkey không?", pl: "Czy chcesz utworzyć klucz dostępu?", ro: "Doriți să creați o cheie de acces?", nl: "Wilt u een toegangssleutel maken?", el: "Θέλετε να δημιουργήσετε ένα κλειδί πρόσβασης;", th: "คุณต้องการสร้างรหัสผ่านหรือไม่", cs: "Chcete vytvořit přístupový klíč?", hu: "Szeretne létrehozni egy jelszót?", sv: "Vill du skapa en passnyckel?", da: "Vil du oprette en adgangsnøgle?" }))) {
-      const uuid = user.uuid
-
-      const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-      const fresh = stale.map(x => x.uuid === user.uuid ? { uuid, name } : x)
-
-      await store.value.getOrThrow().setOrThrow("users", fresh)
-
-      store.update()
-
-      close()
-
-      return
-    }
-
     const uuid = user.uuid
 
-    const auth = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    const auth = await Result.runAndWrap(async () => {
+      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    }).then(r => r.inspectErrSync(console.log).getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
@@ -1177,25 +1148,11 @@ function UserReimportFsfhPage(props: { user: UserData }) {
 
     await encrypted.decryptOrThrow(composite)
 
-    if (!confirm(Lang.match({ en: "Do you want to create a passkey?", zh: "您想创建一个通行密钥吗？", hi: "क्या आप एक पासकी बनाना चाहते हैं?", es: "¿Desea crear una clave de acceso?", ar: "هل تريد إنشاء مفتاح مرور؟", fr: "Voulez-vous créer une clé d'accès ?", de: "Möchten Sie einen Passkey erstellen?", ru: "Вы хотите создать ключ доступа?", pt: "Você quer criar uma chave de acesso?", ja: "パスキーを作成しますか？", pa: "ਕੀ ਤੁਸੀਂ ਇੱਕ ਪਾਸਕੀ ਬਣਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?", bn: "আপনি কি একটি পাসকি তৈরি করতে চান?", id: "Apakah Anda ingin membuat passkey?", ur: "کیا آپ پاسکی بنانا چاہتے ہیں؟", ms: "Apakah Anda ingin membuat passkey?", it: "Vuoi creare una passkey?", tr: "Bir geçiş anahtarı oluşturmak ister misiniz?", ta: "நீங்கள் ஒரு பாஸ்கி உருவாக்க விரும்புகிறீர்களா?", te: "మీరు పాస్కీని సృష్టించాలనుకుంటున్నారా?", ko: "패스키를 생성하시겠습니까?", vi: "Bạn có muốn tạo một passkey không?", pl: "Czy chcesz utworzyć klucz dostępu?", ro: "Doriți să creați o cheie de acces?", nl: "Wilt u een toegangssleutel maken?", el: "Θέλετε να δημιουργήσετε ένα κλειδί πρόσβασης;", th: "คุณต้องการสร้างรหัสผ่านหรือไม่", cs: "Chcete vytvořit přístupový klíč?", hu: "Szeretne létrehozni egy jelszót?", sv: "Vill du skapa en passnyckel?", da: "Vil du oprette en adgangsnøgle?" }))) {
-      const uuid = user.uuid
-
-      const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
-
-      const fresh = stale.map(x => x.uuid === user.uuid ? { uuid, name, fsfh } : x)
-
-      await store.value.getOrThrow().setOrThrow("users", fresh)
-
-      store.update()
-
-      close()
-
-      return
-    }
-
     const uuid = user.uuid
 
-    const auth = await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    const auth = await Result.runAndWrap(async () => {
+      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+    }).then(r => r.inspectErrSync(console.log).getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
