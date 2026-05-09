@@ -1,3 +1,4 @@
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { RpcCounter, RpcInvalidRequestError, RpcMessageInit, RpcRequestInit, RpcRequestPreinit, RpcResponse, RpcResponseInit } from "@hazae41/jsonrpc";
 import { DataEvent, DataRespondableEvent } from "@hazae41/plume";
 import { Result } from "@hazae41/result-and-option";
@@ -39,10 +40,10 @@ export class RpcPort extends EventTarget {
   }
 
   #onMessage(event: MessageEvent) {
-    const message = event.data as RpcMessageInit | string
+    const message = event.data as Nullable<RpcMessageInit>
 
-    if (typeof message === "string")
-      return this.close(message)
+    if (message == null)
+      return this.close()
 
     if ("method" in message)
       return this.#onRequest(message).catch(console.error)

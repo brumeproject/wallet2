@@ -264,17 +264,23 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
 
-      const msgraw = Uint8Array.fromHex(message.slice(2).padStart(64, "0"))
+      const msgraw = Uint8Array.fromHex(message.slice(2))
       const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
 
-      const cursor = new Cursor(new Uint8Array(prefix.length + msgraw.length))
-      cursor.writeOrThrow(prefix)
-      cursor.writeOrThrow(msgraw)
+      const payload = new Cursor(new Uint8Array(prefix.length + msgraw.length))
+      payload.writeOrThrow(prefix)
+      payload.writeOrThrow(msgraw)
 
-      const digest = keccak_256(cursor.bytes)
-      const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false })
+      const digest = keccak_256(payload.bytes)
 
-      return `0x${sigraw.toHex()}`
+      const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false, format: "recovered" })
+      const sigref = secp256k1.Signature.fromBytes(sigraw, "recovered")
+
+      const signed = new Cursor(new Uint8Array(64 + 1))
+      signed.writeOrThrow(sigref.toBytes("compact"))
+      signed.writeUint8OrThrow(sigref.recovery! + 27)
+
+      return `0x${signed.bytes.toHex()}`
     }
 
     const onSolanaSignMessage = async (message: string) => {
