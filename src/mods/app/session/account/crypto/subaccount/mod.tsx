@@ -305,44 +305,33 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const namespaces = {
       eip155: {
+        accounts: chains.map(chainId =>
+          `eip155:${chainId}:${ethereum}`
+        ),
         chains: chains.map(chainId =>
           `eip155:${chainId}`
         ),
         methods: [
-          "eth_sendTransaction",
           "personal_sign",
-          "eth_signTypedData",
-          "eth_signTypedData_v4"
+          // "eth_signTypedData_v4",
+          // "eth_sendTransaction"
         ],
-        events: [
-          "chainChanged",
-          "accountsChanged"
-        ],
-        accounts: chains.map(chainId =>
-          `eip155:${chainId}:${ethereum}`
-        )
+        events: [],
       },
       solana: {
+        accounts: [
+          `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:${solana}`,
+          `solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ:${solana}`
+        ],
         chains: [
           "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
           "solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ"
         ],
         methods: [
           "solana_signMessage",
-          "solana_signTransaction",
-          "solana_requestAccounts",
-          "solana_getAccounts",
-          "solana_signAllTransactions",
-          "solana_signAndSendTransaction"
+          // "solana_signTransaction",
         ],
-        events: [
-          "accountsChanged",
-          "chainChanged"
-        ],
-        accounts: [
-          `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:${solana}`,
-          `solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ:${solana}`
-        ]
+        events: [],
       }
     }
 
