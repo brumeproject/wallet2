@@ -201,6 +201,21 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   </Fragment>
 }
 
+export function CryptoSessionCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
+  const { color, title, subtitle, index, flip, onFlipChange } = props
+
+  return <FlipCard
+    // type={Lang.match({ en: "Session", zh: "会话", hi: "सत्र", es: "Sesión", ar: "جلسة", fr: "Session", de: "Sitzung", ru: "Сессия", pt: "Sessão", ja: "セッション", pa: "ਸੈਸ਼ਨ", bn: "সেশন", id: "Sesi", ur: "سیشن", ms: "Sesi", it: "Sessione", tr: "Oturum", ta: "அமர்வு", te: "సెషన్", ko: "세션", vi: "Phiên làm việc", pl: "Sesja", ro: "Sesiune", nl: "Sessie", el: "Σύνοδος", th: "เซสชัน", cs: "Relace", hu: "Munkamenet", sv: "Session", da: "Session" })}
+    type="WalletConnect"
+    title={title}
+    subtitle={subtitle}
+    color={color}
+    index={index}
+    icon={<Outline.LinkIcon className="size-5" />}
+    flip={flip}
+    onFlipChange={onFlipChange} />
+}
+
 export function CryptoAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
   const { color, title, subtitle, index, flip, onFlipChange } = props
 

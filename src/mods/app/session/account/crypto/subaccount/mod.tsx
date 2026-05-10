@@ -23,7 +23,7 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { AccountMenuAnchor, CryptoAccountCard } from "../../mod.tsx";
+import { AccountMenuAnchor, CryptoAccountCard, CryptoSessionCard } from "../../mod.tsx";
 
 React;
 
@@ -555,7 +555,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <CryptoAccountCard
+        <CryptoSessionCard
           title={title}
           subtitle={subtitle}
           color={color}
