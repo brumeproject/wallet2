@@ -8,13 +8,14 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { CryptoRequest } from "@/mods/app/session/account/crypto/request/mod.tsx";
 import { CryptoSessionAddAnchor, CryptoSessionAddPage, CryptoSessionAnchor } from "@/mods/app/session/account/crypto/session/mod.tsx";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
-import { IrnClient, WalletConnect, WcMetadata, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult, WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError } from "@hazae41/latrine";
+import { IrnClient, WalletConnect, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult, WcSessionRequestParams } from "@hazae41/latrine";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
@@ -168,7 +169,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return base58.encode(upub)
   }, [seedphrase, subaccount])
 
-  const [sessions, setSessions] = useState<{ title: string, session: WcSession, metadata: WcMetadata }[]>([])
+  const [sessions, setSessions] = useState<Array<{ title: string, session: WcSession, requests: Array<CryptoRequest> }>>([])
 
   const respondOrThrow = useCallback(async (title: string, url: string, signal = new AbortController().signal) => {
     if (seedphrase == null)
@@ -232,61 +233,16 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const session = await upgraded.promise
 
-    const onRequest = (params: WcSessionRequestParams<unknown>) => {
-      const { chainId, request } = params
+    const onRequest = async (params: WcSessionRequestParams<unknown>) => {
+      using stack = new DisposableStack()
 
-      if (request.method === "personal_sign") {
-        const [message, account] = request.params as [string, string]
+      const { promise, resolve, reject } = Promise.withResolvers<unknown>()
 
-        if (account.toLowerCase() !== ethereum.toLowerCase())
-          throw new WcUnsupportedAccountsError()
+      setSessions(x => x.map(y => y.session === session ? { ...y, requests: [...y.requests, { params, resolve, reject }] } : y))
 
-        return onPersonalSign(message)
-      }
+      stack.defer(() => setSessions(x => x.map(y => y.session === session ? { ...y, requests: y.requests.filter(x => x.params !== params) } : y)))
 
-      if (request.method === "solana_signMessage") {
-        const { message, pubkey } = request.params as { message: string, pubkey: string }
-
-        if (pubkey !== solana)
-          throw new WcUnsupportedAccountsError()
-
-        return onSolanaSignMessage(message)
-      }
-
-      throw new WcUnsupportedMethodsError()
-    }
-
-    const onPersonalSign = async (message: string) => {
-      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
-
-      const msgraw = Uint8Array.fromHex(message.slice(2))
-      const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
-
-      const payload = new Cursor(new Uint8Array(prefix.length + msgraw.length))
-      payload.writeOrThrow(prefix)
-      payload.writeOrThrow(msgraw)
-
-      const digest = keccak_256(payload.bytes)
-
-      const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false, format: "recovered" })
-      const sigref = secp256k1.Signature.fromBytes(sigraw, "recovered")
-
-      const signed = new Cursor(new Uint8Array(64 + 1))
-      signed.writeOrThrow(sigref.toBytes("compact"))
-      signed.writeUint8OrThrow(sigref.recovery! + 27)
-
-      return `0x${signed.bytes.toHex()}`
-    }
-
-    const onSolanaSignMessage = async (message: string) => {
-      const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-      const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
-
-      const msgraw = new Uint8Array(base58.decode(message))
-      const sigraw = new Uint8Array(await Ed25519.sign(xsig.key, msgraw))
-
-      return { signature: base58.encode(sigraw) }
+      return await promise
     }
 
     session.addEventListener("request", event => event.respondWith(onRequest(event.data)), { signal: session.closing })
@@ -344,7 +300,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     success = true
 
-    setSessions(x => [...x, { title, session, metadata: proposal.proposer.metadata }])
+    setSessions(x => [...x, { title, session, requests: [] }])
   }, [seedphrase])
 
   return <Fragment>
@@ -393,7 +349,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
               style={{ "height": `${180 + (sessions.length * 60)}px` }}>
               {sessions.map((data, index) =>
                 <Fragment key={index}>
-                  <CryptoSessionAnchor $entry={$entry} subaccount={subaccount} index={index} title={data.title} session={data.session} metadata={data.metadata} />
+                  <CryptoSessionAnchor $entry={$entry} subaccount={subaccount} index={index} title={data.title} session={data.session} requests={data.requests} />
                 </Fragment>)}
               <CryptoSessionAddAnchor count={sessions.length} />
             </div>

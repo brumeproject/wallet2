@@ -6,12 +6,12 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
-import { CryptoRequestAnchor } from "@/mods/app/session/account/crypto/request/mod.tsx";
+import { CryptoRequest, CryptoRequestAnchor } from "@/mods/app/session/account/crypto/request/mod.tsx";
 import { ScanPage } from "@/mods/app/session/account/password/mod.tsx";
 import { useSessionContext } from "@/mods/app/session/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { WcMetadata, WcSession } from "@hazae41/latrine";
+import { WcSession, WcUserRejectedError } from "@hazae41/latrine";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { AccountMenuAnchor, CryptoSessionCard } from "../../mod.tsx";
@@ -250,8 +250,8 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   </Fragment>
 }
 
-export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { index: number } & { title: string } & { session: WcSession } & { metadata: WcMetadata }) {
-  const { $entry, subaccount, index, title, session, metadata } = props
+export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { index: number } & { title: string } & { session: WcSession } & { requests: Array<CryptoRequest> }) {
+  const { $entry, subaccount, index, title, session, requests } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -266,7 +266,7 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
     <SubpathProvider value={hash}>
       {hash.url.pathname === `/session/${index}` &&
         <PathBoard>
-          <CryptoSessionPage $entry={$entry} subaccount={subaccount} title={title} session={session} metadata={metadata} />
+          <CryptoSessionPage $entry={$entry} subaccount={subaccount} title={title} session={session} requests={requests} />
         </PathBoard>}
     </SubpathProvider>
     <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
@@ -317,17 +317,18 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
         <div className="font-medium text-xl text-default-half-contrast">
           #{subaccount + 1}
         </div>
-        <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
-          <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
-          <div className="relative inline-flex size-4 rounded-full bg-sky-500" />
-        </div>
+        {requests.length > 0 &&
+          <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
+            <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
+            <div className="relative inline-flex size-4 rounded-full bg-sky-500" />
+          </div>}
       </div>
     </a>
   </Fragment>
 }
 
-export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { title: string } & { session: WcSession } & { metadata: WcMetadata }) {
-  const { $entry, subaccount, title, session, metadata } = props
+export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { title: string } & { session: WcSession } & { requests: Array<CryptoRequest> }) {
+  const { $entry, subaccount, title, session, requests } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -342,13 +343,15 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
 
-  const [requests, setRequests] = useState<Array<string>>(["Transaction", "Signature"])
+  const decline = useCallback(() => {
+    requests.forEach(request => request.reject(new WcUserRejectedError()))
+  }, [requests])
 
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
         <PathPaper>
-          {/*  */}
+          <CryptoSessionMenu $entry={$entry} subaccount={subaccount} session={session} />
         </PathPaper>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
@@ -387,10 +390,11 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               style={{ "height": `${180 + (requests.length * 60)}px` }}>
               {requests.map((data, index) =>
                 <Fragment key={index}>
-                  <CryptoRequestAnchor $entry={$entry} subaccount={subaccount} index={index} title={title} session={session} metadata={metadata} />
+                  <CryptoRequestAnchor $entry={$entry} subaccount={subaccount} index={index} title={title} session={session} request={data} />
                 </Fragment>)}
               <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
                 style={{ "transform": `translateY(-${requests.length * 120}px)` }}
+                onClick={decline}
                 type="button">
                 <InButton>
                   <Outline.TrashIcon className="size-8" />
@@ -404,17 +408,21 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   </Fragment>
 }
 
-export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number }) {
-  const { $entry, subaccount } = props
+export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { session: WcSession }) {
+  const { $entry, subaccount, session } = props
 
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
+  const destroyOrDisplay = useCallback(() => Promise.try(async () => {
+    await session.delete()
+
+    await session.close()
+
+    close()
+  }).catch(Errors.display), [close])
 
   return <Fragment>
-    <SubpathProvider value={hash}>
-    </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
-      <WideNakedMenuButton>
+      <WideNakedMenuButton
+        onClick={destroyOrDisplay}>
         <Outline.LinkSlashIcon className="size-5" />
         {Lang.match({ en: "Destroy", zh: "销毁", hi: "नष्ट करें", es: "Destruir", ar: "تدمير", fr: "Détruire", de: "Zerstören", ru: "Уничтожить", pt: "Destruir", ja: "破壊", pa: "ਨਸ਼ਟ ਕਰੋ", bn: "ধ্বংস করুন", id: "Hancurkan", ur: "تباہ کریں", ms: "Hancurkan", it: "Distruggi", tr: "Yık", ta: "அழிக்கவும்", te: "నాశనం చేయండి", ko: "파괴하기", vi: "Hủy bỏ", pl: "Zniszcz", ro: "Distruge", nl: "Vernietigen", el: "Καταστρέψτε ", th: "ทำลาย ", cs: "Zničit ", hu: "Megsemmisít ", sv: "Förstöra ", da: "Ødelæg" })}
       </WideNakedMenuButton>
