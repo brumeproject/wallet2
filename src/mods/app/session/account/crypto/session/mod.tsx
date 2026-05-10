@@ -6,11 +6,12 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
+import { CryptoRequestAnchor } from "@/mods/app/session/account/crypto/request/mod.tsx";
 import { ScanPage } from "@/mods/app/session/account/password/mod.tsx";
 import { useSessionContext } from "@/mods/app/session/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { WcMetadata, WcSession, WcSessionRequestParams } from "@hazae41/latrine";
+import { WcMetadata, WcSession } from "@hazae41/latrine";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { AccountMenuAnchor, CryptoSessionCard } from "../../mod.tsx";
@@ -71,7 +72,7 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
       in-dark:data-[color=fuchsia]:bg-fuchsia-500
       in-dark:data-[color=pink]:bg-pink-500
       in-dark:data-[color=rose]:bg-rose-500"
-      style={{ transform: `translateY(-${index * 120}px)` }}
+      style={{ transform: `translateY(-${subindex * 120}px)` }}
       data-theme={color == null ? "opposite" : "dark"}
       data-color={color}
       href={coords.url.hash}
@@ -80,6 +81,9 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
       <div className="flex items-center justify-between">
         <div className="font-medium text-xl">
           {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
+        </div>
+        <div className="font-medium text-xl text-default-half-contrast">
+          #{index + 1}
         </div>
         <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
           <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
@@ -106,7 +110,7 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
 
-  const [requests, setRequests] = useState<Array<WcSessionRequestParams>>([])
+  const [requests, setRequests] = useState<Array<string>>(["Transaction", "Signature"])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -149,9 +153,9 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
             <div className="flex flex-col"
               style={{ "height": `${180 + (requests.length * 60)}px` }}>
-              {requests.map((data, index) =>
-                <Fragment key={index}>
-                  {/* <CryptoSessionAnchor $entry={$entry} index={index} /> */}
+              {requests.map((data, subindex) =>
+                <Fragment key={subindex}>
+                  <CryptoRequestAnchor $entry={$entry} index={index} subindex={subindex} title={title} session={session} metadata={metadata} />
                 </Fragment>)}
               <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
                 style={{ "transform": `translateY(-${requests.length * 120}px)` }}
