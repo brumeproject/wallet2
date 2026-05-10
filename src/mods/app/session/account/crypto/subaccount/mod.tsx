@@ -43,7 +43,7 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
     <SubpathProvider value={hash}>
       {hash.url.pathname === `/subaccount/${index}` &&
         <PathBoard>
-          <CryptoSubaccountPage $entry={$entry} index={index} />
+          <CryptoSubaccountPage $entry={$entry} subaccount={index} />
         </PathBoard>}
     </SubpathProvider>
     <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
@@ -99,8 +99,8 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
   </Fragment>
 }
 
-export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
-  const { $entry, index } = props
+export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number }) {
+  const { $entry, subaccount } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -150,11 +150,11 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+    const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
     const upub = secp256k1.getPublicKey(xsig.key, false)
 
     return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
-  }, [seedphrase, index])
+  }, [seedphrase, subaccount])
 
   const getSolanaOrThrow = useCallback(async () => {
     if (seedphrase == null)
@@ -162,11 +162,11 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive(`m/44'/501'/${index}'/0'`)
+    const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
     const upub = await Ed25519.publish(xsig.key)
 
     return base58.encode(upub)
-  }, [seedphrase, index])
+  }, [seedphrase, subaccount])
 
   const [sessions, setSessions] = useState<{ title: string, session: WcSession, metadata: WcMetadata }[]>([])
 
@@ -258,7 +258,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const onPersonalSign = async (message: string) => {
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-      const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
 
       const msgraw = Uint8Array.fromHex(message.slice(2))
       const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
@@ -281,7 +281,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const onSolanaSignMessage = async (message: string) => {
       const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-      const xsig = await seed.derive(`m/44'/501'/${index}'/0'`)
+      const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
 
       const msgraw = new Uint8Array(base58.decode(message))
       const sigraw = new Uint8Array(await Ed25519.sign(xsig.key, msgraw))
@@ -351,11 +351,11 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
         <PathPaper>
-          <CryptoSubaccountMenu $entry={$entry} index={index} />
+          <CryptoSubaccountMenu $entry={$entry} subaccount={subaccount} />
         </PathPaper>}
       {hash.url.pathname === "/session" &&
         <PathBoard>
-          <CryptoSessionAddPage $entry={$entry} index={index} respond={respondOrThrow} />
+          <CryptoSessionAddPage $entry={$entry} subaccount={subaccount} respond={respondOrThrow} />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
@@ -370,7 +370,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
         <CryptoAccountCard
           title={title}
           color={color}
-          index={index}
+          index={subaccount}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
@@ -391,9 +391,9 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
             <div className="flex flex-col"
               style={{ "height": `${180 + (sessions.length * 60)}px` }}>
-              {sessions.map((data, subindex) =>
-                <Fragment key={subindex}>
-                  <CryptoSessionAnchor $entry={$entry} index={index} subindex={subindex} title={data.title} session={data.session} metadata={data.metadata} />
+              {sessions.map((data, index) =>
+                <Fragment key={index}>
+                  <CryptoSessionAnchor $entry={$entry} subaccount={subaccount} index={index} title={data.title} session={data.session} metadata={data.metadata} />
                 </Fragment>)}
               <CryptoSessionAddAnchor count={sessions.length} />
             </div>
@@ -404,8 +404,8 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   </Fragment>
 }
 
-export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
-  const { $entry, index } = props
+export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number }) {
+  const { $entry, subaccount } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -414,11 +414,11 @@ export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Ent
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/address" &&
         <PathBoard>
-          <CryptoSubaccountAddressPage $entry={$entry} index={index} />
+          <CryptoSubaccountAddressPage $entry={$entry} subaccount={subaccount} />
         </PathBoard>}
       {hash.url.pathname === "/export" &&
         <PathBoard>
-          <CryptoSubaccountExportPage $entry={$entry} index={index} />
+          <CryptoSubaccountExportPage $entry={$entry} subaccount={subaccount} />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col text-left gap-2">
@@ -443,8 +443,8 @@ export function CryptoSubaccountAddressMenuAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
-  const { $entry, index } = props
+export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number }) {
+  const { $entry, subaccount } = props
 
   const [flipped, setFlipped] = useState(false)
 
@@ -468,11 +468,11 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
 
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+    const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
     const upub = secp256k1.getPublicKey(xsig.key, false)
 
     return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
-  }, [seedphrase, index])
+  }, [seedphrase, subaccount])
 
   useEffect(() => {
     getEthereumOrThrow().then(setEthereum).catch(console.error)
@@ -486,11 +486,11 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
 
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive(`m/44'/501'/${index}'/0'`)
+    const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
     const upub = await Ed25519.publish(xsig.key)
 
     return base58.encode(upub)
-  }, [seedphrase, index])
+  }, [seedphrase, subaccount])
 
   useEffect(() => {
     getSolanaOrThrow().then(setSolana).catch(console.error)
@@ -510,7 +510,7 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
       <CryptoAccountCard
         title={title}
         color={color}
-        index={index}
+        index={subaccount}
         flip={flipped}
         onFlipChange={setFlipped} />
     </div>
@@ -588,8 +588,8 @@ export function CryptoSubaccountExportMenuAnchor() {
   </WideNakedMenuAnchor>
 }
 
-export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
-  const { $entry, index } = props
+export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number }) {
+  const { $entry, subaccount } = props
 
   const [flipped, setFlipped] = useState(false)
 
@@ -613,10 +613,10 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
 
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive(`m/44'/60'/0'/0/${index}`)
+    const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
 
     return `0x${xsig.key.toHex()}`
-  }, [seedphrase, index])
+  }, [seedphrase, subaccount])
 
   useEffect(() => {
     getEthereumOrThrow().then(setEthereum).catch(console.error)
@@ -630,7 +630,7 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
 
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
-    const xsig = await seed.derive(`m/44'/501'/${index}'/0'`)
+    const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
     const upub = await Ed25519.publish(xsig.key)
 
     const concat = new Uint8Array(xsig.key.length + upub.length)
@@ -640,7 +640,7 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
     cursor.writeOrThrow(upub)
 
     return base58.encode(concat)
-  }, [seedphrase, index])
+  }, [seedphrase, subaccount])
 
   useEffect(() => {
     getSolanaOrThrow().then(setSolana).catch(console.error)
@@ -660,7 +660,7 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
       <CryptoAccountCard
         title={title}
         color={color}
-        index={index}
+        index={subaccount}
         flip={flipped}
         onFlipChange={setFlipped} />
     </div>

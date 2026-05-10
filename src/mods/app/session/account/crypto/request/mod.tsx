@@ -6,13 +6,13 @@ import React, { Fragment, useMemo } from "react";
 
 React;
 
-export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number } & { subindex: number } & { title: string } & { session: WcSession } & { metadata: WcMetadata }) {
-  const { $entry, index, subindex, title, session, metadata } = props
+export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { index: number } & { title: string } & { session: WcSession } & { metadata: WcMetadata }) {
+  const { $entry, subaccount, index, title, session, metadata } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, `/request/${subindex}`)
+  const coords = useAnchorWithCoords(hash, `/request/${index}`)
 
   const color = useMemo(() => {
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
@@ -54,7 +54,7 @@ export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
       in-dark:data-[color=fuchsia]:bg-fuchsia-500
       in-dark:data-[color=pink]:bg-pink-500
       in-dark:data-[color=rose]:bg-rose-500"
-      style={{ transform: `translateY(-${subindex * 120}px)` }}
+      style={{ transform: `translateY(-${index * 120}px)` }}
       data-theme={color == null ? "opposite" : "dark"}
       data-color={color}
       href={coords.url.hash}
@@ -65,7 +65,7 @@ export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
           {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
         </div>
         <div className="font-medium text-xl text-default-half-contrast">
-          #{index + 1}
+          #{subaccount + 1}
         </div>
         <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
           <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />

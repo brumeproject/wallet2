@@ -1,7 +1,7 @@
 import { InOther } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
-import { PathPaper } from "@/libs/dialog/paper/mod.tsx";
+import { PathPaper, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -17,160 +17,6 @@ import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } fro
 import { AccountMenuAnchor, CryptoSessionCard } from "../../mod.tsx";
 
 React;
-
-export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number } & { subindex: number } & { title: string } & { session: WcSession } & { metadata: WcMetadata }) {
-  const { $entry, index, subindex, title, session, metadata } = props
-
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const coords = useAnchorWithCoords(hash, `/session/${subindex}`)
-
-  const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
-  }, [$entry])
-
-  return <Fragment>
-    <SubpathProvider value={hash}>
-      {hash.url.pathname === `/session/${subindex}` &&
-        <PathBoard>
-          <CryptoSessionPage $entry={$entry} index={index} title={title} session={session} metadata={metadata} />
-        </PathBoard>}
-    </SubpathProvider>
-    <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
-      data-[color=red]:bg-red-400 
-      data-[color=orange]:bg-orange-400 
-      data-[color=amber]:bg-amber-400 
-      data-[color=yellow]:bg-yellow-400 
-      data-[color=lime]:bg-lime-400 
-      data-[color=green]:bg-green-400 
-      data-[color=emerald]:bg-emerald-400 
-      data-[color=teal]:bg-teal-400 
-      data-[color=cyan]:bg-cyan-400 
-      data-[color=sky]:bg-sky-400 
-      data-[color=blue]:bg-blue-400 
-      data-[color=indigo]:bg-indigo-400 
-      data-[color=violet]:bg-violet-400 
-      data-[color=purple]:bg-purple-400 
-      data-[color=fuchsia]:bg-fuchsia-400 
-      data-[color=pink]:bg-pink-400 
-      data-[color=rose]:bg-rose-400 
-      in-dark:data-[color=red]:bg-red-500
-      in-dark:data-[color=orange]:bg-orange-500
-      in-dark:data-[color=amber]:bg-amber-500
-      in-dark:data-[color=yellow]:bg-yellow-500
-      in-dark:data-[color=lime]:bg-lime-500
-      in-dark:data-[color=green]:bg-green-500
-      in-dark:data-[color=emerald]:bg-emerald-500
-      in-dark:data-[color=teal]:bg-teal-500
-      in-dark:data-[color=cyan]:bg-cyan-500
-      in-dark:data-[color=sky]:bg-sky-500
-      in-dark:data-[color=blue]:bg-blue-500
-      in-dark:data-[color=indigo]:bg-indigo-500
-      in-dark:data-[color=violet]:bg-violet-500
-      in-dark:data-[color=purple]:bg-purple-500
-      in-dark:data-[color=fuchsia]:bg-fuchsia-500
-      in-dark:data-[color=pink]:bg-pink-500
-      in-dark:data-[color=rose]:bg-rose-500"
-      style={{ transform: `translateY(-${subindex * 120}px)` }}
-      data-theme={color == null ? "opposite" : "dark"}
-      data-color={color}
-      href={coords.url.hash}
-      onClick={coords.onClick}
-      onKeyDown={coords.onKeyDown}>
-      <div className="flex items-center justify-between">
-        <div className="font-medium text-xl">
-          {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
-        </div>
-        <div className="font-medium text-xl text-default-half-contrast">
-          #{index + 1}
-        </div>
-        <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
-          <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
-          <div className="relative inline-flex size-4 rounded-full bg-sky-500" />
-        </div>
-      </div>
-    </a>
-  </Fragment>
-}
-
-export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number } & { title: string } & { session: WcSession } & { metadata: WcMetadata }) {
-  const { $entry, index, title, session, metadata } = props
-
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const [flipped, setFlipped] = useState(false)
-
-  const subtitle = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const [requests, setRequests] = useState<Array<string>>(["Transaction", "Signature"])
-
-  return <Fragment>
-    <SubpathProvider value={hash}>
-      {hash.url.pathname === "/+" &&
-        <PathPaper>
-          {/*  */}
-        </PathPaper>}
-    </SubpathProvider>
-    <div className="flex flex-col grow p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-medium">
-          {Lang.match({ en: "Crypto session", zh: "加密会话", hi: "क्रिप्टो सत्र", es: "Sesión de criptomonedas", ar: "الجلسة المشفرة", fr: "Session crypto", de: "Krypto-Sitzung", ru: "Крипто-сессия", pt: "Sessão de criptomoeda", ja: "暗号セッション", pa: "ਕ੍ਰਿਪਟੋ ਸੈਸ਼ਨ", bn: "ক্রিপ্টো সেশন", id: "Sesi Kripto", ur: "کرپٹو سیشن", ms: "Sesi Kripto", it: "Sessione crittografica", tr: "Kripto oturumu", ta: "கிரிப்டோ அமர்வு", te: "క్రిప్టో సెషన్", ko: "암호화 세션", vi: "Phiên tiền điện tử", pl: "Sesja kryptowalutowa", ro: "Sesiune criptografică", nl: "Crypto sessie", el: "Συνεδρία κρυπτογράφησης ", th: "เซสชันคริปโต ", cs: "Krypto sezení ", hu: "Kripto munkamenet ", sv: "Krypto-session ", da: "Krypto-session" })}
-        </h1>
-        <AccountMenuAnchor />
-      </div>
-      <div className="h-6" />
-      <div className="flex flex-col items-center justify-center">
-        <CryptoSessionCard
-          title={title}
-          subtitle={subtitle}
-          color={color}
-          index={index}
-          flip={flipped}
-          onFlipChange={setFlipped} />
-      </div>
-      <form className="grow flex flex-col"
-        onSubmit={Events.preventDefault}>
-        <input className="hidden"
-          autoComplete="off"
-          name="username" />
-        <Fragment>
-          <div className="h-6" />
-          <div className="font-medium">
-            {Lang.match({ en: "Requests", zh: "请求", hi: "अनुरोध", es: "Solicitudes", ar: "الطلبات", fr: "Requêtes", de: "Anfragen", ru: "Запросы", pt: "Solicitações", ja: "リクエスト", pa: "ਬੇਨਤੀਆਂ", bn: "অনুরোধসমূহ", id: "Permintaan", ur: "درخواستیں", ms: "Permintaan", it: "Richieste", tr: "İstekler", ta: "கோரிக்கைகள்", te: "అభ్యర్థనలు", ko: "요청 사항", vi: "Yêu cầu", pl: "Żądania", ro: "Cereri", nl: "Verzoeken", el: "Αιτήματα ", th: "คำขอ ", cs: "Požadavky ", hu: "Kérések ", sv: "Förfrågningar ", da: "Anmodninger" })}
-          </div>
-          <div className="text-default-contrast">
-            {Lang.match({ en: "Your WalletConnect requests.", zh: "您的 WalletConnect 请求。", hi: "आपके WalletConnect अनुरोध।", es: "Tus solicitudes de WalletConnect.", ar: "طلبات WalletConnect الخاصة بك.", fr: "Vos requêtes WalletConnect.", de: "Ihre WalletConnect-Anfragen.", ru: "Ваши запросы WalletConnect.", pt: "Suas solicitações do WalletConnect.", ja: "あなたのWalletConnectリクエスト。", pa: "ਤੁਹਾਡੇ WalletConnect ਬੇਨਤੀਆਂ।", bn: "আপনার WalletConnect অনুরোধ।", id: "Permintaan WalletConnect Anda.", ur: "آپ کے WalletConnect درخواستیں۔", ms: "Permintaan WalletConnect Anda.", it: "Le tue richieste di WalletConnect.", tr: "WalletConnect istekleriniz.", ta: "உங்கள் WalletConnect கோரிக்கைகள்.", te: "మీ WalletConnect అభ్యర్థనలు.", ko: "귀하의 WalletConnect 요청입니다.", vi: "Các yêu cầu của bạn trên WalletConnect.", pl: "Twoje żądania WalletConnect.", ro: "Cereri dvs. de pe WalletConnect.", nl: "Uw WalletConnect-verzoeken.", el: "Τα αιτήματα σας στο WalletConnect. ", th: "คำขอของคุณบน WalletConnect. ", cs: "Vaše požadavky na WalletConnect. ", hu: "A WalletConnect kérései. ", sv: "Dina förfrågningar på WalletConnect. ", da: "Dine anmodninger på WalletConnect." })}
-          </div>
-          <div className="h-4" />
-          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-            <div className="flex flex-col"
-              style={{ "height": `${180 + (requests.length * 60)}px` }}>
-              {requests.map((data, subindex) =>
-                <Fragment key={subindex}>
-                  <CryptoRequestAnchor $entry={$entry} index={index} subindex={subindex} title={title} session={session} metadata={metadata} />
-                </Fragment>)}
-              <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-                style={{ "transform": `translateY(-${requests.length * 120}px)` }}
-                type="button">
-                <InButton>
-                  <Outline.TrashIcon className="size-8" />
-                </InButton>
-              </button>
-            </div>
-          </div>
-        </Fragment>
-      </form>
-    </div>
-  </Fragment>
-}
 
 export function CryptoSessionAddAnchor(props: { count: number }) {
   const { count } = props
@@ -191,8 +37,8 @@ export function CryptoSessionAddAnchor(props: { count: number }) {
   </a>
 }
 
-export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number } & { respond(title: string, url: string): Promise<void> }) {
-  const { $entry, index, respond } = props
+export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { respond(title: string, url: string): Promise<void> }) {
+  const { $entry, subaccount, respond } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -317,7 +163,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           title={title}
           subtitle={subtitle}
           color={color}
-          index={index}
+          index={subaccount}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
@@ -403,6 +249,179 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     </div>
   </Fragment>
 }
+
+export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { index: number } & { title: string } & { session: WcSession } & { metadata: WcMetadata }) {
+  const { $entry, subaccount, index, title, session, metadata } = props
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, `/session/${index}`)
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === `/session/${index}` &&
+        <PathBoard>
+          <CryptoSessionPage $entry={$entry} subaccount={subaccount} title={title} session={session} metadata={metadata} />
+        </PathBoard>}
+    </SubpathProvider>
+    <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
+      data-[color=red]:bg-red-400 
+      data-[color=orange]:bg-orange-400 
+      data-[color=amber]:bg-amber-400 
+      data-[color=yellow]:bg-yellow-400 
+      data-[color=lime]:bg-lime-400 
+      data-[color=green]:bg-green-400 
+      data-[color=emerald]:bg-emerald-400 
+      data-[color=teal]:bg-teal-400 
+      data-[color=cyan]:bg-cyan-400 
+      data-[color=sky]:bg-sky-400 
+      data-[color=blue]:bg-blue-400 
+      data-[color=indigo]:bg-indigo-400 
+      data-[color=violet]:bg-violet-400 
+      data-[color=purple]:bg-purple-400 
+      data-[color=fuchsia]:bg-fuchsia-400 
+      data-[color=pink]:bg-pink-400 
+      data-[color=rose]:bg-rose-400 
+      in-dark:data-[color=red]:bg-red-500
+      in-dark:data-[color=orange]:bg-orange-500
+      in-dark:data-[color=amber]:bg-amber-500
+      in-dark:data-[color=yellow]:bg-yellow-500
+      in-dark:data-[color=lime]:bg-lime-500
+      in-dark:data-[color=green]:bg-green-500
+      in-dark:data-[color=emerald]:bg-emerald-500
+      in-dark:data-[color=teal]:bg-teal-500
+      in-dark:data-[color=cyan]:bg-cyan-500
+      in-dark:data-[color=sky]:bg-sky-500
+      in-dark:data-[color=blue]:bg-blue-500
+      in-dark:data-[color=indigo]:bg-indigo-500
+      in-dark:data-[color=violet]:bg-violet-500
+      in-dark:data-[color=purple]:bg-purple-500
+      in-dark:data-[color=fuchsia]:bg-fuchsia-500
+      in-dark:data-[color=pink]:bg-pink-500
+      in-dark:data-[color=rose]:bg-rose-500"
+      style={{ transform: `translateY(-${index * 120}px)` }}
+      data-theme={color == null ? "opposite" : "dark"}
+      data-color={color}
+      href={coords.url.hash}
+      onClick={coords.onClick}
+      onKeyDown={coords.onKeyDown}>
+      <div className="flex items-center justify-between">
+        <div className="font-medium text-xl">
+          {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
+        </div>
+        <div className="font-medium text-xl text-default-half-contrast">
+          #{subaccount + 1}
+        </div>
+        <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
+          <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
+          <div className="relative inline-flex size-4 rounded-full bg-sky-500" />
+        </div>
+      </div>
+    </a>
+  </Fragment>
+}
+
+export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { title: string } & { session: WcSession } & { metadata: WcMetadata }) {
+  const { $entry, subaccount, title, session, metadata } = props
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const [flipped, setFlipped] = useState(false)
+
+  const subtitle = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const [requests, setRequests] = useState<Array<string>>(["Transaction", "Signature"])
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/+" &&
+        <PathPaper>
+          {/*  */}
+        </PathPaper>}
+    </SubpathProvider>
+    <div className="flex flex-col grow p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-medium">
+          {Lang.match({ en: "Crypto session", zh: "加密会话", hi: "क्रिप्टो सत्र", es: "Sesión de criptomonedas", ar: "الجلسة المشفرة", fr: "Session crypto", de: "Krypto-Sitzung", ru: "Крипто-сессия", pt: "Sessão de criptomoeda", ja: "暗号セッション", pa: "ਕ੍ਰਿਪਟੋ ਸੈਸ਼ਨ", bn: "ক্রিপ্টো সেশন", id: "Sesi Kripto", ur: "کرپٹو سیشن", ms: "Sesi Kripto", it: "Sessione crittografica", tr: "Kripto oturumu", ta: "கிரிப்டோ அமர்வு", te: "క్రిప్టో సెషన్", ko: "암호화 세션", vi: "Phiên tiền điện tử", pl: "Sesja kryptowalutowa", ro: "Sesiune criptografică", nl: "Crypto sessie", el: "Συνεδρία κρυπτογράφησης ", th: "เซสชันคริปโต ", cs: "Krypto sezení ", hu: "Kripto munkamenet ", sv: "Krypto-session ", da: "Krypto-session" })}
+        </h1>
+        <AccountMenuAnchor />
+      </div>
+      <div className="h-6" />
+      <div className="flex flex-col items-center justify-center">
+        <CryptoSessionCard
+          title={title}
+          subtitle={subtitle}
+          color={color}
+          index={subaccount}
+          flip={flipped}
+          onFlipChange={setFlipped} />
+      </div>
+      <form className="grow flex flex-col"
+        onSubmit={Events.preventDefault}>
+        <input className="hidden"
+          autoComplete="off"
+          name="username" />
+        <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            {Lang.match({ en: "Requests", zh: "请求", hi: "अनुरोध", es: "Solicitudes", ar: "الطلبات", fr: "Requêtes", de: "Anfragen", ru: "Запросы", pt: "Solicitações", ja: "リクエスト", pa: "ਬੇਨਤੀਆਂ", bn: "অনুরোধসমূহ", id: "Permintaan", ur: "درخواستیں", ms: "Permintaan", it: "Richieste", tr: "İstekler", ta: "கோரிக்கைகள்", te: "అభ్యర్థనలు", ko: "요청 사항", vi: "Yêu cầu", pl: "Żądania", ro: "Cereri", nl: "Verzoeken", el: "Αιτήματα ", th: "คำขอ ", cs: "Požadavky ", hu: "Kérések ", sv: "Förfrågningar ", da: "Anmodninger" })}
+          </div>
+          <div className="text-default-contrast">
+            {Lang.match({ en: "Your WalletConnect requests.", zh: "您的 WalletConnect 请求。", hi: "आपके WalletConnect अनुरोध।", es: "Tus solicitudes de WalletConnect.", ar: "طلبات WalletConnect الخاصة بك.", fr: "Vos requêtes WalletConnect.", de: "Ihre WalletConnect-Anfragen.", ru: "Ваши запросы WalletConnect.", pt: "Suas solicitações do WalletConnect.", ja: "あなたのWalletConnectリクエスト。", pa: "ਤੁਹਾਡੇ WalletConnect ਬੇਨਤੀਆਂ।", bn: "আপনার WalletConnect অনুরোধ।", id: "Permintaan WalletConnect Anda.", ur: "آپ کے WalletConnect درخواستیں۔", ms: "Permintaan WalletConnect Anda.", it: "Le tue richieste di WalletConnect.", tr: "WalletConnect istekleriniz.", ta: "உங்கள் WalletConnect கோரிக்கைகள்.", te: "మీ WalletConnect అభ్యర్థనలు.", ko: "귀하의 WalletConnect 요청입니다.", vi: "Các yêu cầu của bạn trên WalletConnect.", pl: "Twoje żądania WalletConnect.", ro: "Cereri dvs. de pe WalletConnect.", nl: "Uw WalletConnect-verzoeken.", el: "Τα αιτήματα σας στο WalletConnect. ", th: "คำขอของคุณบน WalletConnect. ", cs: "Vaše požadavky na WalletConnect. ", hu: "A WalletConnect kérései. ", sv: "Dina förfrågningar på WalletConnect. ", da: "Dine anmodninger på WalletConnect." })}
+          </div>
+          <div className="h-4" />
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+            <div className="flex flex-col"
+              style={{ "height": `${180 + (requests.length * 60)}px` }}>
+              {requests.map((data, index) =>
+                <Fragment key={index}>
+                  <CryptoRequestAnchor $entry={$entry} subaccount={subaccount} index={index} title={title} session={session} metadata={metadata} />
+                </Fragment>)}
+              <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+                style={{ "transform": `translateY(-${requests.length * 120}px)` }}
+                type="button">
+                <InButton>
+                  <Outline.TrashIcon className="size-8" />
+                </InButton>
+              </button>
+            </div>
+          </div>
+        </Fragment>
+      </form>
+    </div>
+  </Fragment>
+}
+
+export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number }) {
+  const { $entry, subaccount } = props
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+    </SubpathProvider>
+    <div className="flex flex-col text-left gap-2">
+      <WideNakedMenuButton>
+        <Outline.LinkSlashIcon className="size-5" />
+        {Lang.match({ en: "Destroy", zh: "销毁", hi: "नष्ट करें", es: "Destruir", ar: "تدمير", fr: "Détruire", de: "Zerstören", ru: "Уничтожить", pt: "Destruir", ja: "破壊", pa: "ਨਸ਼ਟ ਕਰੋ", bn: "ধ্বংস করুন", id: "Hancurkan", ur: "تباہ کریں", ms: "Hancurkan", it: "Distruggi", tr: "Yık", ta: "அழிக்கவும்", te: "నాశనం చేయండి", ko: "파괴하기", vi: "Hủy bỏ", pl: "Zniszcz", ro: "Distruge", nl: "Vernietigen", el: "Καταστρέψτε ", th: "ทำลาย ", cs: "Zničit ", hu: "Megsemmisít ", sv: "Förstöra ", da: "Ødelæg" })}
+      </WideNakedMenuButton>
+    </div>
+  </Fragment>
+}
+
 
 export function UrlInputAnchor() {
   const path = usePathContext().getOrThrow()
