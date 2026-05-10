@@ -5,7 +5,7 @@ import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
-import { getEntryColor, getEntryTitle, getEntryType } from "@/libs/kdbx/mod.ts";
+import { getEntryType } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { KeypairAccountAddMenuAnchor, KeypairAccountAddPage, KeypairAccountPage } from "@/mods/app/session/account/keypair/mod.tsx";
@@ -44,6 +44,14 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
   const uuid = useMemo(() => {
     return $entry.getUuidOrThrow().getOrThrow()
+  }, [$entry])
+
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
 
   const coords = useAnchorWithCoords(hash, `/account/${uuid}`)
@@ -140,13 +148,13 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       focus-visible:in-dark:data-[color=fuchsia]:outline-fuchsia-500
       focus-visible:in-dark:data-[color=pink]:outline-pink-500
       focus-visible:in-dark:data-[color=rose]:outline-rose-500"
-      data-theme={getEntryColor($entry) == null ? "opposite" : "dark"}
-      data-color={getEntryColor($entry)}
+      data-theme={color == null ? "opposite" : "dark"}
+      data-color={color}
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
       <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
-        {getEntryTitle($entry) || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
+        {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
       </div>
       <div className="h-2" />
       <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
@@ -205,7 +213,6 @@ export function CryptoSessionCard(props: { color: Nullable<string> } & { title: 
   const { color, title, subtitle, index, flip, onFlipChange } = props
 
   return <FlipCard
-    // type={Lang.match({ en: "Session", zh: "会话", hi: "सत्र", es: "Sesión", ar: "جلسة", fr: "Session", de: "Sitzung", ru: "Сессия", pt: "Sessão", ja: "セッション", pa: "ਸੈਸ਼ਨ", bn: "সেশন", id: "Sesi", ur: "سیشن", ms: "Sesi", it: "Sessione", tr: "Oturum", ta: "அமர்வு", te: "సెషన్", ko: "세션", vi: "Phiên làm việc", pl: "Sesja", ro: "Sesiune", nl: "Sessie", el: "Σύνοδος", th: "เซสชัน", cs: "Relace", hu: "Munkamenet", sv: "Session", da: "Session" })}
     type="WalletConnect"
     title={title}
     subtitle={subtitle}

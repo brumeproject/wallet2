@@ -19,269 +19,6 @@ import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, Acc
 
 React;
 
-export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
-  const { $entry } = props
-
-  const close = useCloseContext().getOrThrow()
-
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const session = useSessionContext().getOrThrow()
-
-  const [flipped, setFlipped] = useState(false)
-
-  const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const trashed = useMemo(() => {
-    const { kdbx } = session.value
-
-    const $file = kdbx.inner.content.value
-    const $trash = getRecycleBinOrNull($file)
-
-    if ($trash == null)
-      return false
-
-    return $trash.element.contains($entry.element)
-  }, [session, $entry])
-
-  const num = useMemo(() => {
-    return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const hol = useMemo(() => {
-    return $entry.getStringByKeyOrNull("CardHolder")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const exp = useMemo(() => {
-    return $entry.getStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const cvv = useMemo(() => {
-    return $entry.getStringByKeyOrNull("CVV")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const pin = useMemo(() => {
-    return $entry.getStringByKeyOrNull("PIN")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const notes = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
-  }, [$entry])
-
-  const copyTheNum = useCopy(num)
-  const copyTheHol = useCopy(hol)
-  const copyTheExp = useCopy(exp)
-  const copyTheCvv = useCopy(cvv)
-  const copyThePin = useCopy(pin)
-
-  return <div className="flex flex-col grow p-6">
-    <SubpathProvider value={hash}>
-      {hash.url.pathname === "/+" &&
-        <PathPaper>
-          <div className="flex flex-col text-left gap-2">
-            {/* <WideNakedMenuButton>
-              <Outline.PencilIcon className="size-5" />
-              Edit
-            </WideNakedMenuButton> */}
-            {trashed === false && <AccountMenuTrashButton $entry={$entry} close={close} />}
-            {trashed === true && <AccountMenuUntrashButton $entry={$entry} close={close} />}
-            {trashed === true && <AccountMenuDeleteButton $entry={$entry} close={close} />}
-          </div>
-        </PathPaper>}
-    </SubpathProvider>
-    <div className="flex items-center justify-between">
-      <h1 className="text-xl font-medium">
-        {Lang.match({ en: "Card account", zh: "卡片账户", hi: "कार्ड खाता", es: "Cuenta de tarjeta", ar: "حساب البطاقة", fr: "Compte de carte", de: "Kartenkonto", ru: "Карта аккаунта", pt: "Conta do cartão", ja: "カードアカウント", pa: "ਕਾਰਡ ਖਾਤਾ", bn: "কার্ড অ্যাকাউন্ট", id: "Akun kartu", ur: "کارڈ اکاؤنٹ", ms: "Akun kartu", it: "Account carta", tr: "Kart hesabı", ta: "கார்டு கணக்கு", te: "కార్డు ఖాతా", ko: "카드 계정", vi: "Tài khoản thẻ", pl: "Konto karty", ro: "Cont de card", nl: "Kaartaccount", el: "Λογαριασμός κάρτας", th: "บัญชีบัตรเครดิต", cs: "Kreditní karta účet", hu: "Kártya fiók", sv: "Kortkonto", da: "Kortkonto" })}
-      </h1>
-      <AccountMenuAnchor />
-    </div>
-    <div className="h-6" />
-    <div className="flex items-center justify-center">
-      <CardAccountCard
-        title={title}
-        color={color}
-        number={num}
-        flip={flipped}
-        onFlipChange={setFlipped} />
-    </div>
-    <form className="grow flex flex-col"
-      onSubmit={Events.preventDefault}>
-      <input className="hidden"
-        autoComplete="off"
-        name="username" />
-      {num && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          {Lang.match({ en: "Number", zh: "号码", hi: "नंबर", es: "Número", ar: "رقم", fr: "Numéro", de: "Nummer", ru: "Номер", pt: "Número", ja: "番号", pa: "ਨੰਬਰ", bn: "নম্বর", id: "Nomor", ur: "نمبر", ms: "Nomor", it: "Numero", tr: "Numara", ta: "எண்", te: "సంఖ్య", ko: "번호", vi: "Số", pl: "Numer", ro: "Număr", nl: "Nummer", el: "Αριθμός", th: "หมายเลข", cs: "Číslo", hu: "Szám", sv: "Nummer", da: "Nummer" })}
-        </div>
-        <div className="text-default-contrast">
-          {Lang.match({ en: "Your card number.", zh: "您的卡号。", hi: "आपका कार्ड नंबर।", es: "El número de su tarjeta.", ar: "رقم بطاقتك.", fr: "Votre numéro de carte.", de: "Ihre Kartennummer.", ru: "Номер вашей карты.", pt: "O número do seu cartão.", ja: "あなたのカード番号。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਨੰਬਰ।", bn: "আপনার কার্ড নম্বর।", id: "Nomor kartu Anda.", ur: "آپ کا کارڈ نمبر۔", ms: "Nomor kartu Anda.", it: "Il numero della tua carta.", tr: "Kart numaranız.", ta: "உங்கள் கார்டு எண்.", te: "మీ కార్డు సంఖ్య.", ko: "카드 번호입니다.", vi: "Số thẻ của bạn.", pl: "Numer twojej karty.", ro: "Numărul cardului dvs.", nl: "Uw kaartnummer.", el: "Ο αριθμός της κάρτας σας.", th: "หมายเลขบัตรของคุณ", cs: "Vaše číslo karty.", hu: "A kártya száma.", sv: "Ditt kortnummer.", da: "Dit kortnummer." })}
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <input className="w-full focus-visible:outline-none"
-            readOnly
-            autoComplete="off"
-            onFocus={e => e.currentTarget.select()}
-            value={num} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={copyTheNum.copyOrAlert}>
-              <InButton>
-                {copyTheNum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-              </InButton>
-            </button>
-          </div>
-        </div>
-      </Fragment>}
-      {hol && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          {Lang.match({ en: "Holder", zh: "持卡人", hi: "धारक", es: "Titular", ar: "صاحب البطاقة", fr: "Titulaire", de: "Inhaber", ru: "Держатель", pt: "Titular", ja: "カード所有者", pa: "ਹੋਲਡਰ", bn: "হোল্ডার", id: "Pemegang", ur: "ہولڈر", ms: "Pemegang", it: "Titolare", tr: "Sahip", ta: "கார்டு வைத்திருப்பவர்", te: "హోల్డర్", ko: "홀더", vi: "Chủ thẻ", pl: "Posiadacz karty", ro: "Titularul cardului", nl: "Houder", el: "Κάτοχος κάρτας", th: "ผู้ถือบัตรเครดิต", cs: "Držitel karty.", hu: "Kártyabirtokos.", sv: "Innehavare.", da: "Indehaver." })}
-        </div>
-        <div className="text-default-contrast">
-          {Lang.match({ en: "Your card holder name.", zh: "您的卡片持有人姓名。", hi: "आपका कार्ड धारक नाम।", es: "El nombre del titular de su tarjeta.", ar: "اسم حامل البطاقة الخاصة بك.", fr: "Le nom du titulaire de votre carte.", de: "Der Name des Karteninhabers.", ru: "Имя держателя вашей карты.", pt: "O nome do titular do seu cartão.", ja: "あなたのカード所有者の名前。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਹੋਲਡਰ ਨਾਮ।", bn: "আপনার কার্ড হোল্ডারের নাম।", id: "Nama pemegang kartu Anda.", ur: "آپ کے کارڈ ہولڈر کا نام۔", ms: "Nama pemegang kad anda.", it: "Il nome del titolare della tua carta.", tr: "Kart sahibinin adı.", ta: "உங்கள் கார்டு ஹோல்டர் பெயர்.", te: "మీ కార్డు హోల్డర్ పేరు.", ko: "카드 소유자 이름입니다.", vi: "Tên chủ thẻ của bạn.", pl: "Nazwa posiadacza karty.", ro: "Numele titularului cardului dvs.", nl: "De naam van de kaarthouder.", el: "Το όνομα του κατόχου της κάρτας σας.", th: "ชื่อผู้ถือบัตรของคุณ", cs: "Jméno držitele karty.", hu: "A kártya tulajdonosának neve.", sv: "Kortinnehavarens namn.", da: "Kortindehaverens navn." })}
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <input className="w-full focus-visible:outline-none"
-            readOnly
-            autoComplete="off"
-            onFocus={e => e.currentTarget.select()}
-            value={hol} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={copyTheHol.copyOrAlert}>
-              <InButton>
-                {copyTheHol.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-              </InButton>
-            </button>
-          </div>
-        </div>
-      </Fragment>}
-      {exp && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          {Lang.match({ en: "Expiry", zh: "到期", hi: "समाप्ति", es: "Vencimiento", ar: "تاريخ الانتهاء", fr: "Expiration", de: "Ablauf", ru: "Срок действия", pt: "Validade", ja: "有効期限", pa: "ਮਿਆਦ", bn: "মেয়াদ শেষ", id: "Kedaluwarsa", ur: "اختتامی تاریخ", ms: "Tamat tempoh", it: "Scadenza", tr: "Son kullanma tarihi", ta: "காலாவதி", te: "కాలపరిమితి", ko: "만료", vi: "Hết hạn", pl: "Wygasa", ro: "Expirare", nl: "Vervaldatum", el: "Ημερομηνία λήξης", th: "วันหมดอายุ", cs: "Datum vypršení platnosti", hu: "Lejárat", sv: "Utgångsdatum", da: "Udløbsdato" })}
-        </div>
-        <div className="text-default-contrast">
-          {Lang.match({ en: "Your card expiry date.", zh: "您的卡片到期日期。", hi: "आपका कार्ड समाप्ति तिथि।", es: "La fecha de vencimiento de su tarjeta.", ar: "تاريخ انتهاء صلاحية بطاقتك.", fr: "La date d'expiration de votre carte.", de: "Das Ablaufdatum Ihrer Karte.", ru: "Дата истечения срока действия вашей карты.", pt: "A data de validade do seu cartão.", ja: "あなたのカードの有効期限。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਮਿਆਦ ਦੀ ਤਾਰੀਖ।", bn: "আপনার কার্ডের মেয়াদ শেষ হওয়ার তারিখ।", id: "Tanggal kedaluwarsa kartu Anda.", ur: "آپ کے کارڈ کی تاریخ ختم ہونے کی تاریخ۔", ms: "Tarikh tamat tempoh kad anda.", it: "La data di scadenza della tua carta.", tr: "Kartınızın son kullanma tarihi.", ta: "உங்கள் கார்டு காலாவதி தேதி.", te: "మీ కార్డు కాలపరిమితి తేదీ.", ko: "카드 만료 날짜입니다.", vi: "Ngày hết hạn thẻ của bạn.", pl: "Data wygaśnięcia twojej karty.", ro: "Data expirării cardului dvs.", nl: "De vervaldatum van uw kaart.", el: "Η ημερομηνία λήξης της κάρτας σας.", th: "วันหมดอายุของบัตรของคุณ", cs: "Datum vypršení platnosti vaší karty.", hu: "A kártya lejárati dátuma.", sv: "Ditt korts utgångsdatum.", da: "Udløbsdato for dit kort." })}
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <input className="w-full focus-visible:outline-none"
-            readOnly
-            autoComplete="off"
-            onFocus={e => e.currentTarget.select()}
-            value={exp} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={copyTheExp.copyOrAlert}>
-              <InButton>
-                {copyTheExp.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-              </InButton>
-            </button>
-          </div>
-        </div>
-      </Fragment>}
-      {cvv && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          {Lang.match({ en: "CVV", zh: "CVV", hi: "CVV", es: "CVV", ar: "CVV", fr: "CVV", de: "CVV", ru: "CVV", pt: "CVV", ja: "CVV", pa: "CVV", bn: "CVV", id: "CVV", ur: "CVV", ms: "CVV", it: "CVV", tr: "CVV", ta: "CVV", te: "CVV", ko: "CVV", vi: "CVV", pl: "CVV", ro: "CVV", nl: "CVV", el: "CVV", th: "CVV", cs: "CVV", hu: "CVV", sv: "CVV", da: "CVV" })}
-        </div>
-        <div className="text-default-contrast">
-          {Lang.match({ en: "Your card verification value.", zh: "您的卡片验证值。", hi: "आपका कार्ड सत्यापन मूल्य।", es: "El valor de verificación de su tarjeta.", ar: "قيمة التحقق من بطاقتك.", fr: "La valeur de vérification de votre carte.", de: "Der Überprüfungswert Ihrer Karte.", ru: "Значение проверки вашей карты.", pt: "O valor de verificação do seu cartão.", ja: "あなたのカードの確認値。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਵੈਰੀਫਿਕੇਸ਼ਨ ਮੁੱਲ।", bn: "আপনার কার্ড যাচাইকরণ মান।", id: "Nilai verifikasi kartu Anda.", ur: "آپ کے کارڈ کی تصدیقی قیمت۔", ms: "Nilai pengesahan kad anda.", it: "Il valore di verifica della tua carta.", tr: "Kartınızın doğrulama değeri.", ta: "உங்கள் கார்டு சரிபார்ப்பு மதிப்பு.", te: "మీ కార్డు ధృవీకరణ విలువ.", ko: "카드 확인 값입니다.", vi: "Giá trị xác minh thẻ của bạn.", pl: "Wartość weryfikacji twojej karty.", ro: "Valoarea de verificare a cardului dvs.", nl: "De verificatiewaarde van uw kaart.", el: "Η τιμή επαλήθευσης της κάρτας σας.", th: "ค่าการตรวจสอบบัตรของคุณ", cs: "Hodnota ověření vaší karty.", hu: "A kártya ellenőrző értéke.", sv: "Ditt korts verifieringsvärde.", da: "Dit korts verificeringsværdi." })}
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <input className="w-full focus-visible:outline-none"
-            readOnly
-            autoComplete="off"
-            type={flipped ? "text" : "password"}
-            onFocus={e => e.currentTarget.select()}
-            value={cvv} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={() => setFlipped(x => !x)}>
-              <InButton>
-                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-              </InButton>
-            </button>
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={copyTheCvv.copyOrAlert}>
-              <InButton>
-                {copyTheCvv.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-              </InButton>
-            </button>
-          </div>
-        </div>
-      </Fragment>}
-      {pin && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          {Lang.match({ en: "PIN", zh: "PIN", hi: "PIN", es: "PIN", ar: "PIN", fr: "PIN", de: "PIN", ru: "PIN", pt: "PIN", ja: "PIN", pa: "PIN", bn: "PIN", id: "PIN", ur: "PIN", ms: "PIN", it: "PIN", tr: "PIN", ta: "PIN", te: "PIN", ko: "PIN", vi: "PIN", pl: "PIN", ro: "PIN", nl: "PIN", el: "PIN", th: "รหัส PIN", cs: "PIN kód", hu: "PIN kód", sv: "PIN-kod", da: "PIN-kode" })}
-        </div>
-        <div className="text-default-contrast">
-          {Lang.match({ en: "Your card personal identification number.", zh: "您的卡片个人识别号码。", hi: "आपका कार्ड व्यक्तिगत पहचान संख्या।", es: "El número de identificación personal de su tarjeta.", ar: "رقم التعريف الشخصي لبطاقتك.", fr: "Le numéro d'identification personnel de votre carte.", de: "Ihre persönliche Identifikationsnummer der Karte.", ru: "Ваш личный идентификационный номер карты.", pt: "O número de identificação pessoal do seu cartão.", ja: "あなたのカードの個人識別番号。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਨਿੱਜੀ ਪਛਾਣ ਨੰਬਰ।", bn: "আপনার কার্ডের ব্যক্তিগত শনাক্তকরণ নম্বর।", id: "Nomor identifikasi pribadi kartu Anda.", ur: "آپ کے کارڈ کا ذاتی شناختی نمبر۔", ms: "Nombor pengenalan peribadi kad anda.", it: "Il numero di identificazione personale della tua carta.", tr: "Kartınızın kişisel tanımlama numarası.", ta: "உங்கள் கார்டின் தனிப்பட்ட அடையாள எண்.", te: "మీ కార్డు వ్యక్తిగత గుర్తింపు సంఖ్య.", ko: "카드 개인 식별 번호입니다.", vi: "Số nhận dạng cá nhân của thẻ của bạn.", pl: "Twój osobisty numer identyfikacyjny karty.", ro: "Numărul de identificare personal al cardului dvs.", nl: "Uw persoonlijke identificatienummer van uw kaart.", el: "Ο προσωπικός αριθμός αναγνώρισης της κάρτας σας.", th: "หมายเลขประจำตัวส่วนบุคคลของบัตรของคุณ", cs: "Vaše osobní identifikační číslo karty.", hu: "A kártya személyes azonosító száma.", sv: "Ditt korts personliga identifikationsnummer.", da: "Dit korts personlige identifikationsnummer." })}
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <input className="w-full focus-visible:outline-none"
-            readOnly
-            autoComplete="off"
-            type={flipped ? "text" : "password"}
-            onFocus={e => e.currentTarget.select()}
-            value={pin} />
-          <div className="flex items-center gap-2">
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={() => setFlipped(x => !x)}>
-              <InButton>
-                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
-              </InButton>
-            </button>
-            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
-              type="button"
-              onClick={copyThePin.copyOrAlert}>
-              <InButton>
-                {copyThePin.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
-              </InButton>
-            </button>
-          </div>
-        </div>
-      </Fragment>}
-      {notes && <Fragment>
-        <div className="h-6" />
-        <div className="font-medium">
-          {Lang.match({ en: "Notes", zh: "备注", hi: "नोट्स", es: "Notas", ar: "ملاحظات", fr: "Remarques", de: "Notizen", ru: "Заметки", pt: "Notas", ja: "ノート", pa: "ਨੋਟਸ", bn: "নোটস", id: "Catatan", ur: "نوٹس", ms: "Catatan", it: "Note", tr: "Notlar", ta: "குறிப்புகள்", te: "గమనికలు", ko: "노트", vi: "Ghi chú", pl: "Notatki", ro: "Note", nl: "Notities", el: "Σημειώσεις", th: "บันทึกย่อ", cs: "Poznámky", hu: "Jegyzetek", sv: "Anteckningar", da: "Noter" })}
-        </div>
-        <div className="text-default-contrast">
-          {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
-        </div>
-        <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full resize-none focus-visible:outline-none"
-            readOnly
-            rows={6}
-            value={notes} />
-        </div>
-      </Fragment>}
-    </form>
-  </div>
-}
-
 export function CardAccountAddMenuAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
@@ -592,4 +329,267 @@ export function CardAccountAddPage() {
       </form>
     </div>
   </Fragment>
+}
+
+export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+  const { $entry } = props
+
+  const close = useCloseContext().getOrThrow()
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const session = useSessionContext().getOrThrow()
+
+  const [flipped, setFlipped] = useState(false)
+
+  const title = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const color = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const trashed = useMemo(() => {
+    const { kdbx } = session.value
+
+    const $file = kdbx.inner.content.value
+    const $trash = getRecycleBinOrNull($file)
+
+    if ($trash == null)
+      return false
+
+    return $trash.element.contains($entry.element)
+  }, [session, $entry])
+
+  const num = useMemo(() => {
+    return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const hol = useMemo(() => {
+    return $entry.getStringByKeyOrNull("CardHolder")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const exp = useMemo(() => {
+    return $entry.getStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const cvv = useMemo(() => {
+    return $entry.getStringByKeyOrNull("CVV")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const pin = useMemo(() => {
+    return $entry.getStringByKeyOrNull("PIN")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const notes = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
+  }, [$entry])
+
+  const copyTheNum = useCopy(num)
+  const copyTheHol = useCopy(hol)
+  const copyTheExp = useCopy(exp)
+  const copyTheCvv = useCopy(cvv)
+  const copyThePin = useCopy(pin)
+
+  return <div className="flex flex-col grow p-6">
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/+" &&
+        <PathPaper>
+          <div className="flex flex-col text-left gap-2">
+            {/* <WideNakedMenuButton>
+              <Outline.PencilIcon className="size-5" />
+              Edit
+            </WideNakedMenuButton> */}
+            {trashed === false && <AccountMenuTrashButton $entry={$entry} close={close} />}
+            {trashed === true && <AccountMenuUntrashButton $entry={$entry} close={close} />}
+            {trashed === true && <AccountMenuDeleteButton $entry={$entry} close={close} />}
+          </div>
+        </PathPaper>}
+    </SubpathProvider>
+    <div className="flex items-center justify-between">
+      <h1 className="text-xl font-medium">
+        {Lang.match({ en: "Card account", zh: "卡片账户", hi: "कार्ड खाता", es: "Cuenta de tarjeta", ar: "حساب البطاقة", fr: "Compte de carte", de: "Kartenkonto", ru: "Карта аккаунта", pt: "Conta do cartão", ja: "カードアカウント", pa: "ਕਾਰਡ ਖਾਤਾ", bn: "কার্ড অ্যাকাউন্ট", id: "Akun kartu", ur: "کارڈ اکاؤنٹ", ms: "Akun kartu", it: "Account carta", tr: "Kart hesabı", ta: "கார்டு கணக்கு", te: "కార్డు ఖాతా", ko: "카드 계정", vi: "Tài khoản thẻ", pl: "Konto karty", ro: "Cont de card", nl: "Kaartaccount", el: "Λογαριασμός κάρτας", th: "บัญชีบัตรเครดิต", cs: "Kreditní karta účet", hu: "Kártya fiók", sv: "Kortkonto", da: "Kortkonto" })}
+      </h1>
+      <AccountMenuAnchor />
+    </div>
+    <div className="h-6" />
+    <div className="flex items-center justify-center">
+      <CardAccountCard
+        title={title}
+        color={color}
+        number={num}
+        flip={flipped}
+        onFlipChange={setFlipped} />
+    </div>
+    <form className="grow flex flex-col"
+      onSubmit={Events.preventDefault}>
+      <input className="hidden"
+        autoComplete="off"
+        name="username" />
+      {num && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          {Lang.match({ en: "Number", zh: "号码", hi: "नंबर", es: "Número", ar: "رقم", fr: "Numéro", de: "Nummer", ru: "Номер", pt: "Número", ja: "番号", pa: "ਨੰਬਰ", bn: "নম্বর", id: "Nomor", ur: "نمبر", ms: "Nomor", it: "Numero", tr: "Numara", ta: "எண்", te: "సంఖ్య", ko: "번호", vi: "Số", pl: "Numer", ro: "Număr", nl: "Nummer", el: "Αριθμός", th: "หมายเลข", cs: "Číslo", hu: "Szám", sv: "Nummer", da: "Nummer" })}
+        </div>
+        <div className="text-default-contrast">
+          {Lang.match({ en: "Your card number.", zh: "您的卡号。", hi: "आपका कार्ड नंबर।", es: "El número de su tarjeta.", ar: "رقم بطاقتك.", fr: "Votre numéro de carte.", de: "Ihre Kartennummer.", ru: "Номер вашей карты.", pt: "O número do seu cartão.", ja: "あなたのカード番号。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਨੰਬਰ।", bn: "আপনার কার্ড নম্বর।", id: "Nomor kartu Anda.", ur: "آپ کا کارڈ نمبر۔", ms: "Nomor kartu Anda.", it: "Il numero della tua carta.", tr: "Kart numaranız.", ta: "உங்கள் கார்டு எண்.", te: "మీ కార్డు సంఖ్య.", ko: "카드 번호입니다.", vi: "Số thẻ của bạn.", pl: "Numer twojej karty.", ro: "Numărul cardului dvs.", nl: "Uw kaartnummer.", el: "Ο αριθμός της κάρτας σας.", th: "หมายเลขบัตรของคุณ", cs: "Vaše číslo karty.", hu: "A kártya száma.", sv: "Ditt kortnummer.", da: "Dit kortnummer." })}
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            autoComplete="off"
+            onFocus={e => e.currentTarget.select()}
+            value={num} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              type="button"
+              onClick={copyTheNum.copyOrAlert}>
+              <InButton>
+                {copyTheNum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {hol && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          {Lang.match({ en: "Holder", zh: "持卡人", hi: "धारक", es: "Titular", ar: "صاحب البطاقة", fr: "Titulaire", de: "Inhaber", ru: "Держатель", pt: "Titular", ja: "カード所有者", pa: "ਹੋਲਡਰ", bn: "হোল্ডার", id: "Pemegang", ur: "ہولڈر", ms: "Pemegang", it: "Titolare", tr: "Sahip", ta: "கார்டு வைத்திருப்பவர்", te: "హోల్డర్", ko: "홀더", vi: "Chủ thẻ", pl: "Posiadacz karty", ro: "Titularul cardului", nl: "Houder", el: "Κάτοχος κάρτας", th: "ผู้ถือบัตรเครดิต", cs: "Držitel karty.", hu: "Kártyabirtokos.", sv: "Innehavare.", da: "Indehaver." })}
+        </div>
+        <div className="text-default-contrast">
+          {Lang.match({ en: "Your card holder name.", zh: "您的卡片持有人姓名。", hi: "आपका कार्ड धारक नाम।", es: "El nombre del titular de su tarjeta.", ar: "اسم حامل البطاقة الخاصة بك.", fr: "Le nom du titulaire de votre carte.", de: "Der Name des Karteninhabers.", ru: "Имя держателя вашей карты.", pt: "O nome do titular do seu cartão.", ja: "あなたのカード所有者の名前。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਹੋਲਡਰ ਨਾਮ।", bn: "আপনার কার্ড হোল্ডারের নাম।", id: "Nama pemegang kartu Anda.", ur: "آپ کے کارڈ ہولڈر کا نام۔", ms: "Nama pemegang kad anda.", it: "Il nome del titolare della tua carta.", tr: "Kart sahibinin adı.", ta: "உங்கள் கார்டு ஹோல்டர் பெயர்.", te: "మీ కార్డు హోల్డర్ పేరు.", ko: "카드 소유자 이름입니다.", vi: "Tên chủ thẻ của bạn.", pl: "Nazwa posiadacza karty.", ro: "Numele titularului cardului dvs.", nl: "De naam van de kaarthouder.", el: "Το όνομα του κατόχου της κάρτας σας.", th: "ชื่อผู้ถือบัตรของคุณ", cs: "Jméno držitele karty.", hu: "A kártya tulajdonosának neve.", sv: "Kortinnehavarens namn.", da: "Kortindehaverens navn." })}
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            autoComplete="off"
+            onFocus={e => e.currentTarget.select()}
+            value={hol} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              type="button"
+              onClick={copyTheHol.copyOrAlert}>
+              <InButton>
+                {copyTheHol.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {exp && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          {Lang.match({ en: "Expiry", zh: "到期", hi: "समाप्ति", es: "Vencimiento", ar: "تاريخ الانتهاء", fr: "Expiration", de: "Ablauf", ru: "Срок действия", pt: "Validade", ja: "有効期限", pa: "ਮਿਆਦ", bn: "মেয়াদ শেষ", id: "Kedaluwarsa", ur: "اختتامی تاریخ", ms: "Tamat tempoh", it: "Scadenza", tr: "Son kullanma tarihi", ta: "காலாவதி", te: "కాలపరిమితి", ko: "만료", vi: "Hết hạn", pl: "Wygasa", ro: "Expirare", nl: "Vervaldatum", el: "Ημερομηνία λήξης", th: "วันหมดอายุ", cs: "Datum vypršení platnosti", hu: "Lejárat", sv: "Utgångsdatum", da: "Udløbsdato" })}
+        </div>
+        <div className="text-default-contrast">
+          {Lang.match({ en: "Your card expiry date.", zh: "您的卡片到期日期。", hi: "आपका कार्ड समाप्ति तिथि।", es: "La fecha de vencimiento de su tarjeta.", ar: "تاريخ انتهاء صلاحية بطاقتك.", fr: "La date d'expiration de votre carte.", de: "Das Ablaufdatum Ihrer Karte.", ru: "Дата истечения срока действия вашей карты.", pt: "A data de validade do seu cartão.", ja: "あなたのカードの有効期限。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਮਿਆਦ ਦੀ ਤਾਰੀਖ।", bn: "আপনার কার্ডের মেয়াদ শেষ হওয়ার তারিখ।", id: "Tanggal kedaluwarsa kartu Anda.", ur: "آپ کے کارڈ کی تاریخ ختم ہونے کی تاریخ۔", ms: "Tarikh tamat tempoh kad anda.", it: "La data di scadenza della tua carta.", tr: "Kartınızın son kullanma tarihi.", ta: "உங்கள் கார்டு காலாவதி தேதி.", te: "మీ కార్డు కాలపరిమితి తేదీ.", ko: "카드 만료 날짜입니다.", vi: "Ngày hết hạn thẻ của bạn.", pl: "Data wygaśnięcia twojej karty.", ro: "Data expirării cardului dvs.", nl: "De vervaldatum van uw kaart.", el: "Η ημερομηνία λήξης της κάρτας σας.", th: "วันหมดอายุของบัตรของคุณ", cs: "Datum vypršení platnosti vaší karty.", hu: "A kártya lejárati dátuma.", sv: "Ditt korts utgångsdatum.", da: "Udløbsdato for dit kort." })}
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            autoComplete="off"
+            onFocus={e => e.currentTarget.select()}
+            value={exp} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              type="button"
+              onClick={copyTheExp.copyOrAlert}>
+              <InButton>
+                {copyTheExp.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {cvv && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          {Lang.match({ en: "CVV", zh: "CVV", hi: "CVV", es: "CVV", ar: "CVV", fr: "CVV", de: "CVV", ru: "CVV", pt: "CVV", ja: "CVV", pa: "CVV", bn: "CVV", id: "CVV", ur: "CVV", ms: "CVV", it: "CVV", tr: "CVV", ta: "CVV", te: "CVV", ko: "CVV", vi: "CVV", pl: "CVV", ro: "CVV", nl: "CVV", el: "CVV", th: "CVV", cs: "CVV", hu: "CVV", sv: "CVV", da: "CVV" })}
+        </div>
+        <div className="text-default-contrast">
+          {Lang.match({ en: "Your card verification value.", zh: "您的卡片验证值。", hi: "आपका कार्ड सत्यापन मूल्य।", es: "El valor de verificación de su tarjeta.", ar: "قيمة التحقق من بطاقتك.", fr: "La valeur de vérification de votre carte.", de: "Der Überprüfungswert Ihrer Karte.", ru: "Значение проверки вашей карты.", pt: "O valor de verificação do seu cartão.", ja: "あなたのカードの確認値。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਵੈਰੀਫਿਕੇਸ਼ਨ ਮੁੱਲ।", bn: "আপনার কার্ড যাচাইকরণ মান।", id: "Nilai verifikasi kartu Anda.", ur: "آپ کے کارڈ کی تصدیقی قیمت۔", ms: "Nilai pengesahan kad anda.", it: "Il valore di verifica della tua carta.", tr: "Kartınızın doğrulama değeri.", ta: "உங்கள் கார்டு சரிபார்ப்பு மதிப்பு.", te: "మీ కార్డు ధృవీకరణ విలువ.", ko: "카드 확인 값입니다.", vi: "Giá trị xác minh thẻ của bạn.", pl: "Wartość weryfikacji twojej karty.", ro: "Valoarea de verificare a cardului dvs.", nl: "De verificatiewaarde van uw kaart.", el: "Η τιμή επαλήθευσης της κάρτας σας.", th: "ค่าการตรวจสอบบัตรของคุณ", cs: "Hodnota ověření vaší karty.", hu: "A kártya ellenőrző értéke.", sv: "Ditt korts verifieringsvärde.", da: "Dit korts verificeringsværdi." })}
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            autoComplete="off"
+            type={flipped ? "text" : "password"}
+            onFocus={e => e.currentTarget.select()}
+            value={cvv} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              type="button"
+              onClick={() => setFlipped(x => !x)}>
+              <InButton>
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+              </InButton>
+            </button>
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              type="button"
+              onClick={copyTheCvv.copyOrAlert}>
+              <InButton>
+                {copyTheCvv.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {pin && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          {Lang.match({ en: "PIN", zh: "PIN", hi: "PIN", es: "PIN", ar: "PIN", fr: "PIN", de: "PIN", ru: "PIN", pt: "PIN", ja: "PIN", pa: "PIN", bn: "PIN", id: "PIN", ur: "PIN", ms: "PIN", it: "PIN", tr: "PIN", ta: "PIN", te: "PIN", ko: "PIN", vi: "PIN", pl: "PIN", ro: "PIN", nl: "PIN", el: "PIN", th: "รหัส PIN", cs: "PIN kód", hu: "PIN kód", sv: "PIN-kod", da: "PIN-kode" })}
+        </div>
+        <div className="text-default-contrast">
+          {Lang.match({ en: "Your card personal identification number.", zh: "您的卡片个人识别号码。", hi: "आपका कार्ड व्यक्तिगत पहचान संख्या।", es: "El número de identificación personal de su tarjeta.", ar: "رقم التعريف الشخصي لبطاقتك.", fr: "Le numéro d'identification personnel de votre carte.", de: "Ihre persönliche Identifikationsnummer der Karte.", ru: "Ваш личный идентификационный номер карты.", pt: "O número de identificação pessoal do seu cartão.", ja: "あなたのカードの個人識別番号。", pa: "ਤੁਹਾਡਾ ਕਾਰਡ ਨਿੱਜੀ ਪਛਾਣ ਨੰਬਰ।", bn: "আপনার কার্ডের ব্যক্তিগত শনাক্তকরণ নম্বর।", id: "Nomor identifikasi pribadi kartu Anda.", ur: "آپ کے کارڈ کا ذاتی شناختی نمبر۔", ms: "Nombor pengenalan peribadi kad anda.", it: "Il numero di identificazione personale della tua carta.", tr: "Kartınızın kişisel tanımlama numarası.", ta: "உங்கள் கார்டின் தனிப்பட்ட அடையாள எண்.", te: "మీ కార్డు వ్యక్తిగత గుర్తింపు సంఖ్య.", ko: "카드 개인 식별 번호입니다.", vi: "Số nhận dạng cá nhân của thẻ của bạn.", pl: "Twój osobisty numer identyfikacyjny karty.", ro: "Numărul de identificare personal al cardului dvs.", nl: "Uw persoonlijke identificatienummer van uw kaart.", el: "Ο προσωπικός αριθμός αναγνώρισης της κάρτας σας.", th: "หมายเลขประจำตัวส่วนบุคคลของบัตรของคุณ", cs: "Vaše osobní identifikační číslo karty.", hu: "A kártya személyes azonosító száma.", sv: "Ditt korts personliga identifikationsnummer.", da: "Dit korts personlige identifikationsnummer." })}
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <input className="w-full focus-visible:outline-none"
+            readOnly
+            autoComplete="off"
+            type={flipped ? "text" : "password"}
+            onFocus={e => e.currentTarget.select()}
+            value={pin} />
+          <div className="flex items-center gap-2">
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              type="button"
+              onClick={() => setFlipped(x => !x)}>
+              <InButton>
+                {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
+              </InButton>
+            </button>
+            <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+              type="button"
+              onClick={copyThePin.copyOrAlert}>
+              <InButton>
+                {copyThePin.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              </InButton>
+            </button>
+          </div>
+        </div>
+      </Fragment>}
+      {notes && <Fragment>
+        <div className="h-6" />
+        <div className="font-medium">
+          {Lang.match({ en: "Notes", zh: "备注", hi: "नोट्स", es: "Notas", ar: "ملاحظات", fr: "Remarques", de: "Notizen", ru: "Заметки", pt: "Notas", ja: "ノート", pa: "ਨੋਟਸ", bn: "নোটস", id: "Catatan", ur: "نوٹس", ms: "Catatan", it: "Note", tr: "Notlar", ta: "குறிப்புகள்", te: "గమనికలు", ko: "노트", vi: "Ghi chú", pl: "Notatki", ro: "Note", nl: "Notities", el: "Σημειώσεις", th: "บันทึกย่อ", cs: "Poznámky", hu: "Jegyzetek", sv: "Anteckningar", da: "Noter" })}
+        </div>
+        <div className="text-default-contrast">
+          {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
+        </div>
+        <div className="h-4" />
+        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="w-full resize-none focus-visible:outline-none"
+            readOnly
+            rows={6}
+            value={notes} />
+        </div>
+      </Fragment>}
+    </form>
+  </div>
 }

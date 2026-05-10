@@ -379,21 +379,6 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   </Fragment>
 }
 
-export function CryptoAccountExportMenuAnchor() {
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const coords = useAnchorWithCoords(hash, "/export")
-
-  return <WideNakedMenuAnchor
-    href={coords.url.hash}
-    onClick={coords.onClick}
-    onKeyDown={coords.onKeyDown}>
-    <Outline.ArrowUpOnSquareIcon className="size-5" />
-    {Lang.match({ en: "Export", zh: "导出", hi: "निर्यात", es: "Exportar", ar: "تصدير", fr: "Exporter", de: "Exportieren", ru: "Экспорт", pt: "Exportar", ja: "エクスポート", pa: "ਨਿਰਯਾਤ", bn: "রপ্তানি", id: "Ekspor", ur: "برآمد کریں", ms: "Ekspor", it: "Esporta", tr: "Dışa aktar", ta: "ஏற்றுமதி", te: "ఎగుమతి", ko: "내보내기", vi: "Xuất khẩu", pl: "Eksportuj", ro: "Exportați", nl: "Exporteren", el: "Εξαγωγή ", th: "ส่งออก ", cs: "Exportovat ", hu: "Exportálás ", sv: "Exportera ", da: "Eksporter" })}
-  </WideNakedMenuAnchor>
-}
-
 export function CryptoAccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { close(force?: boolean): void }) {
   const { $entry, close } = props
 
@@ -428,6 +413,21 @@ export function CryptoAccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       {trashed === true && <AccountMenuDeleteButton $entry={$entry} close={close} />}
     </div>
   </Fragment>
+}
+
+export function CryptoAccountExportMenuAnchor() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/export")
+
+  return <WideNakedMenuAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <Outline.ArrowUpOnSquareIcon className="size-5" />
+    {Lang.match({ en: "Export", zh: "导出", hi: "निर्यात", es: "Exportar", ar: "تصدير", fr: "Exporter", de: "Exportieren", ru: "Экспорт", pt: "Exportar", ja: "エクスポート", pa: "ਨਿਰਯਾਤ", bn: "রপ্তানি", id: "Ekspor", ur: "برآمد کریں", ms: "Ekspor", it: "Esporta", tr: "Dışa aktar", ta: "ஏற்றுமதி", te: "ఎగుమతి", ko: "내보내기", vi: "Xuất khẩu", pl: "Eksportuj", ro: "Exportați", nl: "Exporteren", el: "Εξαγωγή ", th: "ส่งออก ", cs: "Exportovat ", hu: "Exportálás ", sv: "Exportera ", da: "Eksporter" })}
+  </WideNakedMenuAnchor>
 }
 
 export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {

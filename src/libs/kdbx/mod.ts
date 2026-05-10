@@ -23,11 +23,3 @@ export function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
 
   return "password"
 }
-
-export function getEntryColor($entry: KDBX.Inner.KeePassFile.Entry) {
-  return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
-}
-
-export function getEntryTitle($entry: KDBX.Inner.KeePassFile.Entry) {
-  return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
-}
