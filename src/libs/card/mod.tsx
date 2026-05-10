@@ -1,3 +1,4 @@
+import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import React, { ReactNode, useCallback, useState } from "react";
 import { flushSync } from "react-dom";
@@ -65,7 +66,7 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
       <div className="absolute inset-0 p-4 flex flex-col backface-hidden overflow-hidden">
         <div className="flex items-center">
           <div className="font-medium text-xl truncate">
-            {title || "Untitled"}
+            {title || Lang.match({ en: "Untitled", zh: "未命名", hi: "बिना शीर्षक के", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "タイトルなし", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "শিরোনামহীন", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షికలేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Naamloos", el: "Χωρίς τίτλο ", th: "ไม่มีชื่อเรื่อง ", cs: "Nezvaný ", hu: "Névtelen ", sv: "Namnlös ", da: "Navnløs" })}
           </div>
           <div className="grow" />
           <div className="font-medium text-xl text-default-half-contrast">

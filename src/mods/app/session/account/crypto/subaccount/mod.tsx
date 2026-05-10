@@ -408,6 +408,12 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   </Fragment>
 }
 
+export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number } & { session: WcSession } & { metadata: WcMetadata }) {
+  const { $entry, index, session, metadata } = props
+
+
+}
+
 export function CryptoSessionAddAnchor(props: { count: number }) {
   const { count } = props
 
@@ -453,7 +459,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
   const [$notes, setNotes] = useState("")
 
-  const title = useDeferredValue($title || "Uniswap")
+  const title = useDeferredValue($title)
 
   const url = useDeferredValue($url)
 
@@ -525,8 +531,10 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   // }).catch(Errors.display), [encryptOrThrow, close])
 
   const error = useMemo(() => {
+    if (!url.length)
+      return Lang.match({ en: "WalletConnect code is required", zh: "需要 WalletConnect 代码", hi: "WalletConnect कोड आवश्यक है", es: "Se requiere código WalletConnect", ar: "رمز WalletConnect مطلوب", fr: "Le code WalletConnect est requis", de: "WalletConnect-Code ist erforderlich", ru: "Требуется код WalletConnect", pt: "Código WalletConnect é obrigatório", ja: "WalletConnectコードが必要です", pa: "WalletConnect ਕੋਡ ਦੀ ਲੋੜ ਹੈ", bn: "WalletConnect কোড প্রয়োজন", id: "Kode WalletConnect diperlukan", ur: "والٹ کنیکٹ کوڈ ضروری ہے", ms: "Kode WalletConnect diperlukan", it: "Il codice WalletConnect è obbligatorio", tr: "WalletConnect kodu gereklidir", ta: "WalletConnect குறியீடு தேவை", te: "WalletConnect కోడ్ అవసరం", ko: "WalletConnect 코드가 필요합니다.", vi: "Mã WalletConnect là bắt buộc.", pl: "Kod WalletConnect jest wymagany.", ro: "Codul WalletConnect este obligatoriu.", nl: "WalletConnect-code is verplicht.", el: "Ο κωδικός WalletConnect είναι υποχρεωτικός. ", th: "รหัส WalletConnect จำเป็นต้องใช้ ", cs: "Kód WalletConnect je povinný. ", hu: "A WalletConnect kód megadása kötelező. ", sv: "WalletConnect-kod krävs. ", da: "WalletConnect-kode er påkrævet." })
     return
-  }, [])
+  }, [url])
 
   const onClick = useCallback(() => Promise.try(async () => {
     await respond(title, url)
@@ -571,7 +579,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
         <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
           <input className="w-full focus-visible:outline-none"
             autoComplete="off"
-            placeholder="Uniswap"
+            placeholder={Lang.match({ en: "Untitled", zh: "未命名", hi: "बिना शीर्षक के", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "タイトルなし", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "শিরোনামহীন", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షికలేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Naamloos", el: "Χωρίς τίτλο ", th: "ไม่มีชื่อเรื่อง ", cs: "Nezvaný ", hu: "Névtelen ", sv: "Namnlös ", da: "Navnløs" })}
             onChange={e => setTitle(e.target.value)}
             value={$title} />
         </div>
