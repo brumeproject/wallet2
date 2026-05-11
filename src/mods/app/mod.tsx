@@ -16,8 +16,12 @@ import { UserLoginButton, UserLoginMenu } from "./user/mod.tsx";
 
 React;
 
-export function useMask() {
+export function App() {
+  const client = useClientContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
 
   const [name, setName] = useState<Nullable<string>>()
 
@@ -80,15 +84,6 @@ export function useMask() {
   useEffect(() => {
     maskOrThrow().catch(console.error)
   }, [maskOrThrow])
-}
-
-export function App() {
-  const client = useClientContext().getOrThrow()
-
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  useMask()
 
   const [session, setSession] = useState<SessionData>()
 
