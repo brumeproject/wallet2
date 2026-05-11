@@ -1,6 +1,6 @@
 import { ContrastAnchor } from "@/libs/anchor/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
-import { useController } from "@/libs/controller/mod.ts";
+import { useBackground, useController } from "@/libs/controller/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper } from "@/libs/dialog/paper/mod.tsx";
 import { Wall } from "@/libs/dialog/wall/mod.tsx";
@@ -8,7 +8,6 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
-import { RpcPort } from "@/libs/rpcport/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { CloseContext } from "@hazae41/react-close-context";
@@ -17,47 +16,6 @@ import { SessionData, SessionPage, SessionProvider } from "./session/mod.tsx";
 import { UserLoginButton, UserLoginMenu } from "./user/mod.tsx";
 
 React;
-
-export function useBackground(controller: Nullable<ServiceWorker>) {
-  const [background, setBackground] = useState<Nullable<RpcPort>>()
-
-  const openOrThrow = useCallback(async () => {
-    if (controller == null)
-      return
-
-    const { port1, port2 } = new MessageChannel()
-
-    const background = new RpcPort(port1)
-
-    background.addEventListener("request", (event) => {
-      return
-    }, { signal: background.closing })
-
-    controller.postMessage(null, [port2])
-
-    setBackground(background)
-  }, [controller])
-
-  useEffect(() => {
-    openOrThrow().catch(console.error)
-  }, [openOrThrow])
-
-  useEffect(() => {
-    Promise.try(() => background?.open()).catch(console.error)
-  }, [background])
-
-  useEffect(() => () => {
-    Promise.try(() => background?.close()).catch(console.error)
-  }, [background])
-
-  useEffect(() => {
-    const f = () => Promise.try(() => background?.close()).catch(console.error)
-
-    addEventListener("beforeunload", f)
-
-    return () => removeEventListener("beforeunload", f)
-  }, [background])
-}
 
 export function App() {
   const client = useClientContext().getOrThrow()
