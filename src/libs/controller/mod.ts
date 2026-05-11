@@ -5,15 +5,15 @@ export function useController() {
   const [controller, setController] = useState<Nullable<ServiceWorker>>()
 
   useEffect(() => {
-    setController(navigator.serviceWorker.controller)
+    setController(navigator.serviceWorker?.controller)
   }, [])
 
   useEffect(() => {
-    const f = () => setController(navigator.serviceWorker.controller)
+    const f = () => setController(navigator.serviceWorker?.controller)
 
-    navigator.serviceWorker.addEventListener("controllerchange", f)
+    navigator.serviceWorker?.addEventListener("controllerchange", f)
 
-    return () => navigator.serviceWorker.removeEventListener("controllerchange", f)
+    return () => navigator.serviceWorker?.removeEventListener("controllerchange", f)
   }, [])
 
   return controller

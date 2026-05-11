@@ -43,15 +43,15 @@ export function useBackground(controller: Nullable<ServiceWorker>) {
   }, [openOrThrow])
 
   useEffect(() => {
-    background?.open()
+    Promise.try(() => background?.open()).catch(console.error)
   }, [background])
 
   useEffect(() => () => {
-    background?.close()
+    Promise.try(() => background?.close()).catch(console.error)
   }, [background])
 
   useEffect(() => {
-    const f = () => background?.close()
+    const f = () => Promise.try(() => background?.close()).catch(console.error)
 
     addEventListener("beforeunload", f)
 
