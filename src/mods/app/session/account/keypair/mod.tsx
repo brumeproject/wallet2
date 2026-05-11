@@ -234,7 +234,6 @@ export function KeypairAccountAddPage() {
           <textarea className="w-full focus-visible:outline-none"
             rows={3}
             autoComplete="off"
-            placeholder="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIP5NGa5rgNRNSHnty0xwZmDgQNUTYBySHLfjEvVV+kD"
             onChange={e => setPubKey(e.target.value)}
             value={$pubkey} />
         </div>
@@ -250,7 +249,6 @@ export function KeypairAccountAddPage() {
           <textarea className="w-full focus-visible:outline-none"
             rows={9}
             autoComplete="off"
-            placeholder={["-----BEGIN OPENSSH PRIVATE KEY-----", "b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDt0nYsbd", "ErGeWyGOH48e51AAAAGAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIIP5NGa5rgNRNSHn", "ty0xwZmDgQNUTYBySHLfjEvVV+kDAAAAoIj24ltpMoyQCmZcgXMvRqXRF0SdQsozyV4yXA", "NqRW3EqcyhwruatrEVuakMzsbQ/TJZBjkZX50svFecQvoeToakGFbOUSr1EmprtGV/nYOw", "w9z1GVdip46pgJw6gcGX33Z8kS/TMT9IMsSzoVk3O/7F/WgiGasQQTwAjnuTWtqmkCzEUC", "pncuvRMmZG3hXbWyXAckezDQNRn2seUsDNwwg=", "-----END OPENSSH PRIVATE KEY-----"].join("\n")}
             onChange={e => setSigKey(e.target.value)}
             value={flipped ? $sigkey : $sigkey.replaceAll(/./g, "•")} />
         </div>
