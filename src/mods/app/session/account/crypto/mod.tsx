@@ -279,15 +279,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
   }, [$entry])
 
-  const [count, setCount] = useState(1)
-
-  const push = useCallback(() => {
-    setCount(x => x + 1)
-  }, [])
-
-  const clear = useCallback(() => {
-    setCount(1)
-  }, [])
+  const [index, setIndex] = useState(0)
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -341,32 +333,23 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {Lang.match({ en: "Your subaccounts.", zh: "您的子账户。", hi: "आपके उप खाते।", es: "Sus subcuentas.", ar: "حساباتك الفرعية.", fr: "Vos sous-comptes.", de: "Ihre Unterkonten.", ru: "Ваши субаккаунты.", pt: "Suas subcontas.", ja: "あなたのサブアカウント。", pa: "ਤੁਹਾਡੇ ਸਬਅਕਾਊਂਟ।", bn: "আপনার সাবঅ্যাকাউন্ট।", id: "Subakun Anda.", ur: "آپ کے ذیلی اکاؤنٹس۔", ms: "Subakun Anda.", it: "I tuoi sottoaccount.", tr: "Alt hesaplarınız.", ta: "உங்கள் உப கணக்குகள்.", te: "మీ ఉప ఖాతాలు.", ko: "귀하의 하위 계정입니다.", vi: "Các tài khoản phụ của bạn.", pl: "Twoje subkonta.", ro: "Subconturile dvs.", nl: "Uw subaccounts.", el: "Οι υπολογαριασμοί σας.", th: "บัญชีย่อยของคุณ", cs: "Vaše subúčty.", hu: "Az Ön alszámlái.", sv: "Dina subkonton.", da: "Dine subkonti." })}
           </div>
           <div className="h-4" />
-          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-            <div className="flex flex-col"
-              style={{ "height": `${180 + (count * 60)}px` }}>
-              {Array.from({ length: count }).map((_, index) =>
-                <Fragment key={index}>
-                  <CryptoSubaccountAnchor $entry={$entry} index={index} />
-                </Fragment>)}
-              {count !== 16 &&
-                <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-                  style={{ "transform": `translateY(-${count * 120}px)` }}
-                  onClick={push}
-                  type="button">
-                  <InButton>
-                    <Outline.PlusIcon className="size-8" />
-                  </InButton>
-                </button>}
-              {count === 16 &&
-                <button className="group w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-                  style={{ "transform": `translateY(-${count * 120}px)` }}
-                  onClick={clear}
-                  type="button">
-                  <InButton>
-                    <Outline.MinusIcon className="size-8" />
-                  </InButton>
-                </button>}
-            </div>
+          <div className="flex items-center justify-between border border-default-contrast rounded-xl p-6">
+            <button className="group rounded-full size-9 flex items-center justify-center enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
+              onClick={() => setIndex(i => i - 1)}
+              disabled={index === 0}
+              type="button">
+              <InButton>
+                <Outline.ChevronLeftIcon className="size-6" />
+              </InButton>
+            </button>
+            <CryptoSubaccountAnchor $entry={$entry} index={index} />
+            <button className="group rounded-full size-9 flex items-center justify-center enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
+              onClick={() => setIndex(i => i + 1)}
+              type="button">
+              <InButton>
+                <Outline.ChevronRightIcon className="size-6" />
+              </InButton>
+            </button>
           </div>
         </Fragment>
       </form>

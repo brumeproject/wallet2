@@ -444,7 +444,7 @@ export function AccountMenuAnchor() {
 
   const coords = useAnchorWithCoords(hash, "/+")
 
-  return <a className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
+  return <a className="group rounded-full size-9 flex items-center justify-center hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
