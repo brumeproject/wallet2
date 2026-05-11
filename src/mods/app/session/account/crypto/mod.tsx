@@ -334,7 +334,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           </div>
           <div className="h-4" />
           <div className="flex items-center justify-between border border-default-contrast rounded-xl p-6">
-            <button className="group rounded-full size-9 flex items-center justify-center enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
+            <button className="group rounded-full p-2 flex items-center justify-center rtl:-scale-x-100 enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
               onClick={() => setIndex(i => i - 1)}
               disabled={index === 0}
               type="button">
@@ -343,7 +343,7 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               </InButton>
             </button>
             <CryptoSubaccountAnchor $entry={$entry} index={index} />
-            <button className="group rounded-full size-9 flex items-center justify-center enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
+            <button className="group rounded-full p-2 flex items-center justify-center rtl:-scale-x-100 enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
               onClick={() => setIndex(i => i + 1)}
               type="button">
               <InButton>
