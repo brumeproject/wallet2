@@ -10,6 +10,10 @@ import { getEntryType, getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { ChildrenProps } from "@/libs/props/mod.ts";
+import { CardAccountAddPage } from "@/mods/app/session/account/card/mod.tsx";
+import { CryptoAccountAddPage } from "@/mods/app/session/account/crypto/mod.tsx";
+import { KeypairAccountAddPage } from "@/mods/app/session/account/keypair/mod.tsx";
+import { PasswordAccountAddPage } from "@/mods/app/session/account/password/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
@@ -114,6 +118,22 @@ export function SessionPage() {
         <PathPaper>
           <AccountAddMenu />
         </PathPaper>}
+      {hash.url.pathname === "/add/password" &&
+        <PathBoard>
+          <PasswordAccountAddPage />
+        </PathBoard>}
+      {hash.url.pathname === "/add/keypair" &&
+        <PathBoard>
+          <KeypairAccountAddPage />
+        </PathBoard>}
+      {hash.url.pathname === "/add/crypto" &&
+        <PathBoard>
+          <CryptoAccountAddPage />
+        </PathBoard>}
+      {hash.url.pathname === "/add/card" &&
+        <PathBoard>
+          <CardAccountAddPage />
+        </PathBoard>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
       <h1 className="text-2xl font-medium">
@@ -127,8 +147,20 @@ export function SessionPage() {
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
                 <AccountCardInGrid $entry={$entry} />
               </Fragment>)}
-            {filter !== "trash" && <Fragment>
-              <AccountAddButtonInGrid />
+            {filter == null && <Fragment>
+              <AccountAddButtonInGrid href="/add" />
+            </Fragment>}
+            {filter === "password" && <Fragment>
+              <AccountAddButtonInGrid href="/add/password" />
+            </Fragment>}
+            {filter === "keypair" && <Fragment>
+              <AccountAddButtonInGrid href="/add/keypair" />
+            </Fragment>}
+            {filter === "crypto" && <Fragment>
+              <AccountAddButtonInGrid href="/add/crypto" />
+            </Fragment>}
+            {filter === "card" && <Fragment>
+              <AccountAddButtonInGrid href="/add/card" />
             </Fragment>}
           </div>
         </div>
@@ -137,36 +169,43 @@ export function SessionPage() {
       <div className="flex flex-wrap items-center gap-2">
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
+          aria-selected={filter == null}
+          onClick={() => setFilter(null)}>
+          <Outline.NoSymbolIcon className="size-5" />
+          {Lang.match({ en: "Everything", zh: "全部", hi: "सब कुछ", es: "Todo", ar: "كل شيء", fr: "Tout", de: "Alles", ru: "Все", pt: "Tudo", ja: "すべて", pa: "ਸਭ ਕੁਝ", bn: "সব কিছু", id: "Semua", ur: "سب کچھ", ms: "Semua", it: "Tutto", tr: "Her şey", ta: "எல்லாம்", te: "అన్నీ", ko: "모든 항목", vi: "Tất cả", pl: "Wszystko", ro: "Totul", nl: "Alles", el: "Όλα", th: "ทั้งหมด", cs: "Všechny položky", hu: "Minden", sv: "Allt", da: "Alt" })}
+        </button>
+        <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
+          type="button"
           aria-selected={filter === "password"}
-          onClick={() => filter === "password" ? setFilter(undefined) : setFilter("password")}>
+          onClick={() => setFilter("password")}>
           <Outline.LanguageIcon className="size-5" />
           {Lang.match({ en: "Passwords", zh: "密码", hi: "पासवर्ड", es: "Contraseñas", ar: "كلمات المرور", fr: "Mots de passe", de: "Passwörter", ru: "Пароли", pt: "Senhas", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata Sandi", ur: "پاس ورڈز", ms: "Kata Laluan", it: "Password", tr: "Parolalar", ta: "கடவுச்சொற்கள்", te: "పాస్వర్డ్లు", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasła", ro: "Parole", nl: "Wachtwoorden", el: "Κωδικοί πρόσβασης", th: "รหัสผ่าน", cs: "Hesla", hu: "Jelszavak", sv: "Lösenord", da: "Adgangskoder" })}
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "keypair"}
-          onClick={() => filter === "keypair" ? setFilter(undefined) : setFilter("keypair")}>
+          onClick={() => setFilter("keypair")}>
           <Outline.KeyIcon className="size-5" />
           {Lang.match({ en: "Keypairs", zh: "密钥对", hi: "की जोड़ी", es: "Pares de claves", ar: "أزواج المفاتيح", fr: "Paires de clés", de: "Schlüsselpaar", ru: "Ключевые пары", pt: "Pares de chaves", ja: "キーペア", pa: "ਕੀ ਜੋੜੇ", bn: "কী জোড়া", id: "Pasangan Kunci", ur: "کلیدی جوڑے", ms: "Pasangan Kunci", it: "Coppie di chiavi", tr: "Anahtar çiftleri", ta: "முக்கிய ஜோடிகள்", te: "కీ జంటలు", ko: "키 쌍", vi: "Cặp khóa", pl: "Pary kluczy", ro: "Perechi de chei", nl: "Sleutelpaar", el: "Ζεύγη κλειδιών", th: "คู่กุญแจ", cs: "Páry klíčů", hu: "Kulcspárok", sv: "Nyckelpar", da: "Nøglepar" })}
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
-          aria-selected={filter === "seed"}
-          onClick={() => filter === "seed" ? setFilter(undefined) : setFilter("seed")}>
+          aria-selected={filter === "crypto"}
+          onClick={() => setFilter("crypto")}>
           <Outline.BanknotesIcon className="size-5" />
           {Lang.match({ en: "Cryptos", zh: "加密货币", hi: "क्रिप्टो", es: "Criptomonedas", ar: "العملات المشفرة", fr: "Cryptos", de: "Kryptos", ru: "Криптовалюты", pt: "Criptomoedas", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Criptovalute", tr: "Kriptolar", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Kryptowaluty", ro: "Criptomonede", nl: "Cryptos", el: "Κρυπτονομίσματα", th: "สกุลเงินดิจิทัล", cs: "Kryptoměny", hu: "Kriptók", sv: "Kryptovalutor", da: "Kryptovalutaer" })}
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "card"}
-          onClick={() => filter === "card" ? setFilter(undefined) : setFilter("card")}>
+          onClick={() => setFilter("card")}>
           <Outline.CreditCardIcon className="size-5" />
           {Lang.match({ en: "Cards", zh: "卡片", hi: "कार्ड", es: "Tarjetas", ar: "بطاقات", fr: "Cartes", de: "Karten", ru: "Карты", pt: "Cartões", ja: "カード", pa: "ਕਾਰਡ", bn: "কার্ড", id: "Kartu", ur: "کارڈز", ms: "Kad", it: "Carte", tr: "Kartlar", ta: "கார்டுகள்", te: "కార్డులు", ko: "카드", vi: "Thẻ", pl: "Karty", ro: "Carduri", nl: "Kaarten", el: "Κάρτες", th: "บัตร", cs: "Karty", hu: "Kártyák", sv: "Kort", da: "Kort" })}
         </button>
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter === "trash"}
-          onClick={() => filter === "trash" ? setFilter(undefined) : setFilter("trash")}>
+          onClick={() => setFilter("trash")}>
           <Outline.TrashIcon className="size-5" />
           {Lang.match({ en: "Trash", zh: "垃圾桶", hi: "कचरा", es: "Papelera", ar: "سلة المهملات", fr: "Corbeille", de: "Papierkorb", ru: "Корзина", pt: "Lixeira", ja: "ゴミ箱", pa: "ਕਚਰਾ", bn: "ট্র্যাশ", id: "Sampah", ur: "کچرا", ms: "Tong Sampah", it: "Cestino", tr: "Çöp", ta: "குப்பை", te: "ట్రాష్", ko: "휴지통", vi: "Thùng rác", pl: "Kosz", ro: "Coș de gunoi", nl: "Prullenbak", el: "Κάδος απορριμμάτων", th: "ถังขยะ", cs: "Koš", hu: "Szemetes", sv: "Papperskorg", da: "Papirkurv" })}
         </button>

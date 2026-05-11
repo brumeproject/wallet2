@@ -20,11 +20,13 @@ import { PasswordAccountAddMenuAnchor, PasswordAccountAddPage, PasswordAccountPa
 
 React;
 
-export function AccountAddButtonInGrid() {
+export function AccountAddButtonInGrid(props: { href: string }) {
+  const { href } = props
+
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, "/add")
+  const coords = useAnchorWithCoords(hash, href)
 
   return <a className="group w-[320px] aspect-video border-2 border-default-contrast rounded-xl hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     href={coords.url.hash}
@@ -69,7 +71,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             if (type === "card")
               return <CardAccountPage $entry={$entry} />
 
-            if (type === "seed")
+            if (type === "crypto")
               return <CryptoAccountPage $entry={$entry} />
 
             if (type === "keypair")
@@ -190,7 +192,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               {Lang.match({ en: "Keypair", zh: "密钥对", hi: "कीपेयार", es: "Par de claves", ar: "زوج المفاتيح", fr: "Paire de clés", de: "Schlüsselpaar", ru: "Ключевая пара", pt: "Par de chaves", ja: "キーペア", pa: "ਕੀਪੇਅਰ", bn: "কীপেয়ার", id: "Pasangan Kunci", ur: "کلیدی جوڑا", ms: "Pasangan Kunci", it: "Coppia di chiavi", tr: "Anahtar çifti", ta: "கீபேர்", te: "కీపేర్", ko: "키페어", vi: "Cặp khóa", pl: "Para kluczy", ro: "Pereche de chei", nl: "Sleutelpaar", el: "Ζεύγος κλειδιών", th: "คู่กุญแจ", cs: "Klíčový pár", hu: "Kulcspár", sv: "Nyckelpar", da: "Nøglepar" })}
             </div>
 
-          if (type === "seed")
+          if (type === "crypto")
             return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
               <Outline.BanknotesIcon className="size-5" />
               {Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}

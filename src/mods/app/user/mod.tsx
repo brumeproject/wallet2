@@ -98,7 +98,7 @@ function UserAddButton() {
     <div className="rounded-full size-7 flex justify-center items-center border-2 border-dashed border-default-contrast">
       <Outline.PlusIcon className="size-4" />
     </div>
-    {Lang.match({ en: "Add user", zh: "添加用户", hi: "उपयोगकर्ता जोड़ें", es: "Agregar usuario", ar: "إضافة مستخدم", fr: "Ajouter un utilisateur", de: "Benutzer hinzufügen", ru: "Добавить пользователя", pt: "Adicionar usuário", ja: "ユーザーを追加", pa: "ਉਪਭੋਗਤਾ ਸ਼ਾਮਲ ਕਰੋ", bn: "ব্যবহারকারী যোগ করুন", id: "Tambah pengguna", ur: "صارف شامل کریں", ms: "Tambah pengguna", it: "Aggiungi utente", tr: "Kullanıcı ekle", ta: "பயனரைச் சேர்க்கவும்", te: "వినియోగదారుని జోడించండి", ko: "사용자 추가", vi: "Thêm người dùng", pl: "Dodaj użytkownika", ro: "Adaugă utilizator", nl: "Gebruiker toevoegen", el: "Προσθήκη χρήστη", th: "เพิ่มผู้ใช้", cs: "Přidat uživatele", hu: "Felhasználó hozzáadása", sv: "Lägg till användare", da: "Tilføj bruger" })}
+    {Lang.match({ en: "Add", zh: "添加", hi: "जोड़ें", es: "Agregar", ar: "إضافة", fr: "Ajouter", de: "Hinzufügen", ru: "Добавить", pt: "Adicionar", ja: "追加", pa: "ਸ਼ਾਮਲ ਕਰੋ", bn: "যোগ করুন", id: "Tambah", ur: "شامل کریں", ms: "Tambah", it: "Aggiungi", tr: "Ekle", ta: "சேர்க்கவும்", te: "చేరండి", ko: "추가", vi: "Thêm vào", pl: "Dodaj", ro: "Adăugați", nl: "Toevoegen", el: "Προσθήκη", th: "เพิ่ม", cs: "Přidat", hu: "Hozzáadás", sv: "Lägg till", da: "Tilføj" })}
   </WideNakedMenuAnchor>
 }
 
@@ -138,7 +138,7 @@ function UserCreateButton() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.SparklesIcon className="size-5" />
-    {Lang.match({ en: "Create user", zh: "创建用户", hi: "उपयोगकर्ता बनाएं", es: "Crear usuario", ar: "إنشاء مستخدم", fr: "Créer un utilisateur", de: "Benutzer erstellen", ru: "Создать пользователя", pt: "Criar usuário", ja: "ユーザーを作成", pa: "ਉਪਭੋਗਤਾ ਬਣਾਓ", bn: "ব্যবহারকারী তৈরি করুন", id: "Buat pengguna", ur: "صارف بنائیں", ms: "Buat pengguna", it: "Crea utente", tr: "Kullanıcı oluştur", ta: "பயனரை உருவாக்கவும்", te: "వినియోగదారుని సృష్టించండి", ko: "사용자 만들기", vi: "Tạo người dùng", pl: "Utwórz użytkownika", ro: "Creează utilizator", nl: "Maak gebruiker", el: "Δημιουργία χρήστη", th: "สร้างผู้ใช้", cs: "Vytvořit uživatele", hu: "Felhasználó létrehozása", sv: "Skapa användare", da: "Opret bruger" })}
+    {Lang.match({ en: "Create", zh: "创建", hi: "बनाएं", es: "Crear", ar: "إنشاء", fr: "Créer", de: "Erstellen", ru: "Создать", pt: "Criar", ja: "作成", pa: "ਬਣਾਓ", bn: "তৈরি করুন", id: "Buat", ur: "بنائیں", ms: "Buat", it: "Crea", tr: "Oluştur", ta: "உருவாக்கவும்", te: "సృష్టించండి", ko: "생성", vi: "Tạo mới", pl: "Utwórz", ro: "Creați", nl: "Maken", el: "Δημιουργία", th: "สร้างใหม่", cs: "Vytvořit", hu: "Létrehozás", sv: "Skapa", da: "Opret" })}
   </WideNakedMenuAnchor>
 }
 
@@ -153,7 +153,7 @@ function UserImportButton() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.ArrowDownOnSquareIcon className="size-5" />
-    {Lang.match({ en: "Import user", zh: "导入用户", hi: "उपयोगकर्ता आयात करें", es: "Importar usuario", ar: "استيراد مستخدم", fr: "Importer un utilisateur", de: "Benutzer importieren", ru: "Импортировать пользователя", pt: "Importar usuário", ja: "ユーザーをインポート", pa: "ਉਪਭੋਗਤਾ ਆਯਾਤ ਕਰੋ", bn: "ব্যবহারকারী আমদানি করুন", id: "Impor pengguna", ur: "صارف درآمد کریں", ms: "Impor pengguna", it: "Importa utente", tr: "Kullanıcı içe aktar", ta: "பயனரை இறக்குமதி செய்யவும்", te: "వినియోగదారుని దిగుమతి చేయండి", ko: "사용자 가져오기", vi: "Nhập người dùng", pl: "Importuj użytkownika", ro: "Importă utilizator", nl: "Importeer gebruiker", el: "Εισαγωγή χρήστη", th: "นำเข้าผู้ใช้", cs: "Importovat uživatele", hu: "Felhasználó importálása", sv: "Importera användare", da: "Importer bruger" })}
+    {Lang.match({ en: "Import", zh: "导入", hi: "आयात करें", es: "Importar", ar: "استيراد", fr: "Importer", de: "Importieren", ru: "Импортировать", pt: "Importar", ja: "インポート", pa: "ਆਯਾਤ ਕਰੋ", bn: "আমদানি করুন", id: "Impor", ur: "درآمد کریں", ms: "Impor", it: "Importa", tr: "İçe aktar", ta: "இறக்குமதி செய்யவும்", te: "దిగుమతి చేయండి", ko: "가져오기", vi: "Nhập khẩu", pl: "Importuj", ro: "Importați", nl: "Importeren", el: "Εισαγωγή", th: "นำเข้า", cs: "Importovat", hu: "Importálás", sv: "Importera", da: "Importer" })}
   </WideNakedMenuAnchor>
 }
 

@@ -16,7 +16,7 @@ export function getEntryType($entry: KDBX.Inner.KeePassFile.Entry) {
     return "keypair"
 
   if ($entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get())
-    return "seed"
+    return "crypto"
 
   if ($entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get())
     return "card"
