@@ -327,7 +327,7 @@ function SettingsPage() {
   const [icon, setIcon] = useState<Nullable<string>>()
 
   const getIconOrThrow = useCallback(async () => {
-    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("appicon").then(x => x && URL.createObjectURL(new Blob([x]))))
+    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("appicon").then(x => x && `data:image/png;base64,${x.toBase64()}`))
   }, [store])
 
   useEffect(() => {
