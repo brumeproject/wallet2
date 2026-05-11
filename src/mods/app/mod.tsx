@@ -1,6 +1,5 @@
 import { ContrastAnchor } from "@/libs/anchor/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
-import { useBackground, useController } from "@/libs/controller/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper } from "@/libs/dialog/paper/mod.tsx";
 import { Wall } from "@/libs/dialog/wall/mod.tsx";
@@ -23,9 +22,6 @@ export function App() {
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
-
-  const controller = useController()
-  const background = useBackground(controller)
 
   const [appname, setAppName] = useState<Nullable<string>>()
 
