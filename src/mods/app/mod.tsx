@@ -16,17 +16,13 @@ import { UserLoginButton, UserLoginMenu } from "./user/mod.tsx";
 
 React;
 
-export function App() {
-  const client = useClientContext().getOrThrow()
+export function useMask() {
   const store = useStoreContext().getOrThrow()
 
-  const path = usePathContext().getOrThrow()
-  const hash = useHashSubpath(path)
-
-  const [appname, setAppName] = useState<Nullable<string>>()
+  const [name, setName] = useState<Nullable<string>>()
 
   const getNameOrThrow = useCallback(async () => {
-    setAppName(await store.value.getOrThrow().getOrThrow<string>("appname"))
+    setName(await store.value.getOrThrow().getOrThrow<string>("appname"))
   }, [store])
 
   useEffect(() => {
@@ -37,10 +33,10 @@ export function App() {
     getNameOrThrow().catch(console.error)
   }, [store])
 
-  const [appicon, setAppIcon] = useState<Nullable<string>>()
+  const [icon, setIcon] = useState<Nullable<string>>()
 
-  const getAppIconOrThrow = useCallback(async () => {
-    setAppIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("appicon").then(x => x && `data:image/png;base64,${x.toBase64()}`))
+  const getIconOrThrow = useCallback(async () => {
+    setIcon(await store.value.getOrThrow().getOrThrow<Uint8Array<ArrayBuffer>>("appicon").then(x => x && `data:image/png;base64,${x.toBase64()}`))
   }, [store])
 
   useEffect(() => {
@@ -48,42 +44,51 @@ export function App() {
       return
     if (store.value.isErr())
       return
-    getAppIconOrThrow().catch(console.error)
+    getIconOrThrow().catch(console.error)
   }, [store])
 
   const maskOrThrow = useCallback(async () => {
+    const manifest = await fetch("/manifest.json").then(res => res.json())
+
+    document.title = name || manifest.name
+
+    manifest.start_url = location.origin + "/"
+    manifest.name = name || manifest.name
+    manifest.short_name = name || manifest.short_name
+
+    if (icon == null) {
+      manifest.icons[0].src = location.origin + "/appicon.png"
+    } else {
+      manifest.icons[0].src = icon
+    }
+
     const $favicon = document.querySelector("link[rel~='icon']")! as HTMLLinkElement
     const $appicon = document.querySelector("link[rel='apple-touch-icon']")! as HTMLLinkElement
     const $manifest = document.querySelector("link[rel='manifest']")! as HTMLLinkElement
 
-    document.title = appname || "Brume Wallet"
-
-    if (appicon == null) {
+    if (icon == null) {
       $favicon.href = "/favicon.ico"
       $appicon.href = "/appicon.png"
     } else {
-      $favicon.href = appicon
-      $appicon.href = appicon
+      $favicon.href = icon
+      $appicon.href = icon
     }
 
-    const manifest = await fetch("/manifest.json").then(res => res.json())
-
-    manifest.start_url = location.origin + "/"
-    manifest.name = appname || "Brume Wallet"
-    manifest.short_name = appname || "Wallet"
-
-    if (appicon != null)
-      manifest.icons[0].src = appicon
-
-    if (appicon == null)
-      manifest.icons[0].src = location.origin + "/appicon.png"
-
     $manifest.href = `data:application/manifest+json,${encodeURIComponent(JSON.stringify(manifest))}`
-  }, [appname, appicon])
+  }, [name, icon])
 
   useEffect(() => {
     maskOrThrow().catch(console.error)
   }, [maskOrThrow])
+}
+
+export function App() {
+  const client = useClientContext().getOrThrow()
+
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  useMask()
 
   const [session, setSession] = useState<SessionData>()
 
