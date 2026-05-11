@@ -265,7 +265,7 @@ function SessionMenu(props: { logout(): void }) {
       <WideNakedMenuButton
         onClick={logout}>
         <Outline.LockClosedIcon className="size-5" />
-        {Lang.match({ en: "Logout", zh: "登出", hi: "लॉग आउट", es: "Cerrar sesión", ar: "تسجيل الخروج", fr: "Se déconnecter", de: "Abmelden", ru: "Выйти", pt: "Sair", ja: "ログアウト", pa: "ਲੌਗ ਆਉਟ", bn: "লগ আউট", id: "Keluar", ur: "لاگ آؤٹ", ms: "Log Keluar", it: "Disconnettersi", tr: "Çıkış Yap", ta: "வெளியேறு", te: "లాగ్ అవుట్", ko: "로그아웃", vi: "Đăng xuất", pl: "Wyloguj się", ro: "Deconectare", nl: "Uitloggen", el: "Αποσύνδεση", th: "ออกจากระบบ", cs: "Odhlásit se", hu: "Kijelentkezés", sv: "Logga ut", da: "Log ud" })}
+        {Lang.match({ en: "Lock", zh: "锁定", hi: "लॉक करें", es: "Bloquear", ar: "قفل", fr: "Verrouiller", de: "Sperren", ru: "Заблокировать", pt: "Bloquear", ja: "ロック", pa: "ਲਾਕ ਕਰੋ", bn: "লক করুন", id: "Kunci", ur: "لاک کریں", ms: "Kunci", it: "Blocca", tr: "Kilitle", ta: "மூடு", te: "లాక్ చేయండి", ko: "잠그기", vi: "Khóa", pl: "Zablokuj", ro: "Blochează", nl: "Vergrendel", el: "Κλείδωμα", th: "ล็อค", cs: "Zamknout", hu: "Zárolás", sv: "Lås", da: "Lås" })}
       </WideNakedMenuButton>
     </div>
   </Fragment>
