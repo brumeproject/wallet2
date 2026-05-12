@@ -118,7 +118,7 @@ export function App() {
       <div className="p-safe flex flex-col items-center">
         <div className="p-6 flex flex-col items-center w-full max-w-[1000px] m-auto">
           <div className="h-[25dvh]" />
-          <h1 className="text-center text-4xl 2xs:text-5xl sm:text-6xl font-medium">
+          <h1 className="text-center text-5xl sm:text-6xl font-medium">
             {Lang.match({ en: "The secure and private wallet", zh: "安全隐私的钱包", hi: "सुरक्षित और निजी वॉलेट", es: "La billetera segura y privada", ar: "المحفظة الآمنة والخاصة", fr: "Le portefeuille sécurisé et privé", de: "Die sichere und private Brieftasche", ru: "Безопасный и приватный кошелек", pt: "A carteira segura e privada", ja: "安全でプライベートなウォレット", pa: "ਸੁਰੱਖਿਅਤ ਅਤੇ ਨਿੱਜੀ ਵਾਲਿਟ", bn: "নিরাপদ এবং ব্যক্তিগত ওয়ালেট", id: "Dompet yang aman dan pribadi", ur: "محفوظ اور نجی والیٹ", ms: "Dompet yang aman dan pribadi", it: "Il portafoglio sicuro e privato", tr: "Güvenli ve özel cüzdan", ta: "பாதுகாப்பான மற்றும் தனிப்பட்ட பணப்பை", te: "సురక్షిత మరియు ప్రైవేట్ వాలెట్", ko: "안전하고 개인적인 지갑", vi: "Ví an toàn và riêng tư", pl: "Bezpieczny i prywatny portfel", ro: "Portofel sigur și privat", nl: "De veilige en privé-portemonnee", el: "Το ασφαλές και ιδιωτικό πορτοφόλι", th: "กระเป๋าเงินที่ปลอดภัยและเป็นส่วนตัว", cs: "Bezpečná a soukromá peněženka", hu: "A biztonságos és privát pénztárca", sv: "Den säkra och privata plånboken", da: "Den sikre og private tegnebog" })}
           </h1>
           <div className="h-4" />
@@ -133,7 +133,7 @@ export function App() {
           <div className="h-16" />
           <Outline.ChevronDownIcon className="size-6 text-default-half-contrast" />
           <div className="h-[50dvh]" />
-          <h1 className="text-center text-4xl 2xs:text-5xl sm:text-6xl font-medium">
+          <h1 className="text-center text-5xl sm:text-6xl font-medium">
             {Lang.match({ en: "Your everything manager", zh: "你的万能管理器", hi: "आपका सब कुछ प्रबंधक", es: "Su gestor de todo", ar: "مدير كل شيء الخاص بك", fr: "Votre gestionnaire universel", de: "Ihr Alles-Manager", ru: "Ваш менеджер всего", pt: "Seu gerente de tudo", ja: "あなたのすべてのマネージャー", pa: "ਤੁਹਾਡਾ ਸਭ ਕੁਝ ਮੈਨੇਜਰ", bn: "আপনার সবকিছু ম্যানেজার", id: "Manajer segalanya Anda", ur: "آپ کا سب کچھ منیجر", ms: "Manajer segalanya Anda", it: "Il tuo gestore di tutto", tr: "Her şey yöneticiniz", ta: "உங்கள் எல்லாம் மேலாளர்", te: "మీ అన్నింటికీ మేనేజర్", ko: "당신의 모든 관리자", vi: "Trình quản lý mọi thứ của bạn", pl: "Twój menedżer wszystkiego", ro: "Managerul tău pentru tot", nl: "Jouw allesmanager", el: "Ο διαχειριστής των πάντων σας", th: "ผู้จัดการทุกอย่างของคุณ", cs: "Váš správce všeho", hu: "Mindenes menedzsered", sv: "Din allt-i-allo-chef", da: "Din alt-mulige manager" })}
           </h1>
           <div className="h-4" />
@@ -156,7 +156,7 @@ export function App() {
             </div>
           </div>
           <div className="h-[50dvh]" />
-          <h1 className="text-center text-4xl 2xs:text-5xl sm:text-6xl font-medium">
+          <h1 className="text-center text-5xl sm:text-6xl font-medium">
             {Lang.match({ en: "Bring your own storage", zh: "使用你自己的存储", hi: "अपना खुद का स्टोरेज लाएं", es: "Trae su propio almacenamiento", ar: "استخدم التخزين الخاص بك", fr: "Utilisez votre propre stockage", de: "Bringen Sie Ihren eigenen Speicher mit", ru: "Используйте собственное хранилище", pt: "Traga seu próprio armazenamento", ja: "独自のストレージを持ち込む", pa: "ਆਪਣਾ ਖੁਦ ਦਾ ਸਟੋਰੇਜ ਲਿਆਓ", bn: "নিজের স্টোরেজ আনুন", id: "Bawa penyimpanan Anda sendiri", ur: "اپنا خود کا اسٹوریج لائیں", ms: "Bawa penyimpanan Anda sendiri", it: "Porta il tuo storage", tr: "Kendi depolamanızı getirin", ta: "உங்கள் சொந்த சேமிப்பை கொண்டு வாருங்கள்", te: "మీ స్వంత నిల్వను తీసుకురండి", ko: "자신의 저장소를 가져오세요", vi: "Mang bộ nhớ của riêng bạn", pl: "Przynieś własne przechowywanie", ro: "Aduceți-vă propriul stocare", nl: "Breng je eigen opslag mee", el: "Φέρτε τη δική σας αποθήκευση", th: "นำที่เก็บข้อมูลของคุณเองมา", cs: "Přineste si vlastní úložiště", hu: "Hozd a saját tárhelyed", sv: "Ta med din egen lagring", da: "Tag din egen opbevaring med" })}
           </h1>
           <div className="h-4" />
@@ -179,7 +179,7 @@ export function App() {
             </div>
           </div>
           <div className="h-[50dvh]" />
-          <h1 className="text-center text-4xl 2xs:text-5xl sm:text-6xl font-medium">
+          <h1 className="text-center text-5xl sm:text-6xl font-medium">
             {Lang.match({ en: "Military-grade encryption", zh: "军用级加密", hi: "सैन्य-ग्रेड एन्क्रिप्शन", es: "Cifrado de grado militar", ar: "تشفير من الدرجة العسكرية", fr: "Chiffrement de niveau militaire", de: "Verschlüsselung auf militärischem Niveau", ru: "Шифрование военного уровня", pt: "Criptografia de nível militar", ja: "軍用グレードの暗号化", pa: "ਸੈਨਾ-ਗਰੇਡ ਇੰਕ੍ਰਿਪਸ਼ਨ", bn: "সামরিক-গ্রেড এনক্রিপশন", id: "Enkripsi tingkat militer", ur: "فوجی گریڈ انکرپشن", ms: "Enkripsi tingkat militer", it: "Crittografia di livello militare", tr: "Askeri sınıf şifreleme", ta: "சைனிக் கிரேட் குறியாக்கம்", te: "సైనిక-గ్రేడ్ ఎన్‌క్రిప్షన్", ko: "군용 등급 암호화", vi: "Mã hóa cấp quân sự", pl: "Szyfrowanie o klasie wojskowej", ro: "Criptare de nivel militar", nl: "Militaire-grade encryptie", el: "Κρυπτογράφηση στρατιωτικού επιπέδου", th: "การเข้ารหัสระดับทหาร", cs: "Vojenské šifrování", hu: "Katonai szintű titkosítás", sv: "Militärklassad kryptering", da: "Militær-kryptering" })}
           </h1>
           <div className="h-4" />
@@ -199,7 +199,7 @@ export function App() {
             </div>
           </div>
           <div className="h-[50dvh]" />
-          <h1 className="text-center text-4xl 2xs:text-5xl sm:text-6xl font-medium">
+          <h1 className="text-center text-5xl sm:text-6xl font-medium">
             {Lang.match({ en: "Hide your fingerprint", zh: "隐藏你的指纹", hi: "अपना फिंगरप्रिंट छिपाएं", es: "Oculta su huella digital", ar: "اخف بصمتك", fr: "Masquez votre empreinte digitale", de: "Verstecken Sie Ihren Fingerabdruck", ru: "Скрыть ваш отпечаток", pt: "Oculte sua impressão digital", ja: "あなたの指紋を隠す", pa: "ਆਪਣੀ ਫਿੰਗਰਪ੍ਰਿੰਟ ਨੂੰ ਛੁਪਾਓ", bn: "আপনার ফিঙ্গারপ্রিন্ট লুকান", id: "Sembunyikan sidik jari Anda", ur: "اپنا فنگر پرنٹ چھپائیں", ms: "Sembunyikan sidik jari Anda", it: "Nascondi la tua impronta digitale", tr: "Parmak izinizi gizleyin", ta: "உங்கள் விரல் அச்சை மறைக்கவும்", te: "మీ ఫింగర్ ప్రింట్‌ను దాచండి", ko: "지문을 숨기세요", vi: "Ẩn dấu vân tay của bạn", pl: "Ukryj swój odcisk palca", ro: "Ascundeți amprenta dvs.", nl: "Verberg je vingerafdruk", el: "Κρύψτε το δακτυλικό σας αποτύπωμα", th: "ซ่อนลายนิ้วมือของคุณ", cs: "Skrýt váš otisk prstu", hu: "Rejtsd el az ujjlenyomatod", sv: "Dölj ditt fingeravtryck", da: "Skjul dit fingeraftryk" })}
           </h1>
           <div className="h-4" />
@@ -225,7 +225,7 @@ export function App() {
             </div>
           </div>
           <div className="h-[50dvh]" />
-          <h1 className="text-center text-4xl 2xs:text-5xl sm:text-6xl font-medium">
+          <h1 className="text-center text-5xl sm:text-6xl font-medium">
             {Lang.match({ en: "Built for resilience", zh: "为韧性而建", hi: "लचीलापन के लिए बनाया गया", es: "Construido para la resiliencia", ar: "بنيت للمرونة", fr: "Conçu pour la résilience", de: "Für Resilienz gebaut", ru: "Создан для устойчивости", pt: "Construído para resiliência", ja: "レジリエンスのために構築", pa: "ਲਚੀਲਾਪਨ ਲਈ ਬਣਾਇਆ ਗਿਆ", bn: "স্থিতিস্থাপকতার জন্য তৈরি", id: "Dibangun untuk ketahanan", ur: "لچک کے لیے بنایا گیا", ms: "Dibangun untuk ketahanan", it: "Costruito per la resilienza", tr: "Dayanıklılık için inşa edildi", ta: "நிலைத்தன்மைக்காக கட்டப்பட்டது", te: "స్థిరత్వం కోసం నిర్మించబడింది", ko: "복원력을 위해 구축", vi: "Được xây dựng cho sự phục hồi", pl: "Zbudowany dla odporności", ro: "Construit pentru reziliență", nl: "Gebouwd voor veerkracht", el: "Χτισμένο για ανθεκτικότητα", th: "สร้างขึ้นสำหรับความยืดหยุ่น", cs: "Postaven pro odolnost", hu: "Az ellenálló képesség érdekében építve", sv: "Byggd för resiliens", da: "Bygget for modstandsdygtighed" })}
           </h1>
           <div className="h-4" />
@@ -245,7 +245,7 @@ export function App() {
             </div>
           </div>
           <div className="h-[50dvh]" />
-          <h1 className="text-center text-4xl 2xs:text-5xl sm:text-6xl font-medium">
+          <h1 className="text-center text-5xl sm:text-6xl font-medium">
             {Lang.match({ en: "Supply-chain hardened", zh: "供应链加固", hi: "सप्लाई-चेन हार्डनिंग", es: "Endurecido contra la cadena de suministro", ar: "مقوى ضد سلسلة التوريد", fr: "Dépendences minimales", de: "Lieferketten gehärtet", ru: "Укрепление цепочки поставок", pt: "Endurecido contra a cadeia de suprimentos", ja: "サプライチェーン強化", pa: "ਸਪਲਾਈ-ਚੇਨ ਹਾਰਡਨਿੰਗ", bn: "সরবরাহ-চেইন হার্ডেনিং", id: "Diperkuat rantai pasokan", ur: "سپلائی چین سخت", ms: "Diperkuat rantai pasokan", it: "Indurito contro la catena di approvvigionamento", tr: "Tedarik zinciri sertleştirilmiş", ta: "சப்ளை-செயின் ஹார்டனிங்", te: "సప్లై-చైన్ హార్డెనింగ్", ko: "공급망 강화", vi: "Tăng cường chuỗi cung ứng", pl: "Wzmocniony łańcuch dostaw", ro: "Întărit împotriva lanțului de aprovizionare", nl: "Supply-chain gehard", el: "Ενισχυμένο κατά της αλυσίδας εφοδιασμού", th: "เสริมความแข็งแกร่งของห่วงโซ่อุปทาน", cs: "Zpevněný dodavatelský řetězec", hu: "Ellátási lánc megerősítve", sv: "Förstärkt försörjningskedja", da: "Supply-chain hærdet" })}
           </h1>
           <div className="h-4" />
