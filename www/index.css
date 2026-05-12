@@ -6,9 +6,3 @@
   --safe-area-inset-right: 32px;
   --safe-area-inset-bottom: 32px;
 } */
-
-@theme {
-  --breakpoint-xs: 20rem;
-  --breakpoint-2xs: 18rem;
-  --breakpoint-3xs: 16rem;
-}
