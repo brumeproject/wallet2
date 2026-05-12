@@ -26,7 +26,7 @@ export function CryptoSessionAddAnchor(props: { count: number }) {
 
   const coords = useAnchorWithCoords(hash, "/session")
 
-  return <a className="group w-[200px] xs:w-[260px] sm:w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+  return <a className="group w-[200px] 3xs:w-[240px] 2xs:w-[280px] sm:w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
     style={{ "transform": `translateY(-${count * 120}px)` }}
     href={coords.url.hash}
     onClick={coords.onClick}
@@ -269,7 +269,7 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
           <CryptoSessionPage $entry={$entry} subaccount={subaccount} title={title} session={session} requests={requests} />
         </PathBoard>}
     </SubpathProvider>
-    <a className="group w-[200px] xs:w-[260px] sm:w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
+    <a className="group w-[200px] 3xs:w-[240px] 2xs:w-[280px] sm:w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -311,7 +311,7 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
       <div className="flex items-center justify-between">
-        <div className="font-medium text-xl">
+        <div className="font-medium text-xl truncate">
           {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
         </div>
         <div className="font-medium text-xl text-default-half-contrast">
@@ -392,7 +392,7 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                 <Fragment key={index}>
                   <CryptoRequestAnchor $entry={$entry} subaccount={subaccount} index={index} title={title} session={session} request={data} />
                 </Fragment>)}
-              <button className="group w-[200px] xs:w-[260px] sm:w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+              <button className="group w-[200px] 3xs:w-[240px] 2xs:w-[280px] sm:w-[320px] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
                 style={{ "transform": `translateY(-${requests.length * 120}px)` }}
                 onClick={decline}
                 type="button">

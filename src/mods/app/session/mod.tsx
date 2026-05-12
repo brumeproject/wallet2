@@ -136,13 +136,13 @@ export function SessionPage() {
         </PathBoard>}
     </SubpathProvider>
     <div className="grow flex flex-col p-6 overflow-y-auto">
-      <h1 className="text-2xl font-medium">
+      <h1 className="text-xl font-medium">
         {Lang.match({ en: "Your accounts", zh: "你的账户", hi: "आपके खाते", es: "Tus cuentas", ar: "حساباتك", fr: "Vos comptes", de: "Deine Konten", ru: "Ваши аккаунты", pt: "Suas contas", ja: "あなたのアカウント", pa: "ਤੁਹਾਡੇ ਖਾਤੇ", bn: "আপনার অ্যাকাউন্টগুলি", id: "Akun Anda", ur: "آپ کے اکاؤنٹس", ms: "Akun Anda", it: "I tuoi account", tr: "Hesaplarınız", ta: "உங்கள் கணக்குகள்", te: "మీ ఖాతాలు", ko: "당신의 계정들", vi: "Tài khoản của bạn", pl: "Twoje konta", ro: "Conturile tale", nl: "Jouw accounts", el: "Οι λογαριασμοί σας", th: "บัญชีของคุณ", cs: "Vaše účty", hu: "Fiókjaid", sv: "Dina konton", da: "Dine konti" })}
       </h1>
       <div className="h-6 shrink-0" />
       <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
         <div className="grow flex flex-col overflow-y-auto overscroll-y-none py-1 px-3">
-          <div className="grow grid grid-cols-[repeat(auto-fit,200px)] xs:grid-cols-[repeat(auto-fit,260px)] sm:grid-cols-[repeat(auto-fit,320px)] justify-center content-center gap-4">
+          <div className="grow grid grid-cols-[repeat(auto-fit,200px)] 3xs:grid-cols-[repeat(auto-fit,240px)] 2xs:grid-cols-[repeat(auto-fit,280px)] sm:grid-cols-[repeat(auto-fit,320px)] justify-center content-center gap-4">
             {visibles.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
                 <AccountCardInGrid $entry={$entry} />

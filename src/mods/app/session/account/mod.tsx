@@ -28,7 +28,7 @@ export function AccountAddButtonInGrid(props: { href: string }) {
 
   const coords = useAnchorWithCoords(hash, href)
 
-  return <a className="group w-[200px] xs:w-[260px] sm:w-[320px] aspect-video border-2 border-default-contrast rounded-xl hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+  return <a className="group w-[200px] 3xs:w-[240px] 2xs:w-[280px] sm:w-[320px] aspect-video border-2 border-default-contrast rounded-xl hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -81,7 +81,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           })()}
         </PathBoard>}
     </SubpathProvider>
-    <a className="w-[200px] xs:w-[260px] sm:w-[320px] aspect-video border-2 border-default-contrast p-4 rounded-xl bg-default text-default select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
+    <a className="w-[200px] 3xs:w-[240px] 2xs:w-[280px] sm:w-[320px] aspect-video border-2 border-default-contrast p-4 rounded-xl bg-default text-default select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -155,11 +155,11 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
-      <div className="font-medium text-xl text-wrap wrap-anywhere truncate">
+      <div className="font-medium text-xl truncate">
         {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
       </div>
-      <div className="h-2" />
-      <div className="text-default-half-contrast text-wrap wrap-anywhere truncate">
+      <div className="not-2xs:hidden h-2" />
+      <div className="not-2xs:hidden text-default-half-contrast truncate">
         {(() => {
           const type = getEntryType($entry)
 
@@ -175,8 +175,8 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           return null
         })()}
       </div>
-      <div className="not-xs:hidden h-4 grow" />
-      <div className="not-xs:hidden flex flex-wrap items-center gap-2">
+      <div className="not-2xs:hidden h-4 grow" />
+      <div className="not-2xs:hidden flex flex-wrap items-center gap-2">
         {(() => {
           const type = getEntryType($entry)
 

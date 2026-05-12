@@ -198,7 +198,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
     <Portal>
       <div className="absolute inset-0 bg-backdrop data-[state=rendering]:opacity-0 data-[state=opening]:animate-opacity-in data-[state=closing]:animate-opacity-out"
         data-state={state} />
-      <div className="fixed inset-0 flex flex-col md:p-safe focus-visible:outline-none overflow-y-scroll md:overflow-y-hidden data-[state=opened]:md:overflow-y-scroll overscroll-y-none not-md:light:scrollbar-light-[white] not-md:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=rendering]:opacity-0 data-[state=opening]:not-md:animate-slideup-in data-[state=opening]:md:animate-scale-xywh-in data-[state=closing]:not-md:animate-opacity-out data-[state=closing]:md:animate-scale-xywh-out"
+      <div className="fixed inset-0 flex flex-col sm:p-safe focus-visible:outline-none overflow-y-scroll sm:overflow-y-hidden data-[state=opened]:sm:overflow-y-scroll overscroll-y-none not-sm:light:scrollbar-light-[white] not-sm:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=rendering]:opacity-0 data-[state=opening]:not-sm:animate-slideup-in data-[state=opening]:sm:animate-scale-xywh-in data-[state=closing]:not-sm:animate-opacity-out data-[state=closing]:sm:animate-scale-xywh-out"
         data-state={state}
         data-theme={dark && "dark"}
         onAnimationEnd={onAnimationEnd}
@@ -206,19 +206,19 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
         onKeyDown={onKeyDown}
         onScroll={onScroll}
         ref={onDialog}>
-        <div className="not-md:basis-[100dvh] md:basis-[10dvh] md:grow shrink-0" />
-        <div className="flex flex-col text-default bg-default selection-default md:w-full md:m-auto md:max-w-3xl not-md:rounded-t-3xl md:rounded-3xl overflow-clip shrink-0"
+        <div className="not-sm:basis-[100dvh] sm:basis-[10dvh] sm:grow shrink-0" />
+        <div className="flex flex-col text-default bg-default selection-default sm:w-full sm:m-auto sm:max-w-3xl not-sm:rounded-t-3xl sm:rounded-3xl overflow-clip shrink-0"
           onMouseDown={Events.stopPropagation}>
-          <div className="flex md:hidden items-center justify-center p-4">
+          <div className="flex sm:hidden items-center justify-center p-4">
             <div className="w-16 h-2 bg-backdrop rounded-full" />
           </div>
-          <div className="not-md:basis-[100dvh] flex flex-col not-md:p-safe"
+          <div className="not-sm:basis-[100dvh] flex flex-col not-sm:p-safe"
             ref={setContent}>
             <button type="button" autoFocus />
             {children}
           </div>
         </div>
-        <div className="md:basis-[10dvh] md:grow shrink-0" />
+        <div className="sm:basis-[10dvh] sm:grow shrink-0" />
       </div>
     </Portal>
   </CloseContext>

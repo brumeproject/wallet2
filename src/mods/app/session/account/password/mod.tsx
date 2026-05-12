@@ -639,7 +639,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
     </h1>
     <div className="h-4" />
     <div className="flex flex-col grow rounded-xl relative">
-      <video className="h-full md:aspect-video object-cover rounded-xl bg-black" muted autoPlay playsInline loop
+      <video className="h-full sm:aspect-video object-cover rounded-xl bg-black" muted autoPlay playsInline loop
         src="/noise.mp4"
         ref={setVideo} />
       <div className="absolute bottom-0 w-full flex items-center p-4">

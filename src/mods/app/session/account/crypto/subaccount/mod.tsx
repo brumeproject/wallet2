@@ -47,7 +47,7 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
           <CryptoSubaccountPage $entry={$entry} subaccount={index} />
         </PathBoard>}
     </SubpathProvider>
-    <a className="group w-[200px] xs:w-[260px] sm:w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
+    <a className="group w-[200px] 3xs:w-[240px] 2xs:w-[280px] sm:w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -88,15 +88,15 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
       <div className="flex items-center justify-between">
-        <div className="font-medium text-xl">
+        <div className="font-medium text-xl truncate">
           {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
         </div>
         <div className="font-medium text-xl text-default-half-contrast">
           #{index + 1}
         </div>
       </div>
-      <div className="not-xs:hidden h-4 grow" />
-      <div className="not-xs:hidden flex flex-wrap items-center gap-2">
+      <div className="not-2xs:hidden h-4 grow" />
+      <div className="not-2xs:hidden flex flex-wrap items-center gap-2">
         <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
           <Outline.BanknotesIcon className="size-5" />
           {Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
