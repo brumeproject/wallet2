@@ -19,7 +19,7 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
     setControl(!control)
   }, [control, setControl])
 
-  return <button className="w-[320px] aspect-video perspective-[640px] text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+  return <button className="w-[200px] xs:w-[260px] sm:w-[320px] aspect-video perspective-normal text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     type="button"
     onClick={onClick}>
     <div className="h-full w-full data-[flipping=true]:animate-flip-in data-[unflipping=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default border-2 border-default-contrast select-none
@@ -74,11 +74,11 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
           </div>
         </div>
         <div className="h-2" />
-        <div className="text-default-half-contrast whitespace-pre-wrap text-wrap wrap-anywhere truncate">
+        <div className="text-default-half-contrast truncate">
           {subtitle}
         </div>
-        <div className="h-4 grow" />
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="not-xs:hidden h-4 grow" />
+        <div className="not-xs:hidden flex flex-wrap items-center gap-2">
           <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
             {icon}
             {type}
@@ -86,7 +86,7 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
         </div>
       </div>
       <div className="absolute inset-0 p-4 flex items-center justify-center backface-hidden overflow-hidden rotate-y-180">
-        <div className="font-mono text-default-half-contrast whitespace-pre-wrap">
+        <div className="not-xs:hidden xs:text-[12px] sm:text-[16px] font-mono text-default-half-contrast whitespace-pre-wrap">
           {`
 00100010 01010110 01101001
 01110010 01100101 01110011

@@ -126,7 +126,7 @@ export function App() {
             {Lang.match({ en: "Meet the only crypto-wallet with maximum security and privacy", zh: "唯一具有最大安全性和隐私性的加密钱包", hi: "अधिकतम सुरक्षा और गोपनीयता के साथ एकमात्र क्रिप्टो-वॉलेट से मिलें", es: "Conoce la única billetera criptográfica con máxima seguridad y privacidad", ar: "تعرف على المحفظة المشفرة الوحيدة ذات الأمان والخصوصية القصوى", fr: "Découvrez le seul portefeuille crypto avec une sécurité et une confidentialité maximales", de: "Lernen Sie die einzige Krypto-Brieftasche mit maximaler Sicherheit und Privatsphäre kennen", ru: "Познакомьтесь с единственным криптокошельком с максимальной безопасностью и конфиденциальностью", pt: "Conheça a única carteira de criptomoedas com máxima segurança e privacidade", ja: "最大のセキュリティとプライバシーを備えた唯一の暗号ウォレットを紹介します", pa: "ਅਧਿਕਤਮ ਸੁਰੱਖਿਆ ਅਤੇ ਗੋਪਨੀਯਤਾ ਨਾਲ ਇੱਕੋ ਹੀ क्रिप्टो-वॉलेट से मिलें", bn: "সর্বাধিক নিরাপত্তা এবং গোপনীয়তা সহ একমাত্র ক্রিপ্টো-ওয়ালেটের সাথে দেখা করুন", id: "Temui satu-satunya dompet kripto dengan keamanan dan privasi maksimal", ur: "زیادہ سے زیادہ سیکیورٹی اور پرائیویسی کے ساتھ واحد کرپٹو-والٹ سے ملیں", ms: "Temui satu-satunya dompet kripto dengan keamanan dan privasi maksimal", it: "Incontra l'unico portafoglio crittografico con massima sicurezza e privacy", tr: "Maksimum güvenlik ve gizlilik ile tek kripto cüzdanla tanışın", ta: "அதிகபட்ச பாதுகாப்பு மற்றும் தனியுரிமையுடன் ஒரே கிரிப்டோ-வாலெட்டை சந்திக்கவும்", te: "అధిక స్థాయి భద్రత మరియు గోప్యతతో ఏకైక క్రిప్టో-వాలెట్‌ను కలుసుకోండి", ko: "최대 보안과 개인 정보 보호를 제공하는 유일한 암호화 지갑을 만나보세요", vi: "Gặp gỡ ví tiền điện tử duy nhất với bảo mật và quyền riêng tư tối đa", pl: "Poznaj jedyną portmonetkę kryptograficzną z maksymalnym bezpieczeństwem i prywatnością", ro: "Cunoașteți singurul portofel cripto cu securitate și confidențialitate maxime", nl: "Ontmoet de enige crypto-portemonnee met maximale beveiliging en privacy", el: "Γνωρίστε το μόνο κρυπτο-πορτοφόλι με μέγ ιστη ασφάλεια και ιδιωτικότητα", th: "พบกับกระเป๋าเงินดิจิทัลเพียงหนึ่งเดียวที่มีความปลอดภัยและความเป็นส่วนตัวสูงสุด", cs: "Seznamte se s jedinou kryptopeněženkou s maximálním zabezpečením a soukromím", hu: "Ismerje meg az egyetlen kriptotárcát, amely maximális biztonságot és adatvédelmet nyújt", sv: "Möt den enda kryptoplånboken med maximal säkerhet och integritet", da: "Mød den eneste kryptotegnebog med maksimal sikkerhed og privatliv" })}
           </div>
           <div className="h-16" />
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center flex-wrap gap-4">
             <UserLoginButton />
             <SettingsButton />
           </div>
@@ -389,11 +389,13 @@ function SettingsPage() {
             <img className="size-24 rounded-xl bg-opposite" src={icon} />
           </button>}
         <div className="h-4" />
-        <input className="text-center bg-default-contrast po-2 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"
-          autoComplete="off"
-          placeholder="Wallet"
-          value={name || ""}
-          onChange={onNameChange} />
+        <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <input className="w-full focus-visible:outline-none text-center"
+            autoComplete="off"
+            placeholder="Wallet"
+            value={name || ""}
+            onChange={onNameChange} />
+        </div>
       </div>
     </form>
   </div>

@@ -44,7 +44,7 @@ export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
           <CryptoRequestPage $entry={$entry} subaccount={subaccount} title={title} session={session} request={request} />
         </PathBoard>}
     </SubpathProvider>
-    <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
+    <a className="group w-[200px] xs:w-[260px] sm:w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -245,7 +245,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {Lang.match({ en: "The request parameters.", zh: "请求参数。", hi: "अनुरोध पैरामीटर।", es: "Los parámetros de la solicitud.", ar: "معلمات الطلب.", fr: "Les paramètres de la requête.", de: "Die Parameter der Anfrage.", ru: "Параметры запроса.", pt: "Os parâmetros da solicitação.", ja: "リクエストパラメーター。", pa: "ਬੇਨਤੀ ਪੈਰਾਮੀਟਰ।", bn: "অনুরোধের প্যারামিটার।", id: "Parameter permintaan.", ur: "درخواست کے پیرامیٹرز۔", ms: "Parameter permintaan.", it: "I parametri della richiesta.", tr: "İstek parametreleri.", ta: "கோரிக்கை பராமீட்டர்கள்.", te: "అభ్యర్థన పరామితులు.", ko: "요청 매개변수입니다.", vi: "Các tham số yêu cầu.", pl: "Parametry żądania.", ro: "Parametrii cererii.", nl: "De parameters van het verzoek.", el: "Οι παράμετροι του αιτήματος ", th: "พารามิเตอร์ของคำขอ ", cs: "Parametry požadavku ", hu: "A kérés paraméterei ", sv: "Förfrågningsparametrar ", da: "Anmodningsparametre" })}
           </div>
           <div className="h-4" />
-          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl py-6">
             <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
               {JSON.stringify(request.params.request, null, 2)}
             </pre>

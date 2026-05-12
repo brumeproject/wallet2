@@ -47,7 +47,7 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
           <CryptoSubaccountPage $entry={$entry} subaccount={index} />
         </PathBoard>}
     </SubpathProvider>
-    <a className="group w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
+    <a className="group w-[200px] xs:w-[260px] sm:w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -95,8 +95,8 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
           #{index + 1}
         </div>
       </div>
-      <div className="h-4 grow" />
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="not-xs:hidden h-4 grow" />
+      <div className="not-xs:hidden flex flex-wrap items-center gap-2">
         <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
           <Outline.BanknotesIcon className="size-5" />
           {Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
@@ -350,7 +350,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
             {Lang.match({ en: "Your WalletConnect sessions.", zh: "您的 WalletConnect 会话。", hi: "आपके WalletConnect सत्र।", es: "Tus sesiones de WalletConnect.", ar: "جلسات WalletConnect الخاصة بك.", fr: "Vos sessions WalletConnect.", de: "Ihre WalletConnect-Sitzungen.", ru: "Ваши сессии WalletConnect.", pt: "Suas sessões do WalletConnect.", ja: "あなたのWalletConnectセッション。", pa: "ਤੁਹਾਡੇ WalletConnect ਸੈਸ਼ਨ।", bn: "আপনার WalletConnect সেশন।", id: "Sesi WalletConnect Anda.", ur: "آپ کے WalletConnect سیشنز۔", ms: "Sesi WalletConnect Anda.", it: "Le tue sessioni di WalletConnect.", tr: "WalletConnect oturumlarınız.", ta: "உங்கள் WalletConnect அமர்வுகள்.", te: "మీ WalletConnect సెషన్లు.", ko: "귀하의 WalletConnect 세션입니다.", vi: "Các phiên của bạn trên WalletConnect.", pl: "Twoje sesje WalletConnect.", ro: "Sesiunile dvs. de pe WalletConnect.", nl: "Uw WalletConnect-sessies.", el: "Οι συνεδρίες σας στο WalletConnect. ", th: "เซสชันของคุณบน WalletConnect. ", cs: "Vaše sezení na WalletConnect. ", hu: "A WalletConnect munkamenetei. ", sv: "Dina sessioner på WalletConnect. ", da: "Dine sessioner på WalletConnect." })}
           </div>
           <div className="h-4" />
-          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl py-6">
             <div className="flex flex-col"
               style={{ "height": `${180 + (sessions.length * 60)}px` }}>
               {sessions.map((data, index) =>
@@ -498,7 +498,7 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
             value={ethereum || ""} />
         </div>
         <div className="h-2" />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center flex-wrap-reverse gap-2">
           <WideContrastButton
             onClick={copyTheEthereum.copyOrAlert}>
             {copyTheEthereum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
@@ -523,7 +523,7 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
             value={solana || ""} />
         </div>
         <div className="h-2" />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center flex-wrap-reverse gap-2">
           <WideContrastButton
             onClick={copyTheSolana.copyOrAlert}>
             {copyTheSolana.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
@@ -648,7 +648,7 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
             value={flipped ? ethereum?.valueOf() : ethereum?.replaceAll(/./g, "•")} />
         </div>
         <div className="h-2" />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center flex-wrap-reverse gap-2">
           <WideContrastButton
             onClick={() => setFlipped(x => !x)}>
             {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
@@ -678,7 +678,7 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
             value={flipped ? solana?.valueOf() : solana?.replaceAll(/./g, "•")} />
         </div>
         <div className="h-2" />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center flex-wrap-reverse gap-2">
           <WideContrastButton
             onClick={() => setFlipped(x => !x)}>
             {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}

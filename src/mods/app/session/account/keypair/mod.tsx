@@ -253,7 +253,7 @@ export function KeypairAccountAddPage() {
             value={flipped ? $sigkey : $sigkey.replaceAll(/./g, "•")} />
         </div>
         <div className="h-2" />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center flex-wrap-reverse gap-2">
           <WideContrastButton
             onClick={() => setFlipped(x => !x)}>
             {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
@@ -544,7 +544,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
               value={pubkey || ""} />
           </div>
           <div className="h-2" />
-          <div className="flex items-center gap-2">
+          <div className="flex items-center flex-wrap-reverse gap-2">
             <WideContrastButton
               onClick={copyThePubKey.copyOrAlert}>
               {copyThePubKey.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
@@ -574,7 +574,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
               value={flipped ? sigkey : sigkey?.replaceAll(/./g, "•")} />
           </div>
           <div className="h-2" />
-          <div className="flex items-center gap-2">
+          <div className="flex items-center flex-wrap-reverse gap-2">
             <WideContrastButton
               onClick={() => setFlipped(x => !x)}>
               {flipped ? <Outline.EyeSlashIcon className="size-5" /> : <Outline.EyeIcon className="size-5" />}
