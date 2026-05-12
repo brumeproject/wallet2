@@ -44,7 +44,7 @@ export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
           <CryptoRequestPage $entry={$entry} subaccount={subaccount} title={title} session={session} request={request} />
         </PathBoard>}
     </SubpathProvider>
-    <a className="group w-[200px] 2xs:w-[260px] sm:w-[320px] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
+    <a className="group w-[min(320px,100%)] aspect-video overflow-hidden p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -85,16 +85,18 @@ export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
-      <div className="flex items-center justify-between">
-        <div className="font-medium text-xl truncate">
-          {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
-        </div>
-        <div className="font-medium text-xl text-default-half-contrast">
-          #{subaccount + 1}
-        </div>
-        <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
-          <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
-          <div className="relative inline-flex size-4 rounded-full bg-sky-500" />
+      <div className="grow flex flex-col flex-wrap overflow-hidden *:shrink-0 *:w-full">
+        <div className="flex items-center justify-between">
+          <div className="font-medium text-xl truncate">
+            {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
+          </div>
+          <div className="font-medium text-xl text-default-half-contrast">
+            #{subaccount + 1}
+          </div>
+          <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
+            <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
+            <div className="relative inline-flex size-4 rounded-full bg-sky-500" />
+          </div>
         </div>
       </div>
     </a>
@@ -245,7 +247,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {Lang.match({ en: "The request parameters.", zh: "请求参数。", hi: "अनुरोध पैरामीटर।", es: "Los parámetros de la solicitud.", ar: "معلمات الطلب.", fr: "Les paramètres de la requête.", de: "Die Parameter der Anfrage.", ru: "Параметры запроса.", pt: "Os parâmetros da solicitação.", ja: "リクエストパラメーター。", pa: "ਬੇਨਤੀ ਪੈਰਾਮੀਟਰ।", bn: "অনুরোধের প্যারামিটার।", id: "Parameter permintaan.", ur: "درخواست کے پیرامیٹرز۔", ms: "Parameter permintaan.", it: "I parametri della richiesta.", tr: "İstek parametreleri.", ta: "கோரிக்கை பராமீட்டர்கள்.", te: "అభ్యర్థన పరామితులు.", ko: "요청 매개변수입니다.", vi: "Các tham số yêu cầu.", pl: "Parametry żądania.", ro: "Parametrii cererii.", nl: "De parameters van het verzoek.", el: "Οι παράμετροι του αιτήματος ", th: "พารามิเตอร์ของคำขอ ", cs: "Parametry požadavku ", hu: "A kérés paraméterei ", sv: "Förfrågningsparametrar ", da: "Anmodningsparametre" })}
           </div>
           <div className="h-4" />
-          <div className="flex flex-col items-center border border-default-contrast rounded-xl py-6">
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
             <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
               {JSON.stringify(request.params.request, null, 2)}
             </pre>

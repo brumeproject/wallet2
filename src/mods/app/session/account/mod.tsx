@@ -28,7 +28,7 @@ export function AccountAddButtonInGrid(props: { href: string }) {
 
   const coords = useAnchorWithCoords(hash, href)
 
-  return <a className="group w-[200px] 3xs:w-[240px] 2xs:w-[280px] sm:w-[320px] aspect-video border-2 border-default-contrast rounded-xl hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+  return <a className="group w-[min(320px,100%)] aspect-video border-2 border-default-contrast rounded-xl hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -81,7 +81,7 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           })()}
         </PathBoard>}
     </SubpathProvider>
-    <a className="w-[200px] 3xs:w-[240px] 2xs:w-[280px] sm:w-[320px] aspect-video border-2 border-default-contrast p-4 rounded-xl bg-default text-default select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
+    <a className="w-[min(320px,100%)] aspect-video overflow-hidden border-2 border-default-contrast p-4 rounded-xl bg-default text-default select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -158,54 +158,55 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       <div className="font-medium text-xl truncate">
         {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
       </div>
-      <div className="not-2xs:hidden h-2" />
-      <div className="not-2xs:hidden text-default-half-contrast truncate">
-        {(() => {
-          const type = getEntryType($entry)
+      <div className="h-2" />
+      <div className="grow flex flex-col flex-wrap justify-between gap-4 overflow-hidden *:shrink-0 *:w-full">
+        <div className="text-default-half-contrast truncate">
+          {(() => {
+            const type = getEntryType($entry)
 
-          if (type === "password")
-            return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+            if (type === "password")
+              return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
 
-          if (type === "keypair")
-            return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+            if (type === "keypair")
+              return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
 
-          if (type === "card")
-            return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+            if (type === "card")
+              return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
 
-          return null
-        })()}
-      </div>
-      <div className="not-2xs:hidden h-4 grow" />
-      <div className="not-2xs:hidden flex flex-wrap items-center gap-2">
-        {(() => {
-          const type = getEntryType($entry)
+            return null
+          })()}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {(() => {
+            const type = getEntryType($entry)
 
-          if (type === "password")
-            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.LanguageIcon className="size-5" />
-              {Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata Sandi", ur: "پاس ورڈ", ms: "Kata Laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
-            </div>
+            if (type === "password")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.LanguageIcon className="size-5" />
+                {Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata Sandi", ur: "پاس ورڈ", ms: "Kata Laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
+              </div>
 
-          if (type === "keypair")
-            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.KeyIcon className="size-5" />
-              {Lang.match({ en: "Keypair", zh: "密钥对", hi: "कीपेयार", es: "Par de claves", ar: "زوج المفاتيح", fr: "Paire de clés", de: "Schlüsselpaar", ru: "Ключевая пара", pt: "Par de chaves", ja: "キーペア", pa: "ਕੀਪੇਅਰ", bn: "কীপেয়ার", id: "Pasangan Kunci", ur: "کلیدی جوڑا", ms: "Pasangan Kunci", it: "Coppia di chiavi", tr: "Anahtar çifti", ta: "கீபேர்", te: "కీపేర్", ko: "키페어", vi: "Cặp khóa", pl: "Para kluczy", ro: "Pereche de chei", nl: "Sleutelpaar", el: "Ζεύγος κλειδιών", th: "คู่กุญแจ", cs: "Klíčový pár", hu: "Kulcspár", sv: "Nyckelpar", da: "Nøglepar" })}
-            </div>
+            if (type === "keypair")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.KeyIcon className="size-5" />
+                {Lang.match({ en: "Keypair", zh: "密钥对", hi: "कीपेयार", es: "Par de claves", ar: "زوج المفاتيح", fr: "Paire de clés", de: "Schlüsselpaar", ru: "Ключевая пара", pt: "Par de chaves", ja: "キーペア", pa: "ਕੀਪੇਅਰ", bn: "কীপেয়ার", id: "Pasangan Kunci", ur: "کلیدی جوڑا", ms: "Pasangan Kunci", it: "Coppia di chiavi", tr: "Anahtar çifti", ta: "கீபேர்", te: "కీపేర్", ko: "키페어", vi: "Cặp khóa", pl: "Para kluczy", ro: "Pereche de chei", nl: "Sleutelpaar", el: "Ζεύγος κλειδιών", th: "คู่กุญแจ", cs: "Klíčový pár", hu: "Kulcspár", sv: "Nyckelpar", da: "Nøglepar" })}
+              </div>
 
-          if (type === "crypto")
-            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.BanknotesIcon className="size-5" />
-              {Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
-            </div>
+            if (type === "crypto")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.BanknotesIcon className="size-5" />
+                {Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
+              </div>
 
-          if (type === "card")
-            return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-              <Outline.CreditCardIcon className="size-5" />
-              {Lang.match({ en: "Card", zh: "卡片", hi: "कार्ड", es: "Tarjeta", ar: "بطاقة", fr: "Carte", de: "Karte", ru: "Карта", pt: "Cartão", ja: "カード", pa: "ਕਾਰਡ", bn: "কার্ড", id: "Kartu", ur: "کارڈ", ms: "Kad", it: "Carta", tr: "Kart", ta: "கார்டு", te: "కార్డు", ko: "카드", vi: "Thẻ", pl: "Karta", ro: "Card", nl: "Kaart", el: "Κάρτα", th: "บัตร", cs: "Karta", hu: "Kártya", sv: "Kort", da: "Kort" })}
-            </div>
+            if (type === "card")
+              return <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+                <Outline.CreditCardIcon className="size-5" />
+                {Lang.match({ en: "Card", zh: "卡片", hi: "कार्ड", es: "Tarjeta", ar: "بطاقة", fr: "Carte", de: "Karte", ru: "Карта", pt: "Cartão", ja: "カード", pa: "ਕਾਰਡ", bn: "কার্ড", id: "Kartu", ur: "کارڈ", ms: "Kad", it: "Carta", tr: "Kart", ta: "கார்டு", te: "కార్డు", ko: "카드", vi: "Thẻ", pl: "Karta", ro: "Card", nl: "Kaart", el: "Κάρτα", th: "บัตร", cs: "Karta", hu: "Kártya", sv: "Kort", da: "Kort" })}
+              </div>
 
-          return null
-        })()}
+            return null
+          })()}
+        </div>
       </div>
     </a>
   </Fragment>

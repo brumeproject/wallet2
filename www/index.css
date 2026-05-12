@@ -8,7 +8,7 @@
 } */
 
 @theme {
-  --breakpoint-xs: 32rem;
-  --breakpoint-2xs: 24rem;
+  --breakpoint-xs: 20rem;
+  --breakpoint-2xs: 18rem;
   --breakpoint-3xs: 16rem;
 }

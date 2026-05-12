@@ -142,7 +142,7 @@ export function SessionPage() {
       <div className="h-6 shrink-0" />
       <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
         <div className="grow flex flex-col overflow-y-auto overscroll-y-none py-1 px-3">
-          <div className="grow grid grid-cols-[repeat(auto-fit,200px)] 3xs:grid-cols-[repeat(auto-fit,240px)] 2xs:grid-cols-[repeat(auto-fit,280px)] sm:grid-cols-[repeat(auto-fit,320px)] justify-center content-center gap-4">
+          <div className="grow grid grid-cols-[repeat(auto-fit,min(320px,100%))] justify-center content-center gap-4">
             {visibles.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
                 <AccountCardInGrid $entry={$entry} />

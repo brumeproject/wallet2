@@ -19,7 +19,7 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
     setControl(!control)
   }, [control, setControl])
 
-  return <button className="w-[200px] 3xs:w-[240px] 2xs:w-[280px] sm:w-[320px] aspect-video perspective-normal text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+  return <button className="@container w-[min(320px,100%)] aspect-video perspective-normal text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     type="button"
     onClick={onClick}>
     <div className="h-full w-full data-[flipping=true]:animate-flip-in data-[unflipping=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default border-2 border-default-contrast select-none
@@ -73,20 +73,21 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
             {index != null ? `#${index + 1}` : null}
           </div>
         </div>
-        <div className="not-2xs:hidden h-2" />
-        <div className="not-2xs:hidden text-default-half-contrast truncate">
-          {subtitle}
-        </div>
-        <div className="not-2xs:hidden h-4 grow" />
-        <div className="not-2xs:hidden flex flex-wrap items-center gap-2">
-          <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-            {icon}
-            {type}
+        <div className="h-2" />
+        <div className="grow flex flex-col flex-wrap justify-between gap-4 overflow-hidden *:shrink-0 *:w-full">
+          <div className="text-default-half-contrast truncate">
+            {subtitle}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+              {icon}
+              {type}
+            </div>
           </div>
         </div>
       </div>
       <div className="absolute inset-0 p-4 flex items-center justify-center backface-hidden overflow-hidden rotate-y-180">
-        <div className="not-2xs:hidden 2xs:text-[14px] sm:text-[16px] font-mono text-default-half-contrast whitespace-pre-wrap">
+        <div className="text-[0px] @[240px]:text-[5cqw] font-mono text-default-half-contrast whitespace-pre-wrap">
           {`
 00100010 01010110 01101001
 01110010 01100101 01110011
