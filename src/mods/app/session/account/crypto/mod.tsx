@@ -333,23 +333,23 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {Lang.match({ en: "Your subaccounts.", zh: "您的子账户。", hi: "आपके उप खाते।", es: "Sus subcuentas.", ar: "حساباتك الفرعية.", fr: "Vos sous-comptes.", de: "Ihre Unterkonten.", ru: "Ваши субаккаунты.", pt: "Suas subcontas.", ja: "あなたのサブアカウント。", pa: "ਤੁਹਾਡੇ ਸਬਅਕਾਊਂਟ।", bn: "আপনার সাবঅ্যাকাউন্ট।", id: "Subakun Anda.", ur: "آپ کے ذیلی اکاؤنٹس۔", ms: "Subakun Anda.", it: "I tuoi sottoaccount.", tr: "Alt hesaplarınız.", ta: "உங்கள் உப கணக்குகள்.", te: "మీ ఉప ఖాతాలు.", ko: "귀하의 하위 계정입니다.", vi: "Các tài khoản phụ của bạn.", pl: "Twoje subkonta.", ro: "Subconturile dvs.", nl: "Uw subaccounts.", el: "Οι υπολογαριασμοί σας.", th: "บัญชีย่อยของคุณ", cs: "Vaše subúčty.", hu: "Az Ön alszámlái.", sv: "Dina subkonton.", da: "Dine subkonti." })}
           </div>
           <div className="h-4" />
-          <div className="flex not-sm:flex-col sm:flex-row items-center border border-default-contrast rounded-xl p-6">
-            <button className="group rounded-full p-2 not-sm:hidden sm:flex items-center justify-center rtl:-scale-x-100 enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
+          <div className="flex not-sm:flex-col sm:flex-row items-center justify-between gap-4 border border-default-contrast rounded-xl p-6">
+            <button className="group rounded-full p-2 flex items-center justify-center rtl:-scale-x-100 enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
               onClick={() => setIndex(i => i - 1)}
               disabled={index === 0}
               type="button">
               <InButton>
-                <Outline.ChevronLeftIcon className="size-6" />
+                <Outline.ChevronLeftIcon className="not-sm:hidden sm:size-6" />
+                <Outline.ChevronUpIcon className="sm:hidden not-sm:size-6" />
               </InButton>
             </button>
-            <div className="w-4 grow" />
             <CryptoSubaccountAnchor $entry={$entry} index={index} />
-            <div className="w-4 grow" />
-            <button className="group rounded-full p-2 not-sm:hidden sm:flex items-center justify-center rtl:-scale-x-100 enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
+            <button className="group rounded-full p-2 flex items-center justify-center rtl:-scale-x-100 enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none disabled:opacity-50"
               onClick={() => setIndex(i => i + 1)}
               type="button">
               <InButton>
-                <Outline.ChevronRightIcon className="size-6" />
+                <Outline.ChevronRightIcon className="not-sm:hidden sm:size-6" />
+                <Outline.ChevronDownIcon className="sm:hidden not-sm:size-6" />
               </InButton>
             </button>
           </div>
