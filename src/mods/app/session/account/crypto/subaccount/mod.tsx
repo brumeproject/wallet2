@@ -350,8 +350,8 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
             {Lang.match({ en: "Your WalletConnect sessions.", zh: "您的 WalletConnect 会话。", hi: "आपके WalletConnect सत्र।", es: "Tus sesiones de WalletConnect.", ar: "جلسات WalletConnect الخاصة بك.", fr: "Vos sessions WalletConnect.", de: "Ihre WalletConnect-Sitzungen.", ru: "Ваши сессии WalletConnect.", pt: "Suas sessões do WalletConnect.", ja: "あなたのWalletConnectセッション。", pa: "ਤੁਹਾਡੇ WalletConnect ਸੈਸ਼ਨ।", bn: "আপনার WalletConnect সেশন।", id: "Sesi WalletConnect Anda.", ur: "آپ کے WalletConnect سیشنز۔", ms: "Sesi WalletConnect Anda.", it: "Le tue sessioni di WalletConnect.", tr: "WalletConnect oturumlarınız.", ta: "உங்கள் WalletConnect அமர்வுகள்.", te: "మీ WalletConnect సెషన్లు.", ko: "귀하의 WalletConnect 세션입니다.", vi: "Các phiên của bạn trên WalletConnect.", pl: "Twoje sesje WalletConnect.", ro: "Sesiunile dvs. de pe WalletConnect.", nl: "Uw WalletConnect-sessies.", el: "Οι συνεδρίες σας στο WalletConnect. ", th: "เซสชันของคุณบน WalletConnect. ", cs: "Vaše sezení na WalletConnect. ", hu: "A WalletConnect munkamenetei. ", sv: "Dina sessioner på WalletConnect. ", da: "Dine sessioner på WalletConnect." })}
           </div>
           <div className="h-4" />
-          <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
-            <div className="grow flex flex-col overflow-y-scroll overscroll-y-none py-1 px-3">
+          <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl p-1">
+            <div className="grow flex flex-col overflow-y-scroll overscroll-y-none p-5">
               <div className="grow grid grid-cols-[repeat(auto-fit,min(320px,100%))] justify-center content-center gap-4">
                 {sessions.map((data, index) =>
                   <Fragment key={index}>

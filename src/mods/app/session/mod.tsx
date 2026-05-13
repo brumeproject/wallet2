@@ -140,8 +140,8 @@ export function SessionPage() {
         {Lang.match({ en: "Your accounts", zh: "你的账户", hi: "आपके खाते", es: "Tus cuentas", ar: "حساباتك", fr: "Vos comptes", de: "Deine Konten", ru: "Ваши аккаунты", pt: "Suas contas", ja: "あなたのアカウント", pa: "ਤੁਹਾਡੇ ਖਾਤੇ", bn: "আপনার অ্যাকাউন্টগুলি", id: "Akun Anda", ur: "آپ کے اکاؤنٹس", ms: "Akun Anda", it: "I tuoi account", tr: "Hesaplarınız", ta: "உங்கள் கணக்குகள்", te: "మీ ఖాతాలు", ko: "당신의 계정들", vi: "Tài khoản của bạn", pl: "Twoje konta", ro: "Conturile tale", nl: "Jouw accounts", el: "Οι λογαριασμοί σας", th: "บัญชีของคุณ", cs: "Vaše účty", hu: "Fiókjaid", sv: "Dina konton", da: "Dine konti" })}
       </h1>
       <div className="h-6 shrink-0" />
-      <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl py-3 px-1">
-        <div className="grow flex flex-col overflow-y-scroll overscroll-y-none py-1 px-3">
+      <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl p-1">
+        <div className="grow flex flex-col overflow-y-scroll overscroll-y-none p-5">
           <div className="grow grid grid-cols-[repeat(auto-fit,min(320px,100%))] justify-center content-center gap-4">
             {visibles.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
