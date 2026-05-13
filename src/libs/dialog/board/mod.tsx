@@ -207,7 +207,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
         onScroll={onScroll}
         ref={onDialog}>
         <div className="not-sm:basis-[100dvh] sm:basis-[10dvh] sm:grow shrink-0" />
-        <div className="flex flex-col text-default bg-default selection-default sm:w-full sm:m-auto sm:max-w-3xl not-sm:rounded-t-3xl sm:rounded-3xl overflow-clip shrink-0"
+        <div className="flex flex-col text-default bg-default selection-default sm:w-full sm:m-auto sm:max-w-2xl not-sm:rounded-t-3xl sm:rounded-3xl overflow-clip shrink-0"
           onMouseDown={Events.stopPropagation}>
           <div className="flex sm:hidden items-center justify-center p-4">
             <div className="w-16 h-2 bg-backdrop rounded-full" />
