@@ -73,12 +73,12 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
             {index != null ? `#${index + 1}` : null}
           </div>
         </div>
-        <div className="not-@[240px]:hidden h-2" />
-        <div className="not-@[240px]:hidden text-default-half-contrast truncate">
+        <div className="not-@[290px]:hidden h-2" />
+        <div className="not-@[290px]:hidden text-default-half-contrast truncate">
           {subtitle}
         </div>
-        <div className="not-@[200px]:hidden h-4 grow" />
-        <div className="not-@[200px]:hidden flex flex-wrap items-center gap-2">
+        <div className="h-4 grow" />
+        <div className="flex flex-wrap items-center gap-2">
           <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
             {icon}
             {type}
