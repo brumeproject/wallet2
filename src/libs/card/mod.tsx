@@ -19,7 +19,7 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
     setControl(!control)
   }, [control, setControl])
 
-  return <button className="@container w-[min(320px,100%)] aspect-video perspective-normal text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+  return <button className="@container w-[min(320px,100%)] aspect-video perspective-midrange text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     type="button"
     onClick={onClick}>
     <div className="h-full w-full data-[flipping=true]:animate-flip-in data-[unflipping=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default border-2 border-default-contrast select-none
