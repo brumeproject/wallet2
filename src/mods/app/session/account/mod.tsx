@@ -28,7 +28,7 @@ export function AccountAddButtonInGrid(props: { href: string }) {
 
   const coords = useAnchorWithCoords(hash, href)
 
-  return <a className="group w-[min(320px,100%)] aspect-video border-2 border-default-contrast rounded-xl hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+  return <a className="group w-[min(320px,100%)] aspect-video rounded-xl border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>

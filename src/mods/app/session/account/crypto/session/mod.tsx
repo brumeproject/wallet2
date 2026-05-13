@@ -18,16 +18,13 @@ import { AccountMenuAnchor, CryptoSessionCard } from "../../mod.tsx";
 
 React;
 
-export function CryptoSessionAddAnchor(props: { count: number }) {
-  const { count } = props
-
+export function CryptoSessionAddAnchor() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
   const coords = useAnchorWithCoords(hash, "/session")
 
-  return <a className="group w-[min(320px,100%)] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-    style={{ "transform": `translateY(-${count * 120}px)` }}
+  return <a className="group w-[min(320px,100%)] aspect-video rounded-xl border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -304,7 +301,6 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
       in-dark:data-[color=fuchsia]:bg-fuchsia-500
       in-dark:data-[color=pink]:bg-pink-500
       in-dark:data-[color=rose]:bg-rose-500"
-      style={{ transform: `translateY(-${index * 120}px)` }}
       data-theme={color == null ? "opposite" : "dark"}
       data-color={color}
       href={coords.url.hash}
@@ -385,8 +381,8 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {Lang.match({ en: "Your WalletConnect requests.", zh: "您的 WalletConnect 请求。", hi: "आपके WalletConnect अनुरोध।", es: "Tus solicitudes de WalletConnect.", ar: "طلبات WalletConnect الخاصة بك.", fr: "Vos requêtes WalletConnect.", de: "Ihre WalletConnect-Anfragen.", ru: "Ваши запросы WalletConnect.", pt: "Suas solicitações do WalletConnect.", ja: "あなたのWalletConnectリクエスト。", pa: "ਤੁਹਾਡੇ WalletConnect ਬੇਨਤੀਆਂ।", bn: "আপনার WalletConnect অনুরোধ।", id: "Permintaan WalletConnect Anda.", ur: "آپ کے WalletConnect درخواستیں۔", ms: "Permintaan WalletConnect Anda.", it: "Le tue richieste di WalletConnect.", tr: "WalletConnect istekleriniz.", ta: "உங்கள் WalletConnect கோரிக்கைகள்.", te: "మీ WalletConnect అభ్యర్థనలు.", ko: "귀하의 WalletConnect 요청입니다.", vi: "Các yêu cầu của bạn trên WalletConnect.", pl: "Twoje żądania WalletConnect.", ro: "Cereri dvs. de pe WalletConnect.", nl: "Uw WalletConnect-verzoeken.", el: "Τα αιτήματα σας στο WalletConnect. ", th: "คำขอของคุณบน WalletConnect. ", cs: "Vaše požadavky na WalletConnect. ", hu: "A WalletConnect kérései. ", sv: "Dina förfrågningar på WalletConnect. ", da: "Dine anmodninger på WalletConnect." })}
           </div>
           <div className="h-4" />
-          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-            <div className="flex flex-col"
+          <div className="flex flex-col border border-default-contrast rounded-xl p-6">
+            <div className="w-full flex flex-col items-center"
               style={{ "height": `${180 + (requests.length * 60)}px` }}>
               {requests.map((data, index) =>
                 <Fragment key={index}>
