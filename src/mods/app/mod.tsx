@@ -1,4 +1,4 @@
-import { ContrastAnchor } from "@/libs/anchor/mod.tsx";
+import { ContrastAnchor, WideContrastAnchor } from "@/libs/anchor/mod.tsx";
 import { useClientContext } from "@/libs/client/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper } from "@/libs/dialog/paper/mod.tsx";
@@ -113,6 +113,10 @@ export function App() {
         <PathBoard>
           <SettingsPage />
         </PathBoard>}
+      {client && hash.url.pathname === "/install" &&
+        <PathBoard>
+          <InstallPage />
+        </PathBoard>}
     </SubpathProvider>
     <div className="h-full w-full overflow-y-scroll animate-opacity-in text-pretty">
       <div className="p-safe flex flex-col items-center">
@@ -126,8 +130,9 @@ export function App() {
             {Lang.match({ en: "Meet the only crypto-wallet with maximum security and privacy", zh: "唯一具有最大安全性和隐私性的加密钱包", hi: "अधिकतम सुरक्षा और गोपनीयता के साथ एकमात्र क्रिप्टो-वॉलेट से मिलें", es: "Conoce la única billetera criptográfica con máxima seguridad y privacidad", ar: "تعرف على المحفظة المشفرة الوحيدة ذات الأمان والخصوصية القصوى", fr: "Découvrez le seul portefeuille crypto avec une sécurité et une confidentialité maximales", de: "Lernen Sie die einzige Krypto-Brieftasche mit maximaler Sicherheit und Privatsphäre kennen", ru: "Познакомьтесь с единственным криптокошельком с максимальной безопасностью и конфиденциальностью", pt: "Conheça a única carteira de criptomoedas com máxima segurança e privacidade", ja: "最大のセキュリティとプライバシーを備えた唯一の暗号ウォレットを紹介します", pa: "ਅਧਿਕਤਮ ਸੁਰੱਖਿਆ ਅਤੇ ਗੋਪਨੀਯਤਾ ਨਾਲ ਇੱਕੋ ਹੀ क्रिप्टो-वॉलेट से मिलें", bn: "সর্বাধিক নিরাপত্তা এবং গোপনীয়তা সহ একমাত্র ক্রিপ্টো-ওয়ালেটের সাথে দেখা করুন", id: "Temui satu-satunya dompet kripto dengan keamanan dan privasi maksimal", ur: "زیادہ سے زیادہ سیکیورٹی اور پرائیویسی کے ساتھ واحد کرپٹو-والٹ سے ملیں", ms: "Temui satu-satunya dompet kripto dengan keamanan dan privasi maksimal", it: "Incontra l'unico portafoglio crittografico con massima sicurezza e privacy", tr: "Maksimum güvenlik ve gizlilik ile tek kripto cüzdanla tanışın", ta: "அதிகபட்ச பாதுகாப்பு மற்றும் தனியுரிமையுடன் ஒரே கிரிப்டோ-வாலெட்டை சந்திக்கவும்", te: "అధిక స్థాయి భద్రత మరియు గోప్యతతో ఏకైక క్రిప్టో-వాలెట్‌ను కలుసుకోండి", ko: "최대 보안과 개인 정보 보호를 제공하는 유일한 암호화 지갑을 만나보세요", vi: "Gặp gỡ ví tiền điện tử duy nhất với bảo mật và quyền riêng tư tối đa", pl: "Poznaj jedyną portmonetkę kryptograficzną z maksymalnym bezpieczeństwem i prywatnością", ro: "Cunoașteți singurul portofel cripto cu securitate și confidențialitate maxime", nl: "Ontmoet de enige crypto-portemonnee met maximale beveiliging en privacy", el: "Γνωρίστε το μόνο κρυπτο-πορτοφόλι με μέγ ιστη ασφάλεια και ιδιωτικότητα", th: "พบกับกระเป๋าเงินดิจิทัลเพียงหนึ่งเดียวที่มีความปลอดภัยและความเป็นส่วนตัวสูงสุด", cs: "Seznamte se s jedinou kryptopeněženkou s maximálním zabezpečením a soukromím", hu: "Ismerje meg az egyetlen kriptotárcát, amely maximális biztonságot és adatvédelmet nyújt", sv: "Möt den enda kryptoplånboken med maximal säkerhet och integritet", da: "Mød den eneste kryptotegnebog med maksimal sikkerhed og privatliv" })}
           </div>
           <div className="h-16" />
-          <div className="flex items-center justify-center flex-wrap gap-4">
+          <div className="flex items-center justify-center flex-wrap gap-4 max-w-64">
             <UserLoginButton />
+            <InstallButton />
             <SettingsButton />
           </div>
           <div className="h-16" />
@@ -274,7 +279,7 @@ export function App() {
   </Fragment>
 }
 
-function SettingsButton() {
+export function SettingsButton() {
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
@@ -289,7 +294,7 @@ function SettingsButton() {
   </ContrastAnchor>
 }
 
-function SettingsPage() {
+export function SettingsPage() {
   const store = useStoreContext().getOrThrow()
 
   const [name, setName] = useState<Nullable<string>>()
@@ -400,3 +405,148 @@ function SettingsPage() {
     </form>
   </div>
 }
+
+export function InstallButton() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/install")
+
+  return <ContrastAnchor
+    href={coords.url.hash}
+    onClick={coords.onClick}
+    onKeyDown={coords.onKeyDown}>
+    <Outline.ArrowDownTrayIcon className="size-5" />
+    {Lang.match({ en: "Install", zh: "下载", hi: "डाउनलोड", es: "Descargar", ar: "تحميل", fr: "Télécharger", de: "Herunterladen", ru: "Скачать", pt: "Baixar", ja: "ダウンロード", pa: "ਡਾਊਨਲੋਡ", bn: "ডাউনলোড", id: "Unduh", ur: "ڈاؤن لوڈ", ms: "Muat turun", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
+  </ContrastAnchor>
+}
+
+export function InstallPage() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  return <Fragment>
+    <SubpathProvider value={hash}>
+      {hash.url.pathname === "/safari" &&
+        <PathBoard>
+          <SafariInstallPage />
+        </PathBoard>}
+      {hash.url.pathname === "/android" &&
+        <PathBoard>
+          <AndroidInstallPage />
+        </PathBoard>}
+    </SubpathProvider>
+    <div className="flex flex-col grow p-6">
+      <h1 className="text-xl font-medium">
+        {Lang.match({ en: "Install", zh: "下载", hi: "डाउनलोड", es: "Descargar", ar: "تحميل", fr: "Télécharger", de: "Herunterladen", ru: "Скачать", pt: "Baixar", ja: "ダウンロード", pa: "ਡਾਊਨਲੋਡ", bn: "ডাউনলোড", id: "Unduh", ur: "ڈاؤن لوڈ", ms: "Muat turun", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
+      </h1>
+      <div className="h-6" />
+      <div className="grid place-items-stretch gap-4 grid-cols-[repeat(auto-fill,minmax(16rem,1fr))]">
+        <SafariButton />
+        <AndroidButton />
+      </div>
+      <div className="h-4" />
+      <WideContrastAnchor
+        target="_blank noreferrer"
+        href="https://github.com/brumeproject/wallet2">
+        <Outline.ArrowTopRightOnSquareIcon className="size-5" />
+        {Lang.match({ en: "Advanced", zh: "高级", hi: "उन्नत", es: "Avanzado", ar: "متقدم", fr: "Avancé", de: "Erweitert", ru: "Продвинутый", pt: "Avançado", ja: "高度な", pa: "ਉੱਨਤ", bn: "উন্নত", id: "Lanjutan", ur: "اعلی درجے کا", ms: "Lanjutan", it: "Avanzato", tr: "Gelişmiş", ta: "மேம்பட்டது", te: "అధునాతన", ko: "고급", vi: "Nâng cao", pl: "Zaawansowane", ro: "Avansat", nl: "Geavanceerd", el: "Για προχωρημένους", th: "ขั้นสูง", cs: "Pokročilý", hu: "Fejlett", sv: "Avancerad", da: "Avanceret" })}
+      </WideContrastAnchor>
+    </div>
+  </Fragment>
+}
+
+export function SafariButton() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/safari")
+
+  return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
+    data-highlighted="true">
+    <div className="flex flex-col">
+      <div className="font-medium text-xl">
+        Safari
+      </div>
+      <div className="h-1" />
+      <div className="text-default-contrast">
+        iPhone, iPad, Mac
+      </div>
+    </div>
+    <div className="h-4 grow" />
+    <div className="flex items-center">
+      <WideContrastAnchor
+        onKeyDown={coords.onKeyDown}
+        onClick={coords.onClick}
+        href={coords.url.hash}>
+        <Outline.ArrowDownTrayIcon className="size-5" />
+        {Lang.match({ en: "Install", zh: "安装", hi: "इंस्टॉल करें", es: "Instalar", ar: "تثبيت", fr: "Installer", de: "Installieren", ru: "Установить", pt: "Instalar", ja: "インストール", pa: "ਇੰਸਟਾਲ ਕਰੋ", bn: "ইনস্টল করুন", id: "Pasang", ur: "انسٹال کریں", ms: "Pasang", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
+      </WideContrastAnchor>
+    </div>
+  </div>
+}
+
+export function AndroidButton() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/android")
+
+  return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
+    data-highlighted="true">
+    <div className="flex flex-col">
+      <div className="font-medium text-xl">
+        Android
+      </div>
+      <div className="h-1" />
+      <div className="text-default-contrast">
+        Google, Samsung, Huawei, Xiaomi, ...
+      </div>
+    </div>
+    <div className="h-4 grow" />
+    <div className="flex items-center">
+      <WideContrastAnchor
+        onKeyDown={coords.onKeyDown}
+        onClick={coords.onClick}
+        href={coords.url.hash}>
+        <Outline.ArrowDownTrayIcon className="size-5" />
+        {Lang.match({ en: "Install", zh: "安装", hi: "इंस्टॉल करें", es: "Instalar", ar: "تثبيت", fr: "Installer", de: "Installieren", ru: "Установить", pt: "Instalar", ja: "インストール", pa: "ਇੰਸਟਾਲ ਕਰੋ", bn: "ইনস্টল করুন", id: "Pasang", ur: "انسٹال کریں", ms: "Pasang", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
+      </WideContrastAnchor>
+    </div>
+  </div>
+}
+
+export function SafariInstallPage() {
+  return <div className="flex flex-col grow p-6">
+    <h1 className="text-xl font-medium">
+      {Lang.match({ en: "Install on Safari", zh: "在 Safari 上安装", hi: "Safari पर इंस्टॉल करें", es: "Instalar en Safari", ar: "التثبيت على سفاري", fr: "Installer sur Safari", de: "Auf Safari installieren", ru: "Установить на Safari", pt: "Instalar no Safari", ja: "Safariにインストール", pa: "ਸਫਾਰੀ 'ਤੇ ਇੰਸਟਾਲ ਕਰੋ", bn: "Safari এ ইনস্টল করুন", id: "Pasang di Safari", ur: "سفاری پر انسٹال کریں", ms: "Pasang di Safari", it: "Installa su Safari", tr: "Safari'ye Yükle", ta: "சஃபாரியில் நிறுவவும்", te: "సఫారి లో ఇన్‌స్టాల్ చేయండి", ko: "Safari에 설치", vi: "Cài đặt trên Safari", pl: "Zainstaluj na Safari", ro: "Instalează pe Safari", nl: "Installeren op Safari", el: "Εγκαταστήστε στο Safari", th: "ติดตั้งบน Safari", cs: "Nainstalovat na Safari", hu: "Telepítés Safarira", sv: "Installera på Safari", da: "Installer på Safari" })}
+    </h1>
+    <div className="h-6" />
+    <div className="flex flex-wrap items-center justify-center gap-2">
+      <img className="w-auto h-120 rounded-4xl border-8 border-default-contrast"
+        src="/assets/install/iphone-1.png" />
+      <img className="w-auto h-120 rounded-4xl border-8 border-default-contrast"
+        src="/assets/install/iphone-2.png" />
+      <img className="w-auto h-120 rounded-4xl border-8 border-default-contrast"
+        src="/assets/install/iphone-3.png" />
+    </div>
+  </div>
+}
+
+export function AndroidInstallPage() {
+  return <div className="flex flex-col grow p-6">
+    <h1 className="text-xl font-medium">
+      {Lang.match({ en: "Install on Android", zh: "在 Android 上安装", hi: "Android पर इंस्टॉल करें", es: "Instalar en Android", ar: "التثبيت على أندرويد", fr: "Installer sur Android", de: "Auf Android installieren", ru: "Установить на Android", pt: "Instalar no Android", ja: "Androidにインストール", pa: "ਐਂਡਰਾਇਡ 'ਤੇ ਇੰਸਟਾਲ ਕਰੋ", bn: "Android এ ইনস্টল করুন", id: "Pasang di Android", ur: "اینڈروئیڈ پر انسٹال کریں", ms: "Pasang di Android", it: "Installa su Android", tr: "Android'e Yükle", ta: "ஆண்ட்ராய்டில் நிறுவவும்", te: "Android లో ఇన్‌స్టాల్ చేయండి", ko: "Android에 설치", vi: "Cài đặt trên Android", pl: "Zainstaluj na Android", ro: "Instalează pe Android", nl: "Installeren op Android", el: "Εγκαταστήστε στο Android", th: "ติดตั้งบน Android", cs: "Nainstalovat na Android", hu: "Telepítés Androidra", sv: "Installera på Android", da: "Installer på Android" })}
+    </h1>
+    <div className="h-6" />
+    <div className="flex flex-wrap items-center justify-center gap-2">
+      <img className="w-auto h-120 rounded-4xl border-8 border-default-contrast"
+        src="/assets/install/android-1.png" />
+      <img className="w-auto h-120 rounded-4xl border-8 border-default-contrast"
+        src="/assets/install/android-2.png" />
+      <img className="w-auto h-120 rounded-4xl border-8 border-default-contrast"
+        src="/assets/install/android-3.png" />
+    </div>
+  </div>
+}
+

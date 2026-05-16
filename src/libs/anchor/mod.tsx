@@ -34,3 +34,15 @@ export function ContrastAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"]
     </InOther>
   </a>
 }
+
+export function WideContrastAnchor(props: ChildrenProps & JSX.IntrinsicElements["a"] & { "aria-disabled"?: boolean }) {
+  const { children, "aria-disabled": disabled = false, ...rest } = props
+
+  return <a className="flex-1 group po-2 bg-default-contrast rounded-xl not-aria-disabled:hover:bg-default-double-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-disabled:opacity-50"
+    aria-disabled={disabled}
+    {...rest}>
+    <InOther>
+      {children}
+    </InOther>
+  </a>
+}
