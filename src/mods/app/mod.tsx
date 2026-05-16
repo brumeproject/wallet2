@@ -465,7 +465,7 @@ export function SafariButton() {
   const coords = useAnchorWithCoords(hash, "/safari")
 
   return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
-    data-highlighted="true">
+    data-highlighted={navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}>
     <div className="flex flex-col">
       <div className="font-medium text-xl">
         Safari
@@ -495,7 +495,7 @@ export function AndroidButton() {
   const coords = useAnchorWithCoords(hash, "/android")
 
   return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
-    data-highlighted="true">
+    data-highlighted={navigator.userAgent.includes("Android")}>
     <div className="flex flex-col">
       <div className="font-medium text-xl">
         Android
