@@ -469,7 +469,7 @@ export function ChromeButton() {
 
   const coords = useAnchorWithCoords(hash, "/chrome")
 
-  return <a className="p-6 bg-default-contrast rounded-xl flex items-center gap-4 data-[highlighted=false]:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-transform"
+  return <a className="p-6 bg-default-contrast rounded-xl flex items-center gap-4 data-[highlighted=false]:opacity-50 hover:bg-default-double-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-transform"
     data-highlighted={navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}
     onKeyDown={coords.onKeyDown}
     onClick={coords.onClick}
@@ -495,7 +495,7 @@ export function SafariButton() {
 
   const coords = useAnchorWithCoords(hash, "/safari")
 
-  return <a className="p-6 bg-default-contrast rounded-xl flex items-center gap-4 data-[highlighted=false]:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-transform"
+  return <a className="p-6 bg-default-contrast rounded-xl flex items-center gap-4 data-[highlighted=false]:opacity-50 hover:bg-default-double-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-transform"
     data-highlighted={navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}
     onKeyDown={coords.onKeyDown}
     onClick={coords.onClick}
@@ -520,7 +520,7 @@ export function AndroidButton() {
 
   const coords = useAnchorWithCoords(hash, "/android")
 
-  return <a className="p-6 bg-default-contrast rounded-xl flex items-center gap-4 data-[highlighted=false]:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-transform"
+  return <a className="p-6 bg-default-contrast rounded-xl flex items-center gap-4 data-[highlighted=false]:opacity-50 hover:bg-default-double-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-transform"
     data-highlighted={navigator.userAgent.includes("Android")}
     onKeyDown={coords.onKeyDown}
     onClick={coords.onClick}
