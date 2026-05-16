@@ -266,7 +266,7 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
           <CryptoSessionPage $entry={$entry} subaccount={subaccount} title={title} session={session} requests={requests} />
         </PathBoard>}
     </SubpathProvider>
-    <a className="relative group w-[min(20rem,100%)] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
+    <a className="@container relative group w-[min(20rem,100%)] aspect-video rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -311,19 +311,21 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
           <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
           <div className="relative inline-flex size-4 rounded-full bg-sky-500" />
         </div>}
-      <div className="flex items-center justify-between">
-        <div className="font-medium text-xl truncate">
-          {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
+      <div className="h-full w-full flex flex-col p-4">
+        <div className="flex items-center justify-between">
+          <div className="font-medium text-xl truncate">
+            {title || Lang.match({ en: "Untitled", zh: "无标题", hi: "शीर्षक रहित", es: "Sin título", ar: "بدون عنوان", fr: "Sans titre", de: "Unbenannt", ru: "Без названия", pt: "Sem título", ja: "無題", pa: "ਬਿਨਾਂ ਸਿਰਲੇਖ ਦੇ", bn: "বিনা শিরোনাম", id: "Tanpa judul", ur: "بغیر عنوان کے", ms: "Tanpa judul", it: "Senza titolo", tr: "Başlıksız", ta: "தலைப்பு இல்லாமல்", te: "శీర్షిక లేని", ko: "제목 없음", vi: "Không tiêu đề", pl: "Bez tytułu", ro: "Fără titlu", nl: "Ongetiteld", el: "Χωρίς τίτλο", th: "ไม่มีชื่อเรื่อง", cs: "Nezvaný", hu: "Névtelen", sv: "Otitulerad", da: "Uden titel" })}
+          </div>
+          <div className="font-medium text-xl text-default-half-contrast">
+            #{subaccount + 1}
+          </div>
         </div>
-        <div className="font-medium text-xl text-default-half-contrast">
-          #{subaccount + 1}
-        </div>
-      </div>
-      <div className="h-4 grow" />
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-          <Outline.LinkIcon className="size-5" />
-          WalletConnect
+        <div className="not-@[12rem]:hidden h-4 grow" />
+        <div className="not-@[12rem]:hidden flex flex-wrap items-center gap-2">
+          <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
+            <Outline.LinkIcon className="size-5" />
+            WalletConnect
+          </div>
         </div>
       </div>
     </a>
@@ -396,8 +398,8 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                   <CryptoRequestAnchor $entry={$entry} subaccount={subaccount} index={index} title={title} session={session} request={data} />
                 </Fragment>)}
               <button className="group w-[min(20rem,100%)] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-                // style={{ "transform": `translateY(-${requests.length * 120}px)` }}
-                style={{ "transform": `translateY(calc(${requests.length} * 10%))` }}
+                style={{ "transform": `translateY(-${requests.length * 120}px)` }}
+                // style={{ "transform": `translateY(calc(${requests.length} * 10%))` }}
                 onClick={decline}
                 type="button">
                 <InButton>

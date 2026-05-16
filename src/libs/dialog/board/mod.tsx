@@ -166,10 +166,13 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
    * Swipe down to close
    */
   const onScroll = useCallback((e: UIEvent) => {
-    if (innerWidth > 640)
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize)
+
+    if (innerWidth > 40 * rem)
       return
     if (e.currentTarget.scrollTop > 0)
       return
+
     hide()
   }, [hide])
 
@@ -179,9 +182,11 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
    * Smoothly scroll to the content to perfectly fit the screen
    */
   useEffect(() => {
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize)
+
     if (content == null)
       return
-    if (innerWidth > 640)
+    if (innerWidth > 40 * rem)
       return
 
     const timeout = setTimeout(() => content.scrollIntoView({ behavior: "smooth" }))

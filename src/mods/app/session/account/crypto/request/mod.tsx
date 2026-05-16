@@ -44,7 +44,7 @@ export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
           <CryptoRequestPage $entry={$entry} subaccount={subaccount} title={title} session={session} request={request} />
         </PathBoard>}
     </SubpathProvider>
-    <a className="relative group w-[min(20rem,100%)] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
+    <a className="relative group w-[min(20rem,100%)] aspect-video p-4 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
