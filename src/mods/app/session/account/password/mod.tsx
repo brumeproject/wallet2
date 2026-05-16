@@ -1,5 +1,6 @@
 import { InOther } from "@/libs/anchor/mod.tsx";
 import { InButton, WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { FlipCard } from "@/libs/card/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
@@ -19,7 +20,7 @@ import { useCloseContext } from "@hazae41/react-close-context";
 import jsqr from "jsqr";
 import React, { ChangeEvent, Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
-import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, PasswordAccountCard } from "../mod.tsx";
+import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
 
 React;
 
@@ -168,10 +169,12 @@ export function PasswordAccountAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <PasswordAccountCard
+        <FlipCard
+          type={Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata Sandi", ur: "پاس ورڈ", ms: "Kata Laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
           title={title}
+          subtitle={username}
           color={color}
-          username={username}
+          icon={<Outline.LanguageIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
@@ -384,10 +387,12 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
       </div>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <PasswordAccountCard
+        <FlipCard
+          type={Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata Sandi", ur: "پاس ورڈ", ms: "Kata Laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
           title={title}
+          subtitle={username}
           color={color}
-          username={username}
+          icon={<Outline.LanguageIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>

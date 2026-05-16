@@ -1,6 +1,5 @@
 import { InOther, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton } from "@/libs/button/mod.tsx";
-import { FlipCard } from "@/libs/card/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
@@ -212,46 +211,6 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     </a>
   </Fragment>
 }
-
-export function PasswordAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { username: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
-  const { color, title, username, flip, onFlipChange } = props
-
-  return <FlipCard
-    type={Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata Sandi", ur: "پاس ورڈ", ms: "Kata Laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
-    title={title}
-    subtitle={username}
-    color={color}
-    icon={<Outline.LanguageIcon className="size-5" />}
-    flip={flip}
-    onFlipChange={onFlipChange} />
-}
-
-export function CardAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { number: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
-  const { color, title, number, flip, onFlipChange } = props
-
-  return <FlipCard
-    type={Lang.match({ en: "Card", zh: "卡片", hi: "कार्ड", es: "Tarjeta", ar: "بطاقة", fr: "Carte", de: "Karte", ru: "Карта", pt: "Cartão", ja: "カード", pa: "ਕਾਰਡ", bn: "কার্ড", id: "Kartu", ur: "کارڈ", ms: "Kad", it: "Carta", tr: "Kart", ta: "கார்டு", te: "కార్డు", ko: "카드", vi: "Thẻ", pl: "Karta", ro: "Card", nl: "Kaart", el: "Κάρτα", th: "บัตร", cs: "Karta", hu: "Kártya", sv: "Kort", da: "Kort" })}
-    title={title}
-    subtitle={number}
-    color={color}
-    icon={<Outline.CreditCardIcon className="size-5" />}
-    flip={flip}
-    onFlipChange={onFlipChange} />
-}
-
-export function KeypairAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { username: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
-  const { color, title, username, flip, onFlipChange } = props
-
-  return <FlipCard
-    type={Lang.match({ en: "Keypair", zh: "密钥对", hi: "कीपेयार", es: "Par de claves", ar: "زوج المفاتيح", fr: "Paire de clés", de: "Schlüsselpaar", ru: "Ключевая пара", pt: "Par de chaves", ja: "キーペア", pa: "ਕੀਪੇਅਰ", bn: "কীপেয়ার", id: "Pasangan Kunci", ur: "کلیدی جوڑا", ms: "Pasangan Kunci", it: "Coppia di chiavi", tr: "Anahtar çifti", ta: "கீபேர்", te: "కీపేర్", ko: "키페어", vi: "Cặp khóa", pl: "Para kluczy", ro: "Pereche de chei", nl: "Sleutelpaar", el: "Ζεύγος κλειδιών", th: "คู่กุญแจ", cs: "Klíčový pár", hu: "Kulcspár", sv: "Nyckelpar", da: "Nøglepar" })}
-    title={title}
-    subtitle={username}
-    color={color}
-    icon={<Outline.KeyIcon className="size-5" />}
-    flip={flip}
-    onFlipChange={onFlipChange} />
-}
-
 
 export function AccountAddButton() {
   const path = usePathContext().getOrThrow()

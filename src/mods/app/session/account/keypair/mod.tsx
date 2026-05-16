@@ -1,4 +1,5 @@
 import { InButton, WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { FlipCard } from "@/libs/card/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -16,7 +17,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
-import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu, KeypairAccountCard } from "../mod.tsx";
+import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
 
 React;
 
@@ -177,10 +178,12 @@ export function KeypairAccountAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <KeypairAccountCard
+        <FlipCard
+          type={Lang.match({ en: "Keypair", zh: "密钥对", hi: "कीपेयार", es: "Par de claves", ar: "زوج المفاتيح", fr: "Paire de clés", de: "Schlüsselpaar", ru: "Ключевая пара", pt: "Par de chaves", ja: "キーペア", pa: "ਕੀਪੇਅਰ", bn: "কীপেয়ার", id: "Pasangan Kunci", ur: "کلیدی جوڑا", ms: "Pasangan Kunci", it: "Coppia di chiavi", tr: "Anahtar çifti", ta: "கீபேர்", te: "కీపేర్", ko: "키페어", vi: "Cặp khóa", pl: "Para kluczy", ro: "Pereche de chei", nl: "Sleutelpaar", el: "Ζεύγος κλειδιών", th: "คู่กุญแจ", cs: "Klíčový pár", hu: "Kulcspár", sv: "Nyckelpar", da: "Nøglepar" })}
           title={title}
+          subtitle={username}
           color={color}
-          username={username}
+          icon={<Outline.KeyIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
@@ -489,10 +492,12 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
       </div>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <KeypairAccountCard
+        <FlipCard
+          type={Lang.match({ en: "Keypair", zh: "密钥对", hi: "कीपेयार", es: "Par de claves", ar: "زوج المفاتيح", fr: "Paire de clés", de: "Schlüsselpaar", ru: "Ключевая пара", pt: "Par de chaves", ja: "キーペア", pa: "ਕੀਪੇਅਰ", bn: "কীপেয়ার", id: "Pasangan Kunci", ur: "کلیدی جوڑا", ms: "Pasangan Kunci", it: "Coppia di chiavi", tr: "Anahtar çifti", ta: "கீபேர்", te: "కీపేర్", ko: "키페어", vi: "Cặp khóa", pl: "Para kluczy", ro: "Pereche de chei", nl: "Sleutelpaar", el: "Ζεύγος κλειδιών", th: "คู่กุญแจ", cs: "Klíčový pár", hu: "Kulcspár", sv: "Nyckelpar", da: "Nøglepar" })}
           title={title}
+          subtitle={username}
           color={color}
-          username={username}
+          icon={<Outline.KeyIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>

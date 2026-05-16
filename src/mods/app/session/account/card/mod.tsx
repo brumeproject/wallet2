@@ -1,4 +1,5 @@
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { FlipCard } from "@/libs/card/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
@@ -13,7 +14,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";
-import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, CardAccountCard, ColorAnchor, ColorMenu } from "../mod.tsx";
+import { AccountMenuAnchor, AccountMenuDeleteButton, AccountMenuTrashButton, AccountMenuUntrashButton, ColorAnchor, ColorMenu } from "../mod.tsx";
 
 React;
 
@@ -163,10 +164,12 @@ export function CardAccountAddPage() {
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <CardAccountCard
+        <FlipCard
+          type={Lang.match({ en: "Card", zh: "卡片", hi: "कार्ड", es: "Tarjeta", ar: "بطاقة", fr: "Carte", de: "Karte", ru: "Карта", pt: "Cartão", ja: "カード", pa: "ਕਾਰਡ", bn: "কার্ড", id: "Kartu", ur: "کارڈ", ms: "Kad", it: "Carta", tr: "Kart", ta: "கார்டு", te: "కార్డు", ko: "카드", vi: "Thẻ", pl: "Karta", ro: "Card", nl: "Kaart", el: "Κάρτα", th: "บัตร", cs: "Karta", hu: "Kártya", sv: "Kort", da: "Kort" })}
           title={title}
+          subtitle={num}
           color={color}
-          number={num}
+          icon={<Outline.CreditCardIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
@@ -410,10 +413,12 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
     </div>
     <div className="h-6" />
     <div className="flex items-center justify-center">
-      <CardAccountCard
+      <FlipCard
+        type={Lang.match({ en: "Card", zh: "卡片", hi: "कार्ड", es: "Tarjeta", ar: "بطاقة", fr: "Carte", de: "Karte", ru: "Карта", pt: "Cartão", ja: "カード", pa: "ਕਾਰਡ", bn: "কার্ড", id: "Kartu", ur: "کارڈ", ms: "Kad", it: "Carta", tr: "Kart", ta: "கார்டு", te: "కార్డు", ko: "카드", vi: "Thẻ", pl: "Karta", ro: "Card", nl: "Kaart", el: "Κάρτα", th: "บัตร", cs: "Karta", hu: "Kártya", sv: "Kort", da: "Kort" })}
         title={title}
+        subtitle={num}
         color={color}
-        number={num}
+        icon={<Outline.CreditCardIcon className="size-5" />}
         flip={flipped}
         onFlipChange={setFlipped} />
     </div>
