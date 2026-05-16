@@ -24,7 +24,7 @@ export function CryptoSessionAddAnchor() {
 
   const coords = useAnchorWithCoords(hash, "/session")
 
-  return <a className="group w-[min(320px,100%)] aspect-video rounded-xl border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+  return <a className="group w-[min(20rem,100%)] aspect-video rounded-xl border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
@@ -266,7 +266,7 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
           <CryptoSessionPage $entry={$entry} subaccount={subaccount} title={title} session={session} requests={requests} />
         </PathBoard>}
     </SubpathProvider>
-    <a className="relative group w-[min(320px,100%)] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
+    <a className="relative group w-[min(20rem,100%)] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -395,8 +395,9 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                 <Fragment key={index}>
                   <CryptoRequestAnchor $entry={$entry} subaccount={subaccount} index={index} title={title} session={session} request={data} />
                 </Fragment>)}
-              <button className="group w-[min(320px,100%)] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-                style={{ "transform": `translateY(-${requests.length * 120}px)` }}
+              <button className="group w-[min(20rem,100%)] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
+                // style={{ "transform": `translateY(-${requests.length * 120}px)` }}
+                style={{ "transform": `translateY(calc(${requests.length} * 10%))` }}
                 onClick={decline}
                 type="button">
                 <InButton>

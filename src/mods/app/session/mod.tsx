@@ -135,14 +135,14 @@ export function SessionPage() {
           <CardAccountAddPage />
         </PathBoard>}
     </SubpathProvider>
-    <div className="grow flex flex-col p-6 overflow-y-auto">
+    <div className="grow flex flex-col *:shrink-0 p-6 overflow-y-auto">
       <h1 className="text-xl font-medium">
         {Lang.match({ en: "Your accounts", zh: "你的账户", hi: "आपके खाते", es: "Tus cuentas", ar: "حساباتك", fr: "Vos comptes", de: "Deine Konten", ru: "Ваши аккаунты", pt: "Suas contas", ja: "あなたのアカウント", pa: "ਤੁਹਾਡੇ ਖਾਤੇ", bn: "আপনার অ্যাকাউন্টগুলি", id: "Akun Anda", ur: "آپ کے اکاؤنٹس", ms: "Akun Anda", it: "I tuoi account", tr: "Hesaplarınız", ta: "உங்கள் கணக்குகள்", te: "మీ ఖాతాలు", ko: "당신의 계정들", vi: "Tài khoản của bạn", pl: "Twoje konta", ro: "Conturile tale", nl: "Jouw accounts", el: "Οι λογαριασμοί σας", th: "บัญชีของคุณ", cs: "Vaše účty", hu: "Fiókjaid", sv: "Dina konton", da: "Dine konti" })}
       </h1>
-      <div className="h-6 shrink-0" />
+      <div className="h-6" />
       <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl p-1">
         <div className="grow flex flex-col overflow-y-scroll overscroll-y-none p-5">
-          <div className="grow grid grid-cols-[repeat(auto-fit,min(320px,100%))] justify-center content-center gap-4">
+          <div className="grow grid grid-cols-[repeat(auto-fit,min(20rem,100%))] justify-center content-center gap-4">
             {visibles.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
                 <AccountCardInGrid $entry={$entry} />
@@ -165,7 +165,7 @@ export function SessionPage() {
           </div>
         </div>
       </div>
-      <div className="h-4 shrink-0" />
+      <div className="h-4" />
       <div className="flex flex-wrap items-center gap-2">
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
@@ -210,7 +210,7 @@ export function SessionPage() {
           {Lang.match({ en: "Trash", zh: "垃圾桶", hi: "कचरा", es: "Papelera", ar: "سلة المهملات", fr: "Corbeille", de: "Papierkorb", ru: "Корзина", pt: "Lixeira", ja: "ゴミ箱", pa: "ਕਚਰਾ", bn: "ট্র্যাশ", id: "Sampah", ur: "کچرا", ms: "Tong Sampah", it: "Cestino", tr: "Çöp", ta: "குப்பை", te: "ట్రాష్", ko: "휴지통", vi: "Thùng rác", pl: "Kosz", ro: "Coș de gunoi", nl: "Prullenbak", el: "Κάδος απορριμμάτων", th: "ถังขยะ", cs: "Koš", hu: "Szemetes", sv: "Papperskorg", da: "Papirkurv" })}
         </button>
       </div>
-      <div className="h-4 shrink-0" />
+      <div className="h-4" />
       <div className="flex items-center gap-2">
         <SessionMenuButton />
         <div className="grow bg-default-contrast po-2 rounded-xl flex items-center gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">

@@ -47,7 +47,7 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
           <CryptoSubaccountPage $entry={$entry} subaccount={index} />
         </PathBoard>}
     </SubpathProvider>
-    <a className="group w-[min(320px,100%)] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
+    <a className="group w-[min(20rem,100%)] aspect-video p-4 z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none flex flex-col hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
       data-[color=red]:bg-red-400 
       data-[color=orange]:bg-orange-400 
       data-[color=amber]:bg-amber-400 
@@ -352,7 +352,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           <div className="h-4" />
           <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl p-1">
             <div className="grow flex flex-col overflow-y-scroll overscroll-y-none p-5">
-              <div className="grow grid grid-cols-[repeat(auto-fit,min(320px,100%))] justify-center content-center gap-4">
+              <div className="grow grid grid-cols-[repeat(auto-fit,min(20rem,100%))] justify-center content-center gap-4">
                 {sessions.map((data, index) =>
                   <Fragment key={index}>
                     <CryptoSessionAnchor $entry={$entry} subaccount={subaccount} index={index} title={data.title} session={data.session} requests={data.requests} />

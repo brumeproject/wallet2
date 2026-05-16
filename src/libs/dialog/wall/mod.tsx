@@ -158,15 +158,15 @@ export function Wall(props: ChildrenProps & DarkProps) {
     <Portal>
       <div className="absolute inset-0 bg-backdrop data-[state=opening]:animate-opacity-in data-[state=closing]:animate-opacity-out"
         data-state={state} />
-      <div className="fixed inset-0 focus-visible:outline-none flex flex-col overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=opening]:animate-slideup-in data-[state=closing]:animate-opacity-out"
+      <div className="fixed inset-0 focus-visible:outline-none flex flex-col *:shrink-0 overflow-y-scroll overscroll-y-none light:scrollbar-light-[white] dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=opening]:animate-slideup-in data-[state=closing]:animate-opacity-out"
         data-state={state}
         data-theme={dark && "dark"}
         onAnimationEnd={onAnimationEnd}
         onMouseDown={onMouseDown}
         onKeyDown={onKeyDown}
         onScroll={onScroll}>
-        <div className="basis-[100dvh] shrink-0" />
-        <div className="flex flex-col bg-default text-default selection-default rounded-t-3xl shrink-0"
+        <div className="basis-[100dvh]" />
+        <div className="flex flex-col bg-default text-default selection-default rounded-t-3xl"
           onMouseDown={Events.stopPropagation}>
           <div className="flex items-center justify-center p-4">
             <div className="w-16 h-2 bg-backdrop rounded-full" />

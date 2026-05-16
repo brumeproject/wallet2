@@ -19,7 +19,7 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
     setControl(!control)
   }, [control, setControl])
 
-  return <button className="@container w-[min(320px,100%)] aspect-video perspective-midrange text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+  return <button className="@container w-[min(20rem,100%)] aspect-video perspective-midrange text-left cursor-pointer hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
     type="button"
     onClick={onClick}>
     <div className="h-full w-full data-[flipping=true]:animate-flip-in data-[unflipping=true]:animate-flip-out data-[flipped=true]:rotate-y-180 transform-3d relative rounded-xl bg-default text-default border-2 border-default-contrast select-none
@@ -73,12 +73,12 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
             {index != null ? `#${index + 1}` : null}
           </div>
         </div>
-        <div className="not-@[290px]:hidden h-2" />
-        <div className="not-@[290px]:hidden text-default-half-contrast truncate">
+        <div className="not-@[16rem]:hidden h-2" />
+        <div className="not-@[16rem]:hidden text-default-half-contrast truncate">
           {subtitle}
         </div>
-        <div className="h-4 grow" />
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="not-@[12rem]:hidden h-4 grow" />
+        <div className="not-@[12rem]:hidden flex flex-wrap items-center gap-2">
           <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
             {icon}
             {type}

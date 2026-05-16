@@ -166,7 +166,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
    * Swipe down to close
    */
   const onScroll = useCallback((e: UIEvent) => {
-    if (innerWidth > 768)
+    if (innerWidth > 640)
       return
     if (e.currentTarget.scrollTop > 0)
       return
@@ -181,7 +181,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
   useEffect(() => {
     if (content == null)
       return
-    if (innerWidth > 768)
+    if (innerWidth > 640)
       return
 
     const timeout = setTimeout(() => content.scrollIntoView({ behavior: "smooth" }))
@@ -198,7 +198,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
     <Portal>
       <div className="absolute inset-0 bg-backdrop data-[state=rendering]:opacity-0 data-[state=opening]:animate-opacity-in data-[state=closing]:animate-opacity-out"
         data-state={state} />
-      <div className="fixed inset-0 flex flex-col sm:p-6 focus-visible:outline-none overflow-y-scroll sm:overflow-y-hidden data-[state=opened]:sm:overflow-y-scroll overscroll-y-none not-sm:light:scrollbar-light-[white] not-sm:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=rendering]:opacity-0 data-[state=opening]:not-sm:animate-slideup-in data-[state=opening]:sm:animate-scale-xywh-in data-[state=closing]:not-sm:animate-opacity-out data-[state=closing]:sm:animate-scale-xywh-out"
+      <div className="fixed inset-0 flex flex-col *:shrink-0 sm:p-6 focus-visible:outline-none overflow-y-scroll sm:overflow-y-hidden data-[state=opened]:sm:overflow-y-scroll overscroll-y-none not-sm:light:scrollbar-light-[white] not-sm:dark:scrollbar-dark-[black] [scrollbar-gutter:stable] data-[state=rendering]:opacity-0 data-[state=opening]:not-sm:animate-slideup-in data-[state=opening]:sm:animate-scale-xywh-in data-[state=closing]:not-sm:animate-opacity-out data-[state=closing]:sm:animate-scale-xywh-out"
         data-state={state}
         data-theme={dark && "dark"}
         onAnimationEnd={onAnimationEnd}
@@ -206,8 +206,8 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
         onKeyDown={onKeyDown}
         onScroll={onScroll}
         ref={onDialog}>
-        <div className="not-sm:basis-[100dvh] sm:basis-[10dvh] sm:grow shrink-0" />
-        <div className="flex flex-col text-default bg-default selection-default sm:w-full sm:m-auto sm:max-w-3xl not-sm:rounded-t-3xl sm:rounded-3xl overflow-clip shrink-0"
+        <div className="not-sm:basis-[100dvh] sm:basis-[10dvh] sm:grow" />
+        <div className="flex flex-col text-default bg-default selection-default sm:w-full sm:m-auto sm:max-w-3xl not-sm:rounded-t-3xl sm:rounded-3xl overflow-clip"
           onMouseDown={Events.stopPropagation}>
           <div className="flex sm:hidden items-center justify-center p-4">
             <div className="w-16 h-2 bg-backdrop rounded-full" />
@@ -218,7 +218,7 @@ export function Board(props: ChildrenProps & DarkProps & { x: number, y: number 
             {children}
           </div>
         </div>
-        <div className="sm:basis-[10dvh] sm:grow shrink-0" />
+        <div className="sm:basis-[10dvh] sm:grow" />
       </div>
     </Portal>
   </CloseContext>
