@@ -416,7 +416,7 @@ export function InstallButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <Outline.ArrowDownTrayIcon className="size-5" />
+    <Outline.ArrowDownOnSquareIcon className="size-5" />
     {Lang.match({ en: "Install", zh: "下载", hi: "डाउनलोड", es: "Descargar", ar: "تحميل", fr: "Télécharger", de: "Herunterladen", ru: "Скачать", pt: "Baixar", ja: "ダウンロード", pa: "ਡਾਊਨਲੋਡ", bn: "ডাউনলোড", id: "Unduh", ur: "ڈاؤن لوڈ", ms: "Muat turun", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
   </ContrastAnchor>
 }
@@ -469,32 +469,23 @@ export function ChromeButton() {
 
   const coords = useAnchorWithCoords(hash, "/chrome")
 
-  return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
-    data-highlighted={navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}>
-    <div className="flex items-center gap-4">
-      <img className="size-16 object-contain p-2 bg-white rounded-xl"
-        src="/assets/platforms/chrome.png" />
-      <div className="flex flex-col">
-        <div className="font-medium text-xl">
-          Chrome
-        </div>
-        <div className="h-1" />
-        <div className="text-default-contrast">
-          Chrome, Edge, Brave, Opera, Chromium
-        </div>
+  return <a className="p-6 bg-default-contrast rounded-xl flex items-center gap-4 data-[highlighted=false]:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-transform"
+    data-highlighted={navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}
+    onKeyDown={coords.onKeyDown}
+    onClick={coords.onClick}
+    href={coords.url.hash}>
+    <img className="size-16 object-contain p-2 bg-white rounded-xl"
+      src="/assets/platforms/chrome.png" />
+    <div className="flex flex-col">
+      <div className="font-medium text-xl">
+        Chrome
+      </div>
+      <div className="h-1" />
+      <div className="text-default-contrast">
+        Chrome, Edge, Brave, Opera, Chromium
       </div>
     </div>
-    <div className="h-4 grow" />
-    <div className="flex items-center">
-      <WideContrastAnchor
-        onKeyDown={coords.onKeyDown}
-        onClick={coords.onClick}
-        href={coords.url.hash}>
-        <Outline.ArrowDownTrayIcon className="size-5" />
-        {Lang.match({ en: "Install", zh: "安装", hi: "इंस्टॉल करें", es: "Instalar", ar: "تثبيت", fr: "Installer", de: "Installieren", ru: "Установить", pt: "Instalar", ja: "インストール", pa: "ਇੰਸਟਾਲ ਕਰੋ", bn: "ইনস্টল করুন", id: "Pasang", ur: "انسٹال کریں", ms: "Pasang", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
-      </WideContrastAnchor>
-    </div>
-  </div>
+  </a>
 }
 
 
@@ -504,32 +495,23 @@ export function SafariButton() {
 
   const coords = useAnchorWithCoords(hash, "/safari")
 
-  return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
-    data-highlighted={navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}>
-    <div className="flex items-center gap-4">
-      <img className="size-16 object-contain p-2 bg-white rounded-xl"
-        src="/assets/platforms/safari.svg" />
-      <div className="flex flex-col">
-        <div className="font-medium text-xl">
-          Safari
-        </div>
-        <div className="h-1" />
-        <div className="text-default-contrast">
-          iPhone, iPad, Mac
-        </div>
+  return <a className="p-6 bg-default-contrast rounded-xl flex items-center gap-4 data-[highlighted=false]:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-transform"
+    data-highlighted={navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}
+    onKeyDown={coords.onKeyDown}
+    onClick={coords.onClick}
+    href={coords.url.hash}>
+    <img className="size-16 object-contain p-2 bg-white rounded-xl"
+      src="/assets/platforms/safari.svg" />
+    <div className="flex flex-col">
+      <div className="font-medium text-xl">
+        Safari
+      </div>
+      <div className="h-1" />
+      <div className="text-default-contrast">
+        iPhone, iPad, Mac
       </div>
     </div>
-    <div className="h-4 grow" />
-    <div className="flex items-center">
-      <WideContrastAnchor
-        onKeyDown={coords.onKeyDown}
-        onClick={coords.onClick}
-        href={coords.url.hash}>
-        <Outline.ArrowDownTrayIcon className="size-5" />
-        {Lang.match({ en: "Install", zh: "安装", hi: "इंस्टॉल करें", es: "Instalar", ar: "تثبيت", fr: "Installer", de: "Installieren", ru: "Установить", pt: "Instalar", ja: "インストール", pa: "ਇੰਸਟਾਲ ਕਰੋ", bn: "ইনস্টল করুন", id: "Pasang", ur: "انسٹال کریں", ms: "Pasang", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
-      </WideContrastAnchor>
-    </div>
-  </div>
+  </a>
 }
 
 export function AndroidButton() {
@@ -538,32 +520,23 @@ export function AndroidButton() {
 
   const coords = useAnchorWithCoords(hash, "/android")
 
-  return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
-    data-highlighted={navigator.userAgent.includes("Android")}>
-    <div className="flex items-center gap-4">
-      <img className="size-16 object-contain p-2 bg-white rounded-xl"
-        src="/assets/platforms/android.svg" />
-      <div className="flex flex-col">
-        <div className="font-medium text-xl">
-          Android
-        </div>
-        <div className="h-1" />
-        <div className="text-default-contrast">
-          Google, Samsung, Huawei, Xiaomi
-        </div>
+  return <a className="p-6 bg-default-contrast rounded-xl flex items-center gap-4 data-[highlighted=false]:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast transition-transform"
+    data-highlighted={navigator.userAgent.includes("Android")}
+    onKeyDown={coords.onKeyDown}
+    onClick={coords.onClick}
+    href={coords.url.hash}>
+    <img className="size-16 object-contain p-2 bg-white rounded-xl"
+      src="/assets/platforms/android.svg" />
+    <div className="flex flex-col">
+      <div className="font-medium text-xl">
+        Android
+      </div>
+      <div className="h-1" />
+      <div className="text-default-contrast">
+        Google, Samsung, Huawei, Xiaomi
       </div>
     </div>
-    <div className="h-4 grow" />
-    <div className="flex items-center">
-      <WideContrastAnchor
-        onKeyDown={coords.onKeyDown}
-        onClick={coords.onClick}
-        href={coords.url.hash}>
-        <Outline.ArrowDownTrayIcon className="size-5" />
-        {Lang.match({ en: "Install", zh: "安装", hi: "इंस्टॉल करें", es: "Instalar", ar: "تثبيت", fr: "Installer", de: "Installieren", ru: "Установить", pt: "Instalar", ja: "インストール", pa: "ਇੰਸਟਾਲ ਕਰੋ", bn: "ইনস্টল করুন", id: "Pasang", ur: "انسٹال کریں", ms: "Pasang", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
-      </WideContrastAnchor>
-    </div>
-  </div>
+  </a>
 }
 
 export function ChromeInstallPage() {
