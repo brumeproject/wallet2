@@ -213,34 +213,6 @@ export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   </Fragment>
 }
 
-export function CryptoSessionCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
-  const { color, title, subtitle, index, flip, onFlipChange } = props
-
-  return <FlipCard
-    type="WalletConnect"
-    title={title}
-    subtitle={subtitle}
-    color={color}
-    index={index}
-    icon={<Outline.LinkIcon className="size-5" />}
-    flip={flip}
-    onFlipChange={onFlipChange} />
-}
-
-export function CryptoAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { subtitle?: Nullable<string> } & { index?: Nullable<number> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
-  const { color, title, subtitle, index, flip, onFlipChange } = props
-
-  return <FlipCard
-    type={Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
-    title={title}
-    subtitle={subtitle}
-    color={color}
-    index={index}
-    icon={<Outline.BanknotesIcon className="size-5" />}
-    flip={flip}
-    onFlipChange={onFlipChange} />
-}
-
 export function PasswordAccountCard(props: { color: Nullable<string> } & { title: Nullable<string> } & { username: Nullable<string> } & { flip: boolean } & { onFlipChange(flip: boolean): void }) {
   const { color, title, username, flip, onFlipChange } = props
 

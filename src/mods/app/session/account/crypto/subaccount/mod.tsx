@@ -1,4 +1,5 @@
 import { WideContrastButton } from "@/libs/button/mod.tsx";
+import { FlipCard } from "@/libs/card/mod.tsx";
 import { ChainData } from "@/libs/chainlist/mod.ts";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
@@ -20,7 +21,7 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { AccountMenuAnchor, CryptoAccountCard } from "../../mod.tsx";
+import { AccountMenuAnchor } from "../../mod.tsx";
 
 React;
 
@@ -331,10 +332,12 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       </div>
       <div className="h-6" />
       <div className="flex flex-col items-center justify-center">
-        <CryptoAccountCard
+        <FlipCard
+          type={Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
           title={title}
           color={color}
           index={subaccount}
+          icon={<Outline.BanknotesIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
@@ -472,10 +475,12 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
     </div>
     <div className="h-6" />
     <div className="flex flex-col items-center justify-center">
-      <CryptoAccountCard
+      <FlipCard
+        type={Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
         title={title}
         color={color}
         index={subaccount}
+        icon={<Outline.BanknotesIcon className="size-5" />}
         flip={flipped}
         onFlipChange={setFlipped} />
     </div>
@@ -622,10 +627,12 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
     </div>
     <div className="h-6" />
     <div className="flex flex-col items-center justify-center">
-      <CryptoAccountCard
+      <FlipCard
+        type={Lang.match({ en: "Crypto", zh: "加密货币", hi: "क्रिप्टो", es: "Cripto", ar: "تشفير", fr: "Crypto", de: "Krypto", ru: "Крипто", pt: "Cripto", ja: "暗号通貨", pa: "ਕ੍ਰਿਪਟੋ", bn: "ক্রিপ্টো", id: "Kripto", ur: "کرپٹو", ms: "Kripto", it: "Cripto", tr: "Kripto", ta: "கிரிப்டோ", te: "క్రిప్టో", ko: "암호화폐", vi: "Tiền điện tử", pl: "Krypto", ro: "Cripto", nl: "Crypto", el: "Κρυπτο", th: "คริปโต", cs: "Krypto", hu: "Kripto", sv: "Krypto", da: "Krypto" })}
         title={title}
         color={color}
         index={subaccount}
+        icon={<Outline.BanknotesIcon className="size-5" />}
         flip={flipped}
         onFlipChange={setFlipped} />
     </div>

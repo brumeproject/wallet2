@@ -1,5 +1,6 @@
 import { InOther } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { FlipCard } from "@/libs/card/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
@@ -14,7 +15,7 @@ import * as KDBX from "@hazae41/kdbx";
 import { WcSession, WcUserRejectedError } from "@hazae41/latrine";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
-import { AccountMenuAnchor, CryptoSessionCard } from "../../mod.tsx";
+import { AccountMenuAnchor } from "../../mod.tsx";
 
 React;
 
@@ -156,11 +157,13 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
       </h1>
       <div className="h-6" />
       <div className="flex items-center justify-center">
-        <CryptoSessionCard
+        <FlipCard
+          type="WalletConnect"
           title={title}
           subtitle={subtitle}
           color={color}
           index={subaccount}
+          icon={<Outline.LinkIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
@@ -376,11 +379,13 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       </div>
       <div className="h-6" />
       <div className="flex flex-col items-center justify-center">
-        <CryptoSessionCard
+        <FlipCard
+          type="WalletConnect"
           title={title}
           subtitle={subtitle}
           color={color}
           index={subaccount}
+          icon={<Outline.LinkIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
