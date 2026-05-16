@@ -166,7 +166,7 @@ export function SessionPage() {
         </div>
       </div>
       <div className="h-4" />
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 pointer-coarse:not-sm:overflow-x-auto pointer-coarse:not-sm:flex-nowrap pointer-coarse:not-sm:[scrollbar-width:none]">
         <button className="bg-default-contrast aria-selected:bg-opposite aria-selected:text-opposite rounded-xl po-1 flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast aria-selected:focus-visible:outline-opposite"
           type="button"
           aria-selected={filter == null}
