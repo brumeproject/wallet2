@@ -471,13 +471,17 @@ export function ChromeButton() {
 
   return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
     data-highlighted={navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}>
-    <div className="flex flex-col">
-      <div className="font-medium text-xl">
-        Chrome
-      </div>
-      <div className="h-1" />
-      <div className="text-default-contrast">
-        Windows, Mac, Linux
+    <div className="flex items-center gap-4">
+      <img className="size-16 object-contain p-2 bg-white rounded-xl"
+        src="/assets/platforms/chrome.png" />
+      <div className="flex flex-col">
+        <div className="font-medium text-xl">
+          Chrome
+        </div>
+        <div className="h-1" />
+        <div className="text-default-contrast">
+          Chrome, Edge, Brave, Opera, Chromium
+        </div>
       </div>
     </div>
     <div className="h-4 grow" />
@@ -502,13 +506,17 @@ export function SafariButton() {
 
   return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
     data-highlighted={navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}>
-    <div className="flex flex-col">
-      <div className="font-medium text-xl">
-        Safari
-      </div>
-      <div className="h-1" />
-      <div className="text-default-contrast">
-        iPhone, iPad, Mac
+    <div className="flex items-center gap-4">
+      <img className="size-16 object-contain p-2 bg-white rounded-xl"
+        src="/assets/platforms/safari.svg" />
+      <div className="flex flex-col">
+        <div className="font-medium text-xl">
+          Safari
+        </div>
+        <div className="h-1" />
+        <div className="text-default-contrast">
+          iPhone, iPad, Mac
+        </div>
       </div>
     </div>
     <div className="h-4 grow" />
@@ -532,13 +540,17 @@ export function AndroidButton() {
 
   return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
     data-highlighted={navigator.userAgent.includes("Android")}>
-    <div className="flex flex-col">
-      <div className="font-medium text-xl">
-        Android
-      </div>
-      <div className="h-1" />
-      <div className="text-default-contrast">
-        Google, Samsung, Huawei, Xiaomi, ...
+    <div className="flex items-center gap-4">
+      <img className="size-16 object-contain p-2 bg-white rounded-xl"
+        src="/assets/platforms/android.svg" />
+      <div className="flex flex-col">
+        <div className="font-medium text-xl">
+          Android
+        </div>
+        <div className="h-1" />
+        <div className="text-default-contrast">
+          Google, Samsung, Huawei, Xiaomi
+        </div>
       </div>
     </div>
     <div className="h-4 grow" />
