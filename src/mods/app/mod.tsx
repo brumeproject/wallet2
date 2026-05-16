@@ -427,6 +427,10 @@ export function InstallPage() {
 
   return <Fragment>
     <SubpathProvider value={hash}>
+      {hash.url.pathname === "/chrome" &&
+        <PathBoard>
+          <ChromeInstallPage />
+        </PathBoard>}
       {hash.url.pathname === "/safari" &&
         <PathBoard>
           <SafariInstallPage />
@@ -441,7 +445,8 @@ export function InstallPage() {
         {Lang.match({ en: "Install", zh: "下载", hi: "डाउनलोड", es: "Descargar", ar: "تحميل", fr: "Télécharger", de: "Herunterladen", ru: "Скачать", pt: "Baixar", ja: "ダウンロード", pa: "ਡਾਊਨਲੋਡ", bn: "ডাউনলোড", id: "Unduh", ur: "ڈاؤن لوڈ", ms: "Muat turun", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
       </h1>
       <div className="h-6" />
-      <div className="grid place-items-stretch gap-4 grid-cols-[repeat(auto-fill,minmax(min(16rem,100%),1fr))]">
+      <div className="flex flex-col gap-4">
+        <ChromeButton />
         <SafariButton />
         <AndroidButton />
       </div>
@@ -457,6 +462,37 @@ export function InstallPage() {
     </div>
   </Fragment>
 }
+
+export function ChromeButton() {
+  const path = usePathContext().getOrThrow()
+  const hash = useHashSubpath(path)
+
+  const coords = useAnchorWithCoords(hash, "/chrome")
+
+  return <div className="p-6 bg-default-contrast rounded-xl flex flex-col data-[highlighted=false]:opacity-50 transition-opacity"
+    data-highlighted={navigator.userAgent.includes("Chrome") && !navigator.userAgent.includes("Android")}>
+    <div className="flex flex-col">
+      <div className="font-medium text-xl">
+        Chrome
+      </div>
+      <div className="h-1" />
+      <div className="text-default-contrast">
+        Windows, Mac, Linux
+      </div>
+    </div>
+    <div className="h-4 grow" />
+    <div className="flex items-center">
+      <WideContrastAnchor
+        onKeyDown={coords.onKeyDown}
+        onClick={coords.onClick}
+        href={coords.url.hash}>
+        <Outline.ArrowDownTrayIcon className="size-5" />
+        {Lang.match({ en: "Install", zh: "安装", hi: "इंस्टॉल करें", es: "Instalar", ar: "تثبيت", fr: "Installer", de: "Installieren", ru: "Установить", pt: "Instalar", ja: "インストール", pa: "ਇੰਸਟਾਲ ਕਰੋ", bn: "ইনস্টল করুন", id: "Pasang", ur: "انسٹال کریں", ms: "Pasang", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
+      </WideContrastAnchor>
+    </div>
+  </div>
+}
+
 
 export function SafariButton() {
   const path = usePathContext().getOrThrow()
@@ -514,6 +550,21 @@ export function AndroidButton() {
         <Outline.ArrowDownTrayIcon className="size-5" />
         {Lang.match({ en: "Install", zh: "安装", hi: "इंस्टॉल करें", es: "Instalar", ar: "تثبيت", fr: "Installer", de: "Installieren", ru: "Установить", pt: "Instalar", ja: "インストール", pa: "ਇੰਸਟਾਲ ਕਰੋ", bn: "ইনস্টল করুন", id: "Pasang", ur: "انسٹال کریں", ms: "Pasang", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
       </WideContrastAnchor>
+    </div>
+  </div>
+}
+
+export function ChromeInstallPage() {
+  return <div className="flex flex-col grow p-6">
+    <h1 className="text-xl font-medium">
+      {Lang.match({ en: "Install on Chrome", zh: "在 Chrome 上安装", hi: "Chrome पर इंस्टॉल करें", es: "Instalar en Chrome", ar: "التثبيت على كروم", fr: "Installer sur Chrome", de: "Auf Chrome installieren", ru: "Установить на Chrome", pt: "Instalar no Chrome", ja: "Chromeにインストール", pa: "ਕ੍ਰੋਮ 'ਤੇ ਇੰਸਟਾਲ ਕਰੋ", bn: "Chrome এ ইনস্টল করুন", id: "Pasang di Chrome", ur: "کروم پر انسٹال کریں", ms: "Pasang di Chrome", it: "Installa su Chrome", tr: "Chrome'ye Yükle", ta: "குரோம் இல் நிறுவவும்", te: "క్రోమ్ లో ఇన్‌స్టాల్ చేయండి", ko: "Chrome에 설치", vi: "Cài đặt trên Chrome", pl: "Zainstaluj na Chrome", ro: "Instalează pe Chrome", nl: "Installeren op Chrome", el: "Εγκαταστήστε στο Chrome", th: "ติดตั้งบน Chrome", cs: "Nainstalovat na Chrome", hu: "Telepítés Chrome-ra", sv: "Installera på Chrome", da: "Installer på Chrome" })}
+    </h1>
+    <div className="h-6" />
+    <div className="flex flex-wrap items-center justify-center gap-2">
+      <img className="w-auto h-120"
+        src="/assets/install/chrome-1.png" />
+      <img className="w-auto h-120"
+        src="/assets/install/chrome-2.png" />
     </div>
   </div>
 }
