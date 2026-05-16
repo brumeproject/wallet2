@@ -417,7 +417,7 @@ export function InstallButton() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <Outline.ArrowDownOnSquareIcon className="size-5" />
-    {Lang.match({ en: "Install", zh: "下载", hi: "डाउनलोड", es: "Descargar", ar: "تحميل", fr: "Télécharger", de: "Herunterladen", ru: "Скачать", pt: "Baixar", ja: "ダウンロード", pa: "ਡਾਊਨਲੋਡ", bn: "ডাউনলোড", id: "Unduh", ur: "ڈاؤن لوڈ", ms: "Muat turun", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
+    {Lang.match({ en: "Install", zh: "安装", hi: "इंस्टॉल करें", es: "Instalar", ar: "تثبيت", fr: "Installer", de: "Installieren", ru: "Установить", pt: "Instalar", ja: "インストール", pa: "ਇੰਸਟਾਲ ਕਰੋ", bn: "ইনস্টল করুন", id: "Pasang", ur: "انسٹال کریں", ms: "Pasang", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치하기", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
   </ContrastAnchor>
 }
 
@@ -442,7 +442,7 @@ export function InstallPage() {
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
       <h1 className="text-xl font-medium">
-        {Lang.match({ en: "Install", zh: "下载", hi: "डाउनलोड", es: "Descargar", ar: "تحميل", fr: "Télécharger", de: "Herunterladen", ru: "Скачать", pt: "Baixar", ja: "ダウンロード", pa: "ਡਾਊਨਲੋਡ", bn: "ডাউনলোড", id: "Unduh", ur: "ڈاؤن لوڈ", ms: "Muat turun", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
+        {Lang.match({ en: "Install", zh: "安装", hi: "इंस्टॉल करें", es: "Instalar", ar: "تثبيت", fr: "Installer", de: "Installieren", ru: "Установить", pt: "Instalar", ja: "インストール", pa: "ਇੰਸਟਾਲ ਕਰੋ", bn: "ইনস্টল করুন", id: "Pasang", ur: "انسٹال کریں", ms: "Pasang", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치하기", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
       </h1>
       <div className="h-6" />
       <div className="flex flex-col gap-4">
