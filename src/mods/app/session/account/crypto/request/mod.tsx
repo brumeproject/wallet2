@@ -1,16 +1,17 @@
 import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
+import { FlipCard } from "@/libs/card/mod.tsx";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
-import { CryptoSessionCard } from "@/mods/app/session/account/mod.tsx";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
 import { WcSession, WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
+import { Result } from "@hazae41/result-and-option";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
@@ -161,7 +162,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [seedphrase, subaccount])
 
   const respondOrThrow = useCallback(async (params: WcSessionRequestParams) => {
-    const { chainId, request } = params
+    const { request } = params
 
     if (request.method === "personal_sign") {
       const [message, account] = request.params as [string, string]
@@ -231,6 +232,34 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     request.reject(new WcUserRejectedError())
   }, [request])
 
+  const decodeOrThrow = useCallback((params: WcSessionRequestParams) => {
+    const { request } = params
+
+    if (request.method === "personal_sign") {
+      const [message] = request.params as [string]
+
+      const msgraw = Uint8Array.fromHex(message.slice(2))
+      const msgtxt = new TextDecoder().decode(msgraw)
+
+      return msgtxt
+    }
+
+    if (request.method === "solana_signMessage") {
+      const { message } = request.params as { message: string }
+
+      const msgraw = base58.decode(message)
+      const msgtxt = new TextDecoder().decode(msgraw)
+
+      return msgtxt
+    }
+
+    throw new WcUnsupportedMethodsError()
+  }, [])
+
+  const message = useMemo(() => {
+    return Result.runAndWrapSync(() => decodeOrThrow(request.params))
+  }, [request])
+
   return <Fragment>
     <div className="flex flex-col grow p-6">
       <div className="flex items-center justify-between">
@@ -240,11 +269,13 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       </div>
       <div className="h-6" />
       <div className="flex flex-col items-center justify-center">
-        <CryptoSessionCard
+        <FlipCard
+          type="Signature"
           title={title}
           subtitle={subtitle}
           color={color}
           index={subaccount}
+          icon={<Outline.CubeTransparentIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
       </div>
@@ -253,21 +284,21 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <input className="hidden"
           autoComplete="off"
           name="username" />
-        <Fragment>
+        {message.isOk() && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
-            {Lang.match({ en: "Parameters", zh: "参数", hi: "पैरामीटर", es: "Parámetros", ar: "المعلمات", fr: "Paramètres", de: "Parameter", ru: "Параметры", pt: "Parâmetros", ja: "パラメーター", pa: "ਪੈਰਾਮੀਟਰ", bn: "প্যারামিটার", id: "Parameter", ur: "پیرامیٹرز", ms: "Parameter", it: "Parametri", tr: "Parametreler", ta: "பராமீட்டர்கள்", te: "పరామితులు", ko: "매개변수", vi: "Tham số", pl: "Parametry", ro: "Parametri", nl: "Parameters", el: "Παράμετροι ", th: "พารามิเตอร์ ", cs: "Parametry ", hu: "Paraméterek ", sv: "Parametrar ", da: "Parametre" })}
+            {Lang.match({ en: "Message", zh: "消息", hi: "संदेश", es: "Mensaje", ar: "رسالة", fr: "Message", de: "Nachricht", ru: "Сообщение", pt: "Mensagem", ja: "メッセージ", pa: "ਸੰਦੇਸ਼", bn: "বার্তা", id: "Pesan", ur: "پیغام", ms: "Mesej", it: "Messaggio", tr: "Mesaj", ta: "செய்தி", te: "సందేశం", ko: "메시지", vi: "Tin nhắn", pl: "Wiadomość", ro: "Mesaj", nl: "Bericht", el: "Μήνυμα ", th: "ข้อความ ", cs: "Zpráva ", hu: "Üzenet ", sv: "Meddelande ", da: "Besked" })}
           </div>
           <div className="text-default-contrast">
-            {Lang.match({ en: "The request parameters.", zh: "请求参数。", hi: "अनुरोध पैरामीटर।", es: "Los parámetros de la solicitud.", ar: "معلمات الطلب.", fr: "Les paramètres de la requête.", de: "Die Parameter der Anfrage.", ru: "Параметры запроса.", pt: "Os parâmetros da solicitação.", ja: "リクエストパラメーター。", pa: "ਬੇਨਤੀ ਪੈਰਾਮੀਟਰ।", bn: "অনুরোধের প্যারামিটার।", id: "Parameter permintaan.", ur: "درخواست کے پیرامیٹرز۔", ms: "Parameter permintaan.", it: "I parametri della richiesta.", tr: "İstek parametreleri.", ta: "கோரிக்கை பராமீட்டர்கள்.", te: "అభ్యర్థన పరామితులు.", ko: "요청 매개변수입니다.", vi: "Các tham số yêu cầu.", pl: "Parametry żądania.", ro: "Parametrii cererii.", nl: "De parameters van het verzoek.", el: "Οι παράμετροι του αιτήματος ", th: "พารามิเตอร์ของคำขอ ", cs: "Parametry požadavku ", hu: "A kérés paraméterei ", sv: "Förfrågningsparametrar ", da: "Anmodningsparametre" })}
+            {Lang.match({ en: "The request message.", zh: "请求消息。", hi: "अनुरोध संदेश।", es: "El mensaje de la solicitud.", ar: "رسالة الطلب.", fr: "Le message de la requête.", de: "Die Nachricht der Anfrage.", ru: "Сообщение запроса.", pt: "A mensagem da solicitação.", ja: "リクエストメッセージ。", pa: "ਬੇਨਤੀ ਸੁਨੇਹਾ।", bn: "অনুরোধের বার্তা।", id: "Pesan permintaan.", ur: "درخواست کا پیغام۔", ms: "Mesej permintaan.", it: "Il messaggio della richiesta.", tr: "İstek mesajı.", ta: "கோரிக்கை செய்தி.", te: "అభ్యర్థన సందేశం.", ko: "요청 메시지입니다.", vi: "Tin nhắn yêu cầu.", pl: "Wiadomość żądania.", ro: "Mesajul cererii.", nl: "Het bericht van het verzoek.", el: "Το μήνυμα του αιτήματος ", th: "ข้อความของคำขอ ", cs: "Zpráva požadavku ", hu: "A kérés üzenete ", sv: "Förfrågningsmeddelande ", da: "Anmodningsbesked" })}
           </div>
           <div className="h-4" />
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
             <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
-              {JSON.stringify(request.params.request, null, 2)}
+              {message.get()}
             </pre>
           </div>
-        </Fragment>
+        </Fragment>}
         <div className="h-8" />
         <div className="flex items-center flex-wrap-reverse gap-2">
           <WideContrastButton
