@@ -255,6 +255,10 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
 
   const coords = useAnchorWithCoords(hash, `/session/${index}`)
 
+  const subtitle = useMemo(() => {
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$entry])
+
   const color = useMemo(() => {
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
@@ -319,6 +323,10 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
           <div className="font-medium text-xl text-default-half-contrast">
             #{subaccount + 1}
           </div>
+        </div>
+        <div className="not-@[16rem]:hidden h-2" />
+        <div className="not-@[16rem]:hidden text-default-half-contrast truncate">
+          {subtitle}
         </div>
         <div className="not-@[12rem]:hidden h-4 grow" />
         <div className="not-@[12rem]:hidden flex flex-wrap items-center gap-2">
@@ -390,22 +398,21 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {Lang.match({ en: "Your requests.", zh: "您的请求。", hi: "आपके अनुरोध।", es: "Tus solicitudes.", ar: "طلباتك.", fr: "Vos requêtes.", de: "Ihre Anfragen.", ru: "Ваши запросы.", pt: "Suas solicitações.", ja: "あなたのリクエスト。", pa: "ਤੁਹਾਡੀਆਂ ਬੇਨਤੀਆਂ।", bn: "আপনার অনুরোধ।", id: "Permintaan Anda.", ur: "آپ کی درخواستیں۔", ms: "Permintaan Anda.", it: "Le tue richieste.", tr: "İstekleriniz.", ta: "உங்கள் கோரிக்கைகள்.", te: "మీ అభ్యర్థనలు.", ko: "당신의 요청입니다.", vi: "Yêu cầu của bạn.", pl: "Twoje żądania.", ro: "Cereri tale.", nl: "Uw verzoeken.", el: "Τα αιτήματά σας. ", th: "คำขอของคุณ. ", cs: "Vaše požadavky. ", hu: "Az Ön kérései. ", sv: "Dina förfrågningar. ", da: "Dine anmodninger." })}
           </div>
           <div className="h-4" />
-          <div className="flex flex-col border border-default-contrast rounded-xl p-6">
-            <div className="w-full flex flex-col items-center"
-              style={{ "height": `${180 + (requests.length * 60)}px` }}>
-              {requests.map((data, index) =>
-                <Fragment key={index}>
-                  <CryptoRequestAnchor $entry={$entry} subaccount={subaccount} index={index} title={title} session={session} request={data} />
-                </Fragment>)}
-              <button className="group w-[min(20rem,100%)] aspect-video z-10 rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:translate-x-3 focus-visible:outline-none focus-visible:translate-x-3 transition-transform"
-                style={{ "transform": `translateY(-${requests.length * 120}px)` }}
-                // style={{ "transform": `translateY(calc(${requests.length} * 10%))` }}
-                onClick={decline}
-                type="button">
-                <InButton>
-                  <Outline.TrashIcon className="size-8" />
-                </InButton>
-              </button>
+          <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl p-1">
+            <div className="grow flex flex-col overflow-y-scroll overscroll-y-none p-5">
+              <div className="grow grid grid-cols-[repeat(auto-fit,min(20rem,100%))] justify-center content-center gap-4">
+                {requests.map((data, index) =>
+                  <Fragment key={index}>
+                    <CryptoRequestAnchor $entry={$entry} subaccount={subaccount} index={index} title={title} session={session} request={data} />
+                  </Fragment>)}
+                <button className="group w-[min(20rem,100%)] aspect-video rounded-xl border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
+                  onClick={decline}
+                  type="button">
+                  <InButton>
+                    <Outline.TrashIcon className="size-8" />
+                  </InButton>
+                </button>
+              </div>
             </div>
           </div>
         </Fragment>
