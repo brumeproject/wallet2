@@ -7,6 +7,7 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
+import { useTask } from "@/libs/task/mod.ts";
 import { CryptoRequest, CryptoRequestAnchor } from "@/mods/app/session/account/crypto/request/mod.tsx";
 import { ScanPage } from "@/mods/app/session/account/password/mod.tsx";
 import { useSessionContext } from "@/mods/app/session/mod.tsx";
@@ -138,11 +139,11 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return
   }, [url])
 
-  const onClick = useCallback(() => Promise.try(async () => {
+  const submit = useTask(async () => {
     await respond(title, url)
 
     close()
-  }).catch(Errors.display), [title, url, respond, close])
+  }, [title, url, respond, close])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -233,15 +234,15 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           {session.value.user.fsfh != null &&
             <WideOppositeButton
               type="button"
-              disabled={error != null}
-              onClick={onClick}>
+              disabled={error != null || submit.running}
+              onClick={submit.execute}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
-              disabled={error != null}
-              onClick={onClick}>
+              disabled={error != null || submit.running}
+              onClick={submit.execute}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
             </WideOppositeButton>}
         </div>
