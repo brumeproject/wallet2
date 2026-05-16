@@ -86,7 +86,7 @@ export function FlipCard(props: { type: string } & { icon: ReactNode } & { color
         </div>
       </div>
       <div className="absolute inset-0 p-4 flex items-center justify-center backface-hidden overflow-hidden rotate-y-180">
-        <div className="text-[0px] @[240px]:text-[5cqw] font-mono text-default-half-contrast whitespace-pre-wrap">
+        <div className="not-@[16rem]:hidden text-[5cqw] font-mono text-default-half-contrast whitespace-pre-wrap">
           {`
 00100010 01010110 01101001
 01110010 01100101 01110011
