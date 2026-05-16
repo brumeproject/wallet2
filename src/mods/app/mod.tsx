@@ -441,17 +441,19 @@ export function InstallPage() {
         {Lang.match({ en: "Install", zh: "下载", hi: "डाउनलोड", es: "Descargar", ar: "تحميل", fr: "Télécharger", de: "Herunterladen", ru: "Скачать", pt: "Baixar", ja: "ダウンロード", pa: "ਡਾਊਨਲੋਡ", bn: "ডাউনলোড", id: "Unduh", ur: "ڈاؤن لوڈ", ms: "Muat turun", it: "Installa", tr: "Yükle", ta: "நிறுவு", te: "ఇన్‌స్టాల్ చేయండి", ko: "설치", vi: "Cài đặt", pl: "Zainstaluj", ro: "Instalează", nl: "Installeren", el: "Εγκαταστήστε το", th: "ติดตั้ง", cs: "Nainstalovat", hu: "Telepítés", sv: "Installera", da: "Installer" })}
       </h1>
       <div className="h-6" />
-      <div className="grid place-items-stretch gap-4 grid-cols-[repeat(auto-fill,minmax(16rem,1fr))]">
+      <div className="grid place-items-stretch gap-4 grid-cols-[repeat(auto-fill,minmax(min(16rem,100%),1fr))]">
         <SafariButton />
         <AndroidButton />
       </div>
-      <div className="h-4" />
-      <WideContrastAnchor
-        target="_blank noreferrer"
-        href="https://github.com/brumeproject/wallet2">
-        <Outline.ArrowTopRightOnSquareIcon className="size-5" />
-        {Lang.match({ en: "Advanced", zh: "高级", hi: "उन्नत", es: "Avanzado", ar: "متقدم", fr: "Avancé", de: "Erweitert", ru: "Продвинутый", pt: "Avançado", ja: "高度な", pa: "ਉੱਨਤ", bn: "উন্নত", id: "Lanjutan", ur: "اعلی درجے کا", ms: "Lanjutan", it: "Avanzato", tr: "Gelişmiş", ta: "மேம்பட்டது", te: "అధునాతన", ko: "고급", vi: "Nâng cao", pl: "Zaawansowane", ro: "Avansat", nl: "Geavanceerd", el: "Για προχωρημένους", th: "ขั้นสูง", cs: "Pokročilý", hu: "Fejlett", sv: "Avancerad", da: "Avanceret" })}
-      </WideContrastAnchor>
+      <div className="h-4 grow" />
+      <div className="flex items-center">
+        <WideContrastAnchor
+          target="_blank noreferrer"
+          href="https://github.com/brumeproject/wallet2">
+          <Outline.ArrowTopRightOnSquareIcon className="size-5" />
+          {Lang.match({ en: "Advanced", zh: "高级", hi: "उन्नत", es: "Avanzado", ar: "متقدم", fr: "Avancé", de: "Erweitert", ru: "Продвинутый", pt: "Avançado", ja: "高度な", pa: "ਉੱਨਤ", bn: "উন্নত", id: "Lanjutan", ur: "اعلی درجے کا", ms: "Lanjutan", it: "Avanzato", tr: "Gelişmiş", ta: "மேம்பட்டது", te: "అధునాతన", ko: "고급", vi: "Nâng cao", pl: "Zaawansowane", ro: "Avansat", nl: "Geavanceerd", el: "Για προχωρημένους", th: "ขั้นสูง", cs: "Pokročilý", hu: "Fejlett", sv: "Avancerad", da: "Avanceret" })}
+        </WideContrastAnchor>
+      </div>
     </div>
   </Fragment>
 }
