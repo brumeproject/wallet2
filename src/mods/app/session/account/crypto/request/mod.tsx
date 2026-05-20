@@ -11,6 +11,7 @@ import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
 import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
+import { useCloseContext } from "@hazae41/react-close-context";
 import { Result } from "@hazae41/result-and-option";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
@@ -122,6 +123,8 @@ export function CryptoRequestAnchor(props: { index: number } & { $entry: KDBX.In
 export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry } & { request: CryptoRequest }) {
   const { $entry, subaccount, $subentry, request } = props
 
+  const close = useCloseContext().getOrThrow()
+
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
@@ -135,7 +138,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const color = useMemo(() => {
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
-
 
   const seedphrase = useMemo(() => {
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
@@ -229,12 +231,12 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [])
 
   const approve = useCallback(() => {
-    respondOrThrow(request.params).then(request.resolve).catch(request.reject)
-  }, [request, respondOrThrow])
+    respondOrThrow(request.params).then(request.resolve).catch(request.reject).finally(() => close(true))
+  }, [request, respondOrThrow, close])
 
   const decline = useCallback(() => {
-    request.reject(new WcUserRejectedError())
-  }, [request])
+    Promise.reject(new WcUserRejectedError()).catch(request.reject).finally(() => close(true))
+  }, [request, close])
 
   const decodeOrThrow = useCallback((params: WcSessionRequestParams) => {
     const { request } = params
