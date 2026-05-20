@@ -9,14 +9,14 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
-import { CryptoRequest } from "@/mods/app/session/account/crypto/request/mod.tsx";
 import { CryptoSessionAddAnchor, CryptoSessionAddPage, CryptoSessionAnchor } from "@/mods/app/session/account/crypto/session/mod.tsx";
+import { useSessionContext } from "@/mods/app/session/mod.tsx";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
-import { IrnClient, WalletConnect, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult, WcSessionRequestParams } from "@hazae41/latrine";
+import { IrnClient, WalletConnect, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult } from "@hazae41/latrine";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { base58 } from "@scure/base";
@@ -24,6 +24,12 @@ import React, { Fragment, useCallback, useEffect, useMemo, useState } from "reac
 import { AccountMenuAnchor } from "../../mod.tsx";
 
 React;
+
+export interface WcSessionData {
+  readonly jwk: string
+  readonly tpc: string
+  readonly key: string
+}
 
 export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { index: number }) {
   const { $entry, index } = props
@@ -115,6 +121,8 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
+  const session = useSessionContext().getOrThrow()
+
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
@@ -129,7 +137,11 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
   }, [$entry])
 
-  const updateOrThrow = useCallback(async () => {
+  const subentries = useMemo(() => {
+    return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent")?.getValueOrThrow().get() === $entry.getUuidOrThrow().toString()).filter(e => e.getStringByKeyOrNull("Index")?.getValueOrThrow().get() === subaccount.toString())
+  }, [session, $entry, subaccount])
+
+  const getChainlistOrThrow = useCallback(async () => {
     const res = await fetch("https://chainlist.org/rpcs.json")
 
     if (!res.ok)
@@ -178,9 +190,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return base58.encode(upub)
   }, [seedphrase, subaccount])
 
-  const [sessions, setSessions] = useState<Array<{ title: string, session: WcSession, requests: Array<CryptoRequest> }>>([])
-
-  const respondOrThrow = useCallback(async (title: string, url: string, signal = new AbortController().signal) => {
+  const respond = useCallback(async (url: string, signal = new AbortController().signal): Promise<Nullable<WcSessionData>> => {
     if (seedphrase == null)
       return
 
@@ -199,9 +209,10 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     if (solana == null)
       return
 
-    const jwk = crypto.getRandomValues(new Uint8Array(32))
+    const sticky = crypto.getRandomValues(new Uint8Array(32))
+    const client = await IrnClient.open(WalletConnect.RELAY, sticky, "c6c9bacd35afa3eb9e6cccf6d8464395")
 
-    const client = await IrnClient.open(WalletConnect.RELAY, jwk, "c6c9bacd35afa3eb9e6cccf6d8464395")
+    stack.defer(() => client.close())
 
     const pairing = await WcPairing.from(client, WcPairingParams.parse(url))
 
@@ -242,21 +253,6 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const session = await upgraded.promise
 
-    const onRequest = async (params: WcSessionRequestParams<unknown>) => {
-      using stack = new DisposableStack()
-
-      const { promise, resolve, reject } = Promise.withResolvers<unknown>()
-
-      setSessions(x => x.map(y => y.session === session ? { ...y, requests: [...y.requests, { params, resolve, reject }] } : y))
-
-      stack.defer(() => setSessions(x => x.map(y => y.session === session ? { ...y, requests: y.requests.filter(x => x.params !== params) } : y)))
-
-      return await promise
-    }
-
-    session.addEventListener("request", event => event.respondWith(onRequest(event.data)), { signal: session.closing })
-    session.addEventListener("close", () => setSessions(x => x.filter(y => y.session !== session)), { signal: session.closing })
-
     await session.open()
 
     let success = false
@@ -268,7 +264,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const { requiredNamespaces, optionalNamespaces } = proposal
 
-    const chains = await updateOrThrow()
+    const chains = await getChainlistOrThrow()
 
     const namespaces = {
       eip155: {
@@ -309,7 +305,13 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     success = true
 
-    setSessions(x => [...x, { title, session, requests: [] }])
+    await session.close()
+
+    const jwk = sticky.toBase64()
+    const tpc = session.channel.topic
+    const key = session.channel.key.toBase64()
+
+    return { jwk, tpc, key }
   }, [seedphrase])
 
   return <Fragment>
@@ -320,7 +322,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
         </PathPaper>}
       {hash.url.pathname === "/session" &&
         <PathBoard>
-          <CryptoSessionAddPage $entry={$entry} subaccount={subaccount} respond={respondOrThrow} />
+          <CryptoSessionAddPage $entry={$entry} subaccount={subaccount} respond={respond} />
         </PathBoard>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
@@ -358,9 +360,9 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl p-1">
             <div className="grow flex flex-col overflow-y-scroll overscroll-y-none p-5">
               <div className="grow grid grid-cols-[repeat(auto-fit,min(20rem,100%))] justify-center content-center gap-4">
-                {sessions.map((data, index) =>
-                  <Fragment key={index}>
-                    <CryptoSessionAnchor $entry={$entry} subaccount={subaccount} index={index} title={data.title} session={data.session} requests={data.requests} />
+                {subentries.map($subentry =>
+                  <Fragment key={$subentry.getUuidOrThrow().getOrThrow()}>
+                    <CryptoSessionAnchor $entry={$entry} subaccount={subaccount} $subentry={$subentry} />
                   </Fragment>)}
                 <CryptoSessionAddAnchor />
               </div>

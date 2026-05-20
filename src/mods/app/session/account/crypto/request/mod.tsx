@@ -10,7 +10,7 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
-import { WcSession, WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
+import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
 import { Result } from "@hazae41/result-and-option";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
@@ -27,13 +27,17 @@ export interface CryptoRequest {
   reject(error: unknown): void
 }
 
-export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { index: number } & { title: string } & { session: WcSession } & { request: CryptoRequest }) {
-  const { $entry, subaccount, index, title, session, request } = props
+export function CryptoRequestAnchor(props: { index: number } & { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry } & { request: CryptoRequest }) {
+  const { index, $entry, subaccount, $subentry, request } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
   const coords = useAnchorWithCoords(hash, `/request/${index}`)
+
+  const title = useMemo(() => {
+    return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$subentry])
 
   const subtitle = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
@@ -47,7 +51,7 @@ export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
     <SubpathProvider value={hash}>
       {hash.url.pathname === `/request/${index}` &&
         <PathBoard>
-          <CryptoRequestPage $entry={$entry} subaccount={subaccount} title={title} session={session} request={request} />
+          <CryptoRequestPage $entry={$entry} subaccount={subaccount} $subentry={$subentry} request={request} />
         </PathBoard>}
     </SubpathProvider>
     <a className="@container relative group w-[min(20rem,100%)] aspect-video rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
@@ -90,10 +94,6 @@ export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
-      <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
-        <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
-        <div className="relative inline-flex size-4 rounded-full bg-sky-500" />
-      </div>
       <div className="h-full w-full flex flex-col p-4">
         <div className="flex items-center justify-between">
           <div className="font-medium text-xl truncate">
@@ -119,10 +119,14 @@ export function CryptoRequestAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
   </Fragment>
 }
 
-export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { title: string } & { session: WcSession } & { request: CryptoRequest }) {
-  const { $entry, subaccount, title, session, request } = props
+export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry } & { request: CryptoRequest }) {
+  const { $entry, subaccount, $subentry, request } = props
 
   const [flipped, setFlipped] = useState(false)
+
+  const title = useMemo(() => {
+    return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$subentry])
 
   const subtitle = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()

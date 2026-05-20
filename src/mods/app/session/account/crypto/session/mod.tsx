@@ -7,15 +7,18 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { useTask } from "@/libs/task/mod.ts";
 import { CryptoRequest, CryptoRequestAnchor } from "@/mods/app/session/account/crypto/request/mod.tsx";
+import { WcSessionData } from "@/mods/app/session/account/crypto/subaccount/mod.tsx";
 import { ScanPage } from "@/mods/app/session/account/password/mod.tsx";
 import { useSessionContext } from "@/mods/app/session/mod.tsx";
+import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { WcSession, WcUserRejectedError } from "@hazae41/latrine";
+import { IrnClient, WalletConnect, WcChannel, WcSession, WcSessionRequestParams, WcUserRejectedError } from "@hazae41/latrine";
 import { useCloseContext } from "@hazae41/react-close-context";
-import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { AccountMenuAnchor } from "../../mod.tsx";
 
 React;
@@ -36,7 +39,7 @@ export function CryptoSessionAddAnchor() {
   </a>
 }
 
-export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { respond(title: string, url: string): Promise<void> }) {
+export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { respond(url: string, signal?: AbortSignal): Promise<Nullable<WcSessionData>> }) {
   const { $entry, subaccount, respond } = props
 
   const path = usePathContext().getOrThrow()
@@ -68,82 +71,102 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
   const notes = useDeferredValue($notes)
 
-  // const encryptOrThrow = useCallback(async () => {
-  //   const { kdbx, comp } = session.value
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx, comp } = session.value
 
-  //   const $file = kdbx.inner.content.value
-  //   const $root = $file.getRootOrThrow()
+    const data = await respond(url)
 
-  //   const $group = $root.getDirectGroupByIndexOrThrow(0)
-  //   const $entry = $group.addEntryOrThrow()
+    if (data == null)
+      return
 
-  //   $entry.addStringOrThrow("Title", title)
+    const { jwk, tpc, key } = data
 
-  //   if (color)
-  //     $entry.addStringOrThrow("Color", color)
+    const $file = kdbx.inner.content.value
+    const $root = $file.getRootOrThrow()
 
-  //   if (notes)
-  //     $entry.addStringOrThrow("Notes", notes)
+    const $group = $root.getDirectGroupByIndexOrThrow(0)
 
-  //   return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
-  // }, [session, title, color, notes])
+    const $subentry = $group.addEntryOrThrow()
 
-  // const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
-  //   const fsfh = session.value.user.fsfh
+    $subentry.addStringOrThrow("Parent", $entry.getUuidOrThrow().toString())
+    $subentry.addStringOrThrow("Index", subaccount.toString())
 
-  //   if (fsfh == null)
-  //     return
+    $subentry.addStringOrThrow("Title", title)
 
-  //   const content = await encryptOrThrow()
+    if (color)
+      $subentry.addStringOrThrow("Color", color)
 
-  //   const writable = await fsfh.createWritable()
-  //   await writable.write(content)
-  //   await writable.close()
+    if (notes)
+      $subentry.addStringOrThrow("Notes", notes)
 
-  //   session.update()
+    if (jwk)
+      $subentry.addStringOrThrow("WalletConnectJwk", jwk, true)
 
-  //   close()
-  // }).catch(Errors.display), [encryptOrThrow, close])
+    if (tpc)
+      $subentry.addStringOrThrow("WalletConnectTpc", tpc, true)
 
-  // const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
-  //   const content = await encryptOrThrow()
+    if (key)
+      $subentry.addStringOrThrow("WalletConnectKey", key, true)
 
-  //   const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+  }, [$entry, session, title, color, notes, respond, url])
 
-  //   if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
-  //     await navigator.share({ files: [file] })
-  //   } else {
-  //     const url = URL.createObjectURL(file)
+  const encryptAndWriteOrAlert = useTask(() => Promise.try(async () => {
+    const fsfh = session.value.user.fsfh
 
-  //     const a = document.createElement("a") as HTMLAnchorElement
-  //     a.href = url
-  //     a.download = "wallet.kdbx"
+    if (fsfh == null)
+      return
 
-  //     document.body.appendChild(a)
+    const content = await encryptOrThrow()
 
-  //     a.click()
+    if (content == null)
+      return
 
-  //     document.body.removeChild(a)
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
 
-  //     URL.revokeObjectURL(url)
-  //   }
+    session.update()
 
-  //   session.update()
+    close()
+  }).catch(Errors.display), [encryptOrThrow, close])
 
-  //   close()
-  // }).catch(Errors.display), [encryptOrThrow, close])
+  const encryptAndSaveOrAlert = useTask(() => Promise.try(async () => {
+    const content = await encryptOrThrow()
+
+    if (content == null)
+      return
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+    }
+
+    session.update()
+
+    close()
+  }).catch(Errors.display), [encryptOrThrow, close])
 
   const error = useMemo(() => {
     if (!url.length)
       return Lang.match({ en: "WalletConnect code is required", zh: "需要 WalletConnect 代码", hi: "WalletConnect कोड आवश्यक है", es: "Se requiere código WalletConnect", ar: "رمز WalletConnect مطلوب", fr: "Le code WalletConnect est requis", de: "WalletConnect-Code ist erforderlich", ru: "Требуется код WalletConnect", pt: "Código WalletConnect é obrigatório", ja: "WalletConnectコードが必要です", pa: "WalletConnect ਕੋਡ ਦੀ ਲੋੜ ਹੈ", bn: "WalletConnect কোড প্রয়োজন", id: "Kode WalletConnect diperlukan", ur: "والٹ کنیکٹ کوڈ ضروری ہے", ms: "Kode WalletConnect diperlukan", it: "Il codice WalletConnect è obbligatorio", tr: "WalletConnect kodu gereklidir", ta: "WalletConnect குறியீடு தேவை", te: "WalletConnect కోడ్ అవసరం", ko: "WalletConnect 코드가 필요합니다.", vi: "Mã WalletConnect là bắt buộc.", pl: "Kod WalletConnect jest wymagany.", ro: "Codul WalletConnect este obligatoriu.", nl: "WalletConnect-code is verplicht.", el: "Ο κωδικός WalletConnect είναι υποχρεωτικός. ", th: "รหัส WalletConnect จำเป็นต้องใช้ ", cs: "Kód WalletConnect je povinný. ", hu: "A WalletConnect kód megadása kötelező. ", sv: "WalletConnect-kod krävs. ", da: "WalletConnect-kode er påkrævet." })
     return
   }, [url])
-
-  const submit = useTask(async () => {
-    await respond(title, url)
-
-    close()
-  }, [title, url, respond, close])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -234,15 +257,15 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           {session.value.user.fsfh != null &&
             <WideOppositeButton
               type="button"
-              disabled={error != null || submit.running}
-              onClick={submit.execute}>
+              disabled={error != null || encryptAndWriteOrAlert.running}
+              onClick={encryptAndWriteOrAlert.execute}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
-              disabled={error != null || submit.running}
-              onClick={submit.execute}>
+              disabled={error != null || encryptAndSaveOrAlert.running}
+              onClick={encryptAndSaveOrAlert.execute}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
             </WideOppositeButton>}
         </div>
@@ -251,13 +274,19 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   </Fragment>
 }
 
-export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { index: number } & { title: string } & { session: WcSession } & { requests: Array<CryptoRequest> }) {
-  const { $entry, subaccount, index, title, session, requests } = props
+export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry }) {
+  const { $entry, subaccount, $subentry } = props
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
-  const coords = useAnchorWithCoords(hash, `/session/${index}`)
+  const uuid = useMemo(() => {
+    return $subentry.getUuidOrThrow().getOrThrow()
+  }, [$subentry])
+
+  const title = useMemo(() => {
+    return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$subentry])
 
   const subtitle = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
@@ -267,11 +296,13 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
 
+  const coords = useAnchorWithCoords(hash, `/session/${uuid}`)
+
   return <Fragment>
     <SubpathProvider value={hash}>
-      {hash.url.pathname === `/session/${index}` &&
+      {hash.url.pathname === `/session/${uuid}` &&
         <PathBoard>
-          <CryptoSessionPage $entry={$entry} subaccount={subaccount} title={title} session={session} requests={requests} />
+          <CryptoSessionPage $entry={$entry} subaccount={subaccount} $subentry={$subentry} />
         </PathBoard>}
     </SubpathProvider>
     <a className="@container relative group w-[min(20rem,100%)] aspect-video rounded-xl bg-default text-default border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform
@@ -314,11 +345,6 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
       href={coords.url.hash}
       onClick={coords.onClick}
       onKeyDown={coords.onKeyDown}>
-      {requests.length > 0 &&
-        <div className="absolute top-0 right-0 -translate-y-1.5 translate-x-1.5 flex size-4">
-          <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
-          <div className="relative inline-flex size-4 rounded-full bg-sky-500" />
-        </div>}
       <div className="h-full w-full flex flex-col p-4">
         <div className="flex items-center justify-between">
           <div className="font-medium text-xl truncate">
@@ -344,13 +370,19 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
   </Fragment>
 }
 
-export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { title: string } & { session: WcSession } & { requests: Array<CryptoRequest> }) {
-  const { $entry, subaccount, title, session, requests } = props
+export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry }) {
+  const { $entry, subaccount, $subentry } = props
+
+  const close = useCloseContext().getOrThrow()
 
   const path = usePathContext().getOrThrow()
   const hash = useHashSubpath(path)
 
   const [flipped, setFlipped] = useState(false)
+
+  const title = useMemo(() => {
+    return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+  }, [$subentry])
 
   const subtitle = useMemo(() => {
     return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
@@ -360,15 +392,76 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
   }, [$entry])
 
+  const jwk = useMemo(() => {
+    return $subentry.getStringByKeyOrNull("WalletConnectJwk")?.getValueOrThrow().get()
+  }, [$subentry])
+
+  const tpc = useMemo(() => {
+    return $subentry.getStringByKeyOrNull("WalletConnectTpc")?.getValueOrThrow().get()
+  }, [$subentry])
+
+  const key = useMemo(() => {
+    return $subentry.getStringByKeyOrNull("WalletConnectKey")?.getValueOrThrow().get()
+  }, [$subentry])
+
+  const [session, setSession] = useState<Nullable<WcSession>>()
+  const [requests, setRequests] = useState<Array<CryptoRequest>>([])
+
   const decline = useCallback(() => {
     requests.forEach(request => request.reject(new WcUserRejectedError()))
   }, [requests])
+
+  const connectOrThrow = useCallback(async () => {
+    if (jwk == null)
+      return
+    if (tpc == null)
+      return
+    if (key == null)
+      return
+
+    const sticky = Uint8Array.fromBase64(jwk)
+    const client = await IrnClient.open(WalletConnect.RELAY, sticky, "c6c9bacd35afa3eb9e6cccf6d8464395")
+
+    const channel = new WcChannel(client, tpc, Uint8Array.fromBase64(key))
+    const session = new WcSession(channel)
+
+    const onRequest = async (params: WcSessionRequestParams<unknown>) => {
+      using stack = new DisposableStack()
+
+      const { promise, resolve, reject } = Promise.withResolvers<unknown>()
+
+      setRequests(x => [...x, { params, resolve, reject }])
+
+      stack.defer(() => setRequests(x => x.filter(y => y.params !== params)))
+
+      return await promise
+    }
+
+    session.addEventListener("request", event => event.respondWith(onRequest(event.data)), { signal: session.closing })
+    session.addEventListener("close", () => setSession(undefined), { signal: session.closing })
+
+    await session.open()
+
+    setSession(session)
+  }, [jwk, tpc, key])
+
+  useEffect(() => {
+    connectOrThrow().catch(console.error)
+  }, [connectOrThrow])
+
+  useEffect(() => () => {
+    session?.channel.client.close()
+  }, [session])
+
+  useEffect(() => {
+    console.log(session)
+  }, [session])
 
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
         <PathPaper>
-          <CryptoSessionMenu $entry={$entry} subaccount={subaccount} session={session} />
+          <CryptoSessionMenu $entry={$entry} subaccount={subaccount} $subentry={$subentry} session={session} close={close} />
         </PathPaper>}
     </SubpathProvider>
     <div className="flex flex-col grow p-6">
@@ -409,7 +502,7 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               <div className="grow grid grid-cols-[repeat(auto-fit,min(20rem,100%))] justify-center content-center gap-4">
                 {requests.map((data, index) =>
                   <Fragment key={index}>
-                    <CryptoRequestAnchor $entry={$entry} subaccount={subaccount} index={index} title={title} session={session} request={data} />
+                    <CryptoRequestAnchor index={index} $entry={$entry} subaccount={subaccount} $subentry={$subentry} request={data} />
                   </Fragment>)}
                 <button className="group w-[min(20rem,100%)] aspect-video rounded-xl border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
                   onClick={decline}
@@ -427,28 +520,91 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   </Fragment>
 }
 
-export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { session: WcSession }) {
-  const { $entry, subaccount, session } = props
+export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry } & { session: Nullable<WcSession> } & { close(force: boolean): void }) {
+  const { $entry, subaccount, $subentry, close } = props
 
-  const destroyOrDisplay = useCallback(() => Promise.try(async () => {
-    await session.delete()
+  const session = useSessionContext().getOrThrow()
 
-    await session.close()
+  const encryptOrThrow = useCallback(async () => {
+    const { kdbx, comp } = session.value
 
-    close()
-  }).catch(Errors.display), [close])
+    $subentry.element.parentNode?.removeChild($subentry.element)
+
+    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+  }, [session, $subentry])
+
+  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+    const fsfh = session.value.user.fsfh
+
+    if (fsfh == null)
+      return
+
+    const content = await encryptOrThrow()
+
+    if (content == null)
+      return
+
+    const writable = await fsfh.createWritable()
+    await writable.write(content)
+    await writable.close()
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
+
+  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+    const content = await encryptOrThrow()
+
+    if (content == null)
+      return
+
+    const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
+
+    if (/iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
+      await navigator.share({ files: [file] })
+    } else {
+      const url = URL.createObjectURL(file)
+
+      const a = document.createElement("a") as HTMLAnchorElement
+      a.href = url
+      a.download = "wallet.kdbx"
+
+      document.body.appendChild(a)
+
+      a.click()
+
+      document.body.removeChild(a)
+
+      URL.revokeObjectURL(url)
+
+      await new Promise(ok => setTimeout(ok, 300))
+    }
+
+    close(true)
+
+    session.update()
+  }).catch(Errors.display), [encryptOrThrow, close])
 
   return <Fragment>
     <div className="flex flex-col text-left gap-2">
-      <WideNakedMenuButton
-        onClick={destroyOrDisplay}>
-        <Outline.LinkSlashIcon className="size-5" />
-        {Lang.match({ en: "Destroy", zh: "销毁", hi: "नष्ट करें", es: "Destruir", ar: "تدمير", fr: "Détruire", de: "Zerstören", ru: "Уничтожить", pt: "Destruir", ja: "破壊", pa: "ਨਸ਼ਟ ਕਰੋ", bn: "ধ্বংস করুন", id: "Hancurkan", ur: "تباہ کریں", ms: "Hancurkan", it: "Distruggi", tr: "Yık", ta: "அழிக்கவும்", te: "నాశనం చేయండి", ko: "파괴하기", vi: "Hủy bỏ", pl: "Zniszcz", ro: "Distruge", nl: "Vernietigen", el: "Καταστρέψτε ", th: "ทำลาย ", cs: "Zničit ", hu: "Megsemmisít ", sv: "Förstöra ", da: "Ødelæg" })}
-      </WideNakedMenuButton>
+      {session.value.user.fsfh != null &&
+        <WideNakedMenuButton
+          type="button"
+          onClick={encryptAndWriteOrAlert}>
+          <Outline.LinkSlashIcon className="size-5" />
+          {Lang.match({ en: "Destroy", zh: "销毁", hi: "नष्ट करें", es: "Destruir", ar: "تدمير", fr: "Détruire", de: "Zerstören", ru: "Уничтожить", pt: "Destruir", ja: "破棄", pa: "ਨਸ਼ਟ ਕਰੋ", bn: "ধ্বংস করুন", id: "Hancurkan", ur: "تباہ کریں", ms: "Hancurkan", it: "Distruggi", tr: "Yık", ta: "நசுக்கவும்", te: "నాశనం చేయండి", ko: "파괴하다", vi: "Hủy bỏ", pl: "Zniszczyć", ro: "Distrugeți", nl: "Vernietigen", el: "Καταστρέψτε ", th: "ทำลาย ", cs: "Zničit ", hu: "Megsemmisít ", sv: "Förstöra ", da: "Ødelæg" })}
+        </WideNakedMenuButton>}
+      {session.value.user.fsfh == null &&
+        <WideNakedMenuButton
+          type="button"
+          onClick={encryptAndSaveOrAlert}>
+          <Outline.LinkSlashIcon className="size-5" />
+          {Lang.match({ en: "Destroy", zh: "销毁", hi: "नष्ट करें", es: "Destruir", ar: "تدمير", fr: "Détruire", de: "Zerstören", ru: "Уничтожить", pt: "Destruir", ja: "破棄", pa: "ਨਸ਼ਟ ਕਰੋ", bn: "ধ্বংস করুন", id: "Hancurkan", ur: "تباہ کریں", ms: "Hancurkan", it: "Distruggi", tr: "Yık", ta: "நசுக்கவும்", te: "నాశనం చేయండి", ko: "파괴하다", vi: "Hủy bỏ", pl: "Zniszczyć", ro: "Distrugeți", nl: "Vernietigen", el: "Καταστρέψτε ", th: "ทำลาย ", cs: "Zničit ", hu: "Megsemmisít ", sv: "Förstöra ", da: "Ødelæg" })}
+        </WideNakedMenuButton>}
     </div>
   </Fragment>
 }
-
 
 export function UrlInputAnchor() {
   const path = usePathContext().getOrThrow()

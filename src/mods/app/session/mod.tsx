@@ -21,7 +21,7 @@ import { useCloseContext } from "@hazae41/react-close-context";
 import { Option } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, useCallback, useContext, useDeferredValue, useMemo, useState } from "react";
 import { UserData } from "../user/mod.tsx";
-import { AccountAddButtonInGrid, AccountAddMenu, AccountCardInGrid } from "./account/mod.tsx";
+import { AccountAddButtonInGrid, AccountAddMenu, AccountAnchor } from "./account/mod.tsx";
 
 React;
 
@@ -85,7 +85,7 @@ export function SessionPage() {
   }, [session])
 
   const entries = useMemo(() => {
-    return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e))
+    return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent") == null)
   }, [session])
 
   const visibles = useMemo(() => entries.filter($entry => {
@@ -145,7 +145,7 @@ export function SessionPage() {
           <div className="grow grid grid-cols-[repeat(auto-fit,min(20rem,100%))] justify-center content-center gap-4">
             {visibles.map($entry =>
               <Fragment key={$entry.getUuidOrThrow().getOrThrow()}>
-                <AccountCardInGrid $entry={$entry} />
+                <AccountAnchor $entry={$entry} />
               </Fragment>)}
             {filter == null && <Fragment>
               <AccountAddButtonInGrid href="/add" />

@@ -37,7 +37,7 @@ export function AccountAddButtonInGrid(props: { href: string }) {
   </a>
 }
 
-export function AccountCardInGrid(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
+export function AccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   const { $entry } = props
 
   const path = usePathContext().getOrThrow()
@@ -553,6 +553,11 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
 
   const encryptOrThrow = useCallback(async () => {
     const { kdbx, comp } = session.value
+
+    const subentries = [...kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent")?.getValueOrThrow().get() === $entry.getUuidOrThrow().toString())
+
+    for (const $subentry of subentries)
+      $subentry.element.parentNode?.removeChild($subentry.element)
 
     $entry.element.parentNode?.removeChild($entry.element)
 
