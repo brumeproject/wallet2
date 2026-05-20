@@ -16,7 +16,7 @@ import { useSessionContext } from "@/mods/app/session/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { IrnClient, WalletConnect, WcChannel, WcSession, WcSessionRequestParams, WcUserRejectedError } from "@hazae41/latrine";
+import { IrnClient, WalletConnect, WcChannel, WcSession, WcSessionRequestParams } from "@hazae41/latrine";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { AccountMenuAnchor } from "../../mod.tsx";
@@ -407,10 +407,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const [session, setSession] = useState<Nullable<WcSession>>()
   const [requests, setRequests] = useState<Array<CryptoRequest>>([])
 
-  const decline = useCallback(() => {
-    requests.forEach(request => request.reject(new WcUserRejectedError()))
-  }, [requests])
-
   const connectOrThrow = useCallback(async () => {
     if (jwk == null)
       return
@@ -504,13 +500,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                   <Fragment key={index}>
                     <CryptoRequestAnchor index={index} $entry={$entry} subaccount={subaccount} $subentry={$subentry} request={data} />
                   </Fragment>)}
-                <button className="group w-[min(20rem,100%)] aspect-video rounded-xl border-2 border-default-contrast select-none hover:scale-105 focus-visible:outline-none focus-visible:scale-105 transition-transform"
-                  onClick={decline}
-                  type="button">
-                  <InButton>
-                    <Outline.TrashIcon className="size-8" />
-                  </InButton>
-                </button>
               </div>
             </div>
           </div>
