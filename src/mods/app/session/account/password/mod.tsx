@@ -268,7 +268,7 @@ export function PasswordAccountAddPage() {
           </div>
         </div>
         <div className="h-2" />
-        <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-[min(4rem,10dvw)] font-mono tracking-widest"
+        <input className="po-2 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-[min(4rem,10dvw)] font-mono tracking-widest"
           readOnly
           onClick={copyTheTotpcode.copyOrAlert}
           value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
@@ -470,7 +470,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
             {Lang.match({ en: "Your time-based one-time passcode.", zh: "您的基于时间的一次性密码。", hi: "आपका समय-आधारित वन-टाइम पासकोड।", es: "Su código de un solo uso basado en el tiempo.", ar: "رمز المرور لمرة واحدة المستند إلى الوقت الخاص بك.", fr: "Votre code à usage unique basé sur le temps.", de: "Ihr zeitbasierter Einmal-Passcode.", ru: "Ваш одноразовый пароль на основе времени.", pt: "Seu código de uso único baseado no tempo.", ja: "あなたの時間ベースのワンタイムパスコード。", pa: "ਤੁਹਾਡਾ ਸਮੇਂ-ਅਧਾਰਿਤ ਇੱਕ ਵਾਰੀ ਪਾਸਕੋਡ।", bn: "আপনার সময়-ভিত্তিক একবারের পাসকোড।", id: "Kode sekali pakai berbasis waktu Anda.", ur: "آپ کا وقت پر مبنی ایک وقت کا پاس کوڈ۔", ms: "Kod sekali pakai berasaskan masa anda.", it: "Il tuo codice monouso basato sul tempo.", tr: "Zaman tabanlı tek kullanımlık şifreniz.", ta: "உங்கள் நேர அடிப்படையிலான ஒருமுறை கடவுச்சொல்.", te: "మీ సమయ ఆధారిత ఒకసారి పాస్కోడ్.", ko: "귀하의 시간 기반 일회용 비밀번호.", vi: "Mã một lần dựa trên thời gian của bạn.", pl: "Twój czasowy jednorazowy kod dostępu.", ro: "Codul dvs. de unică folosință bazat pe timp.", nl: "Uw tijdgebaseerde eenmalige toegangscode.", el: "Ο χρονικά βασισμένος κωδικός πρόσβασής σας.", th: "รหัสผ่านใช้ครั้งเดียวตามเวลา", cs: "Váš časově založený jednorázový přístupový kód.", hu: "Az időalapú egyszer használatos jelszavad.", sv: "Din tidsbaserade engångskod.", da: "Din tidsbaserede engangskode." })}
           </div>
           <div className="h-4" />
-          <input className="p-8 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-[min(4rem,10dvw)] font-mono tracking-widest"
+          <input className="po-2 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-[min(4rem,10dvw)] font-mono tracking-widest"
             readOnly
             autoComplete="off"
             onClick={copyTheTotpcode.copyOrAlert}
