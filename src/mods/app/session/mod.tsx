@@ -265,6 +265,7 @@ function SessionMenu(props: { logout(): void }) {
     <div className="flex flex-col text-left gap-2">
       <SessionExportAnchor />
       <WideNakedMenuButton
+        type="button"
         onClick={logout}>
         <Outline.LockClosedIcon className="size-5" />
         {Lang.match({ en: "Lock", zh: "锁定", hi: "लॉक करें", es: "Bloquear", ar: "قفل", fr: "Verrouiller", de: "Sperren", ru: "Заблокировать", pt: "Bloquear", ja: "ロック", pa: "ਲਾਕ ਕਰੋ", bn: "লক করুন", id: "Kunci", ur: "لاک کریں", ms: "Kunci", it: "Blocca", tr: "Kilitle", ta: "மூடு", te: "లాక్ చేయండి", ko: "잠그기", vi: "Khóa", pl: "Zablokuj", ro: "Blochează", nl: "Vergrendel", el: "Κλείδωμα", th: "ล็อค", cs: "Zamknout", hu: "Zárolás", sv: "Lås", da: "Lås" })}

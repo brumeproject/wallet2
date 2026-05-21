@@ -10,7 +10,9 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { Spinner } from "@/libs/spinner/mod.tsx";
 import { capitalize } from "@/libs/string/mod.ts";
+import { useTask } from "@/libs/task/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { MoneroSeedPhrase } from "@hazae41/broca";
@@ -99,7 +101,7 @@ export function PasswordAccountAddPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, username, password, totpseed, notes])
 
-  const writeOrDisplay = useCallback(() => Promise.try(async () => {
+  const writeOrDisplay = useTask(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -116,7 +118,7 @@ export function PasswordAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrDisplay = useCallback(() => Promise.try(async () => {
+  const saveOrDisplay = useTask(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -292,16 +294,18 @@ export function PasswordAccountAddPage() {
           {session.value.user.fsfh != null &&
             <WideOppositeButton
               type="button"
-              disabled={error != null}
-              onClick={writeOrDisplay}>
-              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
+              disabled={writeOrDisplay.running || error != null}
+              onClick={writeOrDisplay.execute}>
+              {writeOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+              {writeOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" }))}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
-              disabled={error != null}
-              onClick={saveOrDisplay}>
-              {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
+              disabled={saveOrDisplay.running || error != null}
+              onClick={saveOrDisplay.execute}>
+              {saveOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+              {saveOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" }))}
             </WideOppositeButton>}
         </div>
       </form>
@@ -734,16 +738,19 @@ export function PasswordMenu(props: { value: string } & { onChange(value: string
 
   return <div className="flex flex-col text-left gap-2">
     <WideNakedMenuButton
+      type="button"
       onClick={onDigicodeClick}>
       <Outline.HashtagIcon className="size-5" />
       {Lang.match({ en: "Digicode", zh: "数字密码", hi: "डिजीकोड", es: "Código digital", ar: "الرمز الرقمي", fr: "Digicode", de: "Digicode", ru: "Цифровой код", pt: "Digicode", ja: "デジコード", pa: "ਡਿਗੀਕੋਡ", bn: "ডিজিকোড", id: "Digicode", ur: "ڈیجی کوڈ", ms: "Digicode", it: "Digicode", tr: "Dijikod", ta: "டிஜிகோடு", te: "డిజికోడ్", ko: "디지코드", vi: "Mã kỹ thuật số", pl: "Kod cyfrowy", ro: "Cod digital", nl: "Digicode", el: "Ψηφιακός κώδικας", th: "รหัสดิจิทัล", cs: "Digitální kód", hu: "Digitális kód", sv: "Digikod", da: "Digikode" })}
     </WideNakedMenuButton>
     <WideNakedMenuButton
+      type="button"
       onClick={onPasswordClick}>
       <Outline.LanguageIcon className="size-5" />
       {Lang.match({ en: "Password", zh: "密码", hi: "पासवर्ड", es: "Contraseña", ar: "كلمة المرور", fr: "Mot de passe", de: "Passwort", ru: "Пароль", pt: "Senha", ja: "パスワード", pa: "ਪਾਸਵਰਡ", bn: "পাসওয়ার্ড", id: "Kata sandi", ur: "پاس ورڈ", ms: "Kata laluan", it: "Password", tr: "Parola", ta: "கடவுச்சொல்", te: "పాస్వర్డ్", ko: "비밀번호", vi: "Mật khẩu", pl: "Hasło", ro: "Parolă", nl: "Wachtwoord", el: "Κωδικός πρόσβασης", th: "รหัสผ่าน", cs: "Heslo", hu: "Jelszó", sv: "Lösenord", da: "Adgangskode" })}
     </WideNakedMenuButton>
     <WideNakedMenuButton
+      type="button"
       onClick={onPassphraseClick}>
       <Outline.ChatBubbleOvalLeftEllipsisIcon className="size-5" />
       {Lang.match({ en: "Passphrase", zh: "密码短语", hi: "पासफ़्रेज़", es: "Frase de contraseña", ar: "عبارة المرور", fr: "Phrase de passe", de: "Passphrase", ru: "Парольная фраза", pt: "Frase de senha", ja: "パスフレーズ", pa: "ਪਾਸਫਰੇਜ਼", bn: "পাসফ্রেজ", id: "Frasa sandi", ur: "پاس فریز", ms: "Frasa kata laluan", it: "Frase di accesso", tr: "Parola öbeği", ta: "கடவுச்சொல் வாக்கியம்", te: "పాస్ఫ్రేజ్", ko: "암호 구문", vi: "Cụm từ mật khẩu", pl: "Fraza hasła", ro: "Fraza de parolă", nl: "Wachtwoordzin", el: "Φράση πρόσβασης", th: "วลีรหัสผ่าน", cs: "Heslová fráze", hu: "Jelszó kifejezés", sv: "Lösenordsfras", da: "Adgangskodefrase" })}

@@ -529,7 +529,7 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, $subentry])
 
-  const writeOrDisplay = useCallback(() => Promise.try(async () => {
+  const writeOrDisplay = useTask(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -549,7 +549,7 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrDisplay = useCallback(() => Promise.try(async () => {
+  const saveOrDisplay = useTask(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     if (content == null)
@@ -587,15 +587,17 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       {session.value.user.fsfh != null &&
         <WideNakedMenuButton
           type="button"
-          onClick={writeOrDisplay}>
-          <Outline.LinkSlashIcon className="size-5" />
+          disabled={writeOrDisplay.running}
+          onClick={writeOrDisplay.execute}>
+          {writeOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.LinkSlashIcon className="size-5" />}
           {Lang.match({ en: "Destroy", zh: "销毁", hi: "नष्ट करें", es: "Destruir", ar: "تدمير", fr: "Détruire", de: "Zerstören", ru: "Уничтожить", pt: "Destruir", ja: "破棄", pa: "ਨਸ਼ਟ ਕਰੋ", bn: "ধ্বংস করুন", id: "Hancurkan", ur: "تباہ کریں", ms: "Hancurkan", it: "Distruggi", tr: "Yık", ta: "நசுக்கவும்", te: "నాశనం చేయండి", ko: "파괴하다", vi: "Hủy bỏ", pl: "Zniszczyć", ro: "Distrugeți", nl: "Vernietigen", el: "Καταστρέψτε ", th: "ทำลาย ", cs: "Zničit ", hu: "Megsemmisít ", sv: "Förstöra ", da: "Ødelæg" })}
         </WideNakedMenuButton>}
       {session.value.user.fsfh == null &&
         <WideNakedMenuButton
           type="button"
-          onClick={saveOrDisplay}>
-          <Outline.LinkSlashIcon className="size-5" />
+          disabled={saveOrDisplay.running}
+          onClick={saveOrDisplay.execute}>
+          {saveOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.LinkSlashIcon className="size-5" />}
           {Lang.match({ en: "Destroy", zh: "销毁", hi: "नष्ट करें", es: "Destruir", ar: "تدمير", fr: "Détruire", de: "Zerstören", ru: "Уничтожить", pt: "Destruir", ja: "破棄", pa: "ਨਸ਼ਟ ਕਰੋ", bn: "ধ্বংস করুন", id: "Hancurkan", ur: "تباہ کریں", ms: "Hancurkan", it: "Distruggi", tr: "Yık", ta: "நசுக்கவும்", te: "నాశనం చేయండి", ko: "파괴하다", vi: "Hủy bỏ", pl: "Zniszczyć", ro: "Distrugeți", nl: "Vernietigen", el: "Καταστρέψτε ", th: "ทำลาย ", cs: "Zničit ", hu: "Megsemmisít ", sv: "Förstöra ", da: "Ødelæg" })}
         </WideNakedMenuButton>}
     </div>

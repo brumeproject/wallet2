@@ -191,7 +191,7 @@ export function WideNakedMenuAnchor(props: ChildrenProps & JSX.IntrinsicElements
   </a>
 }
 
-export function WideNakedMenuButton(props: ChildrenProps & JSX.IntrinsicElements["button"]) {
+export function WideNakedMenuButton(props: ChildrenProps & JSX.IntrinsicElements["button"] & { type: "button" }) {
   const { children, ...rest } = props
 
   return <button className="group flex-1 po-2 rounded-xl focus-visible:outline-none whitespace-nowrap enabled:hover:bg-default-double-contrast focus-visible:bg-default-double-contrast disabled:opacity-50"
