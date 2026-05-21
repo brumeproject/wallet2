@@ -186,7 +186,7 @@ function UserImportFilePage() {
 
     const auth = await Result.runAndWrap(async () => {
       return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
-    }).then(r => r.inspectErrSync(console.log).getOrNull())
+    }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
@@ -345,7 +345,7 @@ function UserImportFsfhPage() {
 
     const auth = await Result.runAndWrap(async () => {
       return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
-    }).then(r => r.inspectErrSync(console.log).getOrNull())
+    }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
@@ -536,7 +536,7 @@ function UserCreatePage() {
 
     const auth = await Result.runAndWrap(async () => {
       return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
-    }).then(r => r.inspectErrSync(console.log).getOrNull())
+    }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
@@ -584,7 +584,7 @@ function UserCreatePage() {
 
     const auth = await Result.runAndWrap(async () => {
       return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
-    }).then(r => r.inspectErrSync(console.log).getOrNull())
+    }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
@@ -994,7 +994,7 @@ function UserReimportFilePage(props: { user: UserData }) {
 
     const auth = await Result.runAndWrap(async () => {
       return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
-    }).then(r => r.inspectErrSync(console.log).getOrNull())
+    }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 
@@ -1155,7 +1155,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
 
     const auth = await Result.runAndWrap(async () => {
       return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
-    }).then(r => r.inspectErrSync(console.log).getOrNull())
+    }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
 

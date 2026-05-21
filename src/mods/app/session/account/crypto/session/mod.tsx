@@ -454,10 +454,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     session?.channel.client.close()
   }, [session])
 
-  useEffect(() => {
-    console.log(session)
-  }, [session])
-
   return <Fragment>
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
