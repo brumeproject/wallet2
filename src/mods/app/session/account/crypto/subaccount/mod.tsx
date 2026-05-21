@@ -1,6 +1,6 @@
 import { WideContrastButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
-import { ChainData } from "@/libs/chainlist/mod.ts";
+import { chainlist } from "@/libs/chainlist/mod.ts";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
@@ -141,31 +141,6 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent")?.getValueOrThrow().get() === $entry.getUuidOrThrow().toString()).filter(e => e.getStringByKeyOrNull("Index")?.getValueOrThrow().get() === subaccount.toString())
   }, [session, $entry, subaccount])
 
-  const getChainlistOrThrow = useCallback(async () => {
-    const res = await fetch("https://chainlist.org/rpcs.json")
-
-    if (!res.ok)
-      throw new Error(await res.text(), { cause: res })
-
-    const chainlist = await res.json() as Array<ChainData>
-
-    return chainlist.filter(x => x.rpc.find(x => {
-      try {
-        const url = new URL(x.url)
-
-        if (url.protocol !== "https:")
-          return false
-
-        if (!url.origin.endsWith(".publicnode.com"))
-          return false
-
-        return true
-      } catch {
-        return false
-      }
-    })).map(x => x.chainId)
-  }, [])
-
   const getEthereumOrThrow = useCallback(async () => {
     if (seedphrase == null)
       return
@@ -264,7 +239,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const { requiredNamespaces, optionalNamespaces } = proposal
 
-    const chains = await getChainlistOrThrow()
+    const chains = chainlist.map(chain => chain.chainId)
 
     const namespaces = {
       eip155: {
