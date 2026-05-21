@@ -8,7 +8,7 @@ import { getEntryType } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useTask } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/task/mod.ts";
 import { KeypairAccountAddMenuAnchor, KeypairAccountAddPage, KeypairAccountPage } from "@/mods/app/session/account/keypair/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -402,7 +402,7 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, $entry])
 
-  const writeOrDisplay = useTask(() => Promise.try(async () => {
+  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -419,7 +419,7 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
     session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrDisplay = useTask(() => Promise.try(async () => {
+  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -485,7 +485,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, $entry])
 
-  const writeOrDisplay = useTask(() => Promise.try(async () => {
+  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -502,7 +502,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
     session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrDisplay = useTask(() => Promise.try(async () => {
+  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -570,7 +570,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, $entry])
 
-  const writeOrDisplay = useTask(() => Promise.try(async () => {
+  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
     if (!confirm(Lang.match({ en: "Are you sure you want to permanently delete this account?", zh: "您确定要永久删除此账户吗？", hi: "क्या आप वाकई इस खाते को स्थायी रूप से हटाना चाहते हैं?", es: "¿Está seguro de que desea eliminar permanentemente esta cuenta?", ar: "هل أنت متأكد أنك تريد حذف هذا الحساب نهائيًا؟", fr: "Êtes-vous sûr de vouloir supprimer définitivement ce compte ?", de: "Sind Sie sicher, dass Sie dieses Konto dauerhaft löschen möchten?", ru: "Вы уверены, что хотите навсегда удалить эту учетную запись?", pt: "Tem certeza de que deseja excluir permanentemente esta conta?", ja: "このアカウントを完全に削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਖਾਤੇ ਨੂੰ ਸਥਾਈ रूप से हटाना चाहते हैं?", bn: "আপনি কি সত্যিই এই অ্যাকাউন্টটি স্থায়ীভাবে মুছে ফেলতে চান?", id: "Apakah Anda yakin ingin menghapus akun ini secara permanen?", ur: "کیا آپ واقعی اس اکاؤنٹ کو مستقل طور پر حذف کرنا چاہتے ہیں؟", ms: "Adakah anda pasti mahu memadam akaun ini secara kekal?", it: "Sei sicuro di voler eliminare definitivamente questo account?", tr: "Bu hesabı kalıcı olarak silmek istediğinizden emin misiniz?", ta: "இந்த கணக்கை நிரந்தரமாக நீக்க விரும்புகிறீர்களா?", te: "మీరు ఈ ఖాతాను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?", ko: "이 계정을 영구적으로 삭제하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này không?", pl: "Czy na pewno chcesz trwale usunąć to konto?", ro: "Sigur doriți să ștergeți definitiv acest cont?", nl: "Weet je zeker dat je dit account permanent wilt verwijderen?", el: "Είστε σίγουροι ότι θέλετε να διαγράψετε οριστικά αυτόν τον λογαριασμό;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้อย่างถาวร?", cs: "Opravdu chcete tento účet trvale smazat?", hu: "Biztos benne, hogy véglegesen törölni szeretné ezt a fiókot?", sv: "Är du säker på att du vill ta bort det här kontot permanent?", da: "Er du sikker på, at du vil slette denne konto permanent?" })))
       return
 
@@ -590,7 +590,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
     session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrDisplay = useTask(() => Promise.try(async () => {
+  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
     if (!confirm(Lang.match({ en: "Are you sure you want to permanently delete this account?", zh: "您确定要永久删除此账户吗？", hi: "क्या आप वाकई इस खाते को स्थायी रूप से हटाना चाहते हैं?", es: "¿Está seguro de que desea eliminar permanentemente esta cuenta?", ar: "هل أنت متأكد أنك تريد حذف هذا الحساب نهائيًا؟", fr: "Êtes-vous sûr de vouloir supprimer définitivement ce compte ?", de: "Sind Sie sicher, dass Sie dieses Konto dauerhaft löschen möchten?", ru: "Вы уверены, что хотите навсегда удалить эту учетную запись?", pt: "Tem certeza de que deseja excluir permanentemente esta conta?", ja: "このアカウントを完全に削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਖਾਤੇ ਨੂੰ ਸਥਾਈ रूप से हटाना चाहते हैं?", bn: "আপনি কি সত্যিই এই অ্যাকাউন্টটি স্থায়ীভাবে মুছে ফেলতে চান?", id: "Apakah Anda yakin ingin menghapus akun ini secara permanen?", ur: "کیا آپ واقعی اس اکاؤنٹ کو مستقل طور پر حذف کرنا چاہتے ہیں؟", ms: "Adakah anda pasti mahu memadam akaun ini secara kekal?", it: "Sei sicuro di voler eliminare definitivamente questo account?", tr: "Bu hesabı kalıcı olarak silmek istediğinizden emin misiniz?", ta: "இந்த கணக்கை நிரந்தரமாக நீக்க விரும்புகிறீர்களா?", te: "మీరు ఈ ఖాతాను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?", ko: "이 계정을 영구적으로 삭제하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này không?", pl: "Czy na pewno chcesz trwale usunąć to konto?", ro: "Sigur doriți să ștergeți definitiv acest cont?", nl: "Weet je zeker dat je dit account permanent wilt verwijderen?", el: "Είστε σίγουροι ότι θέλετε να διαγράψετε οριστικά αυτόν τον λογαριασμό;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้อย่างถาวร?", cs: "Opravdu chcete tento účet trvale smazat?", hu: "Biztos benne, hogy véglegesen törölni szeretné ezt a fiókot?", sv: "Är du säker på att du vill ta bort det här kontot permanent?", da: "Er du sikker på, at du vil slette denne konto permanent?" })))
       return
 

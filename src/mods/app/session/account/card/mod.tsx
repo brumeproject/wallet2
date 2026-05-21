@@ -9,7 +9,7 @@ import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useTask } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/task/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
@@ -102,7 +102,7 @@ export function CardAccountAddPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, num, hol, exp, cvv, pin, notes])
 
-  const writeOrDisplay = useTask(() => Promise.try(async () => {
+  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -119,7 +119,7 @@ export function CardAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrDisplay = useTask(() => Promise.try(async () => {
+  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })

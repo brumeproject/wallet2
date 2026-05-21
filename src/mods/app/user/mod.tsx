@@ -12,7 +12,7 @@ import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
-import { useTask } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/task/mod.ts";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
@@ -173,7 +173,7 @@ function UserImportFilePage() {
 
   const [file, setFile] = useState<Nullable<File>>()
 
-  const loadOrDisplay = useTask(() => Promise.try(async () => {
+  const loadOrDisplay = useSubmit(() => Promise.try(async () => {
     if (file == null)
       return
 
@@ -331,7 +331,7 @@ function UserImportFsfhPage() {
     setFsfh(fsfh)
   }).catch(Errors.display), [])
 
-  const openOrDisplay = useTask(() => Promise.try(async () => {
+  const openOrDisplay = useSubmit(() => Promise.try(async () => {
     if (fsfh == null)
       return
 
@@ -517,7 +517,7 @@ function UserCreatePage() {
     return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, derived)
   }, [])
 
-  const pickOrDisplay = useTask(() => Promise.try(async () => {
+  const pickOrDisplay = useSubmit(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
@@ -551,7 +551,7 @@ function UserCreatePage() {
     close()
   }).catch(Errors.display), [store, pass, innerizeOrThrow, outerizeOrThrow, close])
 
-  const saveOrDisplay = useTask(() => Promise.try(async () => {
+  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     const inner = innerizeOrThrow()
@@ -983,7 +983,7 @@ function UserReimportFilePage(props: { user: UserData }) {
 
   const [file, setFile] = useState<Nullable<File>>()
 
-  const loadOrDisplay = useTask(() => Promise.try(async () => {
+  const loadOrDisplay = useSubmit(() => Promise.try(async () => {
     if (file == null)
       return
 
@@ -1143,7 +1143,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     setFsfh(fsfh)
   }).catch(Errors.display), [])
 
-  const openOrDisplay = useTask(() => Promise.try(async () => {
+  const openOrDisplay = useSubmit(() => Promise.try(async () => {
     if (fsfh == null)
       return
 
@@ -1272,7 +1272,7 @@ function UserRemoveButton(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const removeOrDisplay = useTask(() => Promise.try(async () => {
+  const removeOrDisplay = useSubmit(() => Promise.try(async () => {
     if (!confirm(Lang.match({ en: "Are you sure you want to remove this user?", zh: "您确定要删除此用户吗？", hi: "क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं?", es: "¿Estás seguro de que deseas eliminar este usuario?", ar: "هل أنت متأكد أنك تريد إزالة هذا المستخدم؟", fr: "Êtes-vous sûr de vouloir supprimer cet utilisateur ?", de: "Sind Sie sicher, dass Sie diesen Benutzer entfernen möchten?", ru: "Вы уверены, что хотите удалить этого пользователя?", pt: "Tem certeza de que deseja remover este usuário?", ja: "このユーザーを削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਉਪਭੋਗਤਾ ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?", bn: "আপনি কি সত্যিই এই ব্যবহারকারীকে সরাতে চান?", id: "Apakah Anda yakin ingin menghapus pengguna ini?", ur: "کیا آپ واقعی اس صارف کو ہٹانا چاہتے ہیں؟", ms: "Adakah anda pasti mahu menghapus pengguna ini?", it: "Sei sicuro di voler rimuovere questo utente?", tr: "Bu kullanıcıyı kaldırmak istediğinizden emin misiniz?", ta: "நீங்கள் உண்மையில் இந்த பயனரை அகற்ற விரும்புகிறீர்களா?", te: "మీరు నిజంగా ఈ వినియోగదారుని తొలగించాలనుకుంటున్నారా?", ko: "이 사용자를 정말로 제거하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa người dùng này không?", pl: "Czy na pewno chcesz usunąć tego użytkownika?", ro: "Ești sigur că vrei să ștergi acest utilizator?", nl: "Weet je zeker dat je deze gebruiker wilt verwijderen?", el: "Είστε βέβαιοι ότι θέλετε να αφαιρέσετε αυτόν τον χρήστη;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้", cs: "Opravdu chcete tohoto uživatele odstranit?", hu: "Biztos benne, hogy el akarja távolítani ezt a felhasználót?", sv: "Är du säker på att du vill ta bort den här användaren?", da: "Er du sikker på, at du vil fjerne denne bruger?" })))
       return
 

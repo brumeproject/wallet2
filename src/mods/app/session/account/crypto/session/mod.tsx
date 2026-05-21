@@ -9,7 +9,7 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useTask } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/task/mod.ts";
 import { CryptoRequest, CryptoRequestAnchor } from "@/mods/app/session/account/crypto/request/mod.tsx";
 import { WcSessionData } from "@/mods/app/session/account/crypto/subaccount/mod.tsx";
 import { ScanPage } from "@/mods/app/session/account/password/mod.tsx";
@@ -112,7 +112,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [$entry, session, title, color, notes, respond, url])
 
-  const writeOrDisplay = useTask(() => Promise.try(async () => {
+  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -132,7 +132,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrDisplay = useTask(() => Promise.try(async () => {
+  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     if (content == null)
@@ -529,7 +529,7 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, $subentry])
 
-  const writeOrDisplay = useTask(() => Promise.try(async () => {
+  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -549,7 +549,7 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrDisplay = useTask(() => Promise.try(async () => {
+  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     if (content == null)

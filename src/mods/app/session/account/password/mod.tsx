@@ -12,7 +12,7 @@ import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { capitalize } from "@/libs/string/mod.ts";
-import { useTask } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/task/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { MoneroSeedPhrase } from "@hazae41/broca";
@@ -101,7 +101,7 @@ export function PasswordAccountAddPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, username, password, totpseed, notes])
 
-  const writeOrDisplay = useTask(() => Promise.try(async () => {
+  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -118,7 +118,7 @@ export function PasswordAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrDisplay = useTask(() => Promise.try(async () => {
+  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
