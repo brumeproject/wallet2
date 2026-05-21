@@ -39,7 +39,7 @@
   }
 }
 
-@utility fade-x-default {
+@utility scrollfade-x-default {
   animation: scrollfade;
   animation-timeline: --scrollfade;
   scroll-timeline: --scrollfade x;
