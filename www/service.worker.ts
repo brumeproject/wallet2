@@ -2,7 +2,6 @@
 
 /// <reference lib="webworker" />
 
-import { RpcPort } from "@/libs/rpcport/mod.ts";
 import { immutable } from "@hazae41/immutable";
 
 declare const self: ServiceWorkerGlobalScope
@@ -56,25 +55,25 @@ if (process.env.NODE_ENV === "development") {
   })
 }
 
-const foregrounds = new Set<RpcPort>()
+// const foregrounds = new Set<RpcPort>()
 
-self.addEventListener("message", async (event) => {
-  if (event.origin !== self.origin)
-    return
-  if (event.source instanceof WindowClient === false)
-    return
+// self.addEventListener("message", async (event) => {
+//   if (event.origin !== self.origin)
+//     return
+//   if (event.source instanceof WindowClient === false)
+//     return
 
-  const foreground = new RpcPort(event.ports[0])
+//   const foreground = new RpcPort(event.ports[0])
 
-  foreground.addEventListener("request", (event) => {
-    return
-  }, { signal: foreground.closing })
+//   foreground.addEventListener("request", (event) => {
+//     return
+//   }, { signal: foreground.closing })
 
-  foreground.addEventListener("close", () => {
-    foregrounds.delete(foreground)
-  }, { signal: foreground.closing })
+//   foreground.addEventListener("close", () => {
+//     foregrounds.delete(foreground)
+//   }, { signal: foreground.closing })
 
-  foregrounds.add(foreground)
+//   foregrounds.add(foreground)
 
-  foreground.open()
-})
+//   foreground.open()
+// })

@@ -11,7 +11,7 @@ import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useSubmit } from "@/libs/submit/mod.ts";
-import { useTotpCode } from "@/libs/totp/mod.ts";
+import { useTotp } from "@/libs/totp/mod.ts";
 import { PasswordInputAnchor, PasswordMenu, ScanPage, TotpPageAnchor } from "@/mods/app/session/account/password/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -67,7 +67,7 @@ export function KeypairAccountAddPage() {
   const username = useDeferredValue($username)
   const password = useDeferredValue($password)
   const totpseed = useDeferredValue($totpseed)
-  const totpcode = useTotpCode(totpseed)
+  const totpcode = useTotp(totpseed)
 
   const notes = useDeferredValue($notes)
 
@@ -415,7 +415,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
     return $entry.getStringByKeyOrNull("otp")?.getValueOrThrow().get()
   }, [$entry])
 
-  const totpcode = useTotpCode(totpseed)
+  const totpcode = useTotp(totpseed)
 
   const notes = useMemo(() => {
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()

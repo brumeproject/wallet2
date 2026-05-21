@@ -5,7 +5,7 @@ import { Sha1Totp } from "@hazae41/pendule";
 import { Result } from "@hazae41/result-and-option";
 import { useEffect, useMemo, useState } from "react";
 
-export function useTotpCode(seed: Nullable<string>) {
+export function useTotp(seed: Nullable<string>) {
   const [code, setCode] = useState<Nullable<string>>()
 
   const totp = useMemo(() => {

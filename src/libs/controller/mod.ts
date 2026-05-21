@@ -1,5 +1,5 @@
+import { RpcPort } from "@/libs/jsonrpc/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
-import { RpcPort } from "@/libs/rpcport/mod.ts";
 import { useCallback, useEffect, useState } from "react";
 
 export function useController() {

@@ -11,9 +11,9 @@ import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { capitalize } from "@/libs/string/mod.ts";
+import { Strings } from "@/libs/string/mod.ts";
 import { useSubmit } from "@/libs/submit/mod.ts";
-import { useTotpCode } from "@/libs/totp/mod.ts";
+import { useTotp } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { MoneroSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -66,7 +66,7 @@ export function PasswordAccountAddPage() {
   const username = useDeferredValue($username)
   const password = useDeferredValue($password)
   const totpseed = useDeferredValue($totpseed)
-  const totpcode = useTotpCode(totpseed)
+  const totpcode = useTotp(totpseed)
 
   const notes = useDeferredValue($notes)
 
@@ -359,7 +359,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     return $entry.getStringByKeyOrNull("otp")?.getValueOrThrow().get()
   }, [$entry])
 
-  const totpcode = useTotpCode(totpseed)
+  const totpcode = useTotp(totpseed)
 
   const notes = useMemo(() => {
     return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
@@ -733,7 +733,7 @@ export function PasswordMenu(props: { value: string } & { onChange(value: string
     const source = MoneroSeedPhrase.generate().split(" ").slice(0, 4)
 
     const random = crypto.getRandomValues(new Uint8Array(1))[0]
-    const result = source.map((x, i) => capitalize(x) + (i === (random % 4) ? (random % 10) : "")).join(" ")
+    const result = source.map((x, i) => Strings.capitalize(x) + (i === (random % 4) ? (random % 10) : "")).join(" ")
 
     return setPassword(result)
   }).catch(Errors.display), [])
