@@ -97,7 +97,7 @@ function UserAddButton() {
     href={coords.url.hash}
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
-    <div className="rounded-full size-7 flex justify-center items-center border-2 border-dashed border-default-contrast">
+    <div className="rounded-full size-6 flex justify-center items-center border-2 border-dashed border-default-contrast">
       <Outline.PlusIcon className="size-4" />
     </div>
     {Lang.match({ en: "Add", zh: "添加", hi: "जोड़ें", es: "Agregar", ar: "إضافة", fr: "Ajouter", de: "Hinzufügen", ru: "Добавить", pt: "Adicionar", ja: "追加", pa: "ਸ਼ਾਮਲ ਕਰੋ", bn: "যোগ করুন", id: "Tambah", ur: "شامل کریں", ms: "Tambah", it: "Aggiungi", tr: "Ekle", ta: "சேர்க்கவும்", te: "చేరండి", ko: "추가", vi: "Thêm vào", pl: "Dodaj", ro: "Adăugați", nl: "Toevoegen", el: "Προσθήκη", th: "เพิ่ม", cs: "Přidat", hu: "Hozzáadás", sv: "Lägg till", da: "Tilføj" })}
@@ -702,7 +702,7 @@ function UserItem(props: { user: UserData } & { login(session: SessionData): voi
         onKeyDown={coords.onKeyDown} />
       <div className="po-2 flex items-center justify-start">
         <div className="flex items-center gap-4">
-          <div className="rounded-full size-7 flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
+          <div className="rounded-full size-6 flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
             {user.name.slice(0, 1).toUpperCase()}
           </div>
           {user.name}
