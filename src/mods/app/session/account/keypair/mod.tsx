@@ -251,11 +251,12 @@ export function KeypairAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
+          <textarea className="w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
             rows={9}
             autoComplete="off"
             onChange={e => setSigKey(e.target.value)}
-            value={flipped ? $sigkey : $sigkey.replaceAll(/./g, "•")} />
+            value={$sigkey}
+            data-redacted={!flipped} />
         </div>
         <div className="h-2" />
         <div className="flex items-center flex-wrap-reverse gap-2">
@@ -577,11 +578,12 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-            <textarea className="w-full focus-visible:outline-none"
+            <textarea className="w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
               rows={9}
               readOnly
               onFocus={e => flipped ? e.currentTarget.select() : undefined}
-              value={flipped ? sigkey : sigkey?.replaceAll(/./g, "•")} />
+              value={sigkey?.valueOf()}
+              data-redacted={!flipped} />
           </div>
           <div className="h-2" />
           <div className="flex items-center flex-wrap-reverse gap-2">

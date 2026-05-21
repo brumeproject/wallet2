@@ -205,11 +205,12 @@ export function CryptoAccountAddPage() {
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
+          <textarea className="w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
             rows={3}
             autoComplete="off"
             onChange={e => setSeedPhrase(e.target.value)}
-            value={flipped ? $seedphrase : $seedphrase.replaceAll(/./g, "•")} />
+            value={$seedphrase}
+            data-redacted={!flipped} />
         </div>
         <div className="h-2" />
         <div className="flex items-center flex-wrap-reverse gap-2">
@@ -469,11 +470,12 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
+          <textarea className="w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
             rows={3}
             readOnly
             onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? seedphrase : seedphrase?.replaceAll(/./g, "•")} />
+            value={seedphrase?.valueOf()}
+            data-redacted={!flipped} />
         </div>
         <div className="h-2" />
         <div className="flex items-center flex-wrap-reverse gap-2">

@@ -653,11 +653,12 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
+          <textarea className="w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
             rows={2}
             readOnly
             onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? ethereum?.valueOf() : ethereum?.replaceAll(/./g, "•")} />
+            value={ethereum?.valueOf()}
+            data-redacted={!flipped} />
         </div>
         <div className="h-2" />
         <div className="flex items-center flex-wrap-reverse gap-2">
@@ -683,11 +684,12 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
         </div>
         <div className="h-4" />
         <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
+          <textarea className="w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
             rows={2}
             readOnly
             onFocus={e => flipped ? e.currentTarget.select() : undefined}
-            value={flipped ? solana?.valueOf() : solana?.replaceAll(/./g, "•")} />
+            value={solana?.valueOf()}
+            data-redacted={!flipped} />
         </div>
         <div className="h-2" />
         <div className="flex items-center flex-wrap-reverse gap-2">
