@@ -483,6 +483,10 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           icon={<Outline.LinkIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
+        <div className="h-2" />
+        <div className="po-2 w-[min(20rem,100%)] bg-default-contrast text-default-contrast rounded-xl">
+          {Lang.match({ en: "Transactions are not supported yet.", zh: "交易尚不支持。", hi: "लेनदेन अभी समर्थित नहीं हैं।", es: "Las transacciones aún no son compatibles.", ar: "المعاملات غير مدعومة بعد.", fr: "Les transactions ne sont pas encore prises en charge.", de: "Transaktionen werden noch nicht unterstützt.", ru: "Транзакции пока не поддерживаются.", pt: "As transações ainda não são suportadas.", ja: "トランザクションはまだサポートされていません。", pa: "ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ ਅਜੇ ਤੱਕ ਸਹਾਇਤ ਨਹੀਂ ਕੀਤੇ ਗਏ ਹਨ।", bn: "লেনদেন এখনও সমর্থিত নয়।", id: "Transaksi belum didukung.", ur: "ٹرانزیکشنز ابھی تک سپورٹ نہیں کی جاتیں۔", ms: "Transaksi belum didukung.", it: "Le transazioni non sono ancora supportate.", tr: "İşlemler henüz desteklenmiyor.", ta: "பரிவர்த்தனைகள் இன்னும் ஆதரிக்கப்படவில்லை.", te: "ట్రాన్సాక్షన్లు ఇంకా మద్దతు ఇవ్వబడలేదు.", ko: "거래는 아직 지원되지 않습니다.", vi: "Giao dịch chưa được hỗ trợ.", pl: "Transakcje nie są jeszcze obsługiwane.", ro: "Tranzacțiile nu sunt încă suportate.", nl: "Transacties worden nog niet ondersteund.", el: "Οι συναλλαγές δεν υποστηρίζονται ακόμα. ", th: "ธุรกรรมยังไม่รองรับ ", cs: "Transakce nejsou zatím podporovány. ", hu: "A tranzakciók még nem támogatottak. ", sv: "Transaktioner stöds inte än. ", da: "Transaktioner understøttes endnu ikke." })}
+        </div>
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -491,8 +495,19 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           name="username" />
         <Fragment>
           <div className="h-6" />
-          <div className="font-medium">
-            {Lang.match({ en: "Requests", zh: "请求", hi: "अनुरोध", es: "Solicitudes", ar: "الطلبات", fr: "Requêtes", de: "Anfragen", ru: "Запросы", pt: "Solicitações", ja: "リクエスト", pa: "ਬੇਨਤੀਆਂ", bn: "অনুরোধসমূহ", id: "Permintaan", ur: "درخواستیں", ms: "Permintaan", it: "Richieste", tr: "İstekler", ta: "கோரிக்கைகள்", te: "అభ్యర్థనలు", ko: "요청 사항", vi: "Yêu cầu", pl: "Żądania", ro: "Cereri", nl: "Verzoeken", el: "Αιτήματα ", th: "คำขอ ", cs: "Požadavky ", hu: "Kérések ", sv: "Förfrågningar ", da: "Anmodninger" })}
+          <div className="flex items-center gap-2">
+            {session != null &&
+              <span className="relative flex size-3">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex size-3 rounded-full bg-red-500" />
+              </span>}
+            {session == null &&
+              <Fragment>
+                <span className="size-3 rounded-full border-2 border-red-500" />
+              </Fragment>}
+            <div className="font-medium">
+              {Lang.match({ en: "Requests", zh: "请求", hi: "अनुरोध", es: "Solicitudes", ar: "الطلبات", fr: "Requêtes", de: "Anfragen", ru: "Запросы", pt: "Solicitações", ja: "リクエスト", pa: "ਬੇਨਤੀਆਂ", bn: "অনুরোধসমূহ", id: "Permintaan", ur: "درخواستیں", ms: "Permintaan", it: "Richieste", tr: "İstekler", ta: "கோரிக்கைகள்", te: "అభ్యర్థనలు", ko: "요청 사항", vi: "Yêu cầu", pl: "Żądania", ro: "Cereri", nl: "Verzoeken", el: "Αιτήματα ", th: "คำขอ ", cs: "Požadavky ", hu: "Kérések ", sv: "Förfrågningar ", da: "Anmodninger" })}
+            </div>
           </div>
           <div className="text-default-contrast">
             {Lang.match({ en: "Your requests will appear here. Only approve requests you understand.", zh: "您的请求将显示在这里。仅批准您理解的请求。", hi: "आपके अनुरोध यहां दिखाई देंगे। केवल उन अनुरोधों को मंजूरी दें जिन्हें आप समझते हैं।", es: "Sus solicitudes aparecerán aquí. Solo apruebe las solicitudes que entienda.", ar: "ستظهر طلباتك هنا. فقط وافق على الطلبات التي تفهمها.", fr: "Vos demandes apparaîtront ici. N'approuvez que les demandes que vous comprenez.", de: "Ihre Anfragen werden hier angezeigt. Genehmigen Sie nur Anfragen, die Sie verstehen.", ru: "Ваши запросы будут отображаться здесь. Одобряйте только те запросы, которые вы понимаете.", pt: "Suas solicitações aparecerão aqui. Aprove apenas as solicitações que você entende.", ja: "あなたのリクエストはここに表示されます。理解できるリクエストのみを承認してください。", pa: "ਤੁਹਾਡੇ ਬੇਨਤੀ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੀਆਂ। ਸਿਰਫ ਉਹ ਬੇਨਤੀਆਂ ਮਨਜ਼ੂਰ ਕਰੋ ਜੋ ਤੁਸੀਂ ਸਮਝਦੇ ਹੋ।", bn: "আপনার অনুরোধগুলি এখানে প্রদর্শিত হবে। শুধুমাত্র সেই অনুরোধগুলি অনুমোদন করুন যা আপনি বুঝতে পারেন।", id: "Permintaan Anda akan muncul di sini. Hanya setujui permintaan yang Anda pahami.", ur: "آپ کی درخواستیں یہاں ظاہر ہوں گی۔ صرف ان درخواستوں کو منظور کریں جنہیں آپ سمجھتے ہیں۔", ms: "Permintaan Anda akan muncul di sini. Hanya setujui permintaan yang Anda pahami.", it: "Le tue richieste appariranno qui. Approva solo le richieste che comprendi.", tr: "İstekleriniz burada görünecektir. Yalnızca anladığınız istekleri onaylayın.", ta: "உங்கள் கோரிக்கைகள் இங்கே தோன்றும். நீங்கள் புரிந்துகொள்ளும் கோரிக்கைகளை மட்டுமே ஒப்புக்கொள்ளுங்கள்.", te: "మీ అభ్యర్థనలు ఇక్కడ కనిపిస్తాయి. మీరు అర్థం చేసుకున్న అభ్యర్థనలను మాత్రమే ఆమోదించండి.", ko: "귀하의 요청이 여기에 표시됩니다. 이해하는 요청만 승인하십시오.", vi: "Yêu cầu của bạn sẽ xuất hiện ở đây. Chỉ chấp thuận các yêu cầu mà bạn hiểu.", pl: "Twoje żądania pojawią się tutaj. Zatwierdzaj tylko te żądania, które rozumiesz.", ro: "Cererile dvs. vor apărea aici. Aprobați doar cererile pe care le înțelegeți.", nl: "Uw verzoeken verschijnen hier. Keur alleen verzoeken goed die u begrijpt.", el: "Τα αιτήματά σας θα εμφανίζονται εδώ. Εγκρίνετε μόνο τα αιτήματα που καταλαβαίνετε. ", th: "คำขอของคุณจะปรากฏที่นี่ โปรดอนุมัติคำขอที่คุณเข้าใจเท่านั้น ", cs: "Vaše požadavky se zde zobrazí. Schvalte pouze požadavky, kterým rozumíte. ", hu: "Kérései itt jelennek meg. Csak azokat a kéréseket hagyja jóvá, amelyeket megért. ", sv: "Dina förfrågningar kommer att visas här. Godkänn endast förfrågningar som du förstår. ", da: "Dine anmodninger vises her. Godkend kun anmodninger, som du forstår." })}
