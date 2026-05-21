@@ -75,6 +75,8 @@ export function PasswordAccountAddPage() {
   const encryptOrThrow = useCallback(async () => {
     const { kdbx, comp } = session.value
 
+    await new Promise(ok => requestIdleCallback(ok))
+
     const $file = kdbx.inner.content.value
     const $root = $file.getRootOrThrow()
 

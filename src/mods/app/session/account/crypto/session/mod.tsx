@@ -75,6 +75,8 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   const encryptOrThrow = useCallback(async () => {
     const { kdbx, comp } = session.value
 
+    await new Promise(ok => requestIdleCallback(ok))
+
     const data = await respond(url)
 
     if (data == null)
@@ -523,6 +525,8 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
   const encryptOrThrow = useCallback(async () => {
     const { kdbx, comp } = session.value
+
+    await new Promise(ok => requestIdleCallback(ok))
 
     $subentry.element.parentNode?.removeChild($subentry.element)
 

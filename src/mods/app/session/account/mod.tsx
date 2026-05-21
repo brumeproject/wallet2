@@ -397,6 +397,8 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
   const encryptOrThrow = useCallback(async () => {
     const { kdbx, comp } = session.value
 
+    await new Promise(ok => requestIdleCallback(ok))
+
     $entry.trashOrThrow()
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
@@ -476,6 +478,8 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
 
   const encryptOrThrow = useCallback(async () => {
     const { kdbx, comp } = session.value
+
+    await new Promise(ok => requestIdleCallback(ok))
 
     const $file = kdbx.inner.content.value
     const $root = $file.getRootOrThrow()
@@ -559,6 +563,8 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
 
   const encryptOrThrow = useCallback(async () => {
     const { kdbx, comp } = session.value
+
+    await new Promise(ok => requestIdleCallback(ok))
 
     const subentries = [...kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent")?.getValueOrThrow().get() === $entry.getUuidOrThrow().toString())
 

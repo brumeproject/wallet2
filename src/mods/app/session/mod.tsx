@@ -303,6 +303,8 @@ export function SessionExportPage() {
   const encryptOrThrow = useCallback(async () => {
     const { kdbx } = session.value
 
+    await new Promise(ok => requestIdleCallback(ok))
+
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(composite))

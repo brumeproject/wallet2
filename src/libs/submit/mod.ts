@@ -1,5 +1,6 @@
 import { Awaitable } from "@/libs/awaitable/mod.ts";
 import { DependencyList, useCallback, useMemo, useState } from "react";
+import { flushSync } from "react-dom";
 
 /**
  * A hook to execute an async function once and track its execution state
@@ -16,7 +17,7 @@ export function useSubmit<P extends readonly unknown[]>(callback: (...params: P)
     if (running)
       return
 
-    setRunning(true)
+    flushSync(() => setRunning(true))
 
     stack.defer(() => setRunning(false))
 
