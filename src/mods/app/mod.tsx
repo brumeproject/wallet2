@@ -136,7 +136,7 @@ export function App() {
             <SettingsButton />
           </div>
           <div className="h-16" />
-          <Outline.ChevronDownIcon className="size-6 text-default-half-contrast" />
+          <Outline.ChevronDownIcon className="size-5 text-default-half-contrast" />
           <div className="h-[50dvh]" />
           <h1 className="text-center text-5xl sm:text-6xl font-medium">
             {Lang.match({ en: "Your everything manager", zh: "你的万能管理器", hi: "आपका सब कुछ प्रबंधक", es: "Su gestor de todo", ar: "مدير كل شيء الخاص بك", fr: "Votre gestionnaire universel", de: "Ihr Alles-Manager", ru: "Ваш менеджер всего", pt: "Seu gerente de tudo", ja: "あなたのすべてのマネージャー", pa: "ਤੁਹਾਡਾ ਸਭ ਕੁਝ ਮੈਨੇਜਰ", bn: "আপনার সবকিছু ম্যানেজার", id: "Manajer segalanya Anda", ur: "آپ کا سب کچھ منیجر", ms: "Manajer segalanya Anda", it: "Il tuo gestore di tutto", tr: "Her şey yöneticiniz", ta: "உங்கள் எல்லாம் மேலாளர்", te: "మీ అన్నింటికీ మేనేజర్", ko: "당신의 모든 관리자", vi: "Trình quản lý mọi thứ của bạn", pl: "Twój menedżer wszystkiego", ro: "Managerul tău pentru tot", nl: "Jouw allesmanager", el: "Ο διαχειριστής των πάντων σας", th: "ผู้จัดการทุกอย่างของคุณ", cs: "Váš správce všeho", hu: "Mindenes menedzsered", sv: "Din allt-i-allo-chef", da: "Din alt-mulige manager" })}
@@ -385,7 +385,7 @@ export function SettingsPage() {
               type="file"
               accept="image/*"
               onChange={onIconChange} />
-            <Outline.ArrowUpTrayIcon className="size-6 text-default-contrast" />
+            <Outline.ArrowUpTrayIcon className="size-5 text-default-contrast" />
           </div>}
         {icon != null &&
           <button className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-contrast"

@@ -247,7 +247,7 @@ export function CryptoAccountAddPage() {
               type="button"
               disabled={writeOrDisplay.running || error != null}
               onClick={writeOrDisplay.execute}>
-              {writeOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+              {writeOrDisplay.running === true && <Spinner className="size-5 animate-spin" />}
               {writeOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" }))}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
@@ -255,7 +255,7 @@ export function CryptoAccountAddPage() {
               type="button"
               disabled={saveOrDisplay.running || error != null}
               onClick={saveOrDisplay.execute}>
-              {saveOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+              {saveOrDisplay.running === true && <Spinner className="size-5 animate-spin" />}
               {saveOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" }))}
             </WideOppositeButton>}
         </div>
@@ -348,8 +348,8 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               disabled={index === 0}
               type="button">
               <InButton>
-                <Outline.ChevronLeftIcon className="not-sm:hidden sm:size-6" />
-                <Outline.ChevronUpIcon className="sm:hidden not-sm:size-6" />
+                <Outline.ChevronLeftIcon className="not-sm:hidden sm:size-5" />
+                <Outline.ChevronUpIcon className="sm:hidden not-sm:size-5" />
               </InButton>
             </button>
             <CryptoSubaccountAnchor $entry={$entry} index={index} />
@@ -357,8 +357,8 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               onClick={() => setIndex(i => i + 1)}
               type="button">
               <InButton>
-                <Outline.ChevronRightIcon className="not-sm:hidden sm:size-6" />
-                <Outline.ChevronDownIcon className="sm:hidden not-sm:size-6" />
+                <Outline.ChevronRightIcon className="not-sm:hidden sm:size-5" />
+                <Outline.ChevronDownIcon className="sm:hidden not-sm:size-5" />
               </InButton>
             </button>
           </div>

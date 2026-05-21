@@ -384,7 +384,7 @@ export function AccountMenuAnchor() {
     onClick={coords.onClick}
     onKeyDown={coords.onKeyDown}>
     <InOther>
-      <Outline.EllipsisVerticalIcon className="size-6" />
+      <Outline.EllipsisVerticalIcon className="size-5" />
     </InOther>
   </a>
 }
@@ -455,7 +455,7 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
         type="button"
         disabled={writeOrDisplay.running}
         onClick={writeOrDisplay.execute}>
-        {writeOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.TrashIcon className="size-5" />}
+        {writeOrDisplay.running ? <Spinner className="size-5 animate-spin" /> : <Outline.TrashIcon className="size-5" />}
         {Lang.match({ en: "Trash", zh: "丢弃", hi: "कूड़ेदान", es: "Papelera", ar: "سلة المهملات", fr: "Corbeille", de: "Papierkorb", ru: "Корзина", pt: "Lixeira", ja: "ゴミ箱", pa: "ਕੂੜੇਦਾਨ", bn: "ট্র্যাশ", id: "Sampah", ur: "کوڑے دان", ms: "Tong sampah", it: "Cestino", tr: "Çöp Kutusu", ta: "குப்பை பெட்டி", te: "ట్రాష్ బిన్", ko: "휴지통", vi: "Thùng rác", pl: "Kosz na śmieci", ro: "Coș de gunoi", nl: "Prullenbak", el: "Κάδος απορριμμάτων", th: "ถังขยะ", cs: "Koš na odpadky", hu: "Szemetesláda", sv: "Papperskorg", da: "Skraldespand" })}
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
@@ -463,7 +463,7 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
         type="button"
         disabled={saveOrDisplay.running}
         onClick={saveOrDisplay.execute}>
-        {saveOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.TrashIcon className="size-5" />}
+        {saveOrDisplay.running ? <Spinner className="size-5 animate-spin" /> : <Outline.TrashIcon className="size-5" />}
         {Lang.match({ en: "Trash", zh: "丢弃", hi: "कूड़ेदान", es: "Papelera", ar: "سلة المهملات", fr: "Corbeille", de: "Papierkorb", ru: "Корзина", pt: "Lixeira", ja: "ゴミ箱", pa: "ਕੂੜੇਦਾਨ", bn: "ট্র্যাশ", id: "Sampah", ur: "کوڑے دان", ms: "Tong sampah", it: "Cestino", tr: "Çöp Kutusu", ta: "குப்பை பெட்டி", te: "ట్రాష్ బిన్", ko: "휴지통", vi: "Thùng rác", pl: "Kosz na śmieci", ro: "Coș de gunoi", nl: "Prullenbak", el: "Κάδος απορριμμάτων", th: "ถังขยะ", cs: "Koš na odpadky", hu: "Szemetesláda", sv: "Papperskorg", da: "Skraldespand" })}
       </WideNakedMenuButton>}
   </Fragment>
@@ -538,7 +538,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
         type="button"
         disabled={writeOrDisplay.running}
         onClick={writeOrDisplay.execute}>
-        {writeOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.TrashIcon className="size-5" />}
+        {writeOrDisplay.running ? <Spinner className="size-5 animate-spin" /> : <Outline.TrashIcon className="size-5" />}
         {Lang.match({ en: "Untrash", zh: "恢复", hi: "पुनः प्राप्त करें", es: "Restaurar", ar: "استعادة", fr: "Restaurer", de: "Wiederherstellen", ru: "Восстановить", pt: "Restaurar", ja: "復元", pa: "ਪੁਨਰ ਪ੍ਰਾਪਤ ਕਰੋ", bn: "পুনরুদ্ধার", id: "Pulihkan", ur: "بحال کریں", ms: "Pulihkan", it: "Ripristina", tr: "Geri Yükle", ta: "மீட்டெடுக்கவும்", te: "పునరుద్ధరించు", ko: "복원", vi: "Khôi phục", pl: "Przywróć", ro: "Restabilește", nl: "Herstellen", el: "Επαναφορά", th: "กู้คืน", cs: "Obnovit", hu: "Visszaállítás", sv: "Återställ", da: "Gendan" })}
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
@@ -546,7 +546,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
         type="button"
         disabled={saveOrDisplay.running}
         onClick={saveOrDisplay.execute}>
-        {saveOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.TrashIcon className="size-5" />}
+        {saveOrDisplay.running ? <Spinner className="size-5 animate-spin" /> : <Outline.TrashIcon className="size-5" />}
         {Lang.match({ en: "Untrash", zh: "恢复", hi: "पुनः प्राप्त करें", es: "Restaurar", ar: "استعادة", fr: "Restaurer", de: "Wiederherstellen", ru: "Восстановить", pt: "Restaurar", ja: "復元", pa: "ਪੁਨਰ ਪ੍ਰਾਪਤ ਕਰੋ", bn: "পুনরুদ্ধার", id: "Pulihkan", ur: "بحال کریں", ms: "Pulihkan", it: "Ripristina", tr: "Geri Yükle", ta: "மீட்டெடுக்கவும்", te: "పునరుద్ధరించు", ko: "복원", vi: "Khôi phục", pl: "Przywróć", ro: "Restabilește", nl: "Herstellen", el: "Επαναφορά", th: "กู้คืน", cs: "Obnovit", hu: "Visszaállítás", sv: "Återställ", da: "Gendan" })}
       </WideNakedMenuButton>}
   </Fragment>
@@ -629,7 +629,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
         type="button"
         disabled={writeOrDisplay.running}
         onClick={writeOrDisplay.execute}>
-        {writeOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.ScissorsIcon className="size-5" />}
+        {writeOrDisplay.running ? <Spinner className="size-5 animate-spin" /> : <Outline.ScissorsIcon className="size-5" />}
         {Lang.match({ en: "Delete", zh: "删除", hi: "हटाएं", es: "Eliminar", ar: "حذف", fr: "Supprimer", de: "Löschen", ru: "Удалить", pt: "Excluir", ja: "削除", pa: "ਹਟਾਓ", bn: "মুছে ফেলুন", id: "Hapus", ur: "حذف کریں", ms: "Padam", it: "Elimina", tr: "Sil", ta: "அழிக்கவும்", te: "తొలగించు", ko: "삭제", vi: "Xóa", pl: "Usuń", ro: "Șterge", nl: "Verwijderen", el: "Διαγραφή", th: "ลบ", cs: "Smazat", hu: "Törlés", sv: "Radera", da: "Slet" })}
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
@@ -637,7 +637,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
         type="button"
         disabled={saveOrDisplay.running}
         onClick={saveOrDisplay.execute}>
-        {saveOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.ScissorsIcon className="size-5" />}
+        {saveOrDisplay.running ? <Spinner className="size-5 animate-spin" /> : <Outline.ScissorsIcon className="size-5" />}
         {Lang.match({ en: "Delete", zh: "删除", hi: "हटाएं", es: "Eliminar", ar: "حذف", fr: "Supprimer", de: "Löschen", ru: "Удалить", pt: "Excluir", ja: "削除", pa: "ਹਟਾਓ", bn: "মুছে ফেলুন", id: "Hapus", ur: "حذف کریں", ms: "Padam", it: "Elimina", tr: "Sil", ta: "அழிக்கவும்", te: "తొలగించు", ko: "삭제", vi: "Xóa", pl: "Usuń", ro: "Șterge", nl: "Verwijderen", el: "Διαγραφή", th: "ลบ", cs: "Smazat", hu: "Törlés", sv: "Radera", da: "Slet" })}
       </WideNakedMenuButton>}
   </Fragment>

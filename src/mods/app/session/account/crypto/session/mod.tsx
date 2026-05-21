@@ -260,7 +260,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
               type="button"
               disabled={writeOrDisplay.running || error != null}
               onClick={writeOrDisplay.execute}>
-              {writeOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+              {writeOrDisplay.running === true && <Spinner className="size-5 animate-spin" />}
               {writeOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" }))}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
@@ -268,7 +268,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
               type="button"
               disabled={saveOrDisplay.running || error != null}
               onClick={saveOrDisplay.execute}>
-              {saveOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+              {saveOrDisplay.running === true && <Spinner className="size-5 animate-spin" />}
               {saveOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" }))}
             </WideOppositeButton>}
         </div>
@@ -589,7 +589,7 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           type="button"
           disabled={writeOrDisplay.running}
           onClick={writeOrDisplay.execute}>
-          {writeOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.LinkSlashIcon className="size-5" />}
+          {writeOrDisplay.running ? <Spinner className="size-5 animate-spin" /> : <Outline.LinkSlashIcon className="size-5" />}
           {Lang.match({ en: "Destroy", zh: "销毁", hi: "नष्ट करें", es: "Destruir", ar: "تدمير", fr: "Détruire", de: "Zerstören", ru: "Уничтожить", pt: "Destruir", ja: "破棄", pa: "ਨਸ਼ਟ ਕਰੋ", bn: "ধ্বংস করুন", id: "Hancurkan", ur: "تباہ کریں", ms: "Hancurkan", it: "Distruggi", tr: "Yık", ta: "நசுக்கவும்", te: "నాశనం చేయండి", ko: "파괴하다", vi: "Hủy bỏ", pl: "Zniszczyć", ro: "Distrugeți", nl: "Vernietigen", el: "Καταστρέψτε ", th: "ทำลาย ", cs: "Zničit ", hu: "Megsemmisít ", sv: "Förstöra ", da: "Ødelæg" })}
         </WideNakedMenuButton>}
       {session.value.user.fsfh == null &&
@@ -597,7 +597,7 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           type="button"
           disabled={saveOrDisplay.running}
           onClick={saveOrDisplay.execute}>
-          {saveOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.LinkSlashIcon className="size-5" />}
+          {saveOrDisplay.running ? <Spinner className="size-5 animate-spin" /> : <Outline.LinkSlashIcon className="size-5" />}
           {Lang.match({ en: "Destroy", zh: "销毁", hi: "नष्ट करें", es: "Destruir", ar: "تدمير", fr: "Détruire", de: "Zerstören", ru: "Уничтожить", pt: "Destruir", ja: "破棄", pa: "ਨਸ਼ਟ ਕਰੋ", bn: "ধ্বংস করুন", id: "Hancurkan", ur: "تباہ کریں", ms: "Hancurkan", it: "Distruggi", tr: "Yık", ta: "நசுக்கவும்", te: "నాశనం చేయండి", ko: "파괴하다", vi: "Hủy bỏ", pl: "Zniszczyć", ro: "Distrugeți", nl: "Vernietigen", el: "Καταστρέψτε ", th: "ทำลาย ", cs: "Zničit ", hu: "Megsemmisít ", sv: "Förstöra ", da: "Ødelæg" })}
         </WideNakedMenuButton>}
     </div>

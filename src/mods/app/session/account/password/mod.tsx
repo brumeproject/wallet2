@@ -296,7 +296,7 @@ export function PasswordAccountAddPage() {
               type="button"
               disabled={writeOrDisplay.running || error != null}
               onClick={writeOrDisplay.execute}>
-              {writeOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+              {writeOrDisplay.running === true && <Spinner className="size-5 animate-spin" />}
               {writeOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" }))}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
@@ -304,7 +304,7 @@ export function PasswordAccountAddPage() {
               type="button"
               disabled={saveOrDisplay.running || error != null}
               onClick={saveOrDisplay.execute}>
-              {saveOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+              {saveOrDisplay.running === true && <Spinner className="size-5 animate-spin" />}
               {saveOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" }))}
             </WideOppositeButton>}
         </div>
@@ -658,7 +658,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
             accept="image/*"
             onChange={onFileChange} />
           <InOther>
-            <Outline.ArrowUpTrayIcon className="size-6" />
+            <Outline.ArrowUpTrayIcon className="size-5" />
           </InOther>
         </div>
         <div className="grow" />
@@ -666,7 +666,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
           onClick={() => setTorch(x => !x)}
           type="button">
           <InButton>
-            {torch ? <Outline.BoltSlashIcon className="size-6" /> : <Outline.BoltIcon className="size-6" />}
+            {torch ? <Outline.BoltSlashIcon className="size-5" /> : <Outline.BoltIcon className="size-5" />}
           </InButton>
         </button>
         <div className="w-2" />
@@ -674,7 +674,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
           onClick={() => setFacingMode(x => x === "environment" ? "user" : "environment")}
           type="button">
           <InButton>
-            <Outline.ArrowPathIcon className="size-6" />
+            <Outline.ArrowPathIcon className="size-5" />
           </InButton>
         </button>
       </div>
