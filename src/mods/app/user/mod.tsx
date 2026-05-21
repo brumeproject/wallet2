@@ -10,7 +10,9 @@ import { useAutoFocus } from "@/libs/focus/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useStoreContext } from "@/libs/store/mod.tsx";
+import { useTask } from "@/libs/task/mod.ts";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
@@ -171,7 +173,7 @@ function UserImportFilePage() {
 
   const [file, setFile] = useState<Nullable<File>>()
 
-  const loadOrDisplay = useCallback(() => Promise.try(async () => {
+  const loadOrDisplay = useTask(() => Promise.try(async () => {
     if (file == null)
       return
 
@@ -281,9 +283,10 @@ function UserImportFilePage() {
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
           type="button"
-          disabled={error != null}
-          onClick={loadOrDisplay}>
-          {error != null ? error : Lang.match({ en: "Open", zh: "打开", hi: "खोलें", es: "Abrir", ar: "فتح", fr: "Ouvrir", de: "Öffnen", ru: "Открыть", pt: "Abrir", ja: "開く", pa: "ਖੋਲ੍ਹੋ", bn: "খুলুন", id: "Buka", ur: "کھولیں", ms: "Buka", it: "Apri", tr: "Aç", ta: "திறக்கவும்", te: "తెరవండి", ko: "열기", vi: "Mở", pl: "Otwórz", ro: "Deschideți", nl: "Openen", el: "Άνοιγμα", th: "เปิด", cs: "Otevřít", hu: "Megnyitás", sv: "Öppna", da: "Åbn" })}
+          disabled={loadOrDisplay.running || error != null}
+          onClick={loadOrDisplay.execute}>
+          {loadOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+          {loadOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Open", zh: "打开", hi: "खोलें", es: "Abrir", ar: "فتح", fr: "Ouvrir", de: "Öffnen", ru: "Открыть", pt: "Abrir", ja: "開く", pa: "ਖੋਲ੍ਹੋ", bn: "খুলুন", id: "Buka", ur: "کھولیں", ms: "Buka", it: "Apri", tr: "Aç", ta: "திறக்கவும்", te: "తెరవండి", ko: "열기", vi: "Mở", pl: "Otwórz", ro: "Deschideți", nl: "Openen", el: "Άνοιγμα", th: "เปิด", cs: "Otevřít", hu: "Megnyitás", sv: "Öppna", da: "Åbn" }))}
         </WideOppositeButton>
       </div>
     </form>
@@ -328,7 +331,7 @@ function UserImportFsfhPage() {
     setFsfh(fsfh)
   }).catch(Errors.display), [])
 
-  const openOrDisplay = useCallback(() => Promise.try(async () => {
+  const openOrDisplay = useTask(() => Promise.try(async () => {
     if (fsfh == null)
       return
 
@@ -441,9 +444,10 @@ function UserImportFsfhPage() {
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
           type="button"
-          disabled={error != null}
-          onClick={openOrDisplay}>
-          {error != null ? error : Lang.match({ en: "Open", zh: "打开", hi: "खोलें", es: "Abrir", ar: "فتح", fr: "Ouvrir", de: "Öffnen", ru: "Открыть", pt: "Abrir", ja: "開く", pa: "ਖੋਲ੍ਹੋ", bn: "খুলুন", id: "Buka", ur: "کھولیں", ms: "Buka", it: "Apri", tr: "Aç", ta: "திறக்கவும்", te: "తెరవండి", ko: "열기", vi: "Mở", pl: "Otwórz", ro: "Deschideți", nl: "Openen", el: "Άνοιγμα", th: "เปิด", cs: "Otevřít", hu: "Megnyitás", sv: "Öppna", da: "Åbn" })}
+          disabled={openOrDisplay.running || error != null}
+          onClick={openOrDisplay.execute}>
+          {openOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+          {openOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Open", zh: "打开", hi: "खोलें", es: "Abrir", ar: "فتح", fr: "Ouvrir", de: "Öffnen", ru: "Открыть", pt: "Abrir", ja: "開く", pa: "ਖੋਲ੍ਹੋ", bn: "খুলুন", id: "Buka", ur: "کھولیں", ms: "Buka", it: "Apri", tr: "Aç", ta: "திறக்கவும்", te: "తెరవండి", ko: "열기", vi: "Mở", pl: "Otwórz", ro: "Deschideți", nl: "Openen", el: "Άνοιγμα", th: "เปิด", cs: "Otevřít", hu: "Megnyitás", sv: "Öppna", da: "Åbn" }))}
         </WideOppositeButton>
       </div>
     </form>
@@ -513,7 +517,7 @@ function UserCreatePage() {
     return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, derived)
   }, [])
 
-  const pickOrDisplay = useCallback(() => Promise.try(async () => {
+  const pickOrDisplay = useTask(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
@@ -547,7 +551,7 @@ function UserCreatePage() {
     close()
   }).catch(Errors.display), [store, pass, innerizeOrThrow, outerizeOrThrow, close])
 
-  const saveOrDisplay = useCallback(() => Promise.try(async () => {
+  const saveOrDisplay = useTask(() => Promise.try(async () => {
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     const inner = innerizeOrThrow()
@@ -654,16 +658,18 @@ function UserCreatePage() {
         {"showSaveFilePicker" in window === true &&
           <WideOppositeButton
             type="button"
-            disabled={error != null}
-            onClick={pickOrDisplay}>
-            {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
+            disabled={pickOrDisplay.running || error != null}
+            onClick={pickOrDisplay.execute}>
+            {pickOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+            {pickOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" }))}
           </WideOppositeButton>}
         {"showSaveFilePicker" in window === false &&
           <WideOppositeButton
             type="button"
-            disabled={error != null}
-            onClick={saveOrDisplay}>
-            {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
+            disabled={saveOrDisplay.running || error != null}
+            onClick={saveOrDisplay.execute}>
+            {saveOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+            {saveOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" }))}
           </WideOppositeButton>}
       </div>
     </form>
@@ -977,7 +983,7 @@ function UserReimportFilePage(props: { user: UserData }) {
 
   const [file, setFile] = useState<Nullable<File>>()
 
-  const loadOrDisplay = useCallback(() => Promise.try(async () => {
+  const loadOrDisplay = useTask(() => Promise.try(async () => {
     if (file == null)
       return
 
@@ -1087,9 +1093,10 @@ function UserReimportFilePage(props: { user: UserData }) {
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
           type="button"
-          disabled={error != null}
-          onClick={loadOrDisplay}>
-          {error != null ? error : "Open"}
+          disabled={loadOrDisplay.running || error != null}
+          onClick={loadOrDisplay.execute}>
+          {loadOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+          {loadOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Open", zh: "打开", hi: "खोलें", es: "Abrir", ar: "فتح", fr: "Ouvrir", de: "Öffnen", ru: "Открыть", pt: "Abrir", ja: "開く", pa: "ਖੋਲ੍ਹੋ", bn: "খুলুন", id: "Buka", ur: "کھولیں", ms: "Buka", it: "Apri", tr: "Aç", ta: "திறக்கவும்", te: "తెరవండి", ko: "열기", vi: "Mở", pl: "Otwórz", ro: "Deschideți", nl: "Openen", el: "Άνοιγμα", th: "เปิดไฟล์", cs: "Otevřít", hu: "Megnyitás", sv: "Öppna", da: "Åbn" }))}
         </WideOppositeButton>
       </div>
     </form>
@@ -1136,7 +1143,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     setFsfh(fsfh)
   }).catch(Errors.display), [])
 
-  const openOrDisplay = useCallback(() => Promise.try(async () => {
+  const openOrDisplay = useTask(() => Promise.try(async () => {
     if (fsfh == null)
       return
 
@@ -1249,9 +1256,10 @@ function UserReimportFsfhPage(props: { user: UserData }) {
       <div className="flex items-center flex-wrap-reverse gap-2">
         <WideOppositeButton
           type="button"
-          disabled={error != null}
-          onClick={openOrDisplay}>
-          {error != null ? error : "Open"}
+          disabled={openOrDisplay.running || error != null}
+          onClick={openOrDisplay.execute}>
+          {openOrDisplay.running === true && <Spinner className="size-6 animate-spin" />}
+          {openOrDisplay.running === false && (error != null ? error : Lang.match({ en: "Open", zh: "打开", hi: "खोलें", es: "Abrir", ar: "فتح", fr: "Ouvrir", de: "Öffnen", ru: "Открыть", pt: "Abrir", ja: "開く", pa: "ਖੋਲ੍ਹੋ", bn: "খুলুন", id: "Buka", ur: "کھولیں", ms: "Buka", it: "Apri", tr: "Aç", ta: "திறக்கவும்", te: "తెరవండి", ko: "열기", vi: "Mở", pl: "Otwórz", ro: "Deschideți", nl: "Openen", el: "Άνοιγμα", th: "เปิดไฟล์", cs: "Otevřít", hu: "Megnyitás", sv: "Öppna", da: "Åbn" }))}
         </WideOppositeButton>
       </div>
     </form>
@@ -1264,7 +1272,7 @@ function UserRemoveButton(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const removeOrDisplay = useCallback(() => Promise.try(async () => {
+  const removeOrDisplay = useTask(() => Promise.try(async () => {
     if (!confirm(Lang.match({ en: "Are you sure you want to remove this user?", zh: "您确定要删除此用户吗？", hi: "क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं?", es: "¿Estás seguro de que deseas eliminar este usuario?", ar: "هل أنت متأكد أنك تريد إزالة هذا المستخدم؟", fr: "Êtes-vous sûr de vouloir supprimer cet utilisateur ?", de: "Sind Sie sicher, dass Sie diesen Benutzer entfernen möchten?", ru: "Вы уверены, что хотите удалить этого пользователя?", pt: "Tem certeza de que deseja remover este usuário?", ja: "このユーザーを削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਉਪਭੋਗਤਾ ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?", bn: "আপনি কি সত্যিই এই ব্যবহারকারীকে সরাতে চান?", id: "Apakah Anda yakin ingin menghapus pengguna ini?", ur: "کیا آپ واقعی اس صارف کو ہٹانا چاہتے ہیں؟", ms: "Adakah anda pasti mahu menghapus pengguna ini?", it: "Sei sicuro di voler rimuovere questo utente?", tr: "Bu kullanıcıyı kaldırmak istediğinizden emin misiniz?", ta: "நீங்கள் உண்மையில் இந்த பயனரை அகற்ற விரும்புகிறீர்களா?", te: "మీరు నిజంగా ఈ వినియోగదారుని తొలగించాలనుకుంటున్నారా?", ko: "이 사용자를 정말로 제거하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa người dùng này không?", pl: "Czy na pewno chcesz usunąć tego użytkownika?", ro: "Ești sigur că vrei să ștergi acest utilizator?", nl: "Weet je zeker dat je deze gebruiker wilt verwijderen?", el: "Είστε βέβαιοι ότι θέλετε να αφαιρέσετε αυτόν τον χρήστη;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้", cs: "Opravdu chcete tohoto uživatele odstranit?", hu: "Biztos benne, hogy el akarja távolítani ezt a felhasználót?", sv: "Är du säker på att du vill ta bort den här användaren?", da: "Er du sikker på, at du vil fjerne denne bruger?" })))
       return
 
@@ -1280,8 +1288,9 @@ function UserRemoveButton(props: { user: UserData }) {
   }).catch(Errors.display), [store, user, close])
 
   return <WideNakedMenuButton
-    onClick={removeOrDisplay}>
-    <Outline.TrashIcon className="size-5" />
-    {Lang.match({ en: "Remove", zh: "删除", hi: "हटाएं", es: "Eliminar", ar: "إزالة", fr: "Supprimer", de: "Entfernen", ru: "Удалить", pt: "Remover", ja: "削除", pa: "ਹਟਾਓ", bn: "অপসারণ করুন", id: "Hapus", ur: "ہٹائیں", ms: "Hapus", it: "Rimuovi", tr: "Kaldır", ta: "அகற்று", te: "తొలగించు", ko: "제거하다", vi: "Xóa bỏ", pl: "Usuń", ro: "Eliminați", nl: "Verwijderen", el: "Αφαίρεση", th: "ลบออก", cs: "Odstranit", hu: "Eltávolítás", sv: "Ta bort", da: "Fjern" })}
+    disabled={removeOrDisplay.running}
+    onClick={removeOrDisplay.execute}>
+    {removeOrDisplay.running ? <Spinner className="size-6 animate-spin" /> : <Outline.TrashIcon className="size-5" />}
+    {removeOrDisplay.running && (Lang.match({ en: "Remove", zh: "删除", hi: "हटाएं", es: "Eliminar", ar: "إزالة", fr: "Supprimer", de: "Entfernen", ru: "Удалить", pt: "Remover", ja: "削除", pa: "ਹਟਾਓ", bn: "অপসারণ করুন", id: "Hapus", ur: "ہٹائیں", ms: "Hapus", it: "Rimuovi", tr: "Kaldır", ta: "அகற்று", te: "తొలగించు", ko: "제거하다", vi: "Xóa bỏ", pl: "Usuń", ro: "Eliminați", nl: "Verwijderen", el: "Αφαίρεση", th: "ลบออก", cs: "Odstranit", hu: "Eltávolítás", sv: "Ta bort", da: "Fjern" }))}
   </WideNakedMenuButton>
 }
