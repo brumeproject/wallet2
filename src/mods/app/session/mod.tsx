@@ -11,7 +11,7 @@ import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useSubmit } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/submit/mod.ts";
 import { CardAccountAddPage } from "@/mods/app/session/account/card/mod.tsx";
 import { CryptoAccountAddPage } from "@/mods/app/session/account/crypto/mod.tsx";
 import { KeypairAccountAddPage } from "@/mods/app/session/account/keypair/mod.tsx";

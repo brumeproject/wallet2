@@ -10,7 +10,7 @@ import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useSubmit } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/submit/mod.ts";
 import { useTotpCode } from "@/libs/totp/mod.ts";
 import { PasswordInputAnchor, PasswordMenu, ScanPage, TotpPageAnchor } from "@/mods/app/session/account/password/mod.tsx";
 import { Writable } from "@hazae41/binary";

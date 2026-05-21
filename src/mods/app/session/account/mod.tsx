@@ -8,7 +8,7 @@ import { getEntryType } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useSubmit } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/submit/mod.ts";
 import { KeypairAccountAddMenuAnchor, KeypairAccountAddPage, KeypairAccountPage } from "@/mods/app/session/account/keypair/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";

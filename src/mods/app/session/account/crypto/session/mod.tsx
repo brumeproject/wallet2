@@ -9,7 +9,7 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useSubmit } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/submit/mod.ts";
 import { CryptoRequest, CryptoRequestAnchor } from "@/mods/app/session/account/crypto/request/mod.tsx";
 import { WcSessionData } from "@/mods/app/session/account/crypto/subaccount/mod.tsx";
 import { ScanPage } from "@/mods/app/session/account/password/mod.tsx";

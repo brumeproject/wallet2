@@ -10,7 +10,7 @@ import { getRecycleBinOrNull } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useSubmit } from "@/libs/task/mod.ts";
+import { useSubmit } from "@/libs/submit/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
