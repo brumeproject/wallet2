@@ -100,7 +100,7 @@ export function CardAccountAddPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, num, hol, exp, cvv, pin, notes])
 
-  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrDisplay = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -117,7 +117,7 @@ export function CardAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrDisplay = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -312,14 +312,14 @@ export function CardAccountAddPage() {
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={encryptAndWriteOrAlert}>
+              onClick={encryptAndWriteOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={encryptAndSaveOrAlert}>
+              onClick={encryptAndSaveOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
         </div>
@@ -445,7 +445,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={copyTheNum.copyOrAlert}>
+              onClick={copyTheNum.copyOrDisplay}>
               <InButton>
                 {copyTheNum.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               </InButton>
@@ -471,7 +471,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={copyTheHol.copyOrAlert}>
+              onClick={copyTheHol.copyOrDisplay}>
               <InButton>
                 {copyTheHol.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               </InButton>
@@ -497,7 +497,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
           <div className="flex items-center gap-2">
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={copyTheExp.copyOrAlert}>
+              onClick={copyTheExp.copyOrDisplay}>
               <InButton>
                 {copyTheExp.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               </InButton>
@@ -531,7 +531,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
             </button>
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={copyTheCvv.copyOrAlert}>
+              onClick={copyTheCvv.copyOrDisplay}>
               <InButton>
                 {copyTheCvv.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               </InButton>
@@ -565,7 +565,7 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
             </button>
             <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
               type="button"
-              onClick={copyThePin.copyOrAlert}>
+              onClick={copyThePin.copyOrDisplay}>
               <InButton>
                 {copyThePin.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               </InButton>

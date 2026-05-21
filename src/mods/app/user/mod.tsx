@@ -171,7 +171,7 @@ function UserImportFilePage() {
 
   const [file, setFile] = useState<Nullable<File>>()
 
-  const loadOrAlert = useCallback(() => Promise.try(async () => {
+  const loadOrDisplay = useCallback(() => Promise.try(async () => {
     if (file == null)
       return
 
@@ -282,7 +282,7 @@ function UserImportFilePage() {
         <WideOppositeButton
           type="button"
           disabled={error != null}
-          onClick={loadOrAlert}>
+          onClick={loadOrDisplay}>
           {error != null ? error : Lang.match({ en: "Open", zh: "打开", hi: "खोलें", es: "Abrir", ar: "فتح", fr: "Ouvrir", de: "Öffnen", ru: "Открыть", pt: "Abrir", ja: "開く", pa: "ਖੋਲ੍ਹੋ", bn: "খুলুন", id: "Buka", ur: "کھولیں", ms: "Buka", it: "Apri", tr: "Aç", ta: "திறக்கவும்", te: "తెరవండి", ko: "열기", vi: "Mở", pl: "Otwórz", ro: "Deschideți", nl: "Openen", el: "Άνοιγμα", th: "เปิด", cs: "Otevřít", hu: "Megnyitás", sv: "Öppna", da: "Åbn" })}
         </WideOppositeButton>
       </div>
@@ -304,7 +304,7 @@ function UserImportFsfhPage() {
 
   const [fsfh, setFsfh] = useState<FileSystemFileHandle>()
 
-  const pickOrAlert = useCallback(() => Promise.try(async () => {
+  const pickOrDisplay = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker!({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     if (fsfh == null)
@@ -315,7 +315,7 @@ function UserImportFsfhPage() {
     setFsfh(fsfh)
   }).catch(Errors.display), [])
 
-  const dropOrAlert = useCallback((e: DragEvent<HTMLButtonElement>) => Promise.try(async () => {
+  const dropOrDisplay = useCallback((e: DragEvent<HTMLButtonElement>) => Promise.try(async () => {
     e.preventDefault()
 
     const [item] = e.dataTransfer.items as unknown as Iterable<DataTransferItem>
@@ -328,7 +328,7 @@ function UserImportFsfhPage() {
     setFsfh(fsfh)
   }).catch(Errors.display), [])
 
-  const openOrAlert = useCallback(() => Promise.try(async () => {
+  const openOrDisplay = useCallback(() => Promise.try(async () => {
     if (fsfh == null)
       return
 
@@ -401,9 +401,9 @@ function UserImportFsfhPage() {
         {"showOpenFilePicker" in window === true &&
           <button className="absolute inset-0 opacity-0 cursor-pointer"
             type="button"
-            onClick={pickOrAlert}
+            onClick={pickOrDisplay}
             onDragOver={Events.preventDefault}
-            onDrop={dropOrAlert} />}
+            onDrop={dropOrDisplay} />}
         {fsfh != null &&
           <div className="po-2">
             {fsfh.name}
@@ -442,7 +442,7 @@ function UserImportFsfhPage() {
         <WideOppositeButton
           type="button"
           disabled={error != null}
-          onClick={openOrAlert}>
+          onClick={openOrDisplay}>
           {error != null ? error : Lang.match({ en: "Open", zh: "打开", hi: "खोलें", es: "Abrir", ar: "فتح", fr: "Ouvrir", de: "Öffnen", ru: "Открыть", pt: "Abrir", ja: "開く", pa: "ਖੋਲ੍ਹੋ", bn: "খুলুন", id: "Buka", ur: "کھولیں", ms: "Buka", it: "Apri", tr: "Aç", ta: "திறக்கவும்", te: "తెరవండి", ko: "열기", vi: "Mở", pl: "Otwórz", ro: "Deschideți", nl: "Openen", el: "Άνοιγμα", th: "เปิด", cs: "Otevřít", hu: "Megnyitás", sv: "Öppna", da: "Åbn" })}
         </WideOppositeButton>
       </div>
@@ -513,7 +513,7 @@ function UserCreatePage() {
     return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, derived)
   }, [])
 
-  const pickOrAlert = useCallback(() => Promise.try(async () => {
+  const pickOrDisplay = useCallback(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
@@ -547,7 +547,7 @@ function UserCreatePage() {
     close()
   }).catch(Errors.display), [store, pass, innerizeOrThrow, outerizeOrThrow, close])
 
-  const saveOrAlert = useCallback(() => Promise.try(async () => {
+  const saveOrDisplay = useCallback(() => Promise.try(async () => {
     const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
 
     const inner = innerizeOrThrow()
@@ -655,14 +655,14 @@ function UserCreatePage() {
           <WideOppositeButton
             type="button"
             disabled={error != null}
-            onClick={pickOrAlert}>
+            onClick={pickOrDisplay}>
             {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
           </WideOppositeButton>}
         {"showSaveFilePicker" in window === false &&
           <WideOppositeButton
             type="button"
             disabled={error != null}
-            onClick={saveOrAlert}>
+            onClick={saveOrDisplay}>
             {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
           </WideOppositeButton>}
       </div>
@@ -729,7 +729,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
   const [file1, setFile1] = useState<Nullable<File>>()
   const [file2, setFile2] = useState<Nullable<File>>()
 
-  const loadOrAlert1 = useCallback(() => Promise.try(async () => {
+  const loadOrDisplay1 = useCallback(() => Promise.try(async () => {
     if (file1 == null)
       return
     if (!pass)
@@ -746,7 +746,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     close()
   }).catch(Errors.display), [user, login, file1, pass, close])
 
-  const loadOrAlert2 = useCallback(() => Promise.try(async () => {
+  const loadOrDisplay2 = useCallback(() => Promise.try(async () => {
     if (file2 == null)
       return
     if (auth == null)
@@ -768,18 +768,18 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
       return
     if (!pass)
       return
-    loadOrAlert1().catch(console.error)
-  }, [file1, pass, loadOrAlert1])
+    loadOrDisplay1().catch(console.error)
+  }, [file1, pass, loadOrDisplay1])
 
   useEffect(() => {
     if (file2 == null)
       return
     if (auth == null)
       return
-    loadOrAlert2().catch(console.error)
-  }, [file2, auth, loadOrAlert2])
+    loadOrDisplay2().catch(console.error)
+  }, [file2, auth, loadOrDisplay2])
 
-  const openOrAlert1 = useCallback(() => Promise.try(async () => {
+  const openOrDisplay1 = useCallback(() => Promise.try(async () => {
     if (user.fsfh == null)
       return
     if (!pass)
@@ -799,7 +799,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     close()
   }).catch(Errors.display), [user, login, pass, close])
 
-  const openOrAlert2 = useCallback((stored: Uint8Array<ArrayBuffer> & { length: 32 }) => Promise.try(async () => {
+  const openOrDisplay2 = useCallback((stored: Uint8Array<ArrayBuffer> & { length: 32 }) => Promise.try(async () => {
     if (user.auth == null)
       return
     if (user.fsfh == null)
@@ -830,8 +830,8 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
       return
     }
 
-    await openOrAlert1()
-  }, [user, openOrAlert1, picker1])
+    await openOrDisplay1()
+  }, [user, openOrDisplay1, picker1])
 
   const onPassClick = useCallback(async () => {
     if (user.auth == null)
@@ -845,8 +845,8 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
       return
     }
 
-    await openOrAlert2(await webAuthnStorage.getOrThrow(user.auth) as Uint8Array<ArrayBuffer> & { length: 32 })
-  }, [user, openOrAlert2, picker2])
+    await openOrDisplay2(await webAuthnStorage.getOrThrow(user.auth) as Uint8Array<ArrayBuffer> & { length: 32 })
+  }, [user, openOrDisplay2, picker2])
 
   return <div className="flex flex-col items-center justify-center grow p-6 py-24">
     <div className="rounded-full size-16 text-4xl flex justify-center items-center border border-default-contrast bg-opposite text-opposite">
@@ -977,7 +977,7 @@ function UserReimportFilePage(props: { user: UserData }) {
 
   const [file, setFile] = useState<Nullable<File>>()
 
-  const loadOrAlert = useCallback(() => Promise.try(async () => {
+  const loadOrDisplay = useCallback(() => Promise.try(async () => {
     if (file == null)
       return
 
@@ -1088,7 +1088,7 @@ function UserReimportFilePage(props: { user: UserData }) {
         <WideOppositeButton
           type="button"
           disabled={error != null}
-          onClick={loadOrAlert}>
+          onClick={loadOrDisplay}>
           {error != null ? error : "Open"}
         </WideOppositeButton>
       </div>
@@ -1112,7 +1112,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
 
   const [fsfh, setFsfh] = useState<Nullable<FileSystemFileHandle>>(user.fsfh)
 
-  const pickOrAlert = useCallback(() => Promise.try(async () => {
+  const pickOrDisplay = useCallback(() => Promise.try(async () => {
     const [fsfh] = await window.showOpenFilePicker!({ id: "root", startIn: "documents", types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     if (fsfh == null)
@@ -1123,7 +1123,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     setFsfh(fsfh)
   }).catch(Errors.display), [])
 
-  const dropOrAlert = useCallback((e: DragEvent<HTMLButtonElement>) => Promise.try(async () => {
+  const dropOrDisplay = useCallback((e: DragEvent<HTMLButtonElement>) => Promise.try(async () => {
     e.preventDefault()
 
     const [item] = e.dataTransfer.items as unknown as Iterable<DataTransferItem>
@@ -1136,7 +1136,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     setFsfh(fsfh)
   }).catch(Errors.display), [])
 
-  const openOrAlert = useCallback(() => Promise.try(async () => {
+  const openOrDisplay = useCallback(() => Promise.try(async () => {
     if (fsfh == null)
       return
 
@@ -1209,9 +1209,9 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         {"showOpenFilePicker" in window === true &&
           <button className="absolute inset-0 opacity-0 cursor-pointer"
             type="button"
-            onClick={pickOrAlert}
+            onClick={pickOrDisplay}
             onDragOver={Events.preventDefault}
-            onDrop={dropOrAlert} />}
+            onDrop={dropOrDisplay} />}
         {fsfh != null &&
           <div className="po-2">
             {fsfh.name}
@@ -1250,7 +1250,7 @@ function UserReimportFsfhPage(props: { user: UserData }) {
         <WideOppositeButton
           type="button"
           disabled={error != null}
-          onClick={openOrAlert}>
+          onClick={openOrDisplay}>
           {error != null ? error : "Open"}
         </WideOppositeButton>
       </div>
@@ -1264,7 +1264,7 @@ function UserRemoveButton(props: { user: UserData }) {
   const close = useCloseContext().getOrThrow()
   const store = useStoreContext().getOrThrow()
 
-  const removeOrAlert = useCallback(() => Promise.try(async () => {
+  const removeOrDisplay = useCallback(() => Promise.try(async () => {
     if (!confirm(Lang.match({ en: "Are you sure you want to remove this user?", zh: "您确定要删除此用户吗？", hi: "क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं?", es: "¿Estás seguro de que deseas eliminar este usuario?", ar: "هل أنت متأكد أنك تريد إزالة هذا المستخدم؟", fr: "Êtes-vous sûr de vouloir supprimer cet utilisateur ?", de: "Sind Sie sicher, dass Sie diesen Benutzer entfernen möchten?", ru: "Вы уверены, что хотите удалить этого пользователя?", pt: "Tem certeza de que deseja remover este usuário?", ja: "このユーザーを削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਉਪਭੋਗਤਾ ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?", bn: "আপনি কি সত্যিই এই ব্যবহারকারীকে সরাতে চান?", id: "Apakah Anda yakin ingin menghapus pengguna ini?", ur: "کیا آپ واقعی اس صارف کو ہٹانا چاہتے ہیں؟", ms: "Adakah anda pasti mahu menghapus pengguna ini?", it: "Sei sicuro di voler rimuovere questo utente?", tr: "Bu kullanıcıyı kaldırmak istediğinizden emin misiniz?", ta: "நீங்கள் உண்மையில் இந்த பயனரை அகற்ற விரும்புகிறீர்களா?", te: "మీరు నిజంగా ఈ వినియోగదారుని తొలగించాలనుకుంటున్నారా?", ko: "이 사용자를 정말로 제거하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa người dùng này không?", pl: "Czy na pewno chcesz usunąć tego użytkownika?", ro: "Ești sigur că vrei să ștergi acest utilizator?", nl: "Weet je zeker dat je deze gebruiker wilt verwijderen?", el: "Είστε βέβαιοι ότι θέλετε να αφαιρέσετε αυτόν τον χρήστη;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้", cs: "Opravdu chcete tohoto uživatele odstranit?", hu: "Biztos benne, hogy el akarja távolítani ezt a felhasználót?", sv: "Är du säker på att du vill ta bort den här användaren?", da: "Er du sikker på, at du vil fjerne denne bruger?" })))
       return
 
@@ -1280,7 +1280,7 @@ function UserRemoveButton(props: { user: UserData }) {
   }).catch(Errors.display), [store, user, close])
 
   return <WideNakedMenuButton
-    onClick={removeOrAlert}>
+    onClick={removeOrDisplay}>
     <Outline.TrashIcon className="size-5" />
     {Lang.match({ en: "Remove", zh: "删除", hi: "हटाएं", es: "Eliminar", ar: "إزالة", fr: "Supprimer", de: "Entfernen", ru: "Удалить", pt: "Remover", ja: "削除", pa: "ਹਟਾਓ", bn: "অপসারণ করুন", id: "Hapus", ur: "ہٹائیں", ms: "Hapus", it: "Rimuovi", tr: "Kaldır", ta: "அகற்று", te: "తొలగించు", ko: "제거하다", vi: "Xóa bỏ", pl: "Usuń", ro: "Eliminați", nl: "Verwijderen", el: "Αφαίρεση", th: "ลบออก", cs: "Odstranit", hu: "Eltávolítás", sv: "Ta bort", da: "Fjern" })}
   </WideNakedMenuButton>

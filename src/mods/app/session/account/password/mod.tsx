@@ -99,7 +99,7 @@ export function PasswordAccountAddPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, username, password, totpseed, notes])
 
-  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrDisplay = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -116,7 +116,7 @@ export function PasswordAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrDisplay = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -270,7 +270,7 @@ export function PasswordAccountAddPage() {
         <div className="h-2" />
         <input className="po-2 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-[min(4rem,10dvw)] font-mono tracking-widest"
           readOnly
-          onClick={copyTheTotpcode.copyOrAlert}
+          onClick={copyTheTotpcode.copyOrDisplay}
           value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
         <div className="h-6" />
         <div className="font-medium">
@@ -293,14 +293,14 @@ export function PasswordAccountAddPage() {
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={encryptAndWriteOrAlert}>
+              onClick={encryptAndWriteOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={encryptAndSaveOrAlert}>
+              onClick={encryptAndSaveOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
         </div>
@@ -419,7 +419,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
             <div className="flex items-center gap-2">
               <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
                 type="button"
-                onClick={copyTheUsername.copyOrAlert}>
+                onClick={copyTheUsername.copyOrDisplay}>
                 <InButton>
                   {copyTheUsername.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
                 </InButton>
@@ -453,7 +453,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
               </button>
               <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
                 type="button"
-                onClick={copyThePassword.copyOrAlert}>
+                onClick={copyThePassword.copyOrDisplay}>
                 <InButton>
                   {copyThePassword.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
                 </InButton>
@@ -473,7 +473,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
           <input className="po-2 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-[min(4rem,10dvw)] font-mono tracking-widest"
             readOnly
             autoComplete="off"
-            onClick={copyTheTotpcode.copyOrAlert}
+            onClick={copyTheTotpcode.copyOrDisplay}
             value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
         </Fragment>}
         {notes && <Fragment>
@@ -565,7 +565,7 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
 
   const [torch, setTorch] = useState(false)
 
-  const captureOrAlert = useCallback((signal: AbortSignal) => Promise.try(async () => {
+  const captureOrDisplay = useCallback((signal: AbortSignal) => Promise.try(async () => {
     using stack = new DisposableStack()
 
     if (video == null)
@@ -619,10 +619,10 @@ export function ScanPage(props: { value: string } & { onChange(value: string): v
   useEffect(() => {
     const aborter = new AbortController()
 
-    captureOrAlert(aborter.signal)
+    captureOrDisplay(aborter.signal)
 
     return () => aborter.abort()
-  }, [captureOrAlert])
+  }, [captureOrDisplay])
 
   /**
    * Fix iOS Safari pausing the video after browser prompts

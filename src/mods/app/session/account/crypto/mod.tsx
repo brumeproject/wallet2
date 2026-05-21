@@ -83,7 +83,7 @@ export function CryptoAccountAddPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, seedphrase, notes])
 
-  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrDisplay = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -100,7 +100,7 @@ export function CryptoAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrDisplay = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -244,14 +244,14 @@ export function CryptoAccountAddPage() {
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={encryptAndWriteOrAlert}>
+              onClick={encryptAndWriteOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={encryptAndSaveOrAlert}>
+              onClick={encryptAndSaveOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση ", th: "บันทึก ", cs: "Uložit ", hu: "Mentés ", sv: "Spara ", da: "Gem" })}
             </WideOppositeButton>}
         </div>
@@ -479,7 +479,7 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
             {flipped ? Lang.match({ en: "Hide", zh: "隐藏", hi: "छिपाएं", es: "Ocultar", ar: "إخفاء", fr: "Masquer", de: "Verbergen", ru: "Скрыть", pt: "Ocultar", ja: "非表示", pa: "ਛੁਪਾਓ", bn: "লুকান", id: "Sembunyikan", ur: "چھپائیں", ms: "Sembunyikan", it: "Nascondi", tr: "Gizle", ta: "மறை", te: "దాచు", ko: "숨기기", vi: "Ẩn", pl: "Ukryj", ro: "Ascunde", nl: "Verbergen", el: "Απόκρυψη", th: "ซ่อน", cs: "Skrýt", hu: "Elrejt", sv: "Dölj", da: "Skjul" }) : Lang.match({ en: "Show", zh: "显示", hi: "दिखाएं", es: "Mostrar", ar: "إظهار", fr: "Afficher", de: "Anzeigen", ru: "Показать", pt: "Mostrar", ja: "表示", pa: "ਦਿਖਾਓ", bn: "প্রদর্শন", id: "Tampilkan", ur: "دکھائیں", ms: "Tunjukkan", it: "Mostra", tr: "Göster", ta: "காட்டு", te: "చూపించు", ko: "보이기", vi: "Hiển thị", pl: "Pokaż", ro: "Afișează", nl: "Tonen", el: "Εμφάνιση", th: "แสดง", cs: "Zobrazit", hu: "Mutasd", sv: "Visa", da: "Vis" })}
           </WideContrastButton>
           <WideContrastButton
-            onClick={copyTheSeedPhrase.copyOrAlert}>
+            onClick={copyTheSeedPhrase.copyOrDisplay}>
             {copyTheSeedPhrase.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
             {copyTheSeedPhrase.copied ? Lang.match({ en: "Copied", zh: "已复制", hi: "कॉपी किया गया", es: "Copiado", ar: "تم النسخ", fr: "Copié", de: "Kopiert", ru: "Скопировано", pt: "Copiado", ja: "コピーしました", pa: "ਨਕਲ ਕੀਤਾ", bn: "কপি করা হয়েছে", id: "Disalin", ur: "کاپی کیا گیا", ms: "Disalin", it: "Copiato", tr: "Kopyalandı", ta: "நகலெடுக்கப்பட்டது", te: "నకలించబడింది", ko: "복사됨", vi: "Đã sao chép", pl: "Skopiowano", ro: "Copiat", nl: "Gekopieerd", el: "Αντιγράφηκε ", th: "คัดลอกแล้ว ", cs: "Zkopírováno ", hu: "Másolva ", sv: "Kopierat ", da: "Kopieret" }) : Lang.match({ en: "Copy", zh: "复制", hi: "कॉपी करें", es: "Copiar", ar: "نسخ", fr: "Copier", de: "Kopieren", ru: "Копировать", pt: "Copiar", ja: "コピー", pa: "ਨਕਲ ਕਰੋ", bn: "কপি করুন", id: "Salin", ur: "کاپی کریں", ms: "Salin", it: "Copia", tr: "Kopyala", ta: "நகலெடுக்கவும்", te: "నకలించు", ko: "복사", vi: "Sao chép", pl: "Kopiuj", ro: "Copiați", nl: "Kopiëren", el: "Αντιγραφή ", th: "คัดลอก ", cs: "Kopírovat ", hu: "Másolás ", sv: "Kopiera ", da: "Kopier" })}
           </WideContrastButton>

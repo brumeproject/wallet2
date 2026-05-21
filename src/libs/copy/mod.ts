@@ -5,7 +5,7 @@ import { Nullable } from "../nullable/mod.ts";
 export function useCopy(value: Nullable<string>) {
   const [copied, setCopied] = useState(false)
 
-  const copyOrAlert = useCallback(() => Promise.try(async () => {
+  const copyOrDisplay = useCallback(() => Promise.try(async () => {
     if (value == null)
       return
     await navigator.clipboard.writeText(value)
@@ -13,5 +13,5 @@ export function useCopy(value: Nullable<string>) {
     setCopied(true)
   }).catch(Errors.display), [value])
 
-  return { copied, copyOrAlert }
+  return { copied, copyOrDisplay }
 }

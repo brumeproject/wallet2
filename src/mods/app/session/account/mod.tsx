@@ -400,7 +400,7 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, $entry])
 
-  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrDisplay = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -417,7 +417,7 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
     session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrDisplay = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -451,14 +451,14 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
     {session.value.user.fsfh != null &&
       <WideNakedMenuButton
         type="button"
-        onClick={encryptAndWriteOrAlert}>
+        onClick={encryptAndWriteOrDisplay}>
         <Outline.TrashIcon className="size-5" />
         {Lang.match({ en: "Trash", zh: "丢弃", hi: "कूड़ेदान", es: "Papelera", ar: "سلة المهملات", fr: "Corbeille", de: "Papierkorb", ru: "Корзина", pt: "Lixeira", ja: "ゴミ箱", pa: "ਕੂੜੇਦਾਨ", bn: "ট্র্যাশ", id: "Sampah", ur: "کوڑے دان", ms: "Tong sampah", it: "Cestino", tr: "Çöp Kutusu", ta: "குப்பை பெட்டி", te: "ట్రాష్ బిన్", ko: "휴지통", vi: "Thùng rác", pl: "Kosz na śmieci", ro: "Coș de gunoi", nl: "Prullenbak", el: "Κάδος απορριμμάτων", th: "ถังขยะ", cs: "Koš na odpadky", hu: "Szemetesláda", sv: "Papperskorg", da: "Skraldespand" })}
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
       <WideNakedMenuButton
         type="button"
-        onClick={encryptAndSaveOrAlert}>
+        onClick={encryptAndSaveOrDisplay}>
         <Outline.TrashIcon className="size-5" />
         {Lang.match({ en: "Trash", zh: "丢弃", hi: "कूड़ेदान", es: "Papelera", ar: "سلة المهملات", fr: "Corbeille", de: "Papierkorb", ru: "Корзина", pt: "Lixeira", ja: "ゴミ箱", pa: "ਕੂੜੇਦਾਨ", bn: "ট্র্যাশ", id: "Sampah", ur: "کوڑے دان", ms: "Tong sampah", it: "Cestino", tr: "Çöp Kutusu", ta: "குப்பை பெட்டி", te: "ట్రాష్ బిన్", ko: "휴지통", vi: "Thùng rác", pl: "Kosz na śmieci", ro: "Coș de gunoi", nl: "Prullenbak", el: "Κάδος απορριμμάτων", th: "ถังขยะ", cs: "Koš na odpadky", hu: "Szemetesláda", sv: "Papperskorg", da: "Skraldespand" })}
       </WideNakedMenuButton>}
@@ -481,7 +481,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, $entry])
 
-  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrDisplay = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -498,7 +498,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
     session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrDisplay = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -532,14 +532,14 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
     {session.value.user.fsfh != null &&
       <WideNakedMenuButton
         type="button"
-        onClick={encryptAndWriteOrAlert}>
+        onClick={encryptAndWriteOrDisplay}>
         <Outline.TrashIcon className="size-5" />
         {Lang.match({ en: "Untrash", zh: "恢复", hi: "पुनः प्राप्त करें", es: "Restaurar", ar: "استعادة", fr: "Restaurer", de: "Wiederherstellen", ru: "Восстановить", pt: "Restaurar", ja: "復元", pa: "ਪੁਨਰ ਪ੍ਰਾਪਤ ਕਰੋ", bn: "পুনরুদ্ধার", id: "Pulihkan", ur: "بحال کریں", ms: "Pulihkan", it: "Ripristina", tr: "Geri Yükle", ta: "மீட்டெடுக்கவும்", te: "పునరుద్ధరించు", ko: "복원", vi: "Khôi phục", pl: "Przywróć", ro: "Restabilește", nl: "Herstellen", el: "Επαναφορά", th: "กู้คืน", cs: "Obnovit", hu: "Visszaállítás", sv: "Återställ", da: "Gendan" })}
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
       <WideNakedMenuButton
         type="button"
-        onClick={encryptAndSaveOrAlert}>
+        onClick={encryptAndSaveOrDisplay}>
         <Outline.TrashIcon className="size-5" />
         {Lang.match({ en: "Untrash", zh: "恢复", hi: "पुनः प्राप्त करें", es: "Restaurar", ar: "استعادة", fr: "Restaurer", de: "Wiederherstellen", ru: "Восстановить", pt: "Restaurar", ja: "復元", pa: "ਪੁਨਰ ਪ੍ਰਾਪਤ ਕਰੋ", bn: "পুনরুদ্ধার", id: "Pulihkan", ur: "بحال کریں", ms: "Pulihkan", it: "Ripristina", tr: "Geri Yükle", ta: "மீட்டெடுக்கவும்", te: "పునరుద్ధరించు", ko: "복원", vi: "Khôi phục", pl: "Przywróć", ro: "Restabilește", nl: "Herstellen", el: "Επαναφορά", th: "กู้คืน", cs: "Obnovit", hu: "Visszaállítás", sv: "Återställ", da: "Gendan" })}
       </WideNakedMenuButton>}
@@ -564,7 +564,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, $entry])
 
-  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrDisplay = useCallback(() => Promise.try(async () => {
     if (!confirm(Lang.match({ en: "Are you sure you want to permanently delete this account?", zh: "您确定要永久删除此账户吗？", hi: "क्या आप वाकई इस खाते को स्थायी रूप से हटाना चाहते हैं?", es: "¿Está seguro de que desea eliminar permanentemente esta cuenta?", ar: "هل أنت متأكد أنك تريد حذف هذا الحساب نهائيًا؟", fr: "Êtes-vous sûr de vouloir supprimer définitivement ce compte ?", de: "Sind Sie sicher, dass Sie dieses Konto dauerhaft löschen möchten?", ru: "Вы уверены, что хотите навсегда удалить эту учетную запись?", pt: "Tem certeza de que deseja excluir permanentemente esta conta?", ja: "このアカウントを完全に削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਖਾਤੇ ਨੂੰ ਸਥਾਈ रूप से हटाना चाहते हैं?", bn: "আপনি কি সত্যিই এই অ্যাকাউন্টটি স্থায়ীভাবে মুছে ফেলতে চান?", id: "Apakah Anda yakin ingin menghapus akun ini secara permanen?", ur: "کیا آپ واقعی اس اکاؤنٹ کو مستقل طور پر حذف کرنا چاہتے ہیں؟", ms: "Adakah anda pasti mahu memadam akaun ini secara kekal?", it: "Sei sicuro di voler eliminare definitivamente questo account?", tr: "Bu hesabı kalıcı olarak silmek istediğinizden emin misiniz?", ta: "இந்த கணக்கை நிரந்தரமாக நீக்க விரும்புகிறீர்களா?", te: "మీరు ఈ ఖాతాను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?", ko: "이 계정을 영구적으로 삭제하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này không?", pl: "Czy na pewno chcesz trwale usunąć to konto?", ro: "Sigur doriți să ștergeți definitiv acest cont?", nl: "Weet je zeker dat je dit account permanent wilt verwijderen?", el: "Είστε σίγουροι ότι θέλετε να διαγράψετε οριστικά αυτόν τον λογαριασμό;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้อย่างถาวร?", cs: "Opravdu chcete tento účet trvale smazat?", hu: "Biztos benne, hogy véglegesen törölni szeretné ezt a fiókot?", sv: "Är du säker på att du vill ta bort det här kontot permanent?", da: "Er du sikker på, at du vil slette denne konto permanent?" })))
       return
 
@@ -584,7 +584,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
     session.update()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrDisplay = useCallback(() => Promise.try(async () => {
     if (!confirm(Lang.match({ en: "Are you sure you want to permanently delete this account?", zh: "您确定要永久删除此账户吗？", hi: "क्या आप वाकई इस खाते को स्थायी रूप से हटाना चाहते हैं?", es: "¿Está seguro de que desea eliminar permanentemente esta cuenta?", ar: "هل أنت متأكد أنك تريد حذف هذا الحساب نهائيًا؟", fr: "Êtes-vous sûr de vouloir supprimer définitivement ce compte ?", de: "Sind Sie sicher, dass Sie dieses Konto dauerhaft löschen möchten?", ru: "Вы уверены, что хотите навсегда удалить эту учетную запись?", pt: "Tem certeza de que deseja excluir permanentemente esta conta?", ja: "このアカウントを完全に削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਖਾਤੇ ਨੂੰ ਸਥਾਈ रूप से हटाना चाहते हैं?", bn: "আপনি কি সত্যিই এই অ্যাকাউন্টটি স্থায়ীভাবে মুছে ফেলতে চান?", id: "Apakah Anda yakin ingin menghapus akun ini secara permanen?", ur: "کیا آپ واقعی اس اکاؤنٹ کو مستقل طور پر حذف کرنا چاہتے ہیں؟", ms: "Adakah anda pasti mahu memadam akaun ini secara kekal?", it: "Sei sicuro di voler eliminare definitivamente questo account?", tr: "Bu hesabı kalıcı olarak silmek istediğinizden emin misiniz?", ta: "இந்த கணக்கை நிரந்தரமாக நீக்க விரும்புகிறீர்களா?", te: "మీరు ఈ ఖాతాను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?", ko: "이 계정을 영구적으로 삭제하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này không?", pl: "Czy na pewno chcesz trwale usunąć to konto?", ro: "Sigur doriți să ștergeți definitiv acest cont?", nl: "Weet je zeker dat je dit account permanent wilt verwijderen?", el: "Είστε σίγουροι ότι θέλετε να διαγράψετε οριστικά αυτόν τον λογαριασμό;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้อย่างถาวร?", cs: "Opravdu chcete tento účet trvale smazat?", hu: "Biztos benne, hogy véglegesen törölni szeretné ezt a fiókot?", sv: "Är du säker på att du vill ta bort det här kontot permanent?", da: "Er du sikker på, at du vil slette denne konto permanent?" })))
       return
 
@@ -621,14 +621,14 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
     {session.value.user.fsfh != null &&
       <WideNakedMenuButton
         type="button"
-        onClick={encryptAndWriteOrAlert}>
+        onClick={encryptAndWriteOrDisplay}>
         <Outline.ScissorsIcon className="size-5" />
         {Lang.match({ en: "Delete", zh: "删除", hi: "हटाएं", es: "Eliminar", ar: "حذف", fr: "Supprimer", de: "Löschen", ru: "Удалить", pt: "Excluir", ja: "削除", pa: "ਹਟਾਓ", bn: "মুছে ফেলুন", id: "Hapus", ur: "حذف کریں", ms: "Padam", it: "Elimina", tr: "Sil", ta: "அழிக்கவும்", te: "తొలగించు", ko: "삭제", vi: "Xóa", pl: "Usuń", ro: "Șterge", nl: "Verwijderen", el: "Διαγραφή", th: "ลบ", cs: "Smazat", hu: "Törlés", sv: "Radera", da: "Slet" })}
       </WideNakedMenuButton>}
     {session.value.user.fsfh == null &&
       <WideNakedMenuButton
         type="button"
-        onClick={encryptAndSaveOrAlert}>
+        onClick={encryptAndSaveOrDisplay}>
         <Outline.ScissorsIcon className="size-5" />
         {Lang.match({ en: "Delete", zh: "删除", hi: "हटाएं", es: "Eliminar", ar: "حذف", fr: "Supprimer", de: "Löschen", ru: "Удалить", pt: "Excluir", ja: "削除", pa: "ਹਟਾਓ", bn: "মুছে ফেলুন", id: "Hapus", ur: "حذف کریں", ms: "Padam", it: "Elimina", tr: "Sil", ta: "அழிக்கவும்", te: "తొలగించు", ko: "삭제", vi: "Xóa", pl: "Usuń", ro: "Șterge", nl: "Verwijderen", el: "Διαγραφή", th: "ลบ", cs: "Smazat", hu: "Törlés", sv: "Radera", da: "Slet" })}
       </WideNakedMenuButton>}

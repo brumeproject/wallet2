@@ -106,7 +106,7 @@ export function KeypairAccountAddPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
   }, [session, title, color, pubkey, sigkey, username, password, totpseed, notes])
 
-  const encryptAndWriteOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndWriteOrDisplay = useCallback(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -123,7 +123,7 @@ export function KeypairAccountAddPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const encryptAndSaveOrAlert = useCallback(() => Promise.try(async () => {
+  const encryptAndSaveOrDisplay = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -317,7 +317,7 @@ export function KeypairAccountAddPage() {
         <div className="h-2" />
         <input className="po-2 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-[min(4rem,10dvw)] font-mono tracking-widest"
           readOnly
-          onClick={copyTheTotpcode.copyOrAlert}
+          onClick={copyTheTotpcode.copyOrDisplay}
           value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
         <div className="h-6" />
         <div className="font-medium">
@@ -340,14 +340,14 @@ export function KeypairAccountAddPage() {
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={encryptAndWriteOrAlert}>
+              onClick={encryptAndWriteOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
           {session.value.user.fsfh == null &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={encryptAndSaveOrAlert}>
+              onClick={encryptAndSaveOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
         </div>
@@ -420,7 +420,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
   const copyThePassword = useCopy(password)
   const copyTheTotpcode = useCopy(totpcode)
 
-  const savePubKeyOrAlert = useCallback(() => Promise.try(async () => {
+  const savePubKeyOrDisplay = useCallback(() => Promise.try(async () => {
     const content = pubkey || ""
 
     const file = new File([content], "key.pub", { type: "application/octet-stream" })
@@ -444,7 +444,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
     }
   }).catch(Errors.display), [pubkey])
 
-  const saveSigKeyOrAlert = useCallback(() => Promise.try(async () => {
+  const saveSigKeyOrDisplay = useCallback(() => Promise.try(async () => {
     const content = sigkey || ""
 
     const file = new File([content], "key", { type: "application/octet-stream" })
@@ -524,7 +524,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             <div className="flex items-center gap-2">
               <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
                 type="button"
-                onClick={copyTheUsername.copyOrAlert}>
+                onClick={copyTheUsername.copyOrDisplay}>
                 <InButton>
                   {copyTheUsername.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
                 </InButton>
@@ -551,12 +551,12 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
           <div className="h-2" />
           <div className="flex items-center flex-wrap-reverse gap-2">
             <WideContrastButton
-              onClick={copyThePubKey.copyOrAlert}>
+              onClick={copyThePubKey.copyOrDisplay}>
               {copyThePubKey.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               {copyThePubKey.copied ? Lang.match({ en: "Copied", zh: "已复制", hi: "कॉपी किया गया", es: "Copiado", ar: "تم النسخ", fr: "Copié", de: "Kopiert", ru: "Скопировано", pt: "Copiado", ja: "コピーしました", pa: "ਨਕਲ ਕੀਤਾ", bn: "কপি করা হয়েছে", id: "Disalin", ur: "نقل کیا گیا", ms: "Disalin", it: "Copiato", tr: "Kopyalandı", ta: "நகலெடுக்கப்பட்டது", te: "నకలు చేయబడింది", ko: "복사됨", vi: "Đã sao chép", pl: "Skopiowano", ro: "Copiat", nl: "Gekopieerd", el: "Αντιγράφηκε", th: "คัดลอกแล้ว", cs: "Zkopírováno", hu: "Másolva", sv: "Kopierad", da: "Kopieret" }) : Lang.match({ en: "Copy", zh: "复制", hi: "कॉपी", es: "Copiar", ar: "نسخ", fr: "Copier", de: "Kopieren", ru: "Копировать", pt: "Copiar", ja: "コピー", pa: "ਨਕਲ ਕਰੋ", bn: "কপি করুন", id: "Salin", ur: "نقل کریں", ms: "Salin", it: "Copia", tr: "Kopyala", ta: "நகலெடுக்கவும்", te: "నకలు చేయండి", ko: "복사", vi: "Sao chép", pl: "Kopiuj", ro: "Copiați", nl: "Kopiëren", el: "Αντιγραφή", th: "คัดลอก", cs: "Kopírovat", hu: "Másolás", sv: "Kopiera", da: "Kopier" })}
             </WideContrastButton>
             <WideContrastButton
-              onClick={savePubKeyOrAlert}>
+              onClick={savePubKeyOrDisplay}>
               <Outline.ArrowDownTrayIcon className="size-5" />
               {Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideContrastButton>
@@ -586,12 +586,12 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
               {flipped ? Lang.match({ en: "Hide", zh: "隐藏", hi: "छिपाएं", es: "Ocultar", ar: "إخفاء", fr: "Masquer", de: "Verstecken", ru: "Скрыть", pt: "Ocultar", ja: "非表示", pa: "ਛੁਪਾਓ", bn: "লুকান", id: "Sembunyikan", ur: "چھپائیں", ms: "Sembunyikan", it: "Nascondi", tr: "Gizle", ta: "மறை", te: "దాచు", ko: "숨기기", vi: "Ẩn", pl: "Ukryj", ro: "Ascunde", nl: "Verbergen", el: "Απόκρυψη", th: "ซ่อน", cs: "Skrýt", hu: "Elrejt", sv: "Dölj", da: "Skjul" }) : Lang.match({ en: "Show", zh: "显示", hi: "दिखाएँ", es: "Mostrar", ar: "إظهار", fr: "Afficher", de: "Anzeigen", ru: "Показать", pt: "Mostrar", ja: "表示", pa: "ਦਿਖਾਓ", bn: "দেখান", id: "Tampilkan", ur: "دکھائیں", ms: "Tunjukkan", it: "Mostra", tr: "Göster", ta: "காட்டு", te: "చూపించు", ko: "보이기", vi: "Hiển thị", pl: "Pokaż", ro: "Afișa", nl: "Tonen", el: "Εμφάνιση", th: "แสดง", cs: "Zobrazit", hu: "Mutasd", sv: "Visa", da: "Vis" })}
             </WideContrastButton>
             <WideContrastButton
-              onClick={copyTheSigKey.copyOrAlert}>
+              onClick={copyTheSigKey.copyOrDisplay}>
               {copyTheSigKey.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
               {copyTheSigKey.copied ? Lang.match({ en: "Copied", zh: "已复制", hi: "कॉपी किया गया", es: "Copiado", ar: "تم النسخ", fr: "Copié", de: "Kopiert", ru: "Скопировано", pt: "Copiado", ja: "コピーしました", pa: "ਨਕਲ ਕੀਤਾ", bn: "কপি করা হয়েছে", id: "Disalin", ur: "نقل کیا گیا", ms: "Disalin", it: "Copiato", tr: "Kopyalandı", ta: "நகலெடுக்கப்பட்டது", te: "నకలు చేయబడింది", ko: "복사됨", vi: "Đã sao chép", pl: "Skopiowano", ro: "Copiat", nl: "Gekopieerd", el: "Αντιγράφηκε", th: "คัดลอกแล้ว", cs: "Zkopírováno", hu: "Másolva", sv: "Kopierad", da: "Kopieret" }) : Lang.match({ en: "Copy", zh: "复制", hi: "कॉपी", es: "Copiar", ar: "نسخ", fr: "Copier", de: "Kopieren", ru: "Копировать", pt: "Copiar", ja: "コピー", pa: "ਨਕਲ ਕਰੋ", bn: "কপি করুন", id: "Salin", ur: "نقل کریں", ms: "Salin", it: "Copia", tr: "Kopyala", ta: "நகலெடுக்கவும்", te: "నకలు చేయండి", ko: "복사", vi: "Sao chép", pl: "Kopiuj", ro: "Copiați", nl: "Kopiëren", el: "Αντιγραφή", th: "คัดลอก", cs: "Kopírovat", hu: "Másolás", sv: "Kopiera", da: "Kopier" })}
             </WideContrastButton>
             <WideContrastButton
-              onClick={saveSigKeyOrAlert}>
+              onClick={saveSigKeyOrDisplay}>
               <Outline.ArrowDownTrayIcon className="size-5" />
               {Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideContrastButton>
@@ -623,7 +623,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
               </button>
               <button className="group rounded-full p-1 hover:bg-default-double-contrast focus-visible:bg-default-double-contrast focus-visible:outline-none"
                 type="button"
-                onClick={copyThePassword.copyOrAlert}>
+                onClick={copyThePassword.copyOrDisplay}>
                 <InButton>
                   {copyThePassword.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
                 </InButton>
@@ -643,7 +643,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
           <input className="po-2 rounded-xl bg-default-contrast text-center focus-visible:outline-none text-[min(4rem,10dvw)] font-mono tracking-widest"
             readOnly
             autoComplete="off"
-            onClick={copyTheTotpcode.copyOrAlert}
+            onClick={copyTheTotpcode.copyOrDisplay}
             value={totpcode ? (copyTheTotpcode.copied ? "COPIED" : totpcode) : "------"} />
         </Fragment>}
         {notes && <Fragment>

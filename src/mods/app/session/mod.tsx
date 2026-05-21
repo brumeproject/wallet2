@@ -305,7 +305,7 @@ export function SessionExportPage() {
     return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(composite))
   }, [session, pass])
 
-  const pickOrAlert = useCallback(() => Promise.try(async () => {
+  const pickOrDisplay = useCallback(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     const content = await encryptOrThrow()
@@ -317,7 +317,7 @@ export function SessionExportPage() {
     close()
   }).catch(Errors.display), [encryptOrThrow, close])
 
-  const saveOrAlert = useCallback(() => Promise.try(async () => {
+  const saveOrDisplay = useCallback(() => Promise.try(async () => {
     const content = await encryptOrThrow()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -391,14 +391,14 @@ export function SessionExportPage() {
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={pickOrAlert}>
+              onClick={pickOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
           {"showSaveFilePicker" in window === false &&
             <WideOppositeButton
               type="button"
               disabled={error != null}
-              onClick={saveOrAlert}>
+              onClick={saveOrDisplay}>
               {error != null ? error : Lang.match({ en: "Save", zh: "保存", hi: "सहेजें", es: "Guardar", ar: "حفظ", fr: "Enregistrer", de: "Speichern", ru: "Сохранить", pt: "Salvar", ja: "保存", pa: "ਸੰਭਾਲੋ", bn: "সংরক্ষণ করুন", id: "Simpan", ur: "محفوظ کریں", ms: "Simpan", it: "Salva", tr: "Kaydet", ta: "சேமிக்கவும்", te: "సేవ్ చేయండి", ko: "저장", vi: "Lưu", pl: "Zapisz", ro: "Salvează", nl: "Opslaan", el: "Αποθήκευση", th: "บันทึก", cs: "Uložit", hu: "Mentés", sv: "Spara", da: "Gem" })}
             </WideOppositeButton>}
         </div>
