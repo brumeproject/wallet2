@@ -1,4 +1,4 @@
-@import "../node_modules/@hazae41/labase/src/index.css";
+@import "../node_modules/@hazae41/labase/src/mod.css";
 
 /* body {
   --safe-area-inset-top: 32px;
@@ -6,51 +6,3 @@
   --safe-area-inset-right: 32px;
   --safe-area-inset-bottom: 32px;
 } */
-
-@property --start-fade {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0;
-}
-
-@property --end-fade {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0;
-}
-
-@keyframes scrollfade {
-  0% {
-    --start-fade: 0;
-  }
-
-  10%,
-  100% {
-    --start-fade: 4rem;
-  }
-
-  0%,
-  90% {
-    --end-fade: 4rem;
-  }
-
-  100% {
-    --end-fade: 0;
-  }
-}
-
-@utility scrollfade-x-default {
-  animation: scrollfade;
-  animation-timeline: --scrollfade;
-  scroll-timeline: --scrollfade x;
-
-  @variant light {
-    mask-image: linear-gradient(to right, transparent, black var(--start-fade) calc(100% - var(--end-fade)), transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, black var(--start-fade) calc(100% - var(--end-fade)), transparent);
-  }
-
-  @variant dark {
-    mask-image: linear-gradient(to right, transparent, white var(--start-fade) calc(100% - var(--end-fade)), transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, white var(--start-fade) calc(100% - var(--end-fade)), transparent);
-  }
-}
