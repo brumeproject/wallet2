@@ -1,7 +1,7 @@
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
 import { useCopy } from "@/libs/copy/mod.ts";
-import { PathPaper, WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
+import { WideNakedMenuAnchor } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -13,6 +13,7 @@ import { useSubmit } from "@/libs/submit/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
+import { PathPaper } from "@hazae41/modal";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useMemo, useState } from "react";
 import { useSessionContext } from "../../mod.tsx";

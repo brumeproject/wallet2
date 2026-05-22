@@ -28,6 +28,7 @@
     "@hazae41/kdbx": "0.2.16",
     "@hazae41/labase": "1.0.31",
     "@hazae41/latrine": "^2.1.2",
+    "@hazae41/modal": "^0.1.1",
     "@hazae41/pendule": "^1.0.1",
     "@hazae41/plume": "4.0.1",
     "@hazae41/react-close-context": "1.0.3",

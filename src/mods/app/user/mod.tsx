@@ -2,8 +2,7 @@
 
 import { InOther, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
-import { PathBoard } from "@/libs/dialog/board/mod.tsx";
-import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
+import { WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
@@ -16,6 +15,7 @@ import { useSubmit } from "@/libs/submit/mod.ts";
 import { Readable, Unknown, Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
+import { PathBoard, PathPaper } from "@hazae41/modal";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Result } from "@hazae41/result-and-option";
 import { webAuthnStorage } from "@hazae41/webauthnstorage";

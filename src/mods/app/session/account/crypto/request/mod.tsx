@@ -1,6 +1,5 @@
 import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
-import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -12,6 +11,7 @@ import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
 import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
+import { PathBoard } from "@hazae41/modal";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Result } from "@hazae41/result-and-option";
 import { secp256k1 } from "@noble/curves/secp256k1.js";

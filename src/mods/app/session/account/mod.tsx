@@ -1,6 +1,5 @@
 import { InOther, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton } from "@/libs/button/mod.tsx";
-import { PathBoard } from "@/libs/dialog/board/mod.tsx";
 import { WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -13,6 +12,7 @@ import { KeypairAccountAddMenuAnchor, KeypairAccountAddPage, KeypairAccountPage 
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
+import { PathBoard } from "@hazae41/modal";
 import React, { Fragment, useCallback, useMemo } from "react";
 import { useSessionContext } from "../mod.tsx";
 import { CardAccountAddMenuAnchor, CardAccountAddPage, CardAccountPage } from "./card/mod.tsx";

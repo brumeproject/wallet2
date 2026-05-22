@@ -1,7 +1,6 @@
 import { InOther } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
-import { PathBoard } from "@/libs/dialog/board/mod.tsx";
-import { PathPaper, WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
+import { WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { useAutoFocus } from "@/libs/focus/mod.ts";
@@ -19,6 +18,7 @@ import { PasswordAccountAddPage } from "@/mods/app/session/account/password/mod.
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext, useSearchState } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
+import { PathBoard, PathPaper } from "@hazae41/modal";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Option } from "@hazae41/result-and-option";
 import React, { createContext, Fragment, useCallback, useContext, useDeferredValue, useMemo, useState } from "react";
