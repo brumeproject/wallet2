@@ -1,10 +1,10 @@
 import { InOther, OppositeAnchor } from "@/libs/anchor/mod.tsx";
 import { InButton } from "@/libs/button/mod.tsx";
-import { WideNakedMenuButton } from "@/libs/dialog/paper/mod.tsx";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { getEntryType } from "@/libs/kdbx/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
+import { WideNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useSubmit } from "@/libs/submit/mod.ts";
