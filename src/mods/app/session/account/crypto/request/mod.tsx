@@ -5,6 +5,7 @@ import { Ed25519 } from "@/libs/ed25519/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
+import { base58 } from "@hazae41/base58";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
@@ -15,7 +16,6 @@ import { useCloseContext } from "@hazae41/react-close-context";
 import { Result } from "@hazae41/result-and-option";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
-import { base58 } from "@scure/base";
 import React, { Fragment, useCallback, useMemo, useState } from "react";
 
 React;

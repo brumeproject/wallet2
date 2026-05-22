@@ -14,6 +14,7 @@
   "dependencies": {
     "@hazae41/argon2": "2.0.5",
     "@hazae41/argon2-wasm": "2.0.0",
+    "@hazae41/base58": "^2.0.0",
     "@hazae41/binary": "2.0.2",
     "@hazae41/broca": "0.1.4",
     "@hazae41/chacha20poly1305": "2.0.2",
@@ -26,8 +27,8 @@
     "@hazae41/jsonrpc": "1.1.11",
     "@hazae41/kdbx": "0.2.16",
     "@hazae41/labase": "1.0.31",
-    "@hazae41/latrine": "2.1.2",
-    "@hazae41/pendule": "1.0.1",
+    "@hazae41/latrine": "^2.1.2",
+    "@hazae41/pendule": "^1.0.1",
     "@hazae41/plume": "4.0.1",
     "@hazae41/react-close-context": "1.0.3",
     "@hazae41/request-idle-callback-polyfill": "1.0.0",

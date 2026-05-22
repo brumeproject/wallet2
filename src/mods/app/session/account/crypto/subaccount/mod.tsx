@@ -11,6 +11,7 @@ import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { CryptoSessionAddAnchor, CryptoSessionAddPage, CryptoSessionAnchor } from "@/mods/app/session/account/crypto/session/mod.tsx";
 import { useSessionContext } from "@/mods/app/session/mod.tsx";
+import { base58 } from "@hazae41/base58";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
@@ -19,7 +20,6 @@ import * as KDBX from "@hazae41/kdbx";
 import { IrnClient, WalletConnect, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult } from "@hazae41/latrine";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
-import { base58 } from "@scure/base";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { AccountMenuAnchor } from "../../mod.tsx";
 
