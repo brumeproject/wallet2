@@ -10,12 +10,12 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
+import { keccak256 } from "@hazae41/keccak256";
 import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
 import { PathBoard } from "@hazae41/modal";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Result } from "@hazae41/result-and-option";
-import { secp256k1 } from "@noble/curves/secp256k1.js";
-import { keccak_256 } from "@noble/hashes/sha3.js";
+import { secp256k1 } from "@hazae41/secp256k1";
 import React, { Fragment, useCallback, useMemo, useState } from "react";
 
 React;
@@ -150,9 +150,9 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
-    const upub = secp256k1.getPublicKey(xsig.key, false)
+    const upub = secp256k1.SecretKey.import(xsig.key).publish().export(false)
 
-    return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
+    return `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
   }, [seedphrase, subaccount])
 
   const getSolanaOrThrow = useCallback(async () => {
@@ -193,16 +193,12 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       payload.writeOrThrow(prefix)
       payload.writeOrThrow(msgraw)
 
-      const digest = keccak_256(payload.bytes)
+      const digest = keccak256.digest(payload.bytes)
+      const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
 
-      const sigraw = secp256k1.sign(digest, xsig.key, { prehash: false, format: "recovered" })
-      const sigref = secp256k1.Signature.fromBytes(sigraw, "recovered")
+      signed[64] += 27
 
-      const signed = new Cursor(new Uint8Array(64 + 1))
-      signed.writeOrThrow(sigref.toBytes("compact"))
-      signed.writeUint8OrThrow(sigref.recovery! + 27)
-
-      return `0x${signed.bytes.toHex()}`
+      return `0x${signed.toHex()}`
     }
 
     if (request.method === "solana_signMessage") {

@@ -16,10 +16,10 @@ import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } 
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import * as KDBX from "@hazae41/kdbx";
+import { keccak256 } from "@hazae41/keccak256";
 import { IrnClient, WalletConnect, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult } from "@hazae41/latrine";
 import { PathBoard, PathPaper } from "@hazae41/modal";
-import { secp256k1 } from "@noble/curves/secp256k1.js";
-import { keccak_256 } from "@noble/hashes/sha3.js";
+import { secp256k1 } from "@hazae41/secp256k1";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { AccountMenuAnchor } from "../../mod.tsx";
 
@@ -148,9 +148,9 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
-    const upub = secp256k1.getPublicKey(xsig.key, false)
+    const upub = secp256k1.SecretKey.import(xsig.key).publish().export(false)
 
-    return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
+    return `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
   }, [seedphrase, subaccount])
 
   const getSolanaOrThrow = useCallback(async () => {
@@ -414,9 +414,9 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
 
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
-    const upub = secp256k1.getPublicKey(xsig.key, false)
+    const upub = secp256k1.SecretKey.import(xsig.key).publish().export(false)
 
-    return `0x${keccak_256(upub.slice(1)).slice(-20).toHex()}`
+    return `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
   }, [seedphrase, subaccount])
 
   useEffect(() => {
