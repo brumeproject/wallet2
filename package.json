@@ -12,7 +12,7 @@
     "./out"
   ],
   "dependencies": {
-    "@hazae41/argon2": "2.0.8",
+    "@hazae41/argon2": "^2.0.9",
     "@hazae41/base58": "^2.0.0",
     "@hazae41/binary": "2.0.2",
     "@hazae41/broca": "0.1.4",
@@ -43,7 +43,7 @@
     "react-dom": "19.2.6"
   },
   "devDependencies": {
-    "@hazae41/glace": "1.0.32",
+    "@hazae41/glace": "^1.0.35",
     "@hazae41/phobos": "2.0.16",
     "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",

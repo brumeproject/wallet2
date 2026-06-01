@@ -11,10 +11,6 @@ import { ClientContext } from "@/libs/client/mod.tsx";
 import { dirs, Lang } from "@/libs/lang/mod.ts";
 import { StoreProvider } from "@/libs/store/mod.tsx";
 import { App } from "@/mods/app/mod.tsx";
-import { argon2 } from "@hazae41/argon2";
-import { argon2Wasm } from "@hazae41/argon2-wasm";
-import { chaCha20Poly1305 } from "@hazae41/chacha20poly1305";
-import { chaCha20Poly1305Wasm } from "@hazae41/chacha20poly1305-wasm";
 import { PathProvider, useHashPath } from "@hazae41/chemin";
 import { immutable } from "@hazae41/immutable";
 import { Rewind } from "@hazae41/rewind";
@@ -67,14 +63,6 @@ function Body() {
 
     document.documentElement.lang = lang
     document.documentElement.dir = dirs[lang]
-
-    argon2.set(argon2.fromWasm(argon2Wasm))
-
-    argon2Wasm.load().catch(console.error)
-
-    chaCha20Poly1305.set(chaCha20Poly1305.fromWasm(chaCha20Poly1305Wasm))
-
-    chaCha20Poly1305Wasm.load().catch(console.error)
 
     setClient(true)
   }, [])
