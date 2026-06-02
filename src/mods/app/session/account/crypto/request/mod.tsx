@@ -11,7 +11,7 @@ import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
-import { RpcResponse } from "@hazae41/jsonrpc";
+import { RpcCounter, RpcResponse } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { keccak256 } from "@hazae41/keccak256";
 import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedChainsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
@@ -173,30 +173,26 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const respondOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request } = params
 
+    if (seedphrase == null)
+      throw new WcUnsupportedAccountsError()
+
     if (request.method === "eth_sendTransaction") {
-      const [transaction] = request.params as [unknown]
+      const [{ data, from, gas, gasPrice, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+
+      const chainId = Number(params.chainId.split(":")[1])
+      const chain = chainlist.find(chain => chain.chainId === chainId)
+
+      if (chain == null)
+        throw new WcUnsupportedChainsError()
 
       const current = await getEthereumOrThrow()
 
       if (current == null)
         throw new WcUnsupportedAccountsError()
-
-      // deno-lint-ignore no-explicit-any
-      const { chainId, data, from, gas, gasPrice, to, value } = transaction as any
-
       if (from.toLowerCase() !== current.toLowerCase())
-        throw new WcUnsupportedAccountsError()
-      if (seedphrase == null)
         throw new WcUnsupportedAccountsError()
 
       const utx = UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice, value, nonce: 0 })
-
-      console.log(utx)
-
-      const chain = chainlist.find(chain => chain.chainId === Number(utx.chainId))
-
-      if (chain == null)
-        throw new WcUnsupportedChainsError()
 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
@@ -204,25 +200,20 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       const digest = keccak256.digest(utx.encode())
       const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
 
-      const stx = utx.sign(signed)
-      const rtx = `0x${stx.encode().toHex()}`
+      const subrequest = {
+        method: "eth_sendRawTransaction",
+        params: [`0x${utx.sign(signed).encode().toHex()}`]
+      }
 
       const headers = { "Content-Type": "application/json" }
-      const body = JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_sendRawTransaction", params: [rtx] })
+      const body = JSON.stringify(new RpcCounter().prepare(subrequest))
 
       const response = await fetch(chain.rpc, { method: "POST", headers, body })
 
       if (!response.ok)
         throw new Error()
 
-      const result = RpcResponse.from(await response.json())
-
-      if (result.isErr())
-        throw result.getErr()
-
-      console.log(result.get())
-
-      return result.get()
+      return RpcResponse.from(await response.json()).getOrThrow()
     }
 
     if (request.method === "personal_sign") {
@@ -233,9 +224,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (current == null)
         throw new WcUnsupportedAccountsError()
       if (account.toLowerCase() !== current.toLowerCase())
-        throw new WcUnsupportedAccountsError()
-
-      if (seedphrase == null)
         throw new WcUnsupportedAccountsError()
 
       const msgraw = Uint8Array.fromHex(message.slice(2))
@@ -264,9 +252,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (current == null)
         throw new WcUnsupportedAccountsError()
       if (pubkey !== current)
-        throw new WcUnsupportedAccountsError()
-
-      if (seedphrase == null)
         throw new WcUnsupportedAccountsError()
 
       const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))

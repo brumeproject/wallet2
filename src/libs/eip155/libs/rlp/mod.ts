@@ -16,7 +16,7 @@ export namespace RlpUintLike {
   export type Into = RlpItem
 
   export function from(from: From): RlpUintLike {
-    return BigInt(`0x${from.value.toHex()}`)
+    return BigInt(`0x0${from.value.toHex()}`)
   }
 
   export function into(self: RlpUintLike): Into {

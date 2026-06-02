@@ -29,14 +29,6 @@ export class RlpItem55 {
     readonly value: Uint8Array
   ) { }
 
-  isItem(): this is RlpItem55 {
-    return true
-  }
-
-  isList(): false {
-    return false
-  }
-
   sizeOrThrow(): number {
     return 1 + this.value.length
   }

@@ -52,8 +52,6 @@ export class UnsignedTransaction0 {
   encode(): Uint8Array {
     const nonce = RlpUintLike.into(this.nonce)
 
-    console.log(nonce)
-
     const gasPrice = RlpUintLike.into(this.gasPrice)
     const gasLimit = RlpUintLike.into(this.gasLimit)
 
@@ -63,7 +61,10 @@ export class UnsignedTransaction0 {
 
     const chainId = RlpUintLike.into(this.chainId)
 
-    const list = RlpList.fromOrThrow([nonce, gasPrice, gasLimit, to, value, data, chainId])
+    const x = RlpUintLike.into(0)
+    const y = RlpUintLike.into(0)
+
+    const list = RlpList.fromOrThrow([nonce, gasPrice, gasLimit, to, value, data, chainId, x, y])
 
     return Writable.writeToBytesOrThrow(list)
   }

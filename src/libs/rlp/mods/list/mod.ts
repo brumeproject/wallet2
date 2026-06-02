@@ -200,12 +200,13 @@ export namespace RlpList {
 
     if (size < 56)
       return new RlpList55(value, size)
-    if (value.length < 256)
+    if (size < 256)
       return new RlpListUint8(value, size)
-    if (value.length < 65_536)
+    if (size < 65_536)
       return new RlpListUint16(value, size)
-    if (value.length < 16_777_216)
+    if (size < 16_777_216)
       return new RlpListUint24(value, size)
+
     return new RlpListUint32(value, size)
   }
 
