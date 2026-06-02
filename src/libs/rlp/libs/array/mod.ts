@@ -1,0 +1,1 @@
+export type ArrayOrItem<T> = T | ArrayOrItem<T>[]
