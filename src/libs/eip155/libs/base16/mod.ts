@@ -4,4 +4,8 @@ export namespace base16 {
     return "0".repeat(self.length % 2) + self
   }
 
+  export function trimStart(self: string) {
+    return self.replace(/^0+/, "")
+  }
+
 }

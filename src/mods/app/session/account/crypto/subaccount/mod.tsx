@@ -251,8 +251,8 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
         ),
         methods: [
           "personal_sign",
-          // "eth_signTypedData_v4",
-          // "eth_sendTransaction"
+          "eth_signTypedData_v4",
+          "eth_sendTransaction"
         ],
         events: [],
       },
@@ -265,7 +265,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
         ],
         methods: [
           "solana_signMessage",
-          // "solana_signTransaction",
+          "solana_signTransaction",
         ],
         events: [],
       }

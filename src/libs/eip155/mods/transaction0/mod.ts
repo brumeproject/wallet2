@@ -3,7 +3,7 @@ import { RlpItem } from "@/libs/rlp/mods/item/mod.ts";
 import { RlpList } from "@/libs/rlp/mods/list/mod.ts";
 import { Readable, Writable } from "@hazae41/binary";
 
-export interface TransactionInit0 {
+export interface UnsignedTransactionInit0 {
   readonly nonce: RlpUintLike
 
   readonly gasPrice: RlpUintLike
@@ -16,7 +16,7 @@ export interface TransactionInit0 {
   readonly chainId: RlpUintLike
 }
 
-export class Transaction0 {
+export class UnsignedTransaction0 {
 
   constructor(
     readonly nonce: RlpUintLike,
@@ -28,12 +28,12 @@ export class Transaction0 {
     readonly chainId: RlpUintLike,
   ) { }
 
-  static from(init: TransactionInit0): Transaction0 {
+  static from(init: UnsignedTransactionInit0): UnsignedTransaction0 {
     const { nonce, gasPrice, gasLimit, to, value, data, chainId } = init
-    return new Transaction0(nonce, gasPrice, gasLimit, to, value, data, chainId)
+    return new UnsignedTransaction0(nonce, gasPrice, gasLimit, to, value, data, chainId)
   }
 
-  static decode(bytes: Uint8Array): Transaction0 {
+  static decode(bytes: Uint8Array): UnsignedTransaction0 {
     const list = Readable.readFromBytesOrThrow(RlpList, bytes)
 
     const nonce = RlpUintLike.from(RlpItem.asOrThrow(list.value[0]))
@@ -46,11 +46,14 @@ export class Transaction0 {
 
     const chainId = RlpUintLike.from(RlpItem.asOrThrow(list.value[6]))
 
-    return new Transaction0(nonce, gasPrice, gasLimit, to, value, data, chainId)
+    return new UnsignedTransaction0(nonce, gasPrice, gasLimit, to, value, data, chainId)
   }
 
   encode(): Uint8Array {
     const nonce = RlpUintLike.into(this.nonce)
+
+    console.log(nonce)
+
     const gasPrice = RlpUintLike.into(this.gasPrice)
     const gasLimit = RlpUintLike.into(this.gasLimit)
 
@@ -147,12 +150,12 @@ export class SignedTransaction0 {
     return Writable.writeToBytesOrThrow(list)
   }
 
-  unsign(): Transaction0 {
+  unsign(): UnsignedTransaction0 {
     const { nonce, gasPrice, gasLimit, to, value, data, v } = this
 
     const chainId = (BigInt(v) - 35n) / 2n
 
-    return new Transaction0(nonce, gasPrice, gasLimit, to, value, data, chainId)
+    return new UnsignedTransaction0(nonce, gasPrice, gasLimit, to, value, data, chainId)
   }
 
 }

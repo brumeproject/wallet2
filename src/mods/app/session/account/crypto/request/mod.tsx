@@ -1,6 +1,8 @@
 import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
+import { chainlist } from "@/libs/chainlist/mod.ts";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
+import { UnsignedTransaction0 } from "@/libs/eip155/mods/transaction0/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
@@ -9,9 +11,10 @@ import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
+import { RpcResponse } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { keccak256 } from "@hazae41/keccak256";
-import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
+import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedChainsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
 import { PathBoard } from "@hazae41/modal";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Result } from "@hazae41/result-and-option";
@@ -170,6 +173,58 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const respondOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request } = params
 
+    if (request.method === "eth_sendTransaction") {
+      const [transaction] = request.params as [unknown]
+
+      const current = await getEthereumOrThrow()
+
+      if (current == null)
+        throw new WcUnsupportedAccountsError()
+
+      // deno-lint-ignore no-explicit-any
+      const { chainId, data, from, gas, gasPrice, to, value } = transaction as any
+
+      if (from.toLowerCase() !== current.toLowerCase())
+        throw new WcUnsupportedAccountsError()
+      if (seedphrase == null)
+        throw new WcUnsupportedAccountsError()
+
+      const utx = UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice, value, nonce: 0 })
+
+      console.log(utx)
+
+      const chain = chainlist.find(chain => chain.chainId === Number(utx.chainId))
+
+      if (chain == null)
+        throw new WcUnsupportedChainsError()
+
+      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
+
+      const digest = keccak256.digest(utx.encode())
+      const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
+
+      const stx = utx.sign(signed)
+      const rtx = `0x${stx.encode().toHex()}`
+
+      const headers = { "Content-Type": "application/json" }
+      const body = JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_sendRawTransaction", params: [rtx] })
+
+      const response = await fetch(chain.rpc, { method: "POST", headers, body })
+
+      if (!response.ok)
+        throw new Error()
+
+      const result = RpcResponse.from(await response.json())
+
+      if (result.isErr())
+        throw result.getErr()
+
+      console.log(result.get())
+
+      return result.get()
+    }
+
     if (request.method === "personal_sign") {
       const [message, account] = request.params as [string, string]
 
@@ -183,15 +238,15 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (seedphrase == null)
         throw new WcUnsupportedAccountsError()
 
-      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
-
       const msgraw = Uint8Array.fromHex(message.slice(2))
       const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
 
       const payload = new Cursor(new Uint8Array(prefix.length + msgraw.length))
       payload.writeOrThrow(prefix)
       payload.writeOrThrow(msgraw)
+
+      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
 
       const digest = keccak256.digest(payload.bytes)
       const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()

@@ -429,6 +429,8 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const onRequest = async (params: WcSessionRequestParams<unknown>) => {
       using stack = new DisposableStack()
 
+      console.log("Received request", params)
+
       const { promise, resolve, reject } = Promise.withResolvers<unknown>()
 
       setRequests(x => [...x, { params, resolve, reject }])

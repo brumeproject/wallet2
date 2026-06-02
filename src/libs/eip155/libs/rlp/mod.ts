@@ -1,4 +1,4 @@
-import { base16 } from "@/libs/rlp/libs/base16/mod.ts";
+import { base16 } from "@/libs/eip155/libs/base16/mod.ts";
 import { RlpItem } from "@/libs/rlp/mods/item/mod.ts";
 
 export type RlpUintLike =
@@ -21,11 +21,11 @@ export namespace RlpUintLike {
 
   export function into(self: RlpUintLike): Into {
     if (typeof self === "string")
-      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(self.slice(2))))
+      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(base16.trimStart(self.slice(2)))))
     if (typeof self === "bigint")
-      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(self.toString(16))))
+      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(base16.trimStart(self.toString(16)))))
     if (typeof self === "number")
-      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(self.toString(16))))
+      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(base16.trimStart(self.toString(16)))))
     throw new Error()
   }
 
