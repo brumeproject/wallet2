@@ -2,7 +2,7 @@ import { $$ } from "@hazae41/saumon"
 
 $$(() => {
   const code = [`
-    import { Cursor } from "@hazae41/cursor";
+    import { Cursor } from "@hazae41/cursor"
   `.trim()]
 
   for (let i = 1; i < 32 + 1; i++)
