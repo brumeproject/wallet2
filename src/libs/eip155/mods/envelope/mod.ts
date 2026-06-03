@@ -8,20 +8,20 @@ export class TypedTransactionEnvelope<T extends Writable> {
     readonly data: T,
   ) { }
 
-  static readOrThrow(cursor: Cursor) {
-    const type = cursor.readUint8OrThrow()
-    const data = cursor.readOrThrow(type)
+  static read(cursor: Cursor) {
+    const type = cursor.readUint8()
+    const data = cursor.read(type)
 
     return new TypedTransactionEnvelope(type, new Unknown(data))
   }
 
-  sizeOrThrow(): number {
-    return 1 + this.data.sizeOrThrow()
+  size(): number {
+    return 1 + this.data.size()
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(this.type)
-    this.data.writeOrThrow(cursor)
+  write(cursor: Cursor) {
+    cursor.writeUint8(this.type)
+    this.data.write(cursor)
   }
 
 }

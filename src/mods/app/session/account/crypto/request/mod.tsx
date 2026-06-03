@@ -40,15 +40,15 @@ export function CryptoRequestAnchor(props: { index: number } & { $entry: KDBX.In
   const coords = useAnchorWithCoords(hash, `/request/${index}`)
 
   const title = useMemo(() => {
-    return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $subentry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$subentry])
 
   const subtitle = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   return <Fragment>
@@ -131,19 +131,19 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
-    return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $subentry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$subentry])
 
   const subtitle = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrNull()?.get()
   }, [$entry])
 
   const getEthereumOrThrow = useCallback(async () => {
@@ -230,8 +230,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
 
       const payload = new Cursor(new Uint8Array(prefix.length + msgraw.length))
-      payload.writeOrThrow(prefix)
-      payload.writeOrThrow(msgraw)
+      payload.write(prefix)
+      payload.write(msgraw)
 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)

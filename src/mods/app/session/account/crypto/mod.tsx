@@ -62,7 +62,7 @@ export function CryptoAccountAddPage() {
 
   const notes = useDeferredValue($notes)
 
-  const encryptOrThrow = useCallback(async () => {
+  const encrypt = useCallback(async () => {
     const { kdbx, comp } = session.value
 
     await new Promise(ok => requestIdleCallback(ok))
@@ -71,20 +71,20 @@ export function CryptoAccountAddPage() {
     const $root = $file.getRootOrThrow()
 
     const $group = $root.getDirectGroupByIndexOrThrow(0)
-    const $entry = $group.addEntryOrThrow()
+    const $entry = $group.push()
 
-    $entry.addStringOrThrow("Title", title)
+    $entry.push("Title", title)
 
     if (color)
-      $entry.addStringOrThrow("Color", color)
+      $entry.push("Color", color)
 
     if (seedphrase)
-      $entry.addStringOrThrow("SeedPhrase", seedphrase, true)
+      $entry.push("SeedPhrase", seedphrase, true)
 
     if (notes)
-      $entry.addStringOrThrow("Notes", notes)
+      $entry.push("Notes", notes)
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+    return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, title, color, seedphrase, notes])
 
   const writeOrDisplay = useSubmit(() => Promise.try(async () => {
@@ -93,7 +93,7 @@ export function CryptoAccountAddPage() {
     if (fsfh == null)
       return
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const writable = await fsfh.createWritable()
     await writable.write(content)
@@ -102,10 +102,10 @@ export function CryptoAccountAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
@@ -130,7 +130,7 @@ export function CryptoAccountAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const onGenerateClick = useCallback(() => Promise.try(async () => {
     setSeedPhrase(await BitcoinSeedPhrase.generate(256))
@@ -278,15 +278,15 @@ export function CryptoAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const notes = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Notes")?.getValueOrNull()?.get()
   }, [$entry])
 
   const [index, setIndex] = useState(0)
@@ -428,15 +428,15 @@ export function CryptoAccountExportPage(props: { $entry: KDBX.Inner.KeePassFile.
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrNull()?.get()
   }, [$entry])
 
   const copyTheSeedPhrase = useCopy(seedphrase)

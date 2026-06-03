@@ -73,7 +73,7 @@ export function KeypairAccountAddPage() {
 
   const copyTheTotpcode = useCopy(totpcode)
 
-  const encryptOrThrow = useCallback(async () => {
+  const encrypt = useCallback(async () => {
     const { kdbx, comp } = session.value
 
     await new Promise(ok => requestIdleCallback(ok))
@@ -82,32 +82,32 @@ export function KeypairAccountAddPage() {
     const $root = $file.getRootOrThrow()
 
     const $group = $root.getDirectGroupByIndexOrThrow(0)
-    const $entry = $group.addEntryOrThrow()
+    const $entry = $group.push()
 
-    $entry.addStringOrThrow("Title", title)
+    $entry.push("Title", title)
 
     if (color)
-      $entry.addStringOrThrow("Color", color)
+      $entry.push("Color", color)
 
     if (pubkey)
-      $entry.addStringOrThrow("PublicKey", pubkey)
+      $entry.push("PublicKey", pubkey)
 
     if (sigkey)
-      $entry.addStringOrThrow("PrivateKey", sigkey)
+      $entry.push("PrivateKey", sigkey)
 
     if (username)
-      $entry.addStringOrThrow("UserName", username)
+      $entry.push("UserName", username)
 
     if (password)
-      $entry.addStringOrThrow("Password", password, true)
+      $entry.push("Password", password, true)
 
     if (notes)
-      $entry.addStringOrThrow("Notes", notes)
+      $entry.push("Notes", notes)
 
     if (totpseed)
-      $entry.addStringOrThrow("otp", totpseed, true)
+      $entry.push("otp", totpseed, true)
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+    return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, title, color, pubkey, sigkey, username, password, totpseed, notes])
 
   const writeOrDisplay = useSubmit(() => Promise.try(async () => {
@@ -116,7 +116,7 @@ export function KeypairAccountAddPage() {
     if (fsfh == null)
       return
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const writable = await fsfh.createWritable()
     await writable.write(content)
@@ -125,10 +125,10 @@ export function KeypairAccountAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
@@ -153,7 +153,7 @@ export function KeypairAccountAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const error = useMemo(() => {
     if (!pubkey.length)
@@ -376,11 +376,11 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const trashed = useMemo(() => {
@@ -396,29 +396,29 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
   }, [session, $entry])
 
   const pubkey = useMemo(() => {
-    return $entry.getStringByKeyOrNull("PublicKey")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("PublicKey")?.getValueOrNull()?.get()
   }, [$entry])
 
   const sigkey = useMemo(() => {
-    return $entry.getStringByKeyOrNull("PrivateKey")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("PrivateKey")?.getValueOrNull()?.get()
   }, [$entry])
 
   const username = useMemo(() => {
-    return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("UserName")?.getValueOrNull()?.get()
   }, [$entry])
 
   const password = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Password")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Password")?.getValueOrNull()?.get()
   }, [$entry])
 
   const totpseed = useMemo(() => {
-    return $entry.getStringByKeyOrNull("otp")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("otp")?.getValueOrNull()?.get()
   }, [$entry])
 
   const totpcode = useTotp(totpseed)
 
   const notes = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Notes")?.getValueOrNull()?.get()
   }, [$entry])
 
   const copyThePubKey = useCopy(pubkey)

@@ -300,30 +300,30 @@ export function SessionExportPage() {
 
   const pass = useDeferredValue($pass)
 
-  const encryptOrThrow = useCallback(async () => {
+  const encrypt = useCallback(async () => {
     const { kdbx } = session.value
 
     await new Promise(ok => requestIdleCallback(ok))
 
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+    const composite = await KDBX.CompositeKey.digest(await KDBX.PasswordKey.digest(new TextEncoder().encode(pass)))
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(composite))
+    return Writable.writeToBytes(await kdbx.encrypt(composite))
   }, [session, pass])
 
   const pickOrDisplay = useSubmit(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const writable = await fsfh.createWritable()
     await writable.write(content)
     await writable.close()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
@@ -348,7 +348,7 @@ export function SessionExportPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const error = useMemo(() => {
     if (!pass.length)

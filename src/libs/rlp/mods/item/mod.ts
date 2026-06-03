@@ -6,16 +6,16 @@ export class RlpItem1 {
     readonly value: Uint8Array
   ) { }
 
-  sizeOrThrow(): number {
+  size(): number {
     return this.value.length
   }
 
-  writeOrThrow(cursor: Cursor): void {
-    cursor.writeOrThrow(this.value)
+  write(cursor: Cursor): void {
+    cursor.write(this.value)
   }
 
-  static readOrThrow(cursor: Cursor) {
-    const content = cursor.readOrThrow(1)
+  static read(cursor: Cursor) {
+    const content = cursor.read(1)
     const bytes = new Uint8Array(content)
 
     return new RlpItem1(bytes)
@@ -29,18 +29,18 @@ export class RlpItem55 {
     readonly value: Uint8Array
   ) { }
 
-  sizeOrThrow(): number {
+  size(): number {
     return 1 + this.value.length
   }
 
-  writeOrThrow(cursor: Cursor): void {
-    cursor.writeUint8OrThrow(0x80 + this.value.length)
-    cursor.writeOrThrow(this.value)
+  write(cursor: Cursor): void {
+    cursor.writeUint8(0x80 + this.value.length)
+    cursor.write(this.value)
   }
 
-  static readOrThrow(cursor: Cursor) {
-    const length = cursor.readUint8OrThrow() - 0x80
-    const value = cursor.readOrThrow(length)
+  static read(cursor: Cursor) {
+    const length = cursor.readUint8() - 0x80
+    const value = cursor.read(length)
     const bytes = new Uint8Array(value)
 
     return new RlpItem55(bytes)
@@ -54,21 +54,21 @@ export class RlpItemUint8 {
     readonly value: Uint8Array
   ) { }
 
-  sizeOrThrow(): number {
+  size(): number {
     return 1 + 1 + this.value.length
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(0xb7 + 1)
-    cursor.writeUint8OrThrow(this.value.length)
-    cursor.writeOrThrow(this.value)
+  write(cursor: Cursor) {
+    cursor.writeUint8(0xb7 + 1)
+    cursor.writeUint8(this.value.length)
+    cursor.write(this.value)
   }
 
-  static readOrThrow(cursor: Cursor) {
+  static read(cursor: Cursor) {
     cursor.offset++
 
-    const length = cursor.readUint8OrThrow()
-    const value = cursor.readOrThrow(length)
+    const length = cursor.readUint8()
+    const value = cursor.read(length)
     const bytes = new Uint8Array(value)
 
     return new RlpItemUint8(bytes)
@@ -82,21 +82,21 @@ export class RlpItemUint16 {
     readonly value: Uint8Array
   ) { }
 
-  sizeOrThrow() {
+  size() {
     return 1 + 2 + this.value.length
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(0xb7 + 2)
-    cursor.writeUint16OrThrow(this.value.length)
-    cursor.writeOrThrow(this.value)
+  write(cursor: Cursor) {
+    cursor.writeUint8(0xb7 + 2)
+    cursor.writeUint16(this.value.length)
+    cursor.write(this.value)
   }
 
-  static readOrThrow(cursor: Cursor) {
+  static read(cursor: Cursor) {
     cursor.offset++
 
-    const length = cursor.readUint16OrThrow()
-    const value = cursor.readOrThrow(length)
+    const length = cursor.readUint16()
+    const value = cursor.read(length)
     const bytes = new Uint8Array(value)
 
     return new RlpItemUint16(bytes)
@@ -110,21 +110,21 @@ export class RlpItemUint24 {
     readonly value: Uint8Array
   ) { }
 
-  sizeOrThrow() {
+  size() {
     return 1 + 3 + this.value.length
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(0xb7 + 3)
-    cursor.writeUint24OrThrow(this.value.length)
-    cursor.writeOrThrow(this.value)
+  write(cursor: Cursor) {
+    cursor.writeUint8(0xb7 + 3)
+    cursor.writeUint24(this.value.length)
+    cursor.write(this.value)
   }
 
-  static readOrThrow(cursor: Cursor) {
+  static read(cursor: Cursor) {
     cursor.offset++
 
-    const length = cursor.readUint24OrThrow()
-    const value = cursor.readOrThrow(length)
+    const length = cursor.readUint24()
+    const value = cursor.read(length)
     const bytes = new Uint8Array(value)
 
     return new RlpItemUint24(bytes)
@@ -138,21 +138,21 @@ export class RlpItemUint32 {
     readonly value: Uint8Array
   ) { }
 
-  sizeOrThrow() {
+  size() {
     return 1 + 4 + this.value.length
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(0xb7 + 4)
-    cursor.writeUint32OrThrow(this.value.length)
-    cursor.writeOrThrow(this.value)
+  write(cursor: Cursor) {
+    cursor.writeUint8(0xb7 + 4)
+    cursor.writeUint32(this.value.length)
+    cursor.write(this.value)
   }
 
-  static readOrThrow(cursor: Cursor) {
+  static read(cursor: Cursor) {
     cursor.offset++
 
-    const length = cursor.readUint32OrThrow()
-    const value = cursor.readOrThrow(length)
+    const length = cursor.readUint32()
+    const value = cursor.read(length)
     const bytes = new Uint8Array(value)
 
     return new RlpItemUint32(bytes)
@@ -172,7 +172,7 @@ export namespace RlpItem {
 
   export type From = Uint8Array
 
-  export function fromOrThrow(value: From): RlpItem {
+  export function from(value: From): RlpItem {
     if (value.length === 1 && value[0] < 0x80)
       return new RlpItem1(value)
     if (value.length < 56)
@@ -190,21 +190,21 @@ export namespace RlpItem {
 
 export namespace RlpItem {
 
-  export function readOrThrow(cursor: Cursor) {
-    const first = cursor.getUint8OrThrow()
+  export function read(cursor: Cursor) {
+    const first = cursor.getUint8()
 
     if (first < 0x80)
-      return RlpItem1.readOrThrow(cursor)
+      return RlpItem1.read(cursor)
     if (first < 184)
-      return RlpItem55.readOrThrow(cursor)
+      return RlpItem55.read(cursor)
     if (first === 184)
-      return RlpItemUint8.readOrThrow(cursor)
+      return RlpItemUint8.read(cursor)
     if (first === 185)
-      return RlpItemUint16.readOrThrow(cursor)
+      return RlpItemUint16.read(cursor)
     if (first === 186)
-      return RlpItemUint24.readOrThrow(cursor)
+      return RlpItemUint24.read(cursor)
     if (first === 187)
-      return RlpItemUint32.readOrThrow(cursor)
+      return RlpItemUint32.read(cursor)
 
     throw new Error()
   }
@@ -213,7 +213,7 @@ export namespace RlpItem {
 
 export namespace RlpItem {
 
-  export function asOrThrow(value: unknown) {
+  export function as(value: unknown) {
     if (value instanceof RlpItem1)
       return value
     if (value instanceof RlpItem55)

@@ -34,17 +34,17 @@ export class UnsignedTransaction0 {
   }
 
   static decode(bytes: Uint8Array): UnsignedTransaction0 {
-    const list = Readable.readFromBytesOrThrow(RlpList, bytes)
+    const list = Readable.readFromBytes(RlpList, bytes)
 
-    const nonce = RlpUintLike.from(RlpItem.asOrThrow(list.value[0]))
-    const gasPrice = RlpUintLike.from(RlpItem.asOrThrow(list.value[1]))
-    const gasLimit = RlpUintLike.from(RlpItem.asOrThrow(list.value[2]))
+    const nonce = RlpUintLike.from(RlpItem.as(list.value[0]))
+    const gasPrice = RlpUintLike.from(RlpItem.as(list.value[1]))
+    const gasLimit = RlpUintLike.from(RlpItem.as(list.value[2]))
 
-    const to = RlpDataLike.from(RlpItem.asOrThrow(list.value[3]))
-    const value = RlpUintLike.from(RlpItem.asOrThrow(list.value[4]))
-    const data = RlpDataLike.from(RlpItem.asOrThrow(list.value[5]))
+    const to = RlpDataLike.from(RlpItem.as(list.value[3]))
+    const value = RlpUintLike.from(RlpItem.as(list.value[4]))
+    const data = RlpDataLike.from(RlpItem.as(list.value[5]))
 
-    const chainId = RlpUintLike.from(RlpItem.asOrThrow(list.value[6]))
+    const chainId = RlpUintLike.from(RlpItem.as(list.value[6]))
 
     return new UnsignedTransaction0(nonce, gasPrice, gasLimit, to, value, data, chainId)
   }
@@ -64,9 +64,9 @@ export class UnsignedTransaction0 {
     const x = RlpUintLike.into(0)
     const y = RlpUintLike.into(0)
 
-    const list = RlpList.fromOrThrow([nonce, gasPrice, gasLimit, to, value, data, chainId, x, y])
+    const list = RlpList.from([nonce, gasPrice, gasLimit, to, value, data, chainId, x, y])
 
-    return Writable.writeToBytesOrThrow(list)
+    return Writable.writeToBytes(list)
   }
 
   sign(signature: Uint8Array): SignedTransaction0 {
@@ -116,19 +116,19 @@ export class SignedTransaction0 {
   }
 
   static decode(bytes: Uint8Array): SignedTransaction0 {
-    const list = Readable.readFromBytesOrThrow(RlpList, bytes)
+    const list = Readable.readFromBytes(RlpList, bytes)
 
-    const nonce = RlpUintLike.from(RlpItem.asOrThrow(list.value[0]))
-    const gasPrice = RlpUintLike.from(RlpItem.asOrThrow(list.value[1]))
-    const gasLimit = RlpUintLike.from(RlpItem.asOrThrow(list.value[2]))
+    const nonce = RlpUintLike.from(RlpItem.as(list.value[0]))
+    const gasPrice = RlpUintLike.from(RlpItem.as(list.value[1]))
+    const gasLimit = RlpUintLike.from(RlpItem.as(list.value[2]))
 
-    const to = RlpDataLike.from(RlpItem.asOrThrow(list.value[3]))
-    const value = RlpUintLike.from(RlpItem.asOrThrow(list.value[4]))
-    const data = RlpDataLike.from(RlpItem.asOrThrow(list.value[5]))
+    const to = RlpDataLike.from(RlpItem.as(list.value[3]))
+    const value = RlpUintLike.from(RlpItem.as(list.value[4]))
+    const data = RlpDataLike.from(RlpItem.as(list.value[5]))
 
-    const v = RlpUintLike.from(RlpItem.asOrThrow(list.value[6]))
-    const r = RlpDataLike.from(RlpItem.asOrThrow(list.value[7]))
-    const s = RlpDataLike.from(RlpItem.asOrThrow(list.value[8]))
+    const v = RlpUintLike.from(RlpItem.as(list.value[6]))
+    const r = RlpDataLike.from(RlpItem.as(list.value[7]))
+    const s = RlpDataLike.from(RlpItem.as(list.value[8]))
 
     return new SignedTransaction0(nonce, gasPrice, gasLimit, to, value, data, v, r, s)
   }
@@ -146,9 +146,9 @@ export class SignedTransaction0 {
     const r = RlpDataLike.into(this.r)
     const s = RlpDataLike.into(this.s)
 
-    const list = RlpList.fromOrThrow([nonce, gasPrice, gasLimit, to, value, data, v, r, s])
+    const list = RlpList.from([nonce, gasPrice, gasLimit, to, value, data, v, r, s])
 
-    return Writable.writeToBytesOrThrow(list)
+    return Writable.writeToBytes(list)
   }
 
   unsign(): UnsignedTransaction0 {

@@ -13,7 +13,7 @@ export function useTotp(seed: Nullable<string>) {
       return
 
     const totp = Result.runAndWrapSync(() => {
-      return Sha1Totp.parseOrThrow(seed)
+      return Sha1Totp.parse(seed)
     }).getOrNull()
 
     return totp

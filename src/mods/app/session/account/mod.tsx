@@ -50,11 +50,11 @@ export function AccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
   }, [$entry])
 
   const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const coords = useAnchorWithCoords(hash, `/account/${uuid}`)
@@ -166,13 +166,13 @@ export function AccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entry }) {
             const type = getEntryType($entry)
 
             if (type === "password")
-              return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+              return $entry.getStringByKeyOrNull("UserName")?.getValueOrNull()?.get()
 
             if (type === "keypair")
-              return $entry.getStringByKeyOrNull("UserName")?.getValueOrThrow().get()
+              return $entry.getStringByKeyOrNull("UserName")?.getValueOrNull()?.get()
 
             if (type === "card")
-              return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+              return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrNull()?.get()
 
             return null
           })()}
@@ -394,14 +394,14 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
 
   const session = useSessionContext().getOrThrow()
 
-  const encryptOrThrow = useCallback(async () => {
+  const encrypt = useCallback(async () => {
     const { kdbx, comp } = session.value
 
     await new Promise(ok => requestIdleCallback(ok))
 
-    $entry.trashOrThrow()
+    $entry.trash()
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+    return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, $entry])
 
   const writeOrDisplay = useSubmit(() => Promise.try(async () => {
@@ -410,7 +410,7 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
     if (fsfh == null)
       return
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const writable = await fsfh.createWritable()
     await writable.write(content)
@@ -419,10 +419,10 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
     close(true)
 
     session.update()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
@@ -449,7 +449,7 @@ export function AccountMenuTrashButton(props: { $entry: KDBX.Inner.KeePassFile.E
     close(true)
 
     session.update()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   return <Fragment>
     {session.value.user.fsfh != null &&
@@ -476,7 +476,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
 
   const session = useSessionContext().getOrThrow()
 
-  const encryptOrThrow = useCallback(async () => {
+  const encrypt = useCallback(async () => {
     const { kdbx, comp } = session.value
 
     await new Promise(ok => requestIdleCallback(ok))
@@ -484,9 +484,9 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
     const $file = kdbx.inner.content.value
     const $root = $file.getRootOrThrow()
 
-    $entry.moveOrThrow($root.getDirectGroupByIndexOrThrow(0))
+    $entry.move($root.getDirectGroupByIndexOrThrow(0))
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+    return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, $entry])
 
   const writeOrDisplay = useSubmit(() => Promise.try(async () => {
@@ -495,7 +495,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
     if (fsfh == null)
       return
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const writable = await fsfh.createWritable()
     await writable.write(content)
@@ -504,10 +504,10 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
     close(true)
 
     session.update()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
@@ -534,7 +534,7 @@ export function AccountMenuUntrashButton(props: { $entry: KDBX.Inner.KeePassFile
     close(true)
 
     session.update()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   return <Fragment>
     {session.value.user.fsfh != null &&
@@ -561,19 +561,19 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
 
   const session = useSessionContext().getOrThrow()
 
-  const encryptOrThrow = useCallback(async () => {
+  const encrypt = useCallback(async () => {
     const { kdbx, comp } = session.value
 
     await new Promise(ok => requestIdleCallback(ok))
 
-    const subentries = [...kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent")?.getValueOrThrow().get() === $entry.getUuidOrThrow().toString())
+    const subentries = [...kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent")?.getValueOrNull()?.get() === $entry.getUuidOrThrow().toString())
 
     for (const $subentry of subentries)
       $subentry.element.parentNode?.removeChild($subentry.element)
 
     $entry.element.parentNode?.removeChild($entry.element)
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+    return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, $entry])
 
   const writeOrDisplay = useSubmit(() => Promise.try(async () => {
@@ -585,7 +585,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
     if (fsfh == null)
       return
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const writable = await fsfh.createWritable()
     await writable.write(content)
@@ -594,13 +594,13 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
     close(true)
 
     session.update()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
     if (!confirm(Lang.match({ en: "Are you sure you want to permanently delete this account?", zh: "您确定要永久删除此账户吗？", hi: "क्या आप वाकई इस खाते को स्थायी रूप से हटाना चाहते हैं?", es: "¿Está seguro de que desea eliminar permanentemente esta cuenta?", ar: "هل أنت متأكد أنك تريد حذف هذا الحساب نهائيًا؟", fr: "Êtes-vous sûr de vouloir supprimer définitivement ce compte ?", de: "Sind Sie sicher, dass Sie dieses Konto dauerhaft löschen möchten?", ru: "Вы уверены, что хотите навсегда удалить эту учетную запись?", pt: "Tem certeza de que deseja excluir permanentemente esta conta?", ja: "このアカウントを完全に削除してもよろしいですか？", pa: "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਖਾਤੇ ਨੂੰ ਸਥਾਈ रूप से हटाना चाहते हैं?", bn: "আপনি কি সত্যিই এই অ্যাকাউন্টটি স্থায়ীভাবে মুছে ফেলতে চান?", id: "Apakah Anda yakin ingin menghapus akun ini secara permanen?", ur: "کیا آپ واقعی اس اکاؤنٹ کو مستقل طور پر حذف کرنا چاہتے ہیں؟", ms: "Adakah anda pasti mahu memadam akaun ini secara kekal?", it: "Sei sicuro di voler eliminare definitivamente questo account?", tr: "Bu hesabı kalıcı olarak silmek istediğinizden emin misiniz?", ta: "இந்த கணக்கை நிரந்தரமாக நீக்க விரும்புகிறீர்களா?", te: "మీరు ఈ ఖాతాను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?", ko: "이 계정을 영구적으로 삭제하시겠습니까?", vi: "Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này không?", pl: "Czy na pewno chcesz trwale usunąć to konto?", ro: "Sigur doriți să ștergeți definitiv acest cont?", nl: "Weet je zeker dat je dit account permanent wilt verwijderen?", el: "Είστε σίγουροι ότι θέλετε να διαγράψετε οριστικά αυτόν τον λογαριασμό;", th: "คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้อย่างถาวร?", cs: "Opravdu chcete tento účet trvale smazat?", hu: "Biztos benne, hogy véglegesen törölni szeretné ezt a fiókot?", sv: "Är du säker på att du vill ta bort det här kontot permanent?", da: "Er du sikker på, at du vil slette denne konto permanent?" })))
       return
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
@@ -627,7 +627,7 @@ export function AccountMenuDeleteButton(props: { $entry: KDBX.Inner.KeePassFile.
     close(true)
 
     session.update()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   return <Fragment>
     {session.value.user.fsfh != null &&

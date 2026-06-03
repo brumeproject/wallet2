@@ -177,15 +177,15 @@ function UserImportFilePage() {
 
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+    const encrypted = Readable.readFromBytes(KDBX.Database.Encrypted, data)
+    const composite = await KDBX.CompositeKey.digest(await KDBX.PasswordKey.digest(new TextEncoder().encode(pass)))
 
-    await encrypted.decryptOrThrow(composite)
+    await encrypted.decrypt(composite)
 
     const uuid = crypto.randomUUID()
 
     const auth = await Result.runAndWrap(async () => {
-      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+      return await webAuthnStorage.create(uuid.slice(0, 8), composite.value.bytes)
     }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
@@ -336,15 +336,15 @@ function UserImportFsfhPage() {
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+    const encrypted = Readable.readFromBytes(KDBX.Database.Encrypted, data)
+    const composite = await KDBX.CompositeKey.digest(await KDBX.PasswordKey.digest(new TextEncoder().encode(pass)))
 
-    await encrypted.decryptOrThrow(composite)
+    await encrypted.decrypt(composite)
 
     const uuid = crypto.randomUUID()
 
     const auth = await Result.runAndWrap(async () => {
-      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+      return await webAuthnStorage.create(uuid.slice(0, 8), composite.value.bytes)
     }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
@@ -490,8 +490,8 @@ function UserCreatePage() {
   const innerizeOrThrow = useCallback(() => {
     const document = new DOMParser().parseFromString(xml, "text/xml")
 
-    const headers = KDBX.Inner.Headers.createOrThrow(KDBX.Inner.Cipher.ChaCha20)
-    const content = KDBX.Inner.ContentWithBytes.computeOrThrow(new KDBX.Inner.KeePassFile(document))
+    const headers = KDBX.Inner.Headers.create(KDBX.Inner.Cipher.ChaCha20)
+    const content = KDBX.Inner.ContentWithBytes.compute(new KDBX.Inner.KeePassFile(document))
 
     return new KDBX.Inner.HeadersAndContentWithBytes(headers, content)
   }, [xml])
@@ -500,17 +500,17 @@ function UserCreatePage() {
     const cipher = KDBX.Outer.Cipher.Aes256Cbc
     const compression = KDBX.Outer.Compression.Gzip
 
-    const seed = new Unknown(crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer> & { length: 32 })
+    const seed = new Unknown(crypto.getRandomValues(new Uint8Array(32)))
     const iv = new Unknown(crypto.getRandomValues(new Uint8Array(cipher.IV.length)))
-    const kdf = KDBX.Outer.KdfParameters.Argon2d.createOrThrow()
+    const kdf = KDBX.Outer.KdfParameters.Argon2d.create()
 
-    const headers = KDBX.Outer.Headers.initOrThrow({ cipher, compression, seed, iv, kdf })
+    const headers = KDBX.Outer.Headers.init({ cipher, compression, seed, iv, kdf })
     const wrapper = new KDBX.Outer.MagicAndVersionAndHeaders(new KDBX.Outer.Version(4, 0), headers)
 
-    const derived = await headers.deriveOrThrow(composite)
+    const derived = await headers.derive(composite)
 
-    const bytes = KDBX.Outer.MagicAndVersionAndHeadersWithBytes.computeOrThrow(wrapper)
-    const hashs = await KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmac.computeOrThrow(bytes, derived)
+    const bytes = KDBX.Outer.MagicAndVersionAndHeadersWithBytes.compute(wrapper)
+    const hashs = await KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmac.compute(bytes, derived)
 
     return new KDBX.Outer.MagicAndVersionAndHeadersWithBytesWithHashAndHmacWithKeys(hashs, derived)
   }, [])
@@ -518,15 +518,15 @@ function UserCreatePage() {
   const pickOrDisplay = useSubmit(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+    const composite = await KDBX.CompositeKey.digest(await KDBX.PasswordKey.digest(new TextEncoder().encode(pass)))
 
     const inner = innerizeOrThrow()
     const outer = await outerizeOrThrow(composite)
 
     const decrypted = new KDBX.Database.Decrypted(outer, inner)
-    const encrypted = await decrypted.encryptOrThrow(composite)
+    const encrypted = await decrypted.encrypt(composite)
 
-    const content = Writable.writeToBytesOrThrow(encrypted)
+    const content = Writable.writeToBytes(encrypted)
 
     const writable = await fsfh.createWritable()
     await writable.write(content)
@@ -535,7 +535,7 @@ function UserCreatePage() {
     const uuid = crypto.randomUUID()
 
     const auth = await Result.runAndWrap(async () => {
-      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+      return await webAuthnStorage.create(uuid.slice(0, 8), composite.value.bytes)
     }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
@@ -550,15 +550,15 @@ function UserCreatePage() {
   }).catch(Errors.display), [store, pass, innerizeOrThrow, outerizeOrThrow, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+    const composite = await KDBX.CompositeKey.digest(await KDBX.PasswordKey.digest(new TextEncoder().encode(pass)))
 
     const inner = innerizeOrThrow()
     const outer = await outerizeOrThrow(composite)
 
     const decrypted = new KDBX.Database.Decrypted(outer, inner)
-    const encrypted = await decrypted.encryptOrThrow(composite)
+    const encrypted = await decrypted.encrypt(composite)
 
-    const content = Writable.writeToBytesOrThrow(encrypted)
+    const content = Writable.writeToBytes(encrypted)
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
@@ -583,7 +583,7 @@ function UserCreatePage() {
     const uuid = crypto.randomUUID()
 
     const auth = await Result.runAndWrap(async () => {
-      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+      return await webAuthnStorage.create(uuid.slice(0, 8), composite.value.bytes)
     }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
@@ -723,7 +723,7 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
   const pass = useDeferredValue($pass)
 
-  const [auth, setAuth] = useState<Nullable<Uint8Array<ArrayBuffer> & { length: 32 }>>()
+  const [auth, setAuth] = useState<Nullable<Uint8Array<ArrayBuffer>>>()
 
   const [picker1, setPicker1] = useState<Nullable<HTMLInputElement>>()
   const [picker2, setPicker2] = useState<Nullable<HTMLInputElement>>()
@@ -739,9 +739,9 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
 
     const data = new Uint8Array(await file1.arrayBuffer())
 
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const decrypted = await encrypted.decryptOrThrow(composite)
+    const composite = await KDBX.CompositeKey.digest(await KDBX.PasswordKey.digest(new TextEncoder().encode(pass)))
+    const encrypted = Readable.readFromBytes(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decrypt(composite)
 
     login({ user, comp: composite, kdbx: decrypted })
 
@@ -757,8 +757,8 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     const data = new Uint8Array(await file2.arrayBuffer())
 
     const composite = new KDBX.CompositeKey(new Unknown(auth))
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const decrypted = await encrypted.decryptOrThrow(composite)
+    const encrypted = Readable.readFromBytes(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decrypt(composite)
 
     login({ user, comp: composite, kdbx: decrypted })
 
@@ -792,16 +792,16 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     const file = await user.fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const decrypted = await encrypted.decryptOrThrow(composite)
+    const composite = await KDBX.CompositeKey.digest(await KDBX.PasswordKey.digest(new TextEncoder().encode(pass)))
+    const encrypted = Readable.readFromBytes(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decrypt(composite)
 
     login({ user, comp: composite, kdbx: decrypted })
 
     close()
   }).catch(Errors.display), [user, login, pass, close])
 
-  const openOrDisplay2 = useCallback((stored: Uint8Array<ArrayBuffer> & { length: 32 }) => Promise.try(async () => {
+  const openOrDisplay2 = useCallback((stored: Uint8Array<ArrayBuffer>) => Promise.try(async () => {
     if (user.auth == null)
       return
     if (user.fsfh == null)
@@ -815,8 +815,8 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     const data = new Uint8Array(await file.arrayBuffer())
 
     const composite = new KDBX.CompositeKey(new Unknown(stored))
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const decrypted = await encrypted.decryptOrThrow(composite)
+    const encrypted = Readable.readFromBytes(KDBX.Database.Encrypted, data)
+    const decrypted = await encrypted.decrypt(composite)
 
     login({ user, comp: composite, kdbx: decrypted })
 
@@ -842,12 +842,12 @@ function UserLoginPage(props: { user: UserData } & { login(session: SessionData)
     if (user.fsfh == null) {
       picker2!.click()
 
-      setAuth(await webAuthnStorage.getOrThrow(user.auth) as Uint8Array<ArrayBuffer> & { length: 32 })
+      setAuth(await webAuthnStorage.get(user.auth) as Uint8Array<ArrayBuffer>)
 
       return
     }
 
-    await openOrDisplay2(await webAuthnStorage.getOrThrow(user.auth) as Uint8Array<ArrayBuffer> & { length: 32 })
+    await openOrDisplay2(await webAuthnStorage.get(user.auth) as Uint8Array<ArrayBuffer>)
   }, [user, openOrDisplay2, picker2])
 
   return <div className="flex flex-col items-center justify-center grow p-6 py-24">
@@ -985,15 +985,15 @@ function UserReimportFilePage(props: { user: UserData }) {
 
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+    const encrypted = Readable.readFromBytes(KDBX.Database.Encrypted, data)
+    const composite = await KDBX.CompositeKey.digest(await KDBX.PasswordKey.digest(new TextEncoder().encode(pass)))
 
-    await encrypted.decryptOrThrow(composite)
+    await encrypted.decrypt(composite)
 
     const uuid = user.uuid
 
     const auth = await Result.runAndWrap(async () => {
-      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+      return await webAuthnStorage.create(uuid.slice(0, 8), composite.value.bytes)
     }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []
@@ -1146,15 +1146,15 @@ function UserReimportFsfhPage(props: { user: UserData }) {
     const file = await fsfh.getFile()
     const data = new Uint8Array(await file.arrayBuffer())
 
-    const encrypted = Readable.readFromBytesOrThrow(KDBX.Database.Encrypted, data)
-    const composite = await KDBX.CompositeKey.digestOrThrow(await KDBX.PasswordKey.digestOrThrow(new TextEncoder().encode(pass)))
+    const encrypted = Readable.readFromBytes(KDBX.Database.Encrypted, data)
+    const composite = await KDBX.CompositeKey.digest(await KDBX.PasswordKey.digest(new TextEncoder().encode(pass)))
 
-    await encrypted.decryptOrThrow(composite)
+    await encrypted.decrypt(composite)
 
     const uuid = user.uuid
 
     const auth = await Result.runAndWrap(async () => {
-      return await webAuthnStorage.createOrThrow(uuid.slice(0, 8), composite.value.bytes)
+      return await webAuthnStorage.create(uuid.slice(0, 8), composite.value.bytes)
     }).then(r => r.getOrNull())
 
     const stale = await store.value.getOrThrow().getOrThrow<Array<UserData>>("users") || []

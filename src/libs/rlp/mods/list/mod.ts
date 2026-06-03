@@ -9,27 +9,27 @@ export class RlpList55 {
     readonly length: number
   ) { }
 
-  sizeOrThrow(): number {
+  size(): number {
     return 1 + this.length
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(0xc0 + this.length)
+  write(cursor: Cursor) {
+    cursor.writeUint8(0xc0 + this.length)
 
     for (const element of this.value)
-      element.writeOrThrow(cursor)
+      element.write(cursor)
 
     return
   }
 
-  static readOrThrow(cursor: Cursor) {
-    const length = cursor.readUint8OrThrow() - 0xc0
+  static read(cursor: Cursor) {
+    const length = cursor.readUint8() - 0xc0
 
     const start = cursor.offset
     const value = new Array<RlpType>()
 
     while (cursor.offset - start < length)
-      value.push(RlpType.readOrThrow(cursor))
+      value.push(RlpType.read(cursor))
 
     return new RlpList55(value, length)
   }
@@ -43,30 +43,30 @@ export class RlpListUint8 {
     readonly length: number
   ) { }
 
-  sizeOrThrow(): number {
+  size(): number {
     return 1 + 1 + this.length
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(0xf7 + 1)
-    cursor.writeUint8OrThrow(this.length)
+  write(cursor: Cursor) {
+    cursor.writeUint8(0xf7 + 1)
+    cursor.writeUint8(this.length)
 
     for (const element of this.value)
-      element.writeOrThrow(cursor)
+      element.write(cursor)
 
     return
   }
 
-  static readOrThrow(cursor: Cursor) {
+  static read(cursor: Cursor) {
     cursor.offset++
 
-    const length = cursor.readUint8OrThrow()
+    const length = cursor.readUint8()
 
     const start = cursor.offset
     const value = new Array<RlpType>()
 
     while (cursor.offset - start < length)
-      value.push(RlpType.readOrThrow(cursor))
+      value.push(RlpType.read(cursor))
 
     return new RlpListUint8(value, length)
   }
@@ -80,30 +80,30 @@ export class RlpListUint16 {
     readonly length: number
   ) { }
 
-  sizeOrThrow(): number {
+  size(): number {
     return 1 + 2 + this.length
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(0xf7 + 2)
-    cursor.writeUint16OrThrow(this.length)
+  write(cursor: Cursor) {
+    cursor.writeUint8(0xf7 + 2)
+    cursor.writeUint16(this.length)
 
     for (const element of this.value)
-      element.writeOrThrow(cursor)
+      element.write(cursor)
 
     return
   }
 
-  static readOrThrow(cursor: Cursor) {
+  static read(cursor: Cursor) {
     cursor.offset++
 
-    const length = cursor.readUint16OrThrow()
+    const length = cursor.readUint16()
 
     const start = cursor.offset
     const value = new Array<RlpType>()
 
     while (cursor.offset - start < length)
-      value.push(RlpType.readOrThrow(cursor))
+      value.push(RlpType.read(cursor))
 
     return new RlpListUint16(value, length)
   }
@@ -117,30 +117,30 @@ export class RlpListUint24 {
     readonly length: number
   ) { }
 
-  sizeOrThrow(): number {
+  size(): number {
     return 1 + 3 + this.length
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(0xf7 + 3)
-    cursor.writeUint24OrThrow(this.length)
+  write(cursor: Cursor) {
+    cursor.writeUint8(0xf7 + 3)
+    cursor.writeUint24(this.length)
 
     for (const element of this.value)
-      element.writeOrThrow(cursor)
+      element.write(cursor)
 
     return
   }
 
-  static readOrThrow(cursor: Cursor) {
+  static read(cursor: Cursor) {
     cursor.offset++
 
-    const length = cursor.readUint24OrThrow()
+    const length = cursor.readUint24()
 
     const start = cursor.offset
     const value = new Array<RlpType>()
 
     while (cursor.offset - start < length)
-      value.push(RlpType.readOrThrow(cursor))
+      value.push(RlpType.read(cursor))
 
     return new RlpListUint24(value, length)
   }
@@ -154,30 +154,30 @@ export class RlpListUint32 {
     readonly length: number
   ) { }
 
-  sizeOrThrow(): number {
+  size(): number {
     return 1 + 4 + this.length
   }
 
-  writeOrThrow(cursor: Cursor) {
-    cursor.writeUint8OrThrow(0xf7 + 4)
-    cursor.writeUint32OrThrow(this.length)
+  write(cursor: Cursor) {
+    cursor.writeUint8(0xf7 + 4)
+    cursor.writeUint32(this.length)
 
     for (const element of this.value)
-      element.writeOrThrow(cursor)
+      element.write(cursor)
 
     return
   }
 
-  static readOrThrow(cursor: Cursor) {
+  static read(cursor: Cursor) {
     cursor.offset++
 
-    const length = cursor.readUint32OrThrow()
+    const length = cursor.readUint32()
 
     const start = cursor.offset
     const value = new Array<RlpType>()
 
     while (cursor.offset - start < length)
-      value.push(RlpType.readOrThrow(cursor))
+      value.push(RlpType.read(cursor))
 
     return new RlpListUint32(value, length)
   }
@@ -195,8 +195,8 @@ export namespace RlpList {
 
   export type From = Writable[]
 
-  export function fromOrThrow(value: From): RlpList {
-    const size = value.reduce((a, b) => a + b.sizeOrThrow(), 0)
+  export function from(value: From): RlpList {
+    const size = value.reduce((a, b) => a + b.size(), 0)
 
     if (size < 56)
       return new RlpList55(value, size)
@@ -214,21 +214,21 @@ export namespace RlpList {
 
 export namespace RlpList {
 
-  export function readOrThrow(cursor: Cursor) {
-    const first = cursor.getUint8OrThrow()
+  export function read(cursor: Cursor) {
+    const first = cursor.getUint8()
 
     if (first < 192)
       throw new Error()
     if (first < 248)
-      return RlpList55.readOrThrow(cursor)
+      return RlpList55.read(cursor)
     if (first === 248)
-      return RlpListUint8.readOrThrow(cursor)
+      return RlpListUint8.read(cursor)
     if (first === 249)
-      return RlpListUint16.readOrThrow(cursor)
+      return RlpListUint16.read(cursor)
     if (first === 250)
-      return RlpListUint24.readOrThrow(cursor)
+      return RlpListUint24.read(cursor)
     if (first === 251)
-      return RlpListUint32.readOrThrow(cursor)
+      return RlpListUint32.read(cursor)
     if (first < 256)
       throw new Error()
 
@@ -239,7 +239,7 @@ export namespace RlpList {
 
 export namespace RlpList {
 
-  export function asOrThrow(value: unknown) {
+  export function as(value: unknown) {
     if (value instanceof RlpList55)
       return value
     if (value instanceof RlpListUint8)

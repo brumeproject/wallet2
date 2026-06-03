@@ -8,34 +8,34 @@ export type RlpType =
 
 export namespace RlpType {
 
-  export function readOrThrow(cursor: Cursor) {
-    const first = cursor.getUint8OrThrow()
+  export function read(cursor: Cursor) {
+    const first = cursor.getUint8()
 
     if (first < 0x80)
-      return RlpItem1.readOrThrow(cursor)
+      return RlpItem1.read(cursor)
     if (first < 184)
-      return RlpItem55.readOrThrow(cursor)
+      return RlpItem55.read(cursor)
     if (first === 184)
-      return RlpItemUint8.readOrThrow(cursor)
+      return RlpItemUint8.read(cursor)
     if (first === 185)
-      return RlpItemUint16.readOrThrow(cursor)
+      return RlpItemUint16.read(cursor)
     if (first === 186)
-      return RlpItemUint24.readOrThrow(cursor)
+      return RlpItemUint24.read(cursor)
     if (first === 187)
-      return RlpItemUint32.readOrThrow(cursor)
+      return RlpItemUint32.read(cursor)
 
     if (first < 192)
       throw new Error()
     if (first < 248)
-      return RlpList55.readOrThrow(cursor)
+      return RlpList55.read(cursor)
     if (first === 248)
-      return RlpListUint8.readOrThrow(cursor)
+      return RlpListUint8.read(cursor)
     if (first === 249)
-      return RlpListUint16.readOrThrow(cursor)
+      return RlpListUint16.read(cursor)
     if (first === 250)
-      return RlpListUint24.readOrThrow(cursor)
+      return RlpListUint24.read(cursor)
     if (first === 251)
-      return RlpListUint32.readOrThrow(cursor)
+      return RlpListUint32.read(cursor)
     if (first < 256)
       throw new Error()
 

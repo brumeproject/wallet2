@@ -30,7 +30,7 @@ export class UnsignedTransaction2 {
     readonly to: RlpDataLike = new Uint8Array(),
     readonly value: RlpUintLike,
     readonly data: RlpDataLike = new Uint8Array(),
-    readonly accessList: RlpList = RlpList.fromOrThrow([]),
+    readonly accessList: RlpList = RlpList.from([]),
   ) { }
 
   static from(init: UnsignedTransactionInit2): UnsignedTransaction2 {
@@ -39,25 +39,25 @@ export class UnsignedTransaction2 {
   }
 
   static decode(bytes: Uint8Array): UnsignedTransaction2 {
-    const envelope = Readable.readFromBytesOrThrow(TypedTransactionEnvelope, bytes)
+    const envelope = Readable.readFromBytes(TypedTransactionEnvelope, bytes)
 
     if (envelope.type !== 0x02)
       throw new Error()
 
-    const list = Readable.readFromBytesOrThrow(RlpList, envelope.data.bytes)
+    const list = Readable.readFromBytes(RlpList, envelope.data.bytes)
 
-    const chainId = RlpUintLike.from(RlpItem.asOrThrow(list.value[0]))
-    const nonce = RlpUintLike.from(RlpItem.asOrThrow(list.value[1]))
+    const chainId = RlpUintLike.from(RlpItem.as(list.value[0]))
+    const nonce = RlpUintLike.from(RlpItem.as(list.value[1]))
 
-    const maxPriorityFeePerGas = RlpUintLike.from(RlpItem.asOrThrow(list.value[2]))
-    const maxFeePerGas = RlpUintLike.from(RlpItem.asOrThrow(list.value[3]))
-    const gasLimit = RlpUintLike.from(RlpItem.asOrThrow(list.value[4]))
+    const maxPriorityFeePerGas = RlpUintLike.from(RlpItem.as(list.value[2]))
+    const maxFeePerGas = RlpUintLike.from(RlpItem.as(list.value[3]))
+    const gasLimit = RlpUintLike.from(RlpItem.as(list.value[4]))
 
-    const to = RlpDataLike.from(RlpItem.asOrThrow(list.value[5]))
-    const value = RlpUintLike.from(RlpItem.asOrThrow(list.value[6]))
-    const data = RlpDataLike.from(RlpItem.asOrThrow(list.value[7]))
+    const to = RlpDataLike.from(RlpItem.as(list.value[5]))
+    const value = RlpUintLike.from(RlpItem.as(list.value[6]))
+    const data = RlpDataLike.from(RlpItem.as(list.value[7]))
 
-    const accessList = RlpList.asOrThrow(list.value[8])
+    const accessList = RlpList.as(list.value[8])
 
     return new UnsignedTransaction2(chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data, accessList)
   }
@@ -76,9 +76,9 @@ export class UnsignedTransaction2 {
 
     const accessList = this.accessList
 
-    const list = RlpList.fromOrThrow([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data, accessList])
+    const list = RlpList.from([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data, accessList])
 
-    return Writable.writeToBytesOrThrow(new TypedTransactionEnvelope(0x02, list))
+    return Writable.writeToBytes(new TypedTransactionEnvelope(0x02, list))
   }
 
   sign(signature: Uint8Array): SignedTransactionInit2 {
@@ -125,7 +125,7 @@ export class SignedTransactionInit2 {
     readonly to: RlpDataLike = new Uint8Array(),
     readonly value: RlpUintLike,
     readonly data: RlpDataLike = new Uint8Array(),
-    readonly accessList: RlpList = RlpList.fromOrThrow([]),
+    readonly accessList: RlpList = RlpList.from([]),
     readonly yParity: RlpUintLike,
     readonly r: RlpDataLike,
     readonly s: RlpDataLike,
@@ -137,30 +137,30 @@ export class SignedTransactionInit2 {
   }
 
   static decode(bytes: Uint8Array): SignedTransactionInit2 {
-    const envelope = Readable.readFromBytesOrThrow(TypedTransactionEnvelope, bytes)
+    const envelope = Readable.readFromBytes(TypedTransactionEnvelope, bytes)
 
     if (envelope.type !== 0x02)
       throw new Error()
 
-    const list = Readable.readFromBytesOrThrow(RlpList, envelope.data.bytes)
+    const list = Readable.readFromBytes(RlpList, envelope.data.bytes)
 
-    const chainId = RlpUintLike.from(RlpItem.asOrThrow(list.value[0]))
-    const nonce = RlpUintLike.from(RlpItem.asOrThrow(list.value[1]))
+    const chainId = RlpUintLike.from(RlpItem.as(list.value[0]))
+    const nonce = RlpUintLike.from(RlpItem.as(list.value[1]))
 
-    const maxPriorityFeePerGas = RlpUintLike.from(RlpItem.asOrThrow(list.value[2]))
-    const maxFeePerGas = RlpUintLike.from(RlpItem.asOrThrow(list.value[3]))
-    const gasLimit = RlpUintLike.from(RlpItem.asOrThrow(list.value[4]))
+    const maxPriorityFeePerGas = RlpUintLike.from(RlpItem.as(list.value[2]))
+    const maxFeePerGas = RlpUintLike.from(RlpItem.as(list.value[3]))
+    const gasLimit = RlpUintLike.from(RlpItem.as(list.value[4]))
 
-    const to = RlpDataLike.from(RlpItem.asOrThrow(list.value[5]))
-    const value = RlpUintLike.from(RlpItem.asOrThrow(list.value[6]))
-    const data = RlpDataLike.from(RlpItem.asOrThrow(list.value[7]))
+    const to = RlpDataLike.from(RlpItem.as(list.value[5]))
+    const value = RlpUintLike.from(RlpItem.as(list.value[6]))
+    const data = RlpDataLike.from(RlpItem.as(list.value[7]))
 
-    const accessList = RlpList.asOrThrow(list.value[8])
+    const accessList = RlpList.as(list.value[8])
 
-    const yParity = RlpUintLike.from(RlpItem.asOrThrow(list.value[9]))
+    const yParity = RlpUintLike.from(RlpItem.as(list.value[9]))
 
-    const r = RlpDataLike.from(RlpItem.asOrThrow(list.value[10]))
-    const s = RlpDataLike.from(RlpItem.asOrThrow(list.value[11]))
+    const r = RlpDataLike.from(RlpItem.as(list.value[10]))
+    const s = RlpDataLike.from(RlpItem.as(list.value[11]))
 
     return new SignedTransactionInit2(chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data, accessList, yParity, r, s)
   }
@@ -184,9 +184,9 @@ export class SignedTransactionInit2 {
     const r = RlpDataLike.into(this.r)
     const s = RlpDataLike.into(this.s)
 
-    const list = RlpList.fromOrThrow([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data, accessList, yParity, r, s])
+    const list = RlpList.from([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, to, value, data, accessList, yParity, r, s])
 
-    return Writable.writeToBytesOrThrow(new TypedTransactionEnvelope(0x02, list))
+    return Writable.writeToBytes(new TypedTransactionEnvelope(0x02, list))
   }
 
   unsign(): UnsignedTransaction2 {

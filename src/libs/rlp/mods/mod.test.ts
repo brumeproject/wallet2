@@ -3,11 +3,11 @@ import { Readable, Writable } from "@hazae41/binary";
 import { assert, test } from "@hazae41/phobos";
 
 function f(hex: string) {
-  const rlp = Readable.readFromBytesOrThrow(RlpType, Uint8Array.fromHex(hex))
+  const rlp = Readable.readFromBytes(RlpType, Uint8Array.fromHex(hex))
 
   console.log(rlp)
 
-  const hex2 = Writable.writeToBytesOrThrow(rlp).toHex()
+  const hex2 = Writable.writeToBytes(rlp).toHex()
 
   assert(hex === hex2)
 }

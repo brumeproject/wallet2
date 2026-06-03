@@ -53,11 +53,11 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   const [flipped, setFlipped] = useState(false)
 
   const subtitle = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const [$title, setTitle] = useState("")
@@ -72,7 +72,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
   const notes = useDeferredValue($notes)
 
-  const encryptOrThrow = useCallback(async () => {
+  const encrypt = useCallback(async () => {
     const { kdbx, comp } = session.value
 
     await new Promise(ok => requestIdleCallback(ok))
@@ -89,29 +89,29 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
 
     const $group = $root.getDirectGroupByIndexOrThrow(0)
 
-    const $subentry = $group.addEntryOrThrow()
+    const $subentry = $group.push()
 
-    $subentry.addStringOrThrow("Parent", $entry.getUuidOrThrow().toString())
-    $subentry.addStringOrThrow("Index", subaccount.toString())
+    $subentry.push("Parent", $entry.getUuidOrThrow().toString())
+    $subentry.push("Index", subaccount.toString())
 
-    $subentry.addStringOrThrow("Title", title)
+    $subentry.push("Title", title)
 
     if (color)
-      $subentry.addStringOrThrow("Color", color)
+      $subentry.push("Color", color)
 
     if (notes)
-      $subentry.addStringOrThrow("Notes", notes)
+      $subentry.push("Notes", notes)
 
     if (jwk)
-      $subentry.addStringOrThrow("WalletConnectJwk", jwk, true)
+      $subentry.push("WalletConnectJwk", jwk, true)
 
     if (tpc)
-      $subentry.addStringOrThrow("WalletConnectTpc", tpc, true)
+      $subentry.push("WalletConnectTpc", tpc, true)
 
     if (key)
-      $subentry.addStringOrThrow("WalletConnectKey", key, true)
+      $subentry.push("WalletConnectKey", key, true)
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+    return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [$entry, session, title, color, notes, respond, url])
 
   const writeOrDisplay = useSubmit(() => Promise.try(async () => {
@@ -120,7 +120,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     if (fsfh == null)
       return
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     if (content == null)
       return
@@ -132,10 +132,10 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     session.update()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     if (content == null)
       return
@@ -163,7 +163,7 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     session.update()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const error = useMemo(() => {
     if (!url.length)
@@ -290,15 +290,15 @@ export function CryptoSessionAnchor(props: { $entry: KDBX.Inner.KeePassFile.Entr
   }, [$subentry])
 
   const title = useMemo(() => {
-    return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $subentry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$subentry])
 
   const subtitle = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const coords = useAnchorWithCoords(hash, `/session/${uuid}`)
@@ -386,27 +386,27 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
-    return $subentry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $subentry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$subentry])
 
   const subtitle = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const jwk = useMemo(() => {
-    return $subentry.getStringByKeyOrNull("WalletConnectJwk")?.getValueOrThrow().get()
+    return $subentry.getStringByKeyOrNull("WalletConnectJwk")?.getValueOrNull()?.get()
   }, [$subentry])
 
   const tpc = useMemo(() => {
-    return $subentry.getStringByKeyOrNull("WalletConnectTpc")?.getValueOrThrow().get()
+    return $subentry.getStringByKeyOrNull("WalletConnectTpc")?.getValueOrNull()?.get()
   }, [$subentry])
 
   const key = useMemo(() => {
-    return $subentry.getStringByKeyOrNull("WalletConnectKey")?.getValueOrThrow().get()
+    return $subentry.getStringByKeyOrNull("WalletConnectKey")?.getValueOrNull()?.get()
   }, [$subentry])
 
   const [session, setSession] = useState<Nullable<WcSession>>()
@@ -536,14 +536,14 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
   const session = useSessionContext().getOrThrow()
 
-  const encryptOrThrow = useCallback(async () => {
+  const encrypt = useCallback(async () => {
     const { kdbx, comp } = session.value
 
     await new Promise(ok => requestIdleCallback(ok))
 
     $subentry.element.parentNode?.removeChild($subentry.element)
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+    return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, $subentry])
 
   const writeOrDisplay = useSubmit(() => Promise.try(async () => {
@@ -552,7 +552,7 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (fsfh == null)
       return
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     if (content == null)
       return
@@ -564,10 +564,10 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     close(true)
 
     session.update()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     if (content == null)
       return
@@ -597,7 +597,7 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     close(true)
 
     session.update()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   return <Fragment>
     <div className="flex flex-col text-left gap-2">

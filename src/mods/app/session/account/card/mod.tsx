@@ -68,7 +68,7 @@ export function CardAccountAddPage() {
 
   const notes = useDeferredValue($notes)
 
-  const encryptOrThrow = useCallback(async () => {
+  const encrypt = useCallback(async () => {
     const { kdbx, comp } = session.value
 
     await new Promise(ok => requestIdleCallback(ok))
@@ -77,32 +77,32 @@ export function CardAccountAddPage() {
     const $root = $file.getRootOrThrow()
 
     const $group = $root.getDirectGroupByIndexOrThrow(0)
-    const $entry = $group.addEntryOrThrow()
+    const $entry = $group.push()
 
-    $entry.addStringOrThrow("Title", title)
+    $entry.push("Title", title)
 
     if (color)
-      $entry.addStringOrThrow("Color", color)
+      $entry.push("Color", color)
 
     if (num)
-      $entry.addStringOrThrow("CardNumber", num)
+      $entry.push("CardNumber", num)
 
     if (hol)
-      $entry.addStringOrThrow("CardHolder", hol)
+      $entry.push("CardHolder", hol)
 
     if (exp)
-      $entry.addStringOrThrow("ExpiryDate", exp)
+      $entry.push("ExpiryDate", exp)
 
     if (cvv)
-      $entry.addStringOrThrow("CVV", cvv, true)
+      $entry.push("CVV", cvv, true)
 
     if (pin)
-      $entry.addStringOrThrow("PIN", pin, true)
+      $entry.push("PIN", pin, true)
 
     if (notes)
-      $entry.addStringOrThrow("Notes", notes)
+      $entry.push("Notes", notes)
 
-    return Writable.writeToBytesOrThrow(await kdbx.encryptOrThrow(comp))
+    return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, title, color, num, hol, exp, cvv, pin, notes])
 
   const writeOrDisplay = useSubmit(() => Promise.try(async () => {
@@ -111,7 +111,7 @@ export function CardAccountAddPage() {
     if (fsfh == null)
       return
 
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const writable = await fsfh.createWritable()
     await writable.write(content)
@@ -120,10 +120,10 @@ export function CardAccountAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const saveOrDisplay = useSubmit(() => Promise.try(async () => {
-    const content = await encryptOrThrow()
+    const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
 
@@ -148,7 +148,7 @@ export function CardAccountAddPage() {
     session.update()
 
     close()
-  }).catch(Errors.display), [encryptOrThrow, close])
+  }).catch(Errors.display), [encrypt, close])
 
   const error = useMemo(() => {
     if (!num.length)
@@ -348,11 +348,11 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const trashed = useMemo(() => {
@@ -368,27 +368,27 @@ export function CardAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry })
   }, [session, $entry])
 
   const num = useMemo(() => {
-    return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("CardNumber")?.getValueOrNull()?.get()
   }, [$entry])
 
   const hol = useMemo(() => {
-    return $entry.getStringByKeyOrNull("CardHolder")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("CardHolder")?.getValueOrNull()?.get()
   }, [$entry])
 
   const exp = useMemo(() => {
-    return $entry.getStringByKeyOrNull("ExpiryDate")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("ExpiryDate")?.getValueOrNull()?.get()
   }, [$entry])
 
   const cvv = useMemo(() => {
-    return $entry.getStringByKeyOrNull("CVV")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("CVV")?.getValueOrNull()?.get()
   }, [$entry])
 
   const pin = useMemo(() => {
-    return $entry.getStringByKeyOrNull("PIN")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("PIN")?.getValueOrNull()?.get()
   }, [$entry])
 
   const notes = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Notes")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Notes")?.getValueOrNull()?.get()
   }, [$entry])
 
   const copyTheNum = useCopy(num)

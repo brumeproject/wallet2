@@ -40,11 +40,11 @@ export function CryptoSubaccountAnchor(props: { $entry: KDBX.Inner.KeePassFile.E
   const coords = useAnchorWithCoords(hash, `/subaccount/${index}`)
 
   const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   return <Fragment>
@@ -126,19 +126,19 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrNull()?.get()
   }, [$entry])
 
   const subentries = useMemo(() => {
-    return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent")?.getValueOrThrow().get() === $entry.getUuidOrThrow().toString()).filter(e => e.getStringByKeyOrNull("Index")?.getValueOrThrow().get() === subaccount.toString())
+    return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent")?.getValueOrNull()?.get() === $entry.getUuidOrThrow().toString()).filter(e => e.getStringByKeyOrNull("Index")?.getValueOrNull()?.get() === subaccount.toString())
   }, [session, $entry, subaccount])
 
   const getEthereumOrThrow = useCallback(async () => {
@@ -394,15 +394,15 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrNull()?.get()
   }, [$entry])
 
   const [ethereum, setEthereum] = useState<Nullable<string>>()
@@ -541,15 +541,15 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
   const [flipped, setFlipped] = useState(false)
 
   const title = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Title")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Title")?.getValueOrNull()?.get()
   }, [$entry])
 
   const color = useMemo(() => {
-    return $entry.getStringByKeyOrNull("Color")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
   const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrThrow().get()
+    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrNull()?.get()
   }, [$entry])
 
   const [ethereum, setEthereum] = useState<Nullable<string>>()
@@ -583,8 +583,8 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
     const concat = new Uint8Array(xsig.key.length + upub.length)
 
     const cursor = new Cursor(concat)
-    cursor.writeOrThrow(xsig.key)
-    cursor.writeOrThrow(upub)
+    cursor.write(xsig.key)
+    cursor.write(upub)
 
     return base58.encode(concat)
   }, [seedphrase, subaccount])

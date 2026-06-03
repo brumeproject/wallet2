@@ -21,11 +21,11 @@ export namespace RlpUintLike {
 
   export function into(self: RlpUintLike): Into {
     if (typeof self === "string")
-      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(base16.trimStart(self.slice(2)))))
+      return RlpItem.from(Uint8Array.fromHex(base16.padStart(base16.trimStart(self.slice(2)))))
     if (typeof self === "bigint")
-      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(base16.trimStart(self.toString(16)))))
+      return RlpItem.from(Uint8Array.fromHex(base16.padStart(base16.trimStart(self.toString(16)))))
     if (typeof self === "number")
-      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(base16.trimStart(self.toString(16)))))
+      return RlpItem.from(Uint8Array.fromHex(base16.padStart(base16.trimStart(self.toString(16)))))
     throw new Error()
   }
 
@@ -42,9 +42,9 @@ export namespace RlpDataLike {
 
   export function into(self: RlpDataLike): Into {
     if (typeof self === "string")
-      return RlpItem.fromOrThrow(Uint8Array.fromHex(base16.padStart(self.slice(2))))
+      return RlpItem.from(Uint8Array.fromHex(base16.padStart(self.slice(2))))
     if (self instanceof Uint8Array)
-      return RlpItem.fromOrThrow(self)
+      return RlpItem.from(self)
     throw new Error()
   }
 
