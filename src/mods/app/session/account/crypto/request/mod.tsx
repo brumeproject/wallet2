@@ -3,6 +3,7 @@ import { FlipCard } from "@/libs/card/mod.tsx";
 import { chainlist } from "@/libs/chainlist/mod.ts";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
 import { UnsignedTransaction0 } from "@/libs/eip155/mods/transaction0/mod.ts";
+import { UnsignedTransaction2 } from "@/libs/eip155/mods/transaction2/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
@@ -209,7 +210,9 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         params: [current, "latest"]
       }).then(r => r.getOrThrow())
 
-      const utx = UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice, value, nonce })
+      const utx = maxFeePerGas != null && maxPriorityFeePerGas != null
+        ? UnsignedTransaction2.from({ chainId, data, to, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, value, nonce })
+        : UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice, value, nonce })
 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
@@ -281,7 +284,35 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     Promise.reject(new WcUserRejectedError()).catch(request.reject).finally(() => close(true))
   }, [request, close])
 
-  const decodeOrThrow = useCallback((params: WcSessionRequestParams) => {
+  const getChainOrThrow = useCallback((params: WcSessionRequestParams) => {
+    const { request, chainId } = params
+
+    if (request.method === "eth_sendTransaction")
+      return chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))?.name
+
+    if (request.method === "solana_signTransaction")
+      return "Solana"
+
+    throw new WcUnsupportedMethodsError()
+  }, [])
+
+  const getTypeOrThrow = useCallback((params: WcSessionRequestParams) => {
+    const { request } = params
+
+    if (request.method === "eth_sendTransaction")
+      return "transaction"
+    if (request.method === "solana_signTransaction")
+      return "transaction"
+
+    if (request.method === "personal_sign")
+      return "signature"
+    if (request.method === "solana_signMessage")
+      return "signature"
+
+    throw new WcUnsupportedMethodsError()
+  }, [])
+
+  const getMessageOrThrow = useCallback((params: WcSessionRequestParams) => {
     const { request } = params
 
     if (request.method === "personal_sign") {
@@ -305,8 +336,16 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
+  const type = useMemo(() => {
+    return Result.runAndWrapSync(() => getTypeOrThrow(request.params))
+  }, [request])
+
+  const chain = useMemo(() => {
+    return Result.runAndWrapSync(() => getChainOrThrow(request.params))
+  }, [request])
+
   const message = useMemo(() => {
-    return Result.runAndWrapSync(() => decodeOrThrow(request.params))
+    return Result.runAndWrapSync(() => getMessageOrThrow(request.params))
   }, [request])
 
   return <Fragment>
@@ -318,21 +357,51 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       </div>
       <div className="h-6" />
       <div className="flex flex-col items-center justify-center">
-        <FlipCard
-          type="Signature"
-          title={title}
-          subtitle={subtitle}
-          color={color}
-          index={subaccount}
-          icon={<Outline.CubeTransparentIcon className="size-5" />}
-          flip={flipped}
-          onFlipChange={setFlipped} />
+        {type.getOrNull() === "transaction" &&
+          <FlipCard
+            type="Transaction"
+            title={title}
+            subtitle={subtitle}
+            color={color}
+            index={subaccount}
+            icon={<Outline.CubeIcon className="size-5" />}
+            flip={flipped}
+            onFlipChange={setFlipped} />}
+        {type.getOrNull() === "signature" &&
+          <FlipCard
+            type="Signature"
+            title={title}
+            subtitle={subtitle}
+            color={color}
+            index={subaccount}
+            icon={<Outline.CubeTransparentIcon className="size-5" />}
+            flip={flipped}
+            onFlipChange={setFlipped} />}
+        {type.isErr() &&
+          <FlipCard
+            type="Unknown"
+            title={title}
+            subtitle={subtitle}
+            color={color}
+            index={subaccount}
+            icon={<Outline.CubeTransparentIcon className="size-5" />}
+            flip={flipped}
+            onFlipChange={setFlipped} />}
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
         <input className="hidden"
           autoComplete="off"
           name="username" />
+        {chain.isOk() && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            {Lang.match({ en: "Chain", zh: "链", hi: "चेन", es: "Cadena", ar: "سلسلة", fr: "Chaîne", de: "Kette", ru: "Цепочка", pt: "Cadeia", ja: "チェーン", pa: "ਚੇਨ", bn: "চেইন", id: "Rantai", ur: "چین", ms: "Rantai", it: "Catena", tr: "Zincir", ta: "செயின்", te: "చెయిన్", ko: "체인", vi: "Chuỗi", pl: "Łańcuch", ro: "Lanț", nl: "Ketting", el: "Αλυσίδα ", th: "เชน ", cs: "Řetěz ", hu: "Lánc ", sv: "Kedja ", da: "Kæde" })}
+          </div>
+          <div className="text-default-contrast">
+            {chain.get()}
+          </div>
+        </Fragment>}
         {message.isOk() && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
