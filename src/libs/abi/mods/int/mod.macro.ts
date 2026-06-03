@@ -11,30 +11,28 @@ export class AbiInt${i * 8} {
 
   constructor(
     /**
-     * ${i}-sized bytes
+     * 32-sized bytes
      */
     readonly value: Uint8Array
   ) {}
 
   static from(value: bigint) {
+    const pad = value < 0 ? "f" : "0"
+
     const mod = 2n ** ${i * 8 - 1}n
     const sup = 2n ** ${i * 8}n
 
     value = value % mod
     value = (value + sup) % sup
     
-    const hex = value.toString(16).padStart(${i * 2}, "0")
+    const hex = value.toString(16).padStart(64, pad)
     const raw = Uint8Array.fromHex(hex)
 
     return new AbiInt${i * 8}(raw)
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - ${i}
-
-    const raw = new Uint8Array(cursor.read(${i}))
-
-    return new AbiInt${i * 8}(raw)
+    return new AbiInt${i * 8}(new Uint8Array(cursor.read(32)))
   }
 
   size() {
@@ -42,18 +40,14 @@ export class AbiInt${i * 8} {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - ${i}
-
     cursor.write(this.value)
-
-    return
   }
 
   into() {
     const mod = 2n ** ${i * 8 - 1}n
     const sup = 2n ** ${i * 8}n
 
-    let value = BigInt(\`0x\${this.value.toHex()}\`)
+    let value = BigInt(\`0x\${this.value.subarray(32 - ${i}, 32).toHex()}\`)
 
     value = value % sup
     value = value < mod ? value : value - sup
