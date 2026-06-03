@@ -7,22 +7,17 @@ $$(() => {
 
   for (let i = 1; i < 32 + 1; i++)
     code.push(`
-export class AbiBytes${i * 8} {
+export class AbiBytes${i} {
 
   constructor(
     /**
-     * ${i}-sized big-endian unsigned integer
+     * ${i}-sized byte array
      */
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
-    value = value % (2n ** ${i * 8}n)
-    
-    const hex = value.toString(16).padStart(${i * 2}, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint${i * 8}(raw)
+  static from(value: Uint8Array) {
+    return new AbiBytes${i}(value.subarray(0, ${i}))
   }
 
   static read(cursor: Cursor) {
@@ -30,7 +25,7 @@ export class AbiBytes${i * 8} {
 
     const raw = new Uint8Array(cursor.read(${i}))
 
-    return new AbiUint${i * 8}(raw)
+    return new AbiBytes${i}(raw)
   }
 
   size() {
@@ -46,29 +41,24 @@ export class AbiBytes${i * 8} {
   }
 
   into() {
-    return BigInt(\`0x\${this.value.toHex()}\`) % (2n ** ${i * 8}n)
+    return this.value.subarray(0, ${i})
   }
 
 }
   
-export namespace AbiUint${i * 8} {
+export namespace AbiBytes${i} {
   
   export class Packed {
   
     constructor(
       /**
-       * ${i}-sized big-endian unsigned integer
+       * ${i}-sized byte array
        */
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
-      value = value % (2n ** ${i * 8}n)
-      
-      const hex = value.toString(16).padStart(${i * 2}, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, ${i}))
     }
 
     size() {
@@ -80,7 +70,7 @@ export namespace AbiUint${i * 8} {
     }
 
     into() {
-      return BigInt(\`0x\${this.value.toHex()}\`) % (2n ** ${i * 8}n)
+      return this.value.subarray(0, ${i})
     }
 
   }

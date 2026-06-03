@@ -1,21 +1,16 @@
 import { Cursor } from "@hazae41/cursor";
 
-export class AbiBytes8 {
+export class AbiBytes1 {
 
   constructor(
     /**
-     * 1-sized big-endian unsigned integer
+     * 1-sized byte array
      */
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
-    value = value % (2n ** 8n)
-    
-    const hex = value.toString(16).padStart(2, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint8(raw)
+  static from(value: Uint8Array) {
+    return new AbiBytes1(value.subarray(0, 1))
   }
 
   static read(cursor: Cursor) {
@@ -23,7 +18,7 @@ export class AbiBytes8 {
 
     const raw = new Uint8Array(cursor.read(1))
 
-    return new AbiUint8(raw)
+    return new AbiBytes1(raw)
   }
 
   size() {
@@ -39,29 +34,24 @@ export class AbiBytes8 {
   }
 
   into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 8n)
+    return this.value.subarray(0, 1)
   }
 
 }
   
-export namespace AbiUint8 {
+export namespace AbiBytes1 {
   
   export class Packed {
   
     constructor(
       /**
-       * 1-sized big-endian unsigned integer
+       * 1-sized byte array
        */
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
-      value = value % (2n ** 8n)
-      
-      const hex = value.toString(16).padStart(2, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 1))
     }
 
     size() {
@@ -73,7 +63,987 @@ export namespace AbiUint8 {
     }
 
     into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 8n)
+      return this.value.subarray(0, 1)
+    }
+
+  }
+  
+}
+
+export class AbiBytes2 {
+
+  constructor(
+    /**
+     * 2-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes2(value.subarray(0, 2))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 2
+
+    const raw = new Uint8Array(cursor.read(2))
+
+    return new AbiBytes2(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 2
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 2)
+  }
+
+}
+  
+export namespace AbiBytes2 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 2-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 2))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 2)
+    }
+
+  }
+  
+}
+
+export class AbiBytes3 {
+
+  constructor(
+    /**
+     * 3-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes3(value.subarray(0, 3))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 3
+
+    const raw = new Uint8Array(cursor.read(3))
+
+    return new AbiBytes3(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 3
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 3)
+  }
+
+}
+  
+export namespace AbiBytes3 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 3-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 3))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 3)
+    }
+
+  }
+  
+}
+
+export class AbiBytes4 {
+
+  constructor(
+    /**
+     * 4-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes4(value.subarray(0, 4))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 4
+
+    const raw = new Uint8Array(cursor.read(4))
+
+    return new AbiBytes4(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 4
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 4)
+  }
+
+}
+  
+export namespace AbiBytes4 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 4-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 4))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 4)
+    }
+
+  }
+  
+}
+
+export class AbiBytes5 {
+
+  constructor(
+    /**
+     * 5-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes5(value.subarray(0, 5))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 5
+
+    const raw = new Uint8Array(cursor.read(5))
+
+    return new AbiBytes5(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 5
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 5)
+  }
+
+}
+  
+export namespace AbiBytes5 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 5-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 5))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 5)
+    }
+
+  }
+  
+}
+
+export class AbiBytes6 {
+
+  constructor(
+    /**
+     * 6-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes6(value.subarray(0, 6))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 6
+
+    const raw = new Uint8Array(cursor.read(6))
+
+    return new AbiBytes6(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 6
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 6)
+  }
+
+}
+  
+export namespace AbiBytes6 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 6-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 6))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 6)
+    }
+
+  }
+  
+}
+
+export class AbiBytes7 {
+
+  constructor(
+    /**
+     * 7-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes7(value.subarray(0, 7))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 7
+
+    const raw = new Uint8Array(cursor.read(7))
+
+    return new AbiBytes7(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 7
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 7)
+  }
+
+}
+  
+export namespace AbiBytes7 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 7-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 7))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 7)
+    }
+
+  }
+  
+}
+
+export class AbiBytes8 {
+
+  constructor(
+    /**
+     * 8-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes8(value.subarray(0, 8))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 8
+
+    const raw = new Uint8Array(cursor.read(8))
+
+    return new AbiBytes8(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 8
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 8)
+  }
+
+}
+  
+export namespace AbiBytes8 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 8-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 8))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 8)
+    }
+
+  }
+  
+}
+
+export class AbiBytes9 {
+
+  constructor(
+    /**
+     * 9-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes9(value.subarray(0, 9))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 9
+
+    const raw = new Uint8Array(cursor.read(9))
+
+    return new AbiBytes9(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 9
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 9)
+  }
+
+}
+  
+export namespace AbiBytes9 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 9-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 9))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 9)
+    }
+
+  }
+  
+}
+
+export class AbiBytes10 {
+
+  constructor(
+    /**
+     * 10-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes10(value.subarray(0, 10))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 10
+
+    const raw = new Uint8Array(cursor.read(10))
+
+    return new AbiBytes10(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 10
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 10)
+  }
+
+}
+  
+export namespace AbiBytes10 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 10-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 10))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 10)
+    }
+
+  }
+  
+}
+
+export class AbiBytes11 {
+
+  constructor(
+    /**
+     * 11-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes11(value.subarray(0, 11))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 11
+
+    const raw = new Uint8Array(cursor.read(11))
+
+    return new AbiBytes11(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 11
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 11)
+  }
+
+}
+  
+export namespace AbiBytes11 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 11-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 11))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 11)
+    }
+
+  }
+  
+}
+
+export class AbiBytes12 {
+
+  constructor(
+    /**
+     * 12-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes12(value.subarray(0, 12))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 12
+
+    const raw = new Uint8Array(cursor.read(12))
+
+    return new AbiBytes12(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 12
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 12)
+  }
+
+}
+  
+export namespace AbiBytes12 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 12-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 12))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 12)
+    }
+
+  }
+  
+}
+
+export class AbiBytes13 {
+
+  constructor(
+    /**
+     * 13-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes13(value.subarray(0, 13))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 13
+
+    const raw = new Uint8Array(cursor.read(13))
+
+    return new AbiBytes13(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 13
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 13)
+  }
+
+}
+  
+export namespace AbiBytes13 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 13-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 13))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 13)
+    }
+
+  }
+  
+}
+
+export class AbiBytes14 {
+
+  constructor(
+    /**
+     * 14-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes14(value.subarray(0, 14))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 14
+
+    const raw = new Uint8Array(cursor.read(14))
+
+    return new AbiBytes14(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 14
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 14)
+  }
+
+}
+  
+export namespace AbiBytes14 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 14-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 14))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 14)
+    }
+
+  }
+  
+}
+
+export class AbiBytes15 {
+
+  constructor(
+    /**
+     * 15-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes15(value.subarray(0, 15))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 15
+
+    const raw = new Uint8Array(cursor.read(15))
+
+    return new AbiBytes15(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 15
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 15)
+  }
+
+}
+  
+export namespace AbiBytes15 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 15-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 15))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 15)
     }
 
   }
@@ -84,26 +1054,21 @@ export class AbiBytes16 {
 
   constructor(
     /**
-     * 2-sized big-endian unsigned integer
+     * 16-sized byte array
      */
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
-    value = value % (2n ** 16n)
-    
-    const hex = value.toString(16).padStart(4, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint16(raw)
+  static from(value: Uint8Array) {
+    return new AbiBytes16(value.subarray(0, 16))
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 2
+    cursor.offset += 32 - 16
 
-    const raw = new Uint8Array(cursor.read(2))
+    const raw = new Uint8Array(cursor.read(16))
 
-    return new AbiUint16(raw)
+    return new AbiBytes16(raw)
   }
 
   size() {
@@ -111,7 +1076,7 @@ export class AbiBytes16 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 2
+    cursor.offset += 32 - 16
 
     cursor.write(this.value)
 
@@ -119,29 +1084,24 @@ export class AbiBytes16 {
   }
 
   into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 16n)
+    return this.value.subarray(0, 16)
   }
 
 }
   
-export namespace AbiUint16 {
+export namespace AbiBytes16 {
   
   export class Packed {
   
     constructor(
       /**
-       * 2-sized big-endian unsigned integer
+       * 16-sized byte array
        */
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
-      value = value % (2n ** 16n)
-      
-      const hex = value.toString(16).padStart(4, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 16))
     }
 
     size() {
@@ -153,7 +1113,497 @@ export namespace AbiUint16 {
     }
 
     into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 16n)
+      return this.value.subarray(0, 16)
+    }
+
+  }
+  
+}
+
+export class AbiBytes17 {
+
+  constructor(
+    /**
+     * 17-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes17(value.subarray(0, 17))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 17
+
+    const raw = new Uint8Array(cursor.read(17))
+
+    return new AbiBytes17(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 17
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 17)
+  }
+
+}
+  
+export namespace AbiBytes17 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 17-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 17))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 17)
+    }
+
+  }
+  
+}
+
+export class AbiBytes18 {
+
+  constructor(
+    /**
+     * 18-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes18(value.subarray(0, 18))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 18
+
+    const raw = new Uint8Array(cursor.read(18))
+
+    return new AbiBytes18(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 18
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 18)
+  }
+
+}
+  
+export namespace AbiBytes18 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 18-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 18))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 18)
+    }
+
+  }
+  
+}
+
+export class AbiBytes19 {
+
+  constructor(
+    /**
+     * 19-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes19(value.subarray(0, 19))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 19
+
+    const raw = new Uint8Array(cursor.read(19))
+
+    return new AbiBytes19(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 19
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 19)
+  }
+
+}
+  
+export namespace AbiBytes19 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 19-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 19))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 19)
+    }
+
+  }
+  
+}
+
+export class AbiBytes20 {
+
+  constructor(
+    /**
+     * 20-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes20(value.subarray(0, 20))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 20
+
+    const raw = new Uint8Array(cursor.read(20))
+
+    return new AbiBytes20(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 20
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 20)
+  }
+
+}
+  
+export namespace AbiBytes20 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 20-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 20))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 20)
+    }
+
+  }
+  
+}
+
+export class AbiBytes21 {
+
+  constructor(
+    /**
+     * 21-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes21(value.subarray(0, 21))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 21
+
+    const raw = new Uint8Array(cursor.read(21))
+
+    return new AbiBytes21(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 21
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 21)
+  }
+
+}
+  
+export namespace AbiBytes21 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 21-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 21))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 21)
+    }
+
+  }
+  
+}
+
+export class AbiBytes22 {
+
+  constructor(
+    /**
+     * 22-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes22(value.subarray(0, 22))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 22
+
+    const raw = new Uint8Array(cursor.read(22))
+
+    return new AbiBytes22(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 22
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 22)
+  }
+
+}
+  
+export namespace AbiBytes22 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 22-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 22))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 22)
+    }
+
+  }
+  
+}
+
+export class AbiBytes23 {
+
+  constructor(
+    /**
+     * 23-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes23(value.subarray(0, 23))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 23
+
+    const raw = new Uint8Array(cursor.read(23))
+
+    return new AbiBytes23(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 23
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 23)
+  }
+
+}
+  
+export namespace AbiBytes23 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 23-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 23))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 23)
     }
 
   }
@@ -164,26 +1614,21 @@ export class AbiBytes24 {
 
   constructor(
     /**
-     * 3-sized big-endian unsigned integer
+     * 24-sized byte array
      */
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
-    value = value % (2n ** 24n)
-    
-    const hex = value.toString(16).padStart(6, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint24(raw)
+  static from(value: Uint8Array) {
+    return new AbiBytes24(value.subarray(0, 24))
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 3
+    cursor.offset += 32 - 24
 
-    const raw = new Uint8Array(cursor.read(3))
+    const raw = new Uint8Array(cursor.read(24))
 
-    return new AbiUint24(raw)
+    return new AbiBytes24(raw)
   }
 
   size() {
@@ -191,7 +1636,7 @@ export class AbiBytes24 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 3
+    cursor.offset += 32 - 24
 
     cursor.write(this.value)
 
@@ -199,29 +1644,24 @@ export class AbiBytes24 {
   }
 
   into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 24n)
+    return this.value.subarray(0, 24)
   }
 
 }
   
-export namespace AbiUint24 {
+export namespace AbiBytes24 {
   
   export class Packed {
   
     constructor(
       /**
-       * 3-sized big-endian unsigned integer
+       * 24-sized byte array
        */
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
-      value = value % (2n ** 24n)
-      
-      const hex = value.toString(16).padStart(6, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 24))
     }
 
     size() {
@@ -233,7 +1673,497 @@ export namespace AbiUint24 {
     }
 
     into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 24n)
+      return this.value.subarray(0, 24)
+    }
+
+  }
+  
+}
+
+export class AbiBytes25 {
+
+  constructor(
+    /**
+     * 25-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes25(value.subarray(0, 25))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 25
+
+    const raw = new Uint8Array(cursor.read(25))
+
+    return new AbiBytes25(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 25
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 25)
+  }
+
+}
+  
+export namespace AbiBytes25 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 25-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 25))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 25)
+    }
+
+  }
+  
+}
+
+export class AbiBytes26 {
+
+  constructor(
+    /**
+     * 26-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes26(value.subarray(0, 26))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 26
+
+    const raw = new Uint8Array(cursor.read(26))
+
+    return new AbiBytes26(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 26
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 26)
+  }
+
+}
+  
+export namespace AbiBytes26 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 26-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 26))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 26)
+    }
+
+  }
+  
+}
+
+export class AbiBytes27 {
+
+  constructor(
+    /**
+     * 27-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes27(value.subarray(0, 27))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 27
+
+    const raw = new Uint8Array(cursor.read(27))
+
+    return new AbiBytes27(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 27
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 27)
+  }
+
+}
+  
+export namespace AbiBytes27 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 27-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 27))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 27)
+    }
+
+  }
+  
+}
+
+export class AbiBytes28 {
+
+  constructor(
+    /**
+     * 28-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes28(value.subarray(0, 28))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 28
+
+    const raw = new Uint8Array(cursor.read(28))
+
+    return new AbiBytes28(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 28
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 28)
+  }
+
+}
+  
+export namespace AbiBytes28 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 28-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 28))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 28)
+    }
+
+  }
+  
+}
+
+export class AbiBytes29 {
+
+  constructor(
+    /**
+     * 29-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes29(value.subarray(0, 29))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 29
+
+    const raw = new Uint8Array(cursor.read(29))
+
+    return new AbiBytes29(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 29
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 29)
+  }
+
+}
+  
+export namespace AbiBytes29 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 29-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 29))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 29)
+    }
+
+  }
+  
+}
+
+export class AbiBytes30 {
+
+  constructor(
+    /**
+     * 30-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes30(value.subarray(0, 30))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 30
+
+    const raw = new Uint8Array(cursor.read(30))
+
+    return new AbiBytes30(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 30
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 30)
+  }
+
+}
+  
+export namespace AbiBytes30 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 30-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 30))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 30)
+    }
+
+  }
+  
+}
+
+export class AbiBytes31 {
+
+  constructor(
+    /**
+     * 31-sized byte array
+     */
+    readonly value: Uint8Array
+  ) {}
+
+  static from(value: Uint8Array) {
+    return new AbiBytes31(value.subarray(0, 31))
+  }
+
+  static read(cursor: Cursor) {
+    cursor.offset += 32 - 31
+
+    const raw = new Uint8Array(cursor.read(31))
+
+    return new AbiBytes31(raw)
+  }
+
+  size() {
+    return 32
+  }
+
+  write(cursor: Cursor) {
+    cursor.offset += 32 - 31
+
+    cursor.write(this.value)
+
+    return
+  }
+
+  into() {
+    return this.value.subarray(0, 31)
+  }
+
+}
+  
+export namespace AbiBytes31 {
+  
+  export class Packed {
+  
+    constructor(
+      /**
+       * 31-sized byte array
+       */
+      readonly value: Uint8Array
+    ) {}
+
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 31))
+    }
+
+    size() {
+      return this.value.length
+    }
+
+    write(cursor: Cursor) {
+      cursor.write(this.value)
+    }
+
+    into() {
+      return this.value.subarray(0, 31)
     }
 
   }
@@ -244,2258 +2174,13 @@ export class AbiBytes32 {
 
   constructor(
     /**
-     * 4-sized big-endian unsigned integer
+     * 32-sized byte array
      */
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
-    value = value % (2n ** 32n)
-    
-    const hex = value.toString(16).padStart(8, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint32(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 4
-
-    const raw = new Uint8Array(cursor.read(4))
-
-    return new AbiUint32(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 4
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 32n)
-  }
-
-}
-  
-export namespace AbiUint32 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 4-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 32n)
-      
-      const hex = value.toString(16).padStart(8, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 32n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes40 {
-
-  constructor(
-    /**
-     * 5-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 40n)
-    
-    const hex = value.toString(16).padStart(10, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint40(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 5
-
-    const raw = new Uint8Array(cursor.read(5))
-
-    return new AbiUint40(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 5
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 40n)
-  }
-
-}
-  
-export namespace AbiUint40 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 5-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 40n)
-      
-      const hex = value.toString(16).padStart(10, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 40n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes48 {
-
-  constructor(
-    /**
-     * 6-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 48n)
-    
-    const hex = value.toString(16).padStart(12, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint48(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 6
-
-    const raw = new Uint8Array(cursor.read(6))
-
-    return new AbiUint48(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 6
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 48n)
-  }
-
-}
-  
-export namespace AbiUint48 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 6-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 48n)
-      
-      const hex = value.toString(16).padStart(12, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 48n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes56 {
-
-  constructor(
-    /**
-     * 7-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 56n)
-    
-    const hex = value.toString(16).padStart(14, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint56(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 7
-
-    const raw = new Uint8Array(cursor.read(7))
-
-    return new AbiUint56(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 7
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 56n)
-  }
-
-}
-  
-export namespace AbiUint56 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 7-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 56n)
-      
-      const hex = value.toString(16).padStart(14, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 56n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes64 {
-
-  constructor(
-    /**
-     * 8-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 64n)
-    
-    const hex = value.toString(16).padStart(16, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint64(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 8
-
-    const raw = new Uint8Array(cursor.read(8))
-
-    return new AbiUint64(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 8
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 64n)
-  }
-
-}
-  
-export namespace AbiUint64 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 8-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 64n)
-      
-      const hex = value.toString(16).padStart(16, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 64n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes72 {
-
-  constructor(
-    /**
-     * 9-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 72n)
-    
-    const hex = value.toString(16).padStart(18, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint72(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 9
-
-    const raw = new Uint8Array(cursor.read(9))
-
-    return new AbiUint72(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 9
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 72n)
-  }
-
-}
-  
-export namespace AbiUint72 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 9-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 72n)
-      
-      const hex = value.toString(16).padStart(18, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 72n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes80 {
-
-  constructor(
-    /**
-     * 10-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 80n)
-    
-    const hex = value.toString(16).padStart(20, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint80(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 10
-
-    const raw = new Uint8Array(cursor.read(10))
-
-    return new AbiUint80(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 10
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 80n)
-  }
-
-}
-  
-export namespace AbiUint80 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 10-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 80n)
-      
-      const hex = value.toString(16).padStart(20, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 80n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes88 {
-
-  constructor(
-    /**
-     * 11-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 88n)
-    
-    const hex = value.toString(16).padStart(22, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint88(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 11
-
-    const raw = new Uint8Array(cursor.read(11))
-
-    return new AbiUint88(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 11
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 88n)
-  }
-
-}
-  
-export namespace AbiUint88 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 11-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 88n)
-      
-      const hex = value.toString(16).padStart(22, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 88n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes96 {
-
-  constructor(
-    /**
-     * 12-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 96n)
-    
-    const hex = value.toString(16).padStart(24, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint96(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 12
-
-    const raw = new Uint8Array(cursor.read(12))
-
-    return new AbiUint96(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 12
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 96n)
-  }
-
-}
-  
-export namespace AbiUint96 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 12-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 96n)
-      
-      const hex = value.toString(16).padStart(24, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 96n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes104 {
-
-  constructor(
-    /**
-     * 13-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 104n)
-    
-    const hex = value.toString(16).padStart(26, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint104(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 13
-
-    const raw = new Uint8Array(cursor.read(13))
-
-    return new AbiUint104(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 13
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 104n)
-  }
-
-}
-  
-export namespace AbiUint104 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 13-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 104n)
-      
-      const hex = value.toString(16).padStart(26, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 104n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes112 {
-
-  constructor(
-    /**
-     * 14-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 112n)
-    
-    const hex = value.toString(16).padStart(28, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint112(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 14
-
-    const raw = new Uint8Array(cursor.read(14))
-
-    return new AbiUint112(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 14
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 112n)
-  }
-
-}
-  
-export namespace AbiUint112 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 14-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 112n)
-      
-      const hex = value.toString(16).padStart(28, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 112n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes120 {
-
-  constructor(
-    /**
-     * 15-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 120n)
-    
-    const hex = value.toString(16).padStart(30, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint120(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 15
-
-    const raw = new Uint8Array(cursor.read(15))
-
-    return new AbiUint120(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 15
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 120n)
-  }
-
-}
-  
-export namespace AbiUint120 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 15-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 120n)
-      
-      const hex = value.toString(16).padStart(30, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 120n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes128 {
-
-  constructor(
-    /**
-     * 16-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 128n)
-    
-    const hex = value.toString(16).padStart(32, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint128(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 16
-
-    const raw = new Uint8Array(cursor.read(16))
-
-    return new AbiUint128(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 16
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 128n)
-  }
-
-}
-  
-export namespace AbiUint128 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 16-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 128n)
-      
-      const hex = value.toString(16).padStart(32, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 128n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes136 {
-
-  constructor(
-    /**
-     * 17-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 136n)
-    
-    const hex = value.toString(16).padStart(34, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint136(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 17
-
-    const raw = new Uint8Array(cursor.read(17))
-
-    return new AbiUint136(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 17
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 136n)
-  }
-
-}
-  
-export namespace AbiUint136 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 17-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 136n)
-      
-      const hex = value.toString(16).padStart(34, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 136n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes144 {
-
-  constructor(
-    /**
-     * 18-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 144n)
-    
-    const hex = value.toString(16).padStart(36, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint144(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 18
-
-    const raw = new Uint8Array(cursor.read(18))
-
-    return new AbiUint144(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 18
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 144n)
-  }
-
-}
-  
-export namespace AbiUint144 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 18-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 144n)
-      
-      const hex = value.toString(16).padStart(36, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 144n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes152 {
-
-  constructor(
-    /**
-     * 19-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 152n)
-    
-    const hex = value.toString(16).padStart(38, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint152(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 19
-
-    const raw = new Uint8Array(cursor.read(19))
-
-    return new AbiUint152(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 19
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 152n)
-  }
-
-}
-  
-export namespace AbiUint152 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 19-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 152n)
-      
-      const hex = value.toString(16).padStart(38, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 152n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes160 {
-
-  constructor(
-    /**
-     * 20-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 160n)
-    
-    const hex = value.toString(16).padStart(40, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint160(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 20
-
-    const raw = new Uint8Array(cursor.read(20))
-
-    return new AbiUint160(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 20
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 160n)
-  }
-
-}
-  
-export namespace AbiUint160 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 20-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 160n)
-      
-      const hex = value.toString(16).padStart(40, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 160n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes168 {
-
-  constructor(
-    /**
-     * 21-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 168n)
-    
-    const hex = value.toString(16).padStart(42, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint168(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 21
-
-    const raw = new Uint8Array(cursor.read(21))
-
-    return new AbiUint168(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 21
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 168n)
-  }
-
-}
-  
-export namespace AbiUint168 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 21-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 168n)
-      
-      const hex = value.toString(16).padStart(42, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 168n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes176 {
-
-  constructor(
-    /**
-     * 22-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 176n)
-    
-    const hex = value.toString(16).padStart(44, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint176(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 22
-
-    const raw = new Uint8Array(cursor.read(22))
-
-    return new AbiUint176(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 22
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 176n)
-  }
-
-}
-  
-export namespace AbiUint176 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 22-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 176n)
-      
-      const hex = value.toString(16).padStart(44, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 176n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes184 {
-
-  constructor(
-    /**
-     * 23-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 184n)
-    
-    const hex = value.toString(16).padStart(46, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint184(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 23
-
-    const raw = new Uint8Array(cursor.read(23))
-
-    return new AbiUint184(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 23
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 184n)
-  }
-
-}
-  
-export namespace AbiUint184 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 23-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 184n)
-      
-      const hex = value.toString(16).padStart(46, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 184n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes192 {
-
-  constructor(
-    /**
-     * 24-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 192n)
-    
-    const hex = value.toString(16).padStart(48, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint192(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 24
-
-    const raw = new Uint8Array(cursor.read(24))
-
-    return new AbiUint192(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 24
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 192n)
-  }
-
-}
-  
-export namespace AbiUint192 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 24-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 192n)
-      
-      const hex = value.toString(16).padStart(48, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 192n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes200 {
-
-  constructor(
-    /**
-     * 25-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 200n)
-    
-    const hex = value.toString(16).padStart(50, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint200(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 25
-
-    const raw = new Uint8Array(cursor.read(25))
-
-    return new AbiUint200(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 25
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 200n)
-  }
-
-}
-  
-export namespace AbiUint200 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 25-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 200n)
-      
-      const hex = value.toString(16).padStart(50, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 200n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes208 {
-
-  constructor(
-    /**
-     * 26-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 208n)
-    
-    const hex = value.toString(16).padStart(52, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint208(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 26
-
-    const raw = new Uint8Array(cursor.read(26))
-
-    return new AbiUint208(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 26
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 208n)
-  }
-
-}
-  
-export namespace AbiUint208 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 26-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 208n)
-      
-      const hex = value.toString(16).padStart(52, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 208n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes216 {
-
-  constructor(
-    /**
-     * 27-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 216n)
-    
-    const hex = value.toString(16).padStart(54, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint216(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 27
-
-    const raw = new Uint8Array(cursor.read(27))
-
-    return new AbiUint216(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 27
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 216n)
-  }
-
-}
-  
-export namespace AbiUint216 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 27-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 216n)
-      
-      const hex = value.toString(16).padStart(54, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 216n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes224 {
-
-  constructor(
-    /**
-     * 28-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 224n)
-    
-    const hex = value.toString(16).padStart(56, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint224(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 28
-
-    const raw = new Uint8Array(cursor.read(28))
-
-    return new AbiUint224(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 28
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 224n)
-  }
-
-}
-  
-export namespace AbiUint224 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 28-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 224n)
-      
-      const hex = value.toString(16).padStart(56, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 224n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes232 {
-
-  constructor(
-    /**
-     * 29-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 232n)
-    
-    const hex = value.toString(16).padStart(58, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint232(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 29
-
-    const raw = new Uint8Array(cursor.read(29))
-
-    return new AbiUint232(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 29
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 232n)
-  }
-
-}
-  
-export namespace AbiUint232 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 29-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 232n)
-      
-      const hex = value.toString(16).padStart(58, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 232n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes240 {
-
-  constructor(
-    /**
-     * 30-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 240n)
-    
-    const hex = value.toString(16).padStart(60, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint240(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 30
-
-    const raw = new Uint8Array(cursor.read(30))
-
-    return new AbiUint240(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 30
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 240n)
-  }
-
-}
-  
-export namespace AbiUint240 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 30-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 240n)
-      
-      const hex = value.toString(16).padStart(60, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 240n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes248 {
-
-  constructor(
-    /**
-     * 31-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 248n)
-    
-    const hex = value.toString(16).padStart(62, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint248(raw)
-  }
-
-  static read(cursor: Cursor) {
-    cursor.offset += 32 - 31
-
-    const raw = new Uint8Array(cursor.read(31))
-
-    return new AbiUint248(raw)
-  }
-
-  size() {
-    return 32
-  }
-
-  write(cursor: Cursor) {
-    cursor.offset += 32 - 31
-
-    cursor.write(this.value)
-
-    return
-  }
-
-  into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 248n)
-  }
-
-}
-  
-export namespace AbiUint248 {
-  
-  export class Packed {
-  
-    constructor(
-      /**
-       * 31-sized big-endian unsigned integer
-       */
-      readonly value: Uint8Array
-    ) {}
-
-    static from(value: bigint) {
-      value = value % (2n ** 248n)
-      
-      const hex = value.toString(16).padStart(62, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
-
-    size() {
-      return this.value.length
-    }
-
-    write(cursor: Cursor) {
-      cursor.write(this.value)
-    }
-
-    into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 248n)
-    }
-
-  }
-  
-}
-
-export class AbiBytes256 {
-
-  constructor(
-    /**
-     * 32-sized big-endian unsigned integer
-     */
-    readonly value: Uint8Array
-  ) {}
-
-  static from(value: bigint) {
-    value = value % (2n ** 256n)
-    
-    const hex = value.toString(16).padStart(64, "0")
-    const raw = Uint8Array.fromHex(hex)
-
-    return new AbiUint256(raw)
+  static from(value: Uint8Array) {
+    return new AbiBytes32(value.subarray(0, 32))
   }
 
   static read(cursor: Cursor) {
@@ -2503,7 +2188,7 @@ export class AbiBytes256 {
 
     const raw = new Uint8Array(cursor.read(32))
 
-    return new AbiUint256(raw)
+    return new AbiBytes32(raw)
   }
 
   size() {
@@ -2519,29 +2204,24 @@ export class AbiBytes256 {
   }
 
   into() {
-    return BigInt(`0x${this.value.toHex()}`) % (2n ** 256n)
+    return this.value.subarray(0, 32)
   }
 
 }
   
-export namespace AbiUint256 {
+export namespace AbiBytes32 {
   
   export class Packed {
   
     constructor(
       /**
-       * 32-sized big-endian unsigned integer
+       * 32-sized byte array
        */
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
-      value = value % (2n ** 256n)
-      
-      const hex = value.toString(16).padStart(64, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
+    static from(value: Uint8Array) {
+      return new Packed(value.subarray(0, 32))
     }
 
     size() {
@@ -2553,7 +2233,7 @@ export namespace AbiUint256 {
     }
 
     into() {
-      return BigInt(`0x${this.value.toHex()}`) % (2n ** 256n)
+      return this.value.subarray(0, 32)
     }
 
   }
