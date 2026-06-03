@@ -11,7 +11,7 @@ import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
-import { RpcCounter, RpcResponse } from "@hazae41/jsonrpc";
+import { RpcCounter, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { keccak256 } from "@hazae41/keccak256";
 import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedChainsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
@@ -170,6 +170,18 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return base58.encode(upub)
   }, [seedphrase, subaccount])
 
+  const requestOrThrow = useCallback(async <T,>(rpc: string, req: RpcRequestPreinit<unknown>): Promise<RpcResponse<T>> => {
+    const headers = { "Content-Type": "application/json" }
+    const body = JSON.stringify(new RpcCounter().prepare(req))
+
+    const response = await fetch(rpc, { method: "POST", headers, body })
+
+    if (!response.ok)
+      throw new Error("Could not fetch", { cause: response })
+
+    return RpcResponse.from<T>(await response.json())
+  }, [])
+
   const respondOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request } = params
 
@@ -177,7 +189,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       throw new WcUnsupportedAccountsError()
 
     if (request.method === "eth_sendTransaction") {
-      const [{ data, from, gas, gasPrice, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
 
       const chainId = Number(params.chainId.split(":")[1])
       const chain = chainlist.find(chain => chain.chainId === chainId)
@@ -192,7 +204,12 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (from.toLowerCase() !== current.toLowerCase())
         throw new WcUnsupportedAccountsError()
 
-      const utx = UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice, value, nonce: 0 })
+      const nonce = await requestOrThrow<`0x${string}`>(chain.rpc, {
+        method: "eth_getTransactionCount",
+        params: [current, "latest"]
+      }).then(r => r.getOrThrow())
+
+      const utx = UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice, value, nonce })
 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
@@ -200,20 +217,10 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       const digest = keccak256.digest(utx.encode())
       const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
 
-      const subrequest = {
+      return await requestOrThrow<`0x${string}`>(chain.rpc, {
         method: "eth_sendRawTransaction",
         params: [`0x${utx.sign(signed).encode().toHex()}`]
-      }
-
-      const headers = { "Content-Type": "application/json" }
-      const body = JSON.stringify(new RpcCounter().prepare(subrequest))
-
-      const response = await fetch(chain.rpc, { method: "POST", headers, body })
-
-      if (!response.ok)
-        throw new Error()
-
-      return RpcResponse.from(await response.json()).getOrThrow()
+      }).then(r => r.getOrThrow())
     }
 
     if (request.method === "personal_sign") {
