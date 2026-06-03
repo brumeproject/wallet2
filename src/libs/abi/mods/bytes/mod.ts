@@ -14,9 +14,9 @@ export class AbiBytes1 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 1
-
     const raw = new Uint8Array(cursor.read(1))
+
+    cursor.offset += 32 - 1
 
     return new AbiBytes1(raw)
   }
@@ -26,9 +26,9 @@ export class AbiBytes1 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 1
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 1
 
     return
   }
@@ -84,9 +84,9 @@ export class AbiBytes2 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 2
-
     const raw = new Uint8Array(cursor.read(2))
+
+    cursor.offset += 32 - 2
 
     return new AbiBytes2(raw)
   }
@@ -96,9 +96,9 @@ export class AbiBytes2 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 2
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 2
 
     return
   }
@@ -154,9 +154,9 @@ export class AbiBytes3 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 3
-
     const raw = new Uint8Array(cursor.read(3))
+
+    cursor.offset += 32 - 3
 
     return new AbiBytes3(raw)
   }
@@ -166,9 +166,9 @@ export class AbiBytes3 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 3
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 3
 
     return
   }
@@ -224,9 +224,9 @@ export class AbiBytes4 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 4
-
     const raw = new Uint8Array(cursor.read(4))
+
+    cursor.offset += 32 - 4
 
     return new AbiBytes4(raw)
   }
@@ -236,9 +236,9 @@ export class AbiBytes4 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 4
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 4
 
     return
   }
@@ -294,9 +294,9 @@ export class AbiBytes5 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 5
-
     const raw = new Uint8Array(cursor.read(5))
+
+    cursor.offset += 32 - 5
 
     return new AbiBytes5(raw)
   }
@@ -306,9 +306,9 @@ export class AbiBytes5 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 5
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 5
 
     return
   }
@@ -364,9 +364,9 @@ export class AbiBytes6 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 6
-
     const raw = new Uint8Array(cursor.read(6))
+
+    cursor.offset += 32 - 6
 
     return new AbiBytes6(raw)
   }
@@ -376,9 +376,9 @@ export class AbiBytes6 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 6
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 6
 
     return
   }
@@ -434,9 +434,9 @@ export class AbiBytes7 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 7
-
     const raw = new Uint8Array(cursor.read(7))
+
+    cursor.offset += 32 - 7
 
     return new AbiBytes7(raw)
   }
@@ -446,9 +446,9 @@ export class AbiBytes7 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 7
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 7
 
     return
   }
@@ -504,9 +504,9 @@ export class AbiBytes8 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 8
-
     const raw = new Uint8Array(cursor.read(8))
+
+    cursor.offset += 32 - 8
 
     return new AbiBytes8(raw)
   }
@@ -516,9 +516,9 @@ export class AbiBytes8 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 8
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 8
 
     return
   }
@@ -574,9 +574,9 @@ export class AbiBytes9 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 9
-
     const raw = new Uint8Array(cursor.read(9))
+
+    cursor.offset += 32 - 9
 
     return new AbiBytes9(raw)
   }
@@ -586,9 +586,9 @@ export class AbiBytes9 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 9
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 9
 
     return
   }
@@ -644,9 +644,9 @@ export class AbiBytes10 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 10
-
     const raw = new Uint8Array(cursor.read(10))
+
+    cursor.offset += 32 - 10
 
     return new AbiBytes10(raw)
   }
@@ -656,9 +656,9 @@ export class AbiBytes10 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 10
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 10
 
     return
   }
@@ -714,9 +714,9 @@ export class AbiBytes11 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 11
-
     const raw = new Uint8Array(cursor.read(11))
+
+    cursor.offset += 32 - 11
 
     return new AbiBytes11(raw)
   }
@@ -726,9 +726,9 @@ export class AbiBytes11 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 11
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 11
 
     return
   }
@@ -784,9 +784,9 @@ export class AbiBytes12 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 12
-
     const raw = new Uint8Array(cursor.read(12))
+
+    cursor.offset += 32 - 12
 
     return new AbiBytes12(raw)
   }
@@ -796,9 +796,9 @@ export class AbiBytes12 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 12
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 12
 
     return
   }
@@ -854,9 +854,9 @@ export class AbiBytes13 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 13
-
     const raw = new Uint8Array(cursor.read(13))
+
+    cursor.offset += 32 - 13
 
     return new AbiBytes13(raw)
   }
@@ -866,9 +866,9 @@ export class AbiBytes13 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 13
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 13
 
     return
   }
@@ -924,9 +924,9 @@ export class AbiBytes14 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 14
-
     const raw = new Uint8Array(cursor.read(14))
+
+    cursor.offset += 32 - 14
 
     return new AbiBytes14(raw)
   }
@@ -936,9 +936,9 @@ export class AbiBytes14 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 14
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 14
 
     return
   }
@@ -994,9 +994,9 @@ export class AbiBytes15 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 15
-
     const raw = new Uint8Array(cursor.read(15))
+
+    cursor.offset += 32 - 15
 
     return new AbiBytes15(raw)
   }
@@ -1006,9 +1006,9 @@ export class AbiBytes15 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 15
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 15
 
     return
   }
@@ -1064,9 +1064,9 @@ export class AbiBytes16 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 16
-
     const raw = new Uint8Array(cursor.read(16))
+
+    cursor.offset += 32 - 16
 
     return new AbiBytes16(raw)
   }
@@ -1076,9 +1076,9 @@ export class AbiBytes16 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 16
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 16
 
     return
   }
@@ -1134,9 +1134,9 @@ export class AbiBytes17 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 17
-
     const raw = new Uint8Array(cursor.read(17))
+
+    cursor.offset += 32 - 17
 
     return new AbiBytes17(raw)
   }
@@ -1146,9 +1146,9 @@ export class AbiBytes17 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 17
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 17
 
     return
   }
@@ -1204,9 +1204,9 @@ export class AbiBytes18 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 18
-
     const raw = new Uint8Array(cursor.read(18))
+
+    cursor.offset += 32 - 18
 
     return new AbiBytes18(raw)
   }
@@ -1216,9 +1216,9 @@ export class AbiBytes18 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 18
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 18
 
     return
   }
@@ -1274,9 +1274,9 @@ export class AbiBytes19 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 19
-
     const raw = new Uint8Array(cursor.read(19))
+
+    cursor.offset += 32 - 19
 
     return new AbiBytes19(raw)
   }
@@ -1286,9 +1286,9 @@ export class AbiBytes19 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 19
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 19
 
     return
   }
@@ -1344,9 +1344,9 @@ export class AbiBytes20 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 20
-
     const raw = new Uint8Array(cursor.read(20))
+
+    cursor.offset += 32 - 20
 
     return new AbiBytes20(raw)
   }
@@ -1356,9 +1356,9 @@ export class AbiBytes20 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 20
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 20
 
     return
   }
@@ -1414,9 +1414,9 @@ export class AbiBytes21 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 21
-
     const raw = new Uint8Array(cursor.read(21))
+
+    cursor.offset += 32 - 21
 
     return new AbiBytes21(raw)
   }
@@ -1426,9 +1426,9 @@ export class AbiBytes21 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 21
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 21
 
     return
   }
@@ -1484,9 +1484,9 @@ export class AbiBytes22 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 22
-
     const raw = new Uint8Array(cursor.read(22))
+
+    cursor.offset += 32 - 22
 
     return new AbiBytes22(raw)
   }
@@ -1496,9 +1496,9 @@ export class AbiBytes22 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 22
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 22
 
     return
   }
@@ -1554,9 +1554,9 @@ export class AbiBytes23 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 23
-
     const raw = new Uint8Array(cursor.read(23))
+
+    cursor.offset += 32 - 23
 
     return new AbiBytes23(raw)
   }
@@ -1566,9 +1566,9 @@ export class AbiBytes23 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 23
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 23
 
     return
   }
@@ -1624,9 +1624,9 @@ export class AbiBytes24 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 24
-
     const raw = new Uint8Array(cursor.read(24))
+
+    cursor.offset += 32 - 24
 
     return new AbiBytes24(raw)
   }
@@ -1636,9 +1636,9 @@ export class AbiBytes24 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 24
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 24
 
     return
   }
@@ -1694,9 +1694,9 @@ export class AbiBytes25 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 25
-
     const raw = new Uint8Array(cursor.read(25))
+
+    cursor.offset += 32 - 25
 
     return new AbiBytes25(raw)
   }
@@ -1706,9 +1706,9 @@ export class AbiBytes25 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 25
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 25
 
     return
   }
@@ -1764,9 +1764,9 @@ export class AbiBytes26 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 26
-
     const raw = new Uint8Array(cursor.read(26))
+
+    cursor.offset += 32 - 26
 
     return new AbiBytes26(raw)
   }
@@ -1776,9 +1776,9 @@ export class AbiBytes26 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 26
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 26
 
     return
   }
@@ -1834,9 +1834,9 @@ export class AbiBytes27 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 27
-
     const raw = new Uint8Array(cursor.read(27))
+
+    cursor.offset += 32 - 27
 
     return new AbiBytes27(raw)
   }
@@ -1846,9 +1846,9 @@ export class AbiBytes27 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 27
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 27
 
     return
   }
@@ -1904,9 +1904,9 @@ export class AbiBytes28 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 28
-
     const raw = new Uint8Array(cursor.read(28))
+
+    cursor.offset += 32 - 28
 
     return new AbiBytes28(raw)
   }
@@ -1916,9 +1916,9 @@ export class AbiBytes28 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 28
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 28
 
     return
   }
@@ -1974,9 +1974,9 @@ export class AbiBytes29 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 29
-
     const raw = new Uint8Array(cursor.read(29))
+
+    cursor.offset += 32 - 29
 
     return new AbiBytes29(raw)
   }
@@ -1986,9 +1986,9 @@ export class AbiBytes29 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 29
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 29
 
     return
   }
@@ -2044,9 +2044,9 @@ export class AbiBytes30 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 30
-
     const raw = new Uint8Array(cursor.read(30))
+
+    cursor.offset += 32 - 30
 
     return new AbiBytes30(raw)
   }
@@ -2056,9 +2056,9 @@ export class AbiBytes30 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 30
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 30
 
     return
   }
@@ -2114,9 +2114,9 @@ export class AbiBytes31 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 31
-
     const raw = new Uint8Array(cursor.read(31))
+
+    cursor.offset += 32 - 31
 
     return new AbiBytes31(raw)
   }
@@ -2126,9 +2126,9 @@ export class AbiBytes31 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 31
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 31
 
     return
   }
@@ -2184,9 +2184,9 @@ export class AbiBytes32 {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - 32
-
     const raw = new Uint8Array(cursor.read(32))
+
+    cursor.offset += 32 - 32
 
     return new AbiBytes32(raw)
   }
@@ -2196,9 +2196,9 @@ export class AbiBytes32 {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - 32
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - 32
 
     return
   }

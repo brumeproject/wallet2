@@ -21,9 +21,9 @@ export class AbiBytes${i} {
   }
 
   static read(cursor: Cursor) {
-    cursor.offset += 32 - ${i}
-
     const raw = new Uint8Array(cursor.read(${i}))
+
+    cursor.offset += 32 - ${i}
 
     return new AbiBytes${i}(raw)
   }
@@ -33,9 +33,9 @@ export class AbiBytes${i} {
   }
 
   write(cursor: Cursor) {
-    cursor.offset += 32 - ${i}
-
     cursor.write(this.value)
+    
+    cursor.offset += 32 - ${i}
 
     return
   }
