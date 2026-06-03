@@ -210,19 +210,48 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         params: [current, "latest"]
       }).then(r => r.getOrThrow())
 
-      const utx = maxFeePerGas != null && maxPriorityFeePerGas != null
-        ? UnsignedTransaction2.from({ chainId, data, to, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, value, nonce })
-        : UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice, value, nonce })
+      const transaction = await (async () => {
+        if (maxFeePerGas != null && maxPriorityFeePerGas != null)
+          return UnsignedTransaction2.from({ chainId, data, to, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, value, nonce })
+        if (gasPrice != null)
+          return UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice, value, nonce })
+
+        const liveBlockData = await requestOrThrow<{ baseFeePerGas?: `0x${string}` }>(chain.rpc, {
+          method: "eth_getBlockByNumber",
+          params: ["latest", false]
+        }).then(r => r.getOrThrow())
+
+        if (liveBlockData.baseFeePerGas != null) {
+          const liveMaxPriorityFeePerGas = await requestOrThrow<`0x${string}`>(chain.rpc, {
+            method: "eth_maxPriorityFeePerGas",
+            params: []
+          }).then(r => r.getOrThrow())
+
+          const baseFeePerGas = BigInt(liveBlockData.baseFeePerGas)
+
+          const maxPriorityFeePerGas = BigInt(liveMaxPriorityFeePerGas)
+          const maxFeePerGas = (baseFeePerGas * 2n) + maxPriorityFeePerGas
+
+          return UnsignedTransaction2.from({ chainId, data, to, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, value, nonce })
+        } else {
+          const liveGasPrice = await requestOrThrow<`0x${string}`>(chain.rpc, {
+            method: "eth_gasPrice",
+            params: []
+          }).then(r => r.getOrThrow())
+
+          return UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice: liveGasPrice, value, nonce })
+        }
+      })()
 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
 
-      const digest = keccak256.digest(utx.encode())
+      const digest = keccak256.digest(transaction.encode())
       const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
 
       return await requestOrThrow<`0x${string}`>(chain.rpc, {
         method: "eth_sendRawTransaction",
-        params: [`0x${utx.sign(signed).encode().toHex()}`]
+        params: [`0x${transaction.sign(signed).encode().toHex()}`]
       }).then(r => r.getOrThrow())
     }
 
@@ -417,7 +446,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             </pre>
           </div>
         </Fragment>}
-        <div className="h-8" />
+        <div className="h-8 grow" />
         <div className="flex items-center flex-wrap-reverse gap-2">
           <WideContrastButton
             type="button"
