@@ -1,6 +1,6 @@
 import { Cursor } from "@hazae41/cursor"
 
-export class AbiUint8 {
+export class AbiInt8 {
 
   constructor(
     /**
@@ -10,15 +10,16 @@ export class AbiUint8 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 8n
+    const mod = 2n ** 7n
+    const sup = 2n ** 8n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(2, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint8(raw)
+    return new AbiInt8(raw)
   }
 
   static read(cursor: Cursor) {
@@ -26,7 +27,7 @@ export class AbiUint8 {
 
     const raw = new Uint8Array(cursor.read(1))
 
-    return new AbiUint8(raw)
+    return new AbiInt8(raw)
   }
 
   size() {
@@ -42,18 +43,20 @@ export class AbiUint8 {
   }
 
   into() {
-    const mod = 2n ** 8n
+    const mod = 2n ** 7n
+    const sup = 2n ** 8n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint8 {
+export namespace AbiInt8 {
   
   export class Packed {
   
@@ -65,10 +68,11 @@ export namespace AbiUint8 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 8n
+      const mod = 2n ** 7n
+      const sup = 2n ** 8n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(2, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -85,11 +89,13 @@ export namespace AbiUint8 {
     }
 
     into() {
-      const mod = 2n ** 8n
+      const mod = 2n ** 7n
+      const sup = 2n ** 8n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -98,7 +104,7 @@ export namespace AbiUint8 {
   
 }
 
-export class AbiUint16 {
+export class AbiInt16 {
 
   constructor(
     /**
@@ -108,15 +114,16 @@ export class AbiUint16 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 16n
+    const mod = 2n ** 15n
+    const sup = 2n ** 16n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(4, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint16(raw)
+    return new AbiInt16(raw)
   }
 
   static read(cursor: Cursor) {
@@ -124,7 +131,7 @@ export class AbiUint16 {
 
     const raw = new Uint8Array(cursor.read(2))
 
-    return new AbiUint16(raw)
+    return new AbiInt16(raw)
   }
 
   size() {
@@ -140,18 +147,20 @@ export class AbiUint16 {
   }
 
   into() {
-    const mod = 2n ** 16n
+    const mod = 2n ** 15n
+    const sup = 2n ** 16n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint16 {
+export namespace AbiInt16 {
   
   export class Packed {
   
@@ -163,10 +172,11 @@ export namespace AbiUint16 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 16n
+      const mod = 2n ** 15n
+      const sup = 2n ** 16n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(4, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -183,11 +193,13 @@ export namespace AbiUint16 {
     }
 
     into() {
-      const mod = 2n ** 16n
+      const mod = 2n ** 15n
+      const sup = 2n ** 16n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -196,7 +208,7 @@ export namespace AbiUint16 {
   
 }
 
-export class AbiUint24 {
+export class AbiInt24 {
 
   constructor(
     /**
@@ -206,15 +218,16 @@ export class AbiUint24 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 24n
+    const mod = 2n ** 23n
+    const sup = 2n ** 24n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(6, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint24(raw)
+    return new AbiInt24(raw)
   }
 
   static read(cursor: Cursor) {
@@ -222,7 +235,7 @@ export class AbiUint24 {
 
     const raw = new Uint8Array(cursor.read(3))
 
-    return new AbiUint24(raw)
+    return new AbiInt24(raw)
   }
 
   size() {
@@ -238,18 +251,20 @@ export class AbiUint24 {
   }
 
   into() {
-    const mod = 2n ** 24n
+    const mod = 2n ** 23n
+    const sup = 2n ** 24n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint24 {
+export namespace AbiInt24 {
   
   export class Packed {
   
@@ -261,10 +276,11 @@ export namespace AbiUint24 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 24n
+      const mod = 2n ** 23n
+      const sup = 2n ** 24n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(6, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -281,11 +297,13 @@ export namespace AbiUint24 {
     }
 
     into() {
-      const mod = 2n ** 24n
+      const mod = 2n ** 23n
+      const sup = 2n ** 24n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -294,7 +312,7 @@ export namespace AbiUint24 {
   
 }
 
-export class AbiUint32 {
+export class AbiInt32 {
 
   constructor(
     /**
@@ -304,15 +322,16 @@ export class AbiUint32 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 32n
+    const mod = 2n ** 31n
+    const sup = 2n ** 32n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(8, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint32(raw)
+    return new AbiInt32(raw)
   }
 
   static read(cursor: Cursor) {
@@ -320,7 +339,7 @@ export class AbiUint32 {
 
     const raw = new Uint8Array(cursor.read(4))
 
-    return new AbiUint32(raw)
+    return new AbiInt32(raw)
   }
 
   size() {
@@ -336,18 +355,20 @@ export class AbiUint32 {
   }
 
   into() {
-    const mod = 2n ** 32n
+    const mod = 2n ** 31n
+    const sup = 2n ** 32n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint32 {
+export namespace AbiInt32 {
   
   export class Packed {
   
@@ -359,10 +380,11 @@ export namespace AbiUint32 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 32n
+      const mod = 2n ** 31n
+      const sup = 2n ** 32n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(8, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -379,11 +401,13 @@ export namespace AbiUint32 {
     }
 
     into() {
-      const mod = 2n ** 32n
+      const mod = 2n ** 31n
+      const sup = 2n ** 32n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -392,7 +416,7 @@ export namespace AbiUint32 {
   
 }
 
-export class AbiUint40 {
+export class AbiInt40 {
 
   constructor(
     /**
@@ -402,15 +426,16 @@ export class AbiUint40 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 40n
+    const mod = 2n ** 39n
+    const sup = 2n ** 40n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(10, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint40(raw)
+    return new AbiInt40(raw)
   }
 
   static read(cursor: Cursor) {
@@ -418,7 +443,7 @@ export class AbiUint40 {
 
     const raw = new Uint8Array(cursor.read(5))
 
-    return new AbiUint40(raw)
+    return new AbiInt40(raw)
   }
 
   size() {
@@ -434,18 +459,20 @@ export class AbiUint40 {
   }
 
   into() {
-    const mod = 2n ** 40n
+    const mod = 2n ** 39n
+    const sup = 2n ** 40n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint40 {
+export namespace AbiInt40 {
   
   export class Packed {
   
@@ -457,10 +484,11 @@ export namespace AbiUint40 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 40n
+      const mod = 2n ** 39n
+      const sup = 2n ** 40n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(10, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -477,11 +505,13 @@ export namespace AbiUint40 {
     }
 
     into() {
-      const mod = 2n ** 40n
+      const mod = 2n ** 39n
+      const sup = 2n ** 40n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -490,7 +520,7 @@ export namespace AbiUint40 {
   
 }
 
-export class AbiUint48 {
+export class AbiInt48 {
 
   constructor(
     /**
@@ -500,15 +530,16 @@ export class AbiUint48 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 48n
+    const mod = 2n ** 47n
+    const sup = 2n ** 48n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(12, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint48(raw)
+    return new AbiInt48(raw)
   }
 
   static read(cursor: Cursor) {
@@ -516,7 +547,7 @@ export class AbiUint48 {
 
     const raw = new Uint8Array(cursor.read(6))
 
-    return new AbiUint48(raw)
+    return new AbiInt48(raw)
   }
 
   size() {
@@ -532,18 +563,20 @@ export class AbiUint48 {
   }
 
   into() {
-    const mod = 2n ** 48n
+    const mod = 2n ** 47n
+    const sup = 2n ** 48n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint48 {
+export namespace AbiInt48 {
   
   export class Packed {
   
@@ -555,10 +588,11 @@ export namespace AbiUint48 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 48n
+      const mod = 2n ** 47n
+      const sup = 2n ** 48n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(12, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -575,11 +609,13 @@ export namespace AbiUint48 {
     }
 
     into() {
-      const mod = 2n ** 48n
+      const mod = 2n ** 47n
+      const sup = 2n ** 48n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -588,7 +624,7 @@ export namespace AbiUint48 {
   
 }
 
-export class AbiUint56 {
+export class AbiInt56 {
 
   constructor(
     /**
@@ -598,15 +634,16 @@ export class AbiUint56 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 56n
+    const mod = 2n ** 55n
+    const sup = 2n ** 56n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(14, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint56(raw)
+    return new AbiInt56(raw)
   }
 
   static read(cursor: Cursor) {
@@ -614,7 +651,7 @@ export class AbiUint56 {
 
     const raw = new Uint8Array(cursor.read(7))
 
-    return new AbiUint56(raw)
+    return new AbiInt56(raw)
   }
 
   size() {
@@ -630,18 +667,20 @@ export class AbiUint56 {
   }
 
   into() {
-    const mod = 2n ** 56n
+    const mod = 2n ** 55n
+    const sup = 2n ** 56n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint56 {
+export namespace AbiInt56 {
   
   export class Packed {
   
@@ -653,10 +692,11 @@ export namespace AbiUint56 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 56n
+      const mod = 2n ** 55n
+      const sup = 2n ** 56n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(14, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -673,11 +713,13 @@ export namespace AbiUint56 {
     }
 
     into() {
-      const mod = 2n ** 56n
+      const mod = 2n ** 55n
+      const sup = 2n ** 56n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -686,7 +728,7 @@ export namespace AbiUint56 {
   
 }
 
-export class AbiUint64 {
+export class AbiInt64 {
 
   constructor(
     /**
@@ -696,15 +738,16 @@ export class AbiUint64 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 64n
+    const mod = 2n ** 63n
+    const sup = 2n ** 64n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(16, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint64(raw)
+    return new AbiInt64(raw)
   }
 
   static read(cursor: Cursor) {
@@ -712,7 +755,7 @@ export class AbiUint64 {
 
     const raw = new Uint8Array(cursor.read(8))
 
-    return new AbiUint64(raw)
+    return new AbiInt64(raw)
   }
 
   size() {
@@ -728,18 +771,20 @@ export class AbiUint64 {
   }
 
   into() {
-    const mod = 2n ** 64n
+    const mod = 2n ** 63n
+    const sup = 2n ** 64n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint64 {
+export namespace AbiInt64 {
   
   export class Packed {
   
@@ -751,10 +796,11 @@ export namespace AbiUint64 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 64n
+      const mod = 2n ** 63n
+      const sup = 2n ** 64n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(16, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -771,11 +817,13 @@ export namespace AbiUint64 {
     }
 
     into() {
-      const mod = 2n ** 64n
+      const mod = 2n ** 63n
+      const sup = 2n ** 64n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -784,7 +832,7 @@ export namespace AbiUint64 {
   
 }
 
-export class AbiUint72 {
+export class AbiInt72 {
 
   constructor(
     /**
@@ -794,15 +842,16 @@ export class AbiUint72 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 72n
+    const mod = 2n ** 71n
+    const sup = 2n ** 72n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(18, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint72(raw)
+    return new AbiInt72(raw)
   }
 
   static read(cursor: Cursor) {
@@ -810,7 +859,7 @@ export class AbiUint72 {
 
     const raw = new Uint8Array(cursor.read(9))
 
-    return new AbiUint72(raw)
+    return new AbiInt72(raw)
   }
 
   size() {
@@ -826,18 +875,20 @@ export class AbiUint72 {
   }
 
   into() {
-    const mod = 2n ** 72n
+    const mod = 2n ** 71n
+    const sup = 2n ** 72n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint72 {
+export namespace AbiInt72 {
   
   export class Packed {
   
@@ -849,10 +900,11 @@ export namespace AbiUint72 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 72n
+      const mod = 2n ** 71n
+      const sup = 2n ** 72n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(18, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -869,11 +921,13 @@ export namespace AbiUint72 {
     }
 
     into() {
-      const mod = 2n ** 72n
+      const mod = 2n ** 71n
+      const sup = 2n ** 72n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -882,7 +936,7 @@ export namespace AbiUint72 {
   
 }
 
-export class AbiUint80 {
+export class AbiInt80 {
 
   constructor(
     /**
@@ -892,15 +946,16 @@ export class AbiUint80 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 80n
+    const mod = 2n ** 79n
+    const sup = 2n ** 80n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(20, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint80(raw)
+    return new AbiInt80(raw)
   }
 
   static read(cursor: Cursor) {
@@ -908,7 +963,7 @@ export class AbiUint80 {
 
     const raw = new Uint8Array(cursor.read(10))
 
-    return new AbiUint80(raw)
+    return new AbiInt80(raw)
   }
 
   size() {
@@ -924,18 +979,20 @@ export class AbiUint80 {
   }
 
   into() {
-    const mod = 2n ** 80n
+    const mod = 2n ** 79n
+    const sup = 2n ** 80n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint80 {
+export namespace AbiInt80 {
   
   export class Packed {
   
@@ -947,10 +1004,11 @@ export namespace AbiUint80 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 80n
+      const mod = 2n ** 79n
+      const sup = 2n ** 80n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(20, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -967,11 +1025,13 @@ export namespace AbiUint80 {
     }
 
     into() {
-      const mod = 2n ** 80n
+      const mod = 2n ** 79n
+      const sup = 2n ** 80n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -980,7 +1040,7 @@ export namespace AbiUint80 {
   
 }
 
-export class AbiUint88 {
+export class AbiInt88 {
 
   constructor(
     /**
@@ -990,15 +1050,16 @@ export class AbiUint88 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 88n
+    const mod = 2n ** 87n
+    const sup = 2n ** 88n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(22, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint88(raw)
+    return new AbiInt88(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1006,7 +1067,7 @@ export class AbiUint88 {
 
     const raw = new Uint8Array(cursor.read(11))
 
-    return new AbiUint88(raw)
+    return new AbiInt88(raw)
   }
 
   size() {
@@ -1022,18 +1083,20 @@ export class AbiUint88 {
   }
 
   into() {
-    const mod = 2n ** 88n
+    const mod = 2n ** 87n
+    const sup = 2n ** 88n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint88 {
+export namespace AbiInt88 {
   
   export class Packed {
   
@@ -1045,10 +1108,11 @@ export namespace AbiUint88 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 88n
+      const mod = 2n ** 87n
+      const sup = 2n ** 88n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(22, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1065,11 +1129,13 @@ export namespace AbiUint88 {
     }
 
     into() {
-      const mod = 2n ** 88n
+      const mod = 2n ** 87n
+      const sup = 2n ** 88n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1078,7 +1144,7 @@ export namespace AbiUint88 {
   
 }
 
-export class AbiUint96 {
+export class AbiInt96 {
 
   constructor(
     /**
@@ -1088,15 +1154,16 @@ export class AbiUint96 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 96n
+    const mod = 2n ** 95n
+    const sup = 2n ** 96n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(24, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint96(raw)
+    return new AbiInt96(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1104,7 +1171,7 @@ export class AbiUint96 {
 
     const raw = new Uint8Array(cursor.read(12))
 
-    return new AbiUint96(raw)
+    return new AbiInt96(raw)
   }
 
   size() {
@@ -1120,18 +1187,20 @@ export class AbiUint96 {
   }
 
   into() {
-    const mod = 2n ** 96n
+    const mod = 2n ** 95n
+    const sup = 2n ** 96n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint96 {
+export namespace AbiInt96 {
   
   export class Packed {
   
@@ -1143,10 +1212,11 @@ export namespace AbiUint96 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 96n
+      const mod = 2n ** 95n
+      const sup = 2n ** 96n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(24, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1163,11 +1233,13 @@ export namespace AbiUint96 {
     }
 
     into() {
-      const mod = 2n ** 96n
+      const mod = 2n ** 95n
+      const sup = 2n ** 96n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1176,7 +1248,7 @@ export namespace AbiUint96 {
   
 }
 
-export class AbiUint104 {
+export class AbiInt104 {
 
   constructor(
     /**
@@ -1186,15 +1258,16 @@ export class AbiUint104 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 104n
+    const mod = 2n ** 103n
+    const sup = 2n ** 104n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(26, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint104(raw)
+    return new AbiInt104(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1202,7 +1275,7 @@ export class AbiUint104 {
 
     const raw = new Uint8Array(cursor.read(13))
 
-    return new AbiUint104(raw)
+    return new AbiInt104(raw)
   }
 
   size() {
@@ -1218,18 +1291,20 @@ export class AbiUint104 {
   }
 
   into() {
-    const mod = 2n ** 104n
+    const mod = 2n ** 103n
+    const sup = 2n ** 104n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint104 {
+export namespace AbiInt104 {
   
   export class Packed {
   
@@ -1241,10 +1316,11 @@ export namespace AbiUint104 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 104n
+      const mod = 2n ** 103n
+      const sup = 2n ** 104n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(26, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1261,11 +1337,13 @@ export namespace AbiUint104 {
     }
 
     into() {
-      const mod = 2n ** 104n
+      const mod = 2n ** 103n
+      const sup = 2n ** 104n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1274,7 +1352,7 @@ export namespace AbiUint104 {
   
 }
 
-export class AbiUint112 {
+export class AbiInt112 {
 
   constructor(
     /**
@@ -1284,15 +1362,16 @@ export class AbiUint112 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 112n
+    const mod = 2n ** 111n
+    const sup = 2n ** 112n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(28, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint112(raw)
+    return new AbiInt112(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1300,7 +1379,7 @@ export class AbiUint112 {
 
     const raw = new Uint8Array(cursor.read(14))
 
-    return new AbiUint112(raw)
+    return new AbiInt112(raw)
   }
 
   size() {
@@ -1316,18 +1395,20 @@ export class AbiUint112 {
   }
 
   into() {
-    const mod = 2n ** 112n
+    const mod = 2n ** 111n
+    const sup = 2n ** 112n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint112 {
+export namespace AbiInt112 {
   
   export class Packed {
   
@@ -1339,10 +1420,11 @@ export namespace AbiUint112 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 112n
+      const mod = 2n ** 111n
+      const sup = 2n ** 112n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(28, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1359,11 +1441,13 @@ export namespace AbiUint112 {
     }
 
     into() {
-      const mod = 2n ** 112n
+      const mod = 2n ** 111n
+      const sup = 2n ** 112n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1372,7 +1456,7 @@ export namespace AbiUint112 {
   
 }
 
-export class AbiUint120 {
+export class AbiInt120 {
 
   constructor(
     /**
@@ -1382,15 +1466,16 @@ export class AbiUint120 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 120n
+    const mod = 2n ** 119n
+    const sup = 2n ** 120n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(30, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint120(raw)
+    return new AbiInt120(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1398,7 +1483,7 @@ export class AbiUint120 {
 
     const raw = new Uint8Array(cursor.read(15))
 
-    return new AbiUint120(raw)
+    return new AbiInt120(raw)
   }
 
   size() {
@@ -1414,18 +1499,20 @@ export class AbiUint120 {
   }
 
   into() {
-    const mod = 2n ** 120n
+    const mod = 2n ** 119n
+    const sup = 2n ** 120n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint120 {
+export namespace AbiInt120 {
   
   export class Packed {
   
@@ -1437,10 +1524,11 @@ export namespace AbiUint120 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 120n
+      const mod = 2n ** 119n
+      const sup = 2n ** 120n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(30, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1457,11 +1545,13 @@ export namespace AbiUint120 {
     }
 
     into() {
-      const mod = 2n ** 120n
+      const mod = 2n ** 119n
+      const sup = 2n ** 120n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1470,7 +1560,7 @@ export namespace AbiUint120 {
   
 }
 
-export class AbiUint128 {
+export class AbiInt128 {
 
   constructor(
     /**
@@ -1480,15 +1570,16 @@ export class AbiUint128 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 128n
+    const mod = 2n ** 127n
+    const sup = 2n ** 128n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(32, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint128(raw)
+    return new AbiInt128(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1496,7 +1587,7 @@ export class AbiUint128 {
 
     const raw = new Uint8Array(cursor.read(16))
 
-    return new AbiUint128(raw)
+    return new AbiInt128(raw)
   }
 
   size() {
@@ -1512,18 +1603,20 @@ export class AbiUint128 {
   }
 
   into() {
-    const mod = 2n ** 128n
+    const mod = 2n ** 127n
+    const sup = 2n ** 128n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint128 {
+export namespace AbiInt128 {
   
   export class Packed {
   
@@ -1535,10 +1628,11 @@ export namespace AbiUint128 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 128n
+      const mod = 2n ** 127n
+      const sup = 2n ** 128n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(32, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1555,11 +1649,13 @@ export namespace AbiUint128 {
     }
 
     into() {
-      const mod = 2n ** 128n
+      const mod = 2n ** 127n
+      const sup = 2n ** 128n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1568,7 +1664,7 @@ export namespace AbiUint128 {
   
 }
 
-export class AbiUint136 {
+export class AbiInt136 {
 
   constructor(
     /**
@@ -1578,15 +1674,16 @@ export class AbiUint136 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 136n
+    const mod = 2n ** 135n
+    const sup = 2n ** 136n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(34, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint136(raw)
+    return new AbiInt136(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1594,7 +1691,7 @@ export class AbiUint136 {
 
     const raw = new Uint8Array(cursor.read(17))
 
-    return new AbiUint136(raw)
+    return new AbiInt136(raw)
   }
 
   size() {
@@ -1610,18 +1707,20 @@ export class AbiUint136 {
   }
 
   into() {
-    const mod = 2n ** 136n
+    const mod = 2n ** 135n
+    const sup = 2n ** 136n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint136 {
+export namespace AbiInt136 {
   
   export class Packed {
   
@@ -1633,10 +1732,11 @@ export namespace AbiUint136 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 136n
+      const mod = 2n ** 135n
+      const sup = 2n ** 136n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(34, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1653,11 +1753,13 @@ export namespace AbiUint136 {
     }
 
     into() {
-      const mod = 2n ** 136n
+      const mod = 2n ** 135n
+      const sup = 2n ** 136n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1666,7 +1768,7 @@ export namespace AbiUint136 {
   
 }
 
-export class AbiUint144 {
+export class AbiInt144 {
 
   constructor(
     /**
@@ -1676,15 +1778,16 @@ export class AbiUint144 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 144n
+    const mod = 2n ** 143n
+    const sup = 2n ** 144n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(36, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint144(raw)
+    return new AbiInt144(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1692,7 +1795,7 @@ export class AbiUint144 {
 
     const raw = new Uint8Array(cursor.read(18))
 
-    return new AbiUint144(raw)
+    return new AbiInt144(raw)
   }
 
   size() {
@@ -1708,18 +1811,20 @@ export class AbiUint144 {
   }
 
   into() {
-    const mod = 2n ** 144n
+    const mod = 2n ** 143n
+    const sup = 2n ** 144n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint144 {
+export namespace AbiInt144 {
   
   export class Packed {
   
@@ -1731,10 +1836,11 @@ export namespace AbiUint144 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 144n
+      const mod = 2n ** 143n
+      const sup = 2n ** 144n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(36, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1751,11 +1857,13 @@ export namespace AbiUint144 {
     }
 
     into() {
-      const mod = 2n ** 144n
+      const mod = 2n ** 143n
+      const sup = 2n ** 144n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1764,7 +1872,7 @@ export namespace AbiUint144 {
   
 }
 
-export class AbiUint152 {
+export class AbiInt152 {
 
   constructor(
     /**
@@ -1774,15 +1882,16 @@ export class AbiUint152 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 152n
+    const mod = 2n ** 151n
+    const sup = 2n ** 152n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(38, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint152(raw)
+    return new AbiInt152(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1790,7 +1899,7 @@ export class AbiUint152 {
 
     const raw = new Uint8Array(cursor.read(19))
 
-    return new AbiUint152(raw)
+    return new AbiInt152(raw)
   }
 
   size() {
@@ -1806,18 +1915,20 @@ export class AbiUint152 {
   }
 
   into() {
-    const mod = 2n ** 152n
+    const mod = 2n ** 151n
+    const sup = 2n ** 152n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint152 {
+export namespace AbiInt152 {
   
   export class Packed {
   
@@ -1829,10 +1940,11 @@ export namespace AbiUint152 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 152n
+      const mod = 2n ** 151n
+      const sup = 2n ** 152n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(38, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1849,11 +1961,13 @@ export namespace AbiUint152 {
     }
 
     into() {
-      const mod = 2n ** 152n
+      const mod = 2n ** 151n
+      const sup = 2n ** 152n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1862,7 +1976,7 @@ export namespace AbiUint152 {
   
 }
 
-export class AbiUint160 {
+export class AbiInt160 {
 
   constructor(
     /**
@@ -1872,15 +1986,16 @@ export class AbiUint160 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 160n
+    const mod = 2n ** 159n
+    const sup = 2n ** 160n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(40, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint160(raw)
+    return new AbiInt160(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1888,7 +2003,7 @@ export class AbiUint160 {
 
     const raw = new Uint8Array(cursor.read(20))
 
-    return new AbiUint160(raw)
+    return new AbiInt160(raw)
   }
 
   size() {
@@ -1904,18 +2019,20 @@ export class AbiUint160 {
   }
 
   into() {
-    const mod = 2n ** 160n
+    const mod = 2n ** 159n
+    const sup = 2n ** 160n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint160 {
+export namespace AbiInt160 {
   
   export class Packed {
   
@@ -1927,10 +2044,11 @@ export namespace AbiUint160 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 160n
+      const mod = 2n ** 159n
+      const sup = 2n ** 160n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(40, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1947,11 +2065,13 @@ export namespace AbiUint160 {
     }
 
     into() {
-      const mod = 2n ** 160n
+      const mod = 2n ** 159n
+      const sup = 2n ** 160n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -1960,7 +2080,7 @@ export namespace AbiUint160 {
   
 }
 
-export class AbiUint168 {
+export class AbiInt168 {
 
   constructor(
     /**
@@ -1970,15 +2090,16 @@ export class AbiUint168 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 168n
+    const mod = 2n ** 167n
+    const sup = 2n ** 168n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(42, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint168(raw)
+    return new AbiInt168(raw)
   }
 
   static read(cursor: Cursor) {
@@ -1986,7 +2107,7 @@ export class AbiUint168 {
 
     const raw = new Uint8Array(cursor.read(21))
 
-    return new AbiUint168(raw)
+    return new AbiInt168(raw)
   }
 
   size() {
@@ -2002,18 +2123,20 @@ export class AbiUint168 {
   }
 
   into() {
-    const mod = 2n ** 168n
+    const mod = 2n ** 167n
+    const sup = 2n ** 168n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint168 {
+export namespace AbiInt168 {
   
   export class Packed {
   
@@ -2025,10 +2148,11 @@ export namespace AbiUint168 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 168n
+      const mod = 2n ** 167n
+      const sup = 2n ** 168n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(42, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2045,11 +2169,13 @@ export namespace AbiUint168 {
     }
 
     into() {
-      const mod = 2n ** 168n
+      const mod = 2n ** 167n
+      const sup = 2n ** 168n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2058,7 +2184,7 @@ export namespace AbiUint168 {
   
 }
 
-export class AbiUint176 {
+export class AbiInt176 {
 
   constructor(
     /**
@@ -2068,15 +2194,16 @@ export class AbiUint176 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 176n
+    const mod = 2n ** 175n
+    const sup = 2n ** 176n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(44, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint176(raw)
+    return new AbiInt176(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2084,7 +2211,7 @@ export class AbiUint176 {
 
     const raw = new Uint8Array(cursor.read(22))
 
-    return new AbiUint176(raw)
+    return new AbiInt176(raw)
   }
 
   size() {
@@ -2100,18 +2227,20 @@ export class AbiUint176 {
   }
 
   into() {
-    const mod = 2n ** 176n
+    const mod = 2n ** 175n
+    const sup = 2n ** 176n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint176 {
+export namespace AbiInt176 {
   
   export class Packed {
   
@@ -2123,10 +2252,11 @@ export namespace AbiUint176 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 176n
+      const mod = 2n ** 175n
+      const sup = 2n ** 176n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(44, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2143,11 +2273,13 @@ export namespace AbiUint176 {
     }
 
     into() {
-      const mod = 2n ** 176n
+      const mod = 2n ** 175n
+      const sup = 2n ** 176n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2156,7 +2288,7 @@ export namespace AbiUint176 {
   
 }
 
-export class AbiUint184 {
+export class AbiInt184 {
 
   constructor(
     /**
@@ -2166,15 +2298,16 @@ export class AbiUint184 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 184n
+    const mod = 2n ** 183n
+    const sup = 2n ** 184n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(46, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint184(raw)
+    return new AbiInt184(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2182,7 +2315,7 @@ export class AbiUint184 {
 
     const raw = new Uint8Array(cursor.read(23))
 
-    return new AbiUint184(raw)
+    return new AbiInt184(raw)
   }
 
   size() {
@@ -2198,18 +2331,20 @@ export class AbiUint184 {
   }
 
   into() {
-    const mod = 2n ** 184n
+    const mod = 2n ** 183n
+    const sup = 2n ** 184n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint184 {
+export namespace AbiInt184 {
   
   export class Packed {
   
@@ -2221,10 +2356,11 @@ export namespace AbiUint184 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 184n
+      const mod = 2n ** 183n
+      const sup = 2n ** 184n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(46, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2241,11 +2377,13 @@ export namespace AbiUint184 {
     }
 
     into() {
-      const mod = 2n ** 184n
+      const mod = 2n ** 183n
+      const sup = 2n ** 184n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2254,7 +2392,7 @@ export namespace AbiUint184 {
   
 }
 
-export class AbiUint192 {
+export class AbiInt192 {
 
   constructor(
     /**
@@ -2264,15 +2402,16 @@ export class AbiUint192 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 192n
+    const mod = 2n ** 191n
+    const sup = 2n ** 192n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(48, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint192(raw)
+    return new AbiInt192(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2280,7 +2419,7 @@ export class AbiUint192 {
 
     const raw = new Uint8Array(cursor.read(24))
 
-    return new AbiUint192(raw)
+    return new AbiInt192(raw)
   }
 
   size() {
@@ -2296,18 +2435,20 @@ export class AbiUint192 {
   }
 
   into() {
-    const mod = 2n ** 192n
+    const mod = 2n ** 191n
+    const sup = 2n ** 192n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint192 {
+export namespace AbiInt192 {
   
   export class Packed {
   
@@ -2319,10 +2460,11 @@ export namespace AbiUint192 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 192n
+      const mod = 2n ** 191n
+      const sup = 2n ** 192n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(48, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2339,11 +2481,13 @@ export namespace AbiUint192 {
     }
 
     into() {
-      const mod = 2n ** 192n
+      const mod = 2n ** 191n
+      const sup = 2n ** 192n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2352,7 +2496,7 @@ export namespace AbiUint192 {
   
 }
 
-export class AbiUint200 {
+export class AbiInt200 {
 
   constructor(
     /**
@@ -2362,15 +2506,16 @@ export class AbiUint200 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 200n
+    const mod = 2n ** 199n
+    const sup = 2n ** 200n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(50, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint200(raw)
+    return new AbiInt200(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2378,7 +2523,7 @@ export class AbiUint200 {
 
     const raw = new Uint8Array(cursor.read(25))
 
-    return new AbiUint200(raw)
+    return new AbiInt200(raw)
   }
 
   size() {
@@ -2394,18 +2539,20 @@ export class AbiUint200 {
   }
 
   into() {
-    const mod = 2n ** 200n
+    const mod = 2n ** 199n
+    const sup = 2n ** 200n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint200 {
+export namespace AbiInt200 {
   
   export class Packed {
   
@@ -2417,10 +2564,11 @@ export namespace AbiUint200 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 200n
+      const mod = 2n ** 199n
+      const sup = 2n ** 200n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(50, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2437,11 +2585,13 @@ export namespace AbiUint200 {
     }
 
     into() {
-      const mod = 2n ** 200n
+      const mod = 2n ** 199n
+      const sup = 2n ** 200n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2450,7 +2600,7 @@ export namespace AbiUint200 {
   
 }
 
-export class AbiUint208 {
+export class AbiInt208 {
 
   constructor(
     /**
@@ -2460,15 +2610,16 @@ export class AbiUint208 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 208n
+    const mod = 2n ** 207n
+    const sup = 2n ** 208n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(52, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint208(raw)
+    return new AbiInt208(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2476,7 +2627,7 @@ export class AbiUint208 {
 
     const raw = new Uint8Array(cursor.read(26))
 
-    return new AbiUint208(raw)
+    return new AbiInt208(raw)
   }
 
   size() {
@@ -2492,18 +2643,20 @@ export class AbiUint208 {
   }
 
   into() {
-    const mod = 2n ** 208n
+    const mod = 2n ** 207n
+    const sup = 2n ** 208n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint208 {
+export namespace AbiInt208 {
   
   export class Packed {
   
@@ -2515,10 +2668,11 @@ export namespace AbiUint208 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 208n
+      const mod = 2n ** 207n
+      const sup = 2n ** 208n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(52, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2535,11 +2689,13 @@ export namespace AbiUint208 {
     }
 
     into() {
-      const mod = 2n ** 208n
+      const mod = 2n ** 207n
+      const sup = 2n ** 208n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2548,7 +2704,7 @@ export namespace AbiUint208 {
   
 }
 
-export class AbiUint216 {
+export class AbiInt216 {
 
   constructor(
     /**
@@ -2558,15 +2714,16 @@ export class AbiUint216 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 216n
+    const mod = 2n ** 215n
+    const sup = 2n ** 216n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(54, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint216(raw)
+    return new AbiInt216(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2574,7 +2731,7 @@ export class AbiUint216 {
 
     const raw = new Uint8Array(cursor.read(27))
 
-    return new AbiUint216(raw)
+    return new AbiInt216(raw)
   }
 
   size() {
@@ -2590,18 +2747,20 @@ export class AbiUint216 {
   }
 
   into() {
-    const mod = 2n ** 216n
+    const mod = 2n ** 215n
+    const sup = 2n ** 216n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint216 {
+export namespace AbiInt216 {
   
   export class Packed {
   
@@ -2613,10 +2772,11 @@ export namespace AbiUint216 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 216n
+      const mod = 2n ** 215n
+      const sup = 2n ** 216n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(54, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2633,11 +2793,13 @@ export namespace AbiUint216 {
     }
 
     into() {
-      const mod = 2n ** 216n
+      const mod = 2n ** 215n
+      const sup = 2n ** 216n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2646,7 +2808,7 @@ export namespace AbiUint216 {
   
 }
 
-export class AbiUint224 {
+export class AbiInt224 {
 
   constructor(
     /**
@@ -2656,15 +2818,16 @@ export class AbiUint224 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 224n
+    const mod = 2n ** 223n
+    const sup = 2n ** 224n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(56, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint224(raw)
+    return new AbiInt224(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2672,7 +2835,7 @@ export class AbiUint224 {
 
     const raw = new Uint8Array(cursor.read(28))
 
-    return new AbiUint224(raw)
+    return new AbiInt224(raw)
   }
 
   size() {
@@ -2688,18 +2851,20 @@ export class AbiUint224 {
   }
 
   into() {
-    const mod = 2n ** 224n
+    const mod = 2n ** 223n
+    const sup = 2n ** 224n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint224 {
+export namespace AbiInt224 {
   
   export class Packed {
   
@@ -2711,10 +2876,11 @@ export namespace AbiUint224 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 224n
+      const mod = 2n ** 223n
+      const sup = 2n ** 224n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(56, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2731,11 +2897,13 @@ export namespace AbiUint224 {
     }
 
     into() {
-      const mod = 2n ** 224n
+      const mod = 2n ** 223n
+      const sup = 2n ** 224n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2744,7 +2912,7 @@ export namespace AbiUint224 {
   
 }
 
-export class AbiUint232 {
+export class AbiInt232 {
 
   constructor(
     /**
@@ -2754,15 +2922,16 @@ export class AbiUint232 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 232n
+    const mod = 2n ** 231n
+    const sup = 2n ** 232n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(58, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint232(raw)
+    return new AbiInt232(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2770,7 +2939,7 @@ export class AbiUint232 {
 
     const raw = new Uint8Array(cursor.read(29))
 
-    return new AbiUint232(raw)
+    return new AbiInt232(raw)
   }
 
   size() {
@@ -2786,18 +2955,20 @@ export class AbiUint232 {
   }
 
   into() {
-    const mod = 2n ** 232n
+    const mod = 2n ** 231n
+    const sup = 2n ** 232n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint232 {
+export namespace AbiInt232 {
   
   export class Packed {
   
@@ -2809,10 +2980,11 @@ export namespace AbiUint232 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 232n
+      const mod = 2n ** 231n
+      const sup = 2n ** 232n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(58, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2829,11 +3001,13 @@ export namespace AbiUint232 {
     }
 
     into() {
-      const mod = 2n ** 232n
+      const mod = 2n ** 231n
+      const sup = 2n ** 232n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2842,7 +3016,7 @@ export namespace AbiUint232 {
   
 }
 
-export class AbiUint240 {
+export class AbiInt240 {
 
   constructor(
     /**
@@ -2852,15 +3026,16 @@ export class AbiUint240 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 240n
+    const mod = 2n ** 239n
+    const sup = 2n ** 240n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(60, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint240(raw)
+    return new AbiInt240(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2868,7 +3043,7 @@ export class AbiUint240 {
 
     const raw = new Uint8Array(cursor.read(30))
 
-    return new AbiUint240(raw)
+    return new AbiInt240(raw)
   }
 
   size() {
@@ -2884,18 +3059,20 @@ export class AbiUint240 {
   }
 
   into() {
-    const mod = 2n ** 240n
+    const mod = 2n ** 239n
+    const sup = 2n ** 240n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint240 {
+export namespace AbiInt240 {
   
   export class Packed {
   
@@ -2907,10 +3084,11 @@ export namespace AbiUint240 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 240n
+      const mod = 2n ** 239n
+      const sup = 2n ** 240n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(60, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2927,11 +3105,13 @@ export namespace AbiUint240 {
     }
 
     into() {
-      const mod = 2n ** 240n
+      const mod = 2n ** 239n
+      const sup = 2n ** 240n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -2940,7 +3120,7 @@ export namespace AbiUint240 {
   
 }
 
-export class AbiUint248 {
+export class AbiInt248 {
 
   constructor(
     /**
@@ -2950,15 +3130,16 @@ export class AbiUint248 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 248n
+    const mod = 2n ** 247n
+    const sup = 2n ** 248n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(62, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint248(raw)
+    return new AbiInt248(raw)
   }
 
   static read(cursor: Cursor) {
@@ -2966,7 +3147,7 @@ export class AbiUint248 {
 
     const raw = new Uint8Array(cursor.read(31))
 
-    return new AbiUint248(raw)
+    return new AbiInt248(raw)
   }
 
   size() {
@@ -2982,18 +3163,20 @@ export class AbiUint248 {
   }
 
   into() {
-    const mod = 2n ** 248n
+    const mod = 2n ** 247n
+    const sup = 2n ** 248n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint248 {
+export namespace AbiInt248 {
   
   export class Packed {
   
@@ -3005,10 +3188,11 @@ export namespace AbiUint248 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 248n
+      const mod = 2n ** 247n
+      const sup = 2n ** 248n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(62, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -3025,11 +3209,13 @@ export namespace AbiUint248 {
     }
 
     into() {
-      const mod = 2n ** 248n
+      const mod = 2n ** 247n
+      const sup = 2n ** 248n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
@@ -3038,7 +3224,7 @@ export namespace AbiUint248 {
   
 }
 
-export class AbiUint256 {
+export class AbiInt256 {
 
   constructor(
     /**
@@ -3048,15 +3234,16 @@ export class AbiUint256 {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** 256n
+    const mod = 2n ** 255n
+    const sup = 2n ** 256n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint256(raw)
+    return new AbiInt256(raw)
   }
 
   static read(cursor: Cursor) {
@@ -3064,7 +3251,7 @@ export class AbiUint256 {
 
     const raw = new Uint8Array(cursor.read(32))
 
-    return new AbiUint256(raw)
+    return new AbiInt256(raw)
   }
 
   size() {
@@ -3080,18 +3267,20 @@ export class AbiUint256 {
   }
 
   into() {
-    const mod = 2n ** 256n
+    const mod = 2n ** 255n
+    const sup = 2n ** 256n
 
     let value = BigInt(`0x${this.value.toHex()}`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint256 {
+export namespace AbiInt256 {
   
   export class Packed {
   
@@ -3103,10 +3292,11 @@ export namespace AbiUint256 {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** 256n
+      const mod = 2n ** 255n
+      const sup = 2n ** 256n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(64, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -3123,11 +3313,13 @@ export namespace AbiUint256 {
     }
 
     into() {
-      const mod = 2n ** 256n
+      const mod = 2n ** 255n
+      const sup = 2n ** 256n
 
       let value = BigInt(`0x${this.value.toHex()}`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }

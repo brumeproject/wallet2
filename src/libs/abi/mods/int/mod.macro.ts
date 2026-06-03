@@ -7,7 +7,7 @@ $$(() => {
 
   for (let i = 1; i < 32 + 1; i++)
     code.push(`
-export class AbiUint${i * 8} {
+export class AbiInt${i * 8} {
 
   constructor(
     /**
@@ -17,15 +17,16 @@ export class AbiUint${i * 8} {
   ) {}
 
   static from(value: bigint) {
-    const mod = 2n ** ${i * 8}n
+    const mod = 2n ** ${i * 8 - 1}n
+    const sup = 2n ** ${i * 8}n
 
     value = value % mod
-    value = value < 0 ? -value : value
+    value = (value + sup) % sup
     
     const hex = value.toString(16).padStart(${i * 2}, "0")
     const raw = Uint8Array.fromHex(hex)
 
-    return new AbiUint${i * 8}(raw)
+    return new AbiInt${i * 8}(raw)
   }
 
   static read(cursor: Cursor) {
@@ -33,7 +34,7 @@ export class AbiUint${i * 8} {
 
     const raw = new Uint8Array(cursor.read(${i}))
 
-    return new AbiUint${i * 8}(raw)
+    return new AbiInt${i * 8}(raw)
   }
 
   size() {
@@ -49,18 +50,20 @@ export class AbiUint${i * 8} {
   }
 
   into() {
-    const mod = 2n ** ${i * 8}n
+    const mod = 2n ** ${i * 8 - 1}n
+    const sup = 2n ** ${i * 8}n
 
     let value = BigInt(\`0x\${this.value.toHex()}\`)
 
-    value = value % mod
+    value = value % sup
+    value = value < mod ? value : value - sup
 
     return value
   }
 
 }
   
-export namespace AbiUint${i * 8} {
+export namespace AbiInt${i * 8} {
   
   export class Packed {
   
@@ -72,10 +75,11 @@ export namespace AbiUint${i * 8} {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** ${i * 8}n
+      const mod = 2n ** ${i * 8 - 1}n
+      const sup = 2n ** ${i * 8}n
 
       value = value % mod
-      value = value < 0 ? -value : value
+      value = (value + sup) % sup
       
       const hex = value.toString(16).padStart(${i * 2}, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -92,11 +96,13 @@ export namespace AbiUint${i * 8} {
     }
 
     into() {
-      const mod = 2n ** ${i * 8}n
+      const mod = 2n ** ${i * 8 - 1}n
+      const sup = 2n ** ${i * 8}n
 
       let value = BigInt(\`0x\${this.value.toHex()}\`)
 
-      value = value % mod
+      value = value % sup
+      value = value < mod ? value : value - sup
 
       return value
     }
