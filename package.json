@@ -34,6 +34,7 @@
     "@hazae41/request-idle-callback-polyfill": "1.0.0",
     "@hazae41/result-and-option": "2.1.1",
     "@hazae41/rewind": "2.3.12",
+    "@hazae41/rlp": "^1.0.0",
     "@hazae41/serac": "1.0.6",
     "@hazae41/symbol-dispose-polyfill": "1.1.2",
     "@hazae41/webauthnstorage": "^1.1.0",

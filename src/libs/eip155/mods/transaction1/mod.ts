@@ -1,8 +1,7 @@
 import { RlpDataLike, RlpUintLike } from "@/libs/eip155/libs/rlp/mod.ts";
 import { TypedTransactionEnvelope } from "@/libs/eip155/mods/envelope/mod.ts";
-import { RlpItem } from "@/libs/rlp/mods/item/mod.ts";
-import { RlpList } from "@/libs/rlp/mods/list/mod.ts";
 import { Readable, Writable } from "@hazae41/binary";
+import { Rlp, RlpItem, RlpList } from "@hazae41/rlp";
 
 export interface UnsignedTransactionInit1 {
   readonly chainId: RlpUintLike
@@ -42,7 +41,7 @@ export class UnsignedTransaction1 {
     if (envelope.type !== 0x01)
       throw new Error()
 
-    const list = Readable.readFromBytes(RlpList, envelope.data.bytes)
+    const list = RlpList.as(Readable.readFromBytes(Rlp, envelope.data.bytes))
 
     const chainId = RlpUintLike.from(RlpItem.as(list.value[0]))
     const nonce = RlpUintLike.from(RlpItem.as(list.value[1]))
@@ -134,7 +133,7 @@ export class SignedTransaction1 {
     if (envelope.type !== 0x01)
       throw new Error()
 
-    const list = Readable.readFromBytes(RlpList, envelope.data.bytes)
+    const list = RlpList.as(Readable.readFromBytes(Rlp, envelope.data.bytes))
 
     const chainId = RlpUintLike.from(RlpItem.as(list.value[0]))
     const nonce = RlpUintLike.from(RlpItem.as(list.value[1]))

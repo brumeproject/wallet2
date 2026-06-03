@@ -1,7 +1,6 @@
 import { RlpDataLike, RlpUintLike } from "@/libs/eip155/libs/rlp/mod.ts";
-import { RlpItem } from "@/libs/rlp/mods/item/mod.ts";
-import { RlpList } from "@/libs/rlp/mods/list/mod.ts";
 import { Readable, Writable } from "@hazae41/binary";
+import { Rlp, RlpItem, RlpList } from "@hazae41/rlp";
 
 export interface UnsignedTransactionInit0 {
   readonly nonce: RlpUintLike
@@ -34,7 +33,7 @@ export class UnsignedTransaction0 {
   }
 
   static decode(bytes: Uint8Array): UnsignedTransaction0 {
-    const list = Readable.readFromBytes(RlpList, bytes)
+    const list = RlpList.as(Readable.readFromBytes(Rlp, bytes))
 
     const nonce = RlpUintLike.from(RlpItem.as(list.value[0]))
     const gasPrice = RlpUintLike.from(RlpItem.as(list.value[1]))
@@ -116,7 +115,7 @@ export class SignedTransaction0 {
   }
 
   static decode(bytes: Uint8Array): SignedTransaction0 {
-    const list = Readable.readFromBytes(RlpList, bytes)
+    const list = RlpList.as(Readable.readFromBytes(Rlp, bytes))
 
     const nonce = RlpUintLike.from(RlpItem.as(list.value[0]))
     const gasPrice = RlpUintLike.from(RlpItem.as(list.value[1]))

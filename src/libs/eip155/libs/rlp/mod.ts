@@ -1,5 +1,5 @@
 import { base16 } from "@/libs/eip155/libs/base16/mod.ts";
-import { RlpItem } from "@/libs/rlp/mods/item/mod.ts";
+import { RlpItem } from "@hazae41/rlp";
 
 export type RlpUintLike =
   | `0x${string}`
