@@ -17,15 +17,14 @@ export class AbiInt${i * 8} {
   ) {}
 
   static from(value: bigint) {
-    const pad = value < 0 ? "f" : "0"
+    const padding = value < 0 ? "f" : "0"
 
-    const mod = 2n ** ${i * 8 - 1}n
-    const sup = 2n ** ${i * 8}n
+    const half = 2n ** ${i * 8 - 1}n
+    const full = 2n ** ${i * 8}n
 
-    value = value % mod
-    value = (value + sup) % sup
+    value = ((value % half) + full) % full
     
-    const hex = value.toString(16).padStart(64, pad)
+    const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
 
     return new AbiInt${i * 8}(raw)
@@ -44,15 +43,12 @@ export class AbiInt${i * 8} {
   }
 
   into() {
-    const mod = 2n ** ${i * 8 - 1}n
-    const sup = 2n ** ${i * 8}n
+    const half = 2n ** ${i * 8 - 1}n
+    const full = 2n ** ${i * 8}n
 
-    let value = BigInt(\`0x\${this.value.subarray(32 - ${i}, 32).toHex()}\`)
+    const value = BigInt(\`0x\${this.value.subarray(32 - ${i}, 32).toHex()}\`)
 
-    value = value % sup
-    value = value < mod ? value : value - sup
-
-    return value
+    return value < half ? value : value - full
   }
 
 }
@@ -69,11 +65,10 @@ export namespace AbiInt${i * 8} {
     ) {}
 
     static from(value: bigint) {
-      const mod = 2n ** ${i * 8 - 1}n
-      const sup = 2n ** ${i * 8}n
+      const half = 2n ** ${i * 8 - 1}n
+      const full = 2n ** ${i * 8}n
 
-      value = value % mod
-      value = (value + sup) % sup
+      value = ((value % half) + full) % full
       
       const hex = value.toString(16).padStart(${i * 2}, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -90,15 +85,12 @@ export namespace AbiInt${i * 8} {
     }
 
     into() {
-      const mod = 2n ** ${i * 8 - 1}n
-      const sup = 2n ** ${i * 8}n
+      const half = 2n ** ${i * 8 - 1}n
+      const full = 2n ** ${i * 8}n
 
-      let value = BigInt(\`0x\${this.value.toHex()}\`)
+      const value = BigInt(\`0x\${this.value.toHex()}\`)
 
-      value = value % sup
-      value = value < mod ? value : value - sup
-
-      return value
+      return value < half ? value : value - full
     }
 
   }
