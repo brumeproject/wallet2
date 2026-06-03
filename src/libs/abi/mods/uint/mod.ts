@@ -4,7 +4,7 @@ export class AbiUint8 {
 
   constructor(
     /**
-     * 1-sized big-endian unsigned integer
+     * 1-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -50,7 +50,7 @@ export namespace AbiUint8 {
   
     constructor(
       /**
-       * 1-sized big-endian unsigned integer
+       * 1-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -84,7 +84,7 @@ export class AbiUint16 {
 
   constructor(
     /**
-     * 2-sized big-endian unsigned integer
+     * 2-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -130,7 +130,7 @@ export namespace AbiUint16 {
   
     constructor(
       /**
-       * 2-sized big-endian unsigned integer
+       * 2-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -164,7 +164,7 @@ export class AbiUint24 {
 
   constructor(
     /**
-     * 3-sized big-endian unsigned integer
+     * 3-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -210,7 +210,7 @@ export namespace AbiUint24 {
   
     constructor(
       /**
-       * 3-sized big-endian unsigned integer
+       * 3-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -244,7 +244,7 @@ export class AbiUint32 {
 
   constructor(
     /**
-     * 4-sized big-endian unsigned integer
+     * 4-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -290,7 +290,7 @@ export namespace AbiUint32 {
   
     constructor(
       /**
-       * 4-sized big-endian unsigned integer
+       * 4-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -324,7 +324,7 @@ export class AbiUint40 {
 
   constructor(
     /**
-     * 5-sized big-endian unsigned integer
+     * 5-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -370,7 +370,7 @@ export namespace AbiUint40 {
   
     constructor(
       /**
-       * 5-sized big-endian unsigned integer
+       * 5-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -404,7 +404,7 @@ export class AbiUint48 {
 
   constructor(
     /**
-     * 6-sized big-endian unsigned integer
+     * 6-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -450,7 +450,7 @@ export namespace AbiUint48 {
   
     constructor(
       /**
-       * 6-sized big-endian unsigned integer
+       * 6-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -484,7 +484,7 @@ export class AbiUint56 {
 
   constructor(
     /**
-     * 7-sized big-endian unsigned integer
+     * 7-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -530,7 +530,7 @@ export namespace AbiUint56 {
   
     constructor(
       /**
-       * 7-sized big-endian unsigned integer
+       * 7-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -564,7 +564,7 @@ export class AbiUint64 {
 
   constructor(
     /**
-     * 8-sized big-endian unsigned integer
+     * 8-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -610,7 +610,7 @@ export namespace AbiUint64 {
   
     constructor(
       /**
-       * 8-sized big-endian unsigned integer
+       * 8-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -644,7 +644,7 @@ export class AbiUint72 {
 
   constructor(
     /**
-     * 9-sized big-endian unsigned integer
+     * 9-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -690,7 +690,7 @@ export namespace AbiUint72 {
   
     constructor(
       /**
-       * 9-sized big-endian unsigned integer
+       * 9-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -724,7 +724,7 @@ export class AbiUint80 {
 
   constructor(
     /**
-     * 10-sized big-endian unsigned integer
+     * 10-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -770,7 +770,7 @@ export namespace AbiUint80 {
   
     constructor(
       /**
-       * 10-sized big-endian unsigned integer
+       * 10-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -804,7 +804,7 @@ export class AbiUint88 {
 
   constructor(
     /**
-     * 11-sized big-endian unsigned integer
+     * 11-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -850,7 +850,7 @@ export namespace AbiUint88 {
   
     constructor(
       /**
-       * 11-sized big-endian unsigned integer
+       * 11-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -884,7 +884,7 @@ export class AbiUint96 {
 
   constructor(
     /**
-     * 12-sized big-endian unsigned integer
+     * 12-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -930,7 +930,7 @@ export namespace AbiUint96 {
   
     constructor(
       /**
-       * 12-sized big-endian unsigned integer
+       * 12-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -964,7 +964,7 @@ export class AbiUint104 {
 
   constructor(
     /**
-     * 13-sized big-endian unsigned integer
+     * 13-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1010,7 +1010,7 @@ export namespace AbiUint104 {
   
     constructor(
       /**
-       * 13-sized big-endian unsigned integer
+       * 13-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1044,7 +1044,7 @@ export class AbiUint112 {
 
   constructor(
     /**
-     * 14-sized big-endian unsigned integer
+     * 14-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1090,7 +1090,7 @@ export namespace AbiUint112 {
   
     constructor(
       /**
-       * 14-sized big-endian unsigned integer
+       * 14-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1124,7 +1124,7 @@ export class AbiUint120 {
 
   constructor(
     /**
-     * 15-sized big-endian unsigned integer
+     * 15-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1170,7 +1170,7 @@ export namespace AbiUint120 {
   
     constructor(
       /**
-       * 15-sized big-endian unsigned integer
+       * 15-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1204,7 +1204,7 @@ export class AbiUint128 {
 
   constructor(
     /**
-     * 16-sized big-endian unsigned integer
+     * 16-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1250,7 +1250,7 @@ export namespace AbiUint128 {
   
     constructor(
       /**
-       * 16-sized big-endian unsigned integer
+       * 16-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1284,7 +1284,7 @@ export class AbiUint136 {
 
   constructor(
     /**
-     * 17-sized big-endian unsigned integer
+     * 17-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1330,7 +1330,7 @@ export namespace AbiUint136 {
   
     constructor(
       /**
-       * 17-sized big-endian unsigned integer
+       * 17-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1364,7 +1364,7 @@ export class AbiUint144 {
 
   constructor(
     /**
-     * 18-sized big-endian unsigned integer
+     * 18-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1410,7 +1410,7 @@ export namespace AbiUint144 {
   
     constructor(
       /**
-       * 18-sized big-endian unsigned integer
+       * 18-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1444,7 +1444,7 @@ export class AbiUint152 {
 
   constructor(
     /**
-     * 19-sized big-endian unsigned integer
+     * 19-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1490,7 +1490,7 @@ export namespace AbiUint152 {
   
     constructor(
       /**
-       * 19-sized big-endian unsigned integer
+       * 19-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1524,7 +1524,7 @@ export class AbiUint160 {
 
   constructor(
     /**
-     * 20-sized big-endian unsigned integer
+     * 20-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1570,7 +1570,7 @@ export namespace AbiUint160 {
   
     constructor(
       /**
-       * 20-sized big-endian unsigned integer
+       * 20-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1604,7 +1604,7 @@ export class AbiUint168 {
 
   constructor(
     /**
-     * 21-sized big-endian unsigned integer
+     * 21-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1650,7 +1650,7 @@ export namespace AbiUint168 {
   
     constructor(
       /**
-       * 21-sized big-endian unsigned integer
+       * 21-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1684,7 +1684,7 @@ export class AbiUint176 {
 
   constructor(
     /**
-     * 22-sized big-endian unsigned integer
+     * 22-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1730,7 +1730,7 @@ export namespace AbiUint176 {
   
     constructor(
       /**
-       * 22-sized big-endian unsigned integer
+       * 22-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1764,7 +1764,7 @@ export class AbiUint184 {
 
   constructor(
     /**
-     * 23-sized big-endian unsigned integer
+     * 23-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1810,7 +1810,7 @@ export namespace AbiUint184 {
   
     constructor(
       /**
-       * 23-sized big-endian unsigned integer
+       * 23-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1844,7 +1844,7 @@ export class AbiUint192 {
 
   constructor(
     /**
-     * 24-sized big-endian unsigned integer
+     * 24-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1890,7 +1890,7 @@ export namespace AbiUint192 {
   
     constructor(
       /**
-       * 24-sized big-endian unsigned integer
+       * 24-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1924,7 +1924,7 @@ export class AbiUint200 {
 
   constructor(
     /**
-     * 25-sized big-endian unsigned integer
+     * 25-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1970,7 +1970,7 @@ export namespace AbiUint200 {
   
     constructor(
       /**
-       * 25-sized big-endian unsigned integer
+       * 25-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2004,7 +2004,7 @@ export class AbiUint208 {
 
   constructor(
     /**
-     * 26-sized big-endian unsigned integer
+     * 26-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2050,7 +2050,7 @@ export namespace AbiUint208 {
   
     constructor(
       /**
-       * 26-sized big-endian unsigned integer
+       * 26-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2084,7 +2084,7 @@ export class AbiUint216 {
 
   constructor(
     /**
-     * 27-sized big-endian unsigned integer
+     * 27-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2130,7 +2130,7 @@ export namespace AbiUint216 {
   
     constructor(
       /**
-       * 27-sized big-endian unsigned integer
+       * 27-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2164,7 +2164,7 @@ export class AbiUint224 {
 
   constructor(
     /**
-     * 28-sized big-endian unsigned integer
+     * 28-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2210,7 +2210,7 @@ export namespace AbiUint224 {
   
     constructor(
       /**
-       * 28-sized big-endian unsigned integer
+       * 28-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2244,7 +2244,7 @@ export class AbiUint232 {
 
   constructor(
     /**
-     * 29-sized big-endian unsigned integer
+     * 29-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2290,7 +2290,7 @@ export namespace AbiUint232 {
   
     constructor(
       /**
-       * 29-sized big-endian unsigned integer
+       * 29-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2324,7 +2324,7 @@ export class AbiUint240 {
 
   constructor(
     /**
-     * 30-sized big-endian unsigned integer
+     * 30-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2370,7 +2370,7 @@ export namespace AbiUint240 {
   
     constructor(
       /**
-       * 30-sized big-endian unsigned integer
+       * 30-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2404,7 +2404,7 @@ export class AbiUint248 {
 
   constructor(
     /**
-     * 31-sized big-endian unsigned integer
+     * 31-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2450,7 +2450,7 @@ export namespace AbiUint248 {
   
     constructor(
       /**
-       * 31-sized big-endian unsigned integer
+       * 31-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2484,7 +2484,7 @@ export class AbiUint256 {
 
   constructor(
     /**
-     * 32-sized big-endian unsigned integer
+     * 32-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2530,7 +2530,7 @@ export namespace AbiUint256 {
   
     constructor(
       /**
-       * 32-sized big-endian unsigned integer
+       * 32-sized bytes
        */
       readonly value: Uint8Array
     ) {}

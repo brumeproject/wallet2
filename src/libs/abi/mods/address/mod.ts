@@ -3,6 +3,9 @@ import { Cursor } from "@hazae41/cursor";
 export class AbiAddress {
 
   constructor(
+    /**
+     * 20-sized bytes
+     */
     readonly value: Uint8Array
   ) { }
 
@@ -41,6 +44,9 @@ export namespace AbiAddress {
   export class Packed {
 
     constructor(
+      /**
+       * 20-sized bytes
+       */
       readonly value: Uint8Array
     ) { }
 

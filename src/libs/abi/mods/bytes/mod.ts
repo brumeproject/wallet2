@@ -4,7 +4,7 @@ export class AbiBytes1 {
 
   constructor(
     /**
-     * 1-sized byte array
+     * 1-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -45,7 +45,7 @@ export namespace AbiBytes1 {
   
     constructor(
       /**
-       * 1-sized byte array
+       * 1-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -74,7 +74,7 @@ export class AbiBytes2 {
 
   constructor(
     /**
-     * 2-sized byte array
+     * 2-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -115,7 +115,7 @@ export namespace AbiBytes2 {
   
     constructor(
       /**
-       * 2-sized byte array
+       * 2-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -144,7 +144,7 @@ export class AbiBytes3 {
 
   constructor(
     /**
-     * 3-sized byte array
+     * 3-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -185,7 +185,7 @@ export namespace AbiBytes3 {
   
     constructor(
       /**
-       * 3-sized byte array
+       * 3-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -214,7 +214,7 @@ export class AbiBytes4 {
 
   constructor(
     /**
-     * 4-sized byte array
+     * 4-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -255,7 +255,7 @@ export namespace AbiBytes4 {
   
     constructor(
       /**
-       * 4-sized byte array
+       * 4-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -284,7 +284,7 @@ export class AbiBytes5 {
 
   constructor(
     /**
-     * 5-sized byte array
+     * 5-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -325,7 +325,7 @@ export namespace AbiBytes5 {
   
     constructor(
       /**
-       * 5-sized byte array
+       * 5-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -354,7 +354,7 @@ export class AbiBytes6 {
 
   constructor(
     /**
-     * 6-sized byte array
+     * 6-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -395,7 +395,7 @@ export namespace AbiBytes6 {
   
     constructor(
       /**
-       * 6-sized byte array
+       * 6-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -424,7 +424,7 @@ export class AbiBytes7 {
 
   constructor(
     /**
-     * 7-sized byte array
+     * 7-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -465,7 +465,7 @@ export namespace AbiBytes7 {
   
     constructor(
       /**
-       * 7-sized byte array
+       * 7-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -494,7 +494,7 @@ export class AbiBytes8 {
 
   constructor(
     /**
-     * 8-sized byte array
+     * 8-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -535,7 +535,7 @@ export namespace AbiBytes8 {
   
     constructor(
       /**
-       * 8-sized byte array
+       * 8-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -564,7 +564,7 @@ export class AbiBytes9 {
 
   constructor(
     /**
-     * 9-sized byte array
+     * 9-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -605,7 +605,7 @@ export namespace AbiBytes9 {
   
     constructor(
       /**
-       * 9-sized byte array
+       * 9-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -634,7 +634,7 @@ export class AbiBytes10 {
 
   constructor(
     /**
-     * 10-sized byte array
+     * 10-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -675,7 +675,7 @@ export namespace AbiBytes10 {
   
     constructor(
       /**
-       * 10-sized byte array
+       * 10-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -704,7 +704,7 @@ export class AbiBytes11 {
 
   constructor(
     /**
-     * 11-sized byte array
+     * 11-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -745,7 +745,7 @@ export namespace AbiBytes11 {
   
     constructor(
       /**
-       * 11-sized byte array
+       * 11-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -774,7 +774,7 @@ export class AbiBytes12 {
 
   constructor(
     /**
-     * 12-sized byte array
+     * 12-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -815,7 +815,7 @@ export namespace AbiBytes12 {
   
     constructor(
       /**
-       * 12-sized byte array
+       * 12-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -844,7 +844,7 @@ export class AbiBytes13 {
 
   constructor(
     /**
-     * 13-sized byte array
+     * 13-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -885,7 +885,7 @@ export namespace AbiBytes13 {
   
     constructor(
       /**
-       * 13-sized byte array
+       * 13-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -914,7 +914,7 @@ export class AbiBytes14 {
 
   constructor(
     /**
-     * 14-sized byte array
+     * 14-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -955,7 +955,7 @@ export namespace AbiBytes14 {
   
     constructor(
       /**
-       * 14-sized byte array
+       * 14-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -984,7 +984,7 @@ export class AbiBytes15 {
 
   constructor(
     /**
-     * 15-sized byte array
+     * 15-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1025,7 +1025,7 @@ export namespace AbiBytes15 {
   
     constructor(
       /**
-       * 15-sized byte array
+       * 15-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1054,7 +1054,7 @@ export class AbiBytes16 {
 
   constructor(
     /**
-     * 16-sized byte array
+     * 16-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1095,7 +1095,7 @@ export namespace AbiBytes16 {
   
     constructor(
       /**
-       * 16-sized byte array
+       * 16-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1124,7 +1124,7 @@ export class AbiBytes17 {
 
   constructor(
     /**
-     * 17-sized byte array
+     * 17-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1165,7 +1165,7 @@ export namespace AbiBytes17 {
   
     constructor(
       /**
-       * 17-sized byte array
+       * 17-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1194,7 +1194,7 @@ export class AbiBytes18 {
 
   constructor(
     /**
-     * 18-sized byte array
+     * 18-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1235,7 +1235,7 @@ export namespace AbiBytes18 {
   
     constructor(
       /**
-       * 18-sized byte array
+       * 18-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1264,7 +1264,7 @@ export class AbiBytes19 {
 
   constructor(
     /**
-     * 19-sized byte array
+     * 19-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1305,7 +1305,7 @@ export namespace AbiBytes19 {
   
     constructor(
       /**
-       * 19-sized byte array
+       * 19-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1334,7 +1334,7 @@ export class AbiBytes20 {
 
   constructor(
     /**
-     * 20-sized byte array
+     * 20-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1375,7 +1375,7 @@ export namespace AbiBytes20 {
   
     constructor(
       /**
-       * 20-sized byte array
+       * 20-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1404,7 +1404,7 @@ export class AbiBytes21 {
 
   constructor(
     /**
-     * 21-sized byte array
+     * 21-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1445,7 +1445,7 @@ export namespace AbiBytes21 {
   
     constructor(
       /**
-       * 21-sized byte array
+       * 21-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1474,7 +1474,7 @@ export class AbiBytes22 {
 
   constructor(
     /**
-     * 22-sized byte array
+     * 22-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1515,7 +1515,7 @@ export namespace AbiBytes22 {
   
     constructor(
       /**
-       * 22-sized byte array
+       * 22-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1544,7 +1544,7 @@ export class AbiBytes23 {
 
   constructor(
     /**
-     * 23-sized byte array
+     * 23-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1585,7 +1585,7 @@ export namespace AbiBytes23 {
   
     constructor(
       /**
-       * 23-sized byte array
+       * 23-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1614,7 +1614,7 @@ export class AbiBytes24 {
 
   constructor(
     /**
-     * 24-sized byte array
+     * 24-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1655,7 +1655,7 @@ export namespace AbiBytes24 {
   
     constructor(
       /**
-       * 24-sized byte array
+       * 24-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1684,7 +1684,7 @@ export class AbiBytes25 {
 
   constructor(
     /**
-     * 25-sized byte array
+     * 25-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1725,7 +1725,7 @@ export namespace AbiBytes25 {
   
     constructor(
       /**
-       * 25-sized byte array
+       * 25-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1754,7 +1754,7 @@ export class AbiBytes26 {
 
   constructor(
     /**
-     * 26-sized byte array
+     * 26-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1795,7 +1795,7 @@ export namespace AbiBytes26 {
   
     constructor(
       /**
-       * 26-sized byte array
+       * 26-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1824,7 +1824,7 @@ export class AbiBytes27 {
 
   constructor(
     /**
-     * 27-sized byte array
+     * 27-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1865,7 +1865,7 @@ export namespace AbiBytes27 {
   
     constructor(
       /**
-       * 27-sized byte array
+       * 27-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1894,7 +1894,7 @@ export class AbiBytes28 {
 
   constructor(
     /**
-     * 28-sized byte array
+     * 28-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -1935,7 +1935,7 @@ export namespace AbiBytes28 {
   
     constructor(
       /**
-       * 28-sized byte array
+       * 28-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -1964,7 +1964,7 @@ export class AbiBytes29 {
 
   constructor(
     /**
-     * 29-sized byte array
+     * 29-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2005,7 +2005,7 @@ export namespace AbiBytes29 {
   
     constructor(
       /**
-       * 29-sized byte array
+       * 29-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2034,7 +2034,7 @@ export class AbiBytes30 {
 
   constructor(
     /**
-     * 30-sized byte array
+     * 30-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2075,7 +2075,7 @@ export namespace AbiBytes30 {
   
     constructor(
       /**
-       * 30-sized byte array
+       * 30-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2104,7 +2104,7 @@ export class AbiBytes31 {
 
   constructor(
     /**
-     * 31-sized byte array
+     * 31-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2145,7 +2145,7 @@ export namespace AbiBytes31 {
   
     constructor(
       /**
-       * 31-sized byte array
+       * 31-sized bytes
        */
       readonly value: Uint8Array
     ) {}
@@ -2174,7 +2174,7 @@ export class AbiBytes32 {
 
   constructor(
     /**
-     * 32-sized byte array
+     * 32-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -2215,7 +2215,7 @@ export namespace AbiBytes32 {
   
     constructor(
       /**
-       * 32-sized byte array
+       * 32-sized bytes
        */
       readonly value: Uint8Array
     ) {}

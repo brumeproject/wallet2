@@ -11,7 +11,7 @@ export class AbiUint${i * 8} {
 
   constructor(
     /**
-     * ${i}-sized big-endian unsigned integer
+     * ${i}-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -57,7 +57,7 @@ export namespace AbiUint${i * 8} {
   
     constructor(
       /**
-       * ${i}-sized big-endian unsigned integer
+       * ${i}-sized bytes
        */
       readonly value: Uint8Array
     ) {}

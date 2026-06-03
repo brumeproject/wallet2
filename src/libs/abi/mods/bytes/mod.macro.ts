@@ -11,7 +11,7 @@ export class AbiBytes${i} {
 
   constructor(
     /**
-     * ${i}-sized byte array
+     * ${i}-sized bytes
      */
     readonly value: Uint8Array
   ) {}
@@ -52,7 +52,7 @@ export namespace AbiBytes${i} {
   
     constructor(
       /**
-       * ${i}-sized byte array
+       * ${i}-sized bytes
        */
       readonly value: Uint8Array
     ) {}
