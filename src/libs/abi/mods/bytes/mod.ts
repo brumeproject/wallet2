@@ -2,6 +2,10 @@ import { AbiUint32 } from "@/libs/abi/mods/uint/mod.ts";
 import { Cursor } from "@hazae41/cursor";
 export class AbiBytes {
 
+  static readonly kind = "dynamic"
+
+  readonly kind = "dynamic"
+
   constructor(
     readonly value: Uint8Array
   ) { }
@@ -36,15 +40,25 @@ export class AbiBytes {
     cursor.offset += padded - length
   }
 
+  into() {
+    return this.value
+  }
+
 }
 
 export namespace AbiBytes {
 
   export class Packed {
 
+    readonly kind = "dynamic"
+
     constructor(
       readonly value: Uint8Array
     ) { }
+
+    static from(value: Uint8Array) {
+      return new Packed(value)
+    }
 
     size() {
       return 32 + this.value.length
@@ -58,11 +72,19 @@ export namespace AbiBytes {
       cursor.write(this.value)
     }
 
+    into() {
+      return this.value
+    }
+
   }
 
 }
 
 export class AbiBytes1 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -105,6 +127,8 @@ export namespace AbiBytes1 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 1-sized bytes
@@ -133,6 +157,10 @@ export namespace AbiBytes1 {
 }
 
 export class AbiBytes2 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -175,6 +203,8 @@ export namespace AbiBytes2 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 2-sized bytes
@@ -203,6 +233,10 @@ export namespace AbiBytes2 {
 }
 
 export class AbiBytes3 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -245,6 +279,8 @@ export namespace AbiBytes3 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 3-sized bytes
@@ -273,6 +309,10 @@ export namespace AbiBytes3 {
 }
 
 export class AbiBytes4 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -315,6 +355,8 @@ export namespace AbiBytes4 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 4-sized bytes
@@ -343,6 +385,10 @@ export namespace AbiBytes4 {
 }
 
 export class AbiBytes5 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -385,6 +431,8 @@ export namespace AbiBytes5 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 5-sized bytes
@@ -413,6 +461,10 @@ export namespace AbiBytes5 {
 }
 
 export class AbiBytes6 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -455,6 +507,8 @@ export namespace AbiBytes6 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 6-sized bytes
@@ -483,6 +537,10 @@ export namespace AbiBytes6 {
 }
 
 export class AbiBytes7 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -525,6 +583,8 @@ export namespace AbiBytes7 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 7-sized bytes
@@ -553,6 +613,10 @@ export namespace AbiBytes7 {
 }
 
 export class AbiBytes8 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -595,6 +659,8 @@ export namespace AbiBytes8 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 8-sized bytes
@@ -623,6 +689,10 @@ export namespace AbiBytes8 {
 }
 
 export class AbiBytes9 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -665,6 +735,8 @@ export namespace AbiBytes9 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 9-sized bytes
@@ -693,6 +765,10 @@ export namespace AbiBytes9 {
 }
 
 export class AbiBytes10 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -735,6 +811,8 @@ export namespace AbiBytes10 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 10-sized bytes
@@ -763,6 +841,10 @@ export namespace AbiBytes10 {
 }
 
 export class AbiBytes11 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -805,6 +887,8 @@ export namespace AbiBytes11 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 11-sized bytes
@@ -833,6 +917,10 @@ export namespace AbiBytes11 {
 }
 
 export class AbiBytes12 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -875,6 +963,8 @@ export namespace AbiBytes12 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 12-sized bytes
@@ -903,6 +993,10 @@ export namespace AbiBytes12 {
 }
 
 export class AbiBytes13 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -945,6 +1039,8 @@ export namespace AbiBytes13 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 13-sized bytes
@@ -973,6 +1069,10 @@ export namespace AbiBytes13 {
 }
 
 export class AbiBytes14 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1015,6 +1115,8 @@ export namespace AbiBytes14 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 14-sized bytes
@@ -1043,6 +1145,10 @@ export namespace AbiBytes14 {
 }
 
 export class AbiBytes15 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1085,6 +1191,8 @@ export namespace AbiBytes15 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 15-sized bytes
@@ -1113,6 +1221,10 @@ export namespace AbiBytes15 {
 }
 
 export class AbiBytes16 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1155,6 +1267,8 @@ export namespace AbiBytes16 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 16-sized bytes
@@ -1183,6 +1297,10 @@ export namespace AbiBytes16 {
 }
 
 export class AbiBytes17 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1225,6 +1343,8 @@ export namespace AbiBytes17 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 17-sized bytes
@@ -1253,6 +1373,10 @@ export namespace AbiBytes17 {
 }
 
 export class AbiBytes18 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1295,6 +1419,8 @@ export namespace AbiBytes18 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 18-sized bytes
@@ -1323,6 +1449,10 @@ export namespace AbiBytes18 {
 }
 
 export class AbiBytes19 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1365,6 +1495,8 @@ export namespace AbiBytes19 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 19-sized bytes
@@ -1393,6 +1525,10 @@ export namespace AbiBytes19 {
 }
 
 export class AbiBytes20 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1435,6 +1571,8 @@ export namespace AbiBytes20 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 20-sized bytes
@@ -1463,6 +1601,10 @@ export namespace AbiBytes20 {
 }
 
 export class AbiBytes21 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1505,6 +1647,8 @@ export namespace AbiBytes21 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 21-sized bytes
@@ -1533,6 +1677,10 @@ export namespace AbiBytes21 {
 }
 
 export class AbiBytes22 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1575,6 +1723,8 @@ export namespace AbiBytes22 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 22-sized bytes
@@ -1603,6 +1753,10 @@ export namespace AbiBytes22 {
 }
 
 export class AbiBytes23 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1645,6 +1799,8 @@ export namespace AbiBytes23 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 23-sized bytes
@@ -1673,6 +1829,10 @@ export namespace AbiBytes23 {
 }
 
 export class AbiBytes24 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1715,6 +1875,8 @@ export namespace AbiBytes24 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 24-sized bytes
@@ -1743,6 +1905,10 @@ export namespace AbiBytes24 {
 }
 
 export class AbiBytes25 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1785,6 +1951,8 @@ export namespace AbiBytes25 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 25-sized bytes
@@ -1813,6 +1981,10 @@ export namespace AbiBytes25 {
 }
 
 export class AbiBytes26 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1855,6 +2027,8 @@ export namespace AbiBytes26 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 26-sized bytes
@@ -1883,6 +2057,10 @@ export namespace AbiBytes26 {
 }
 
 export class AbiBytes27 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1925,6 +2103,8 @@ export namespace AbiBytes27 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 27-sized bytes
@@ -1953,6 +2133,10 @@ export namespace AbiBytes27 {
 }
 
 export class AbiBytes28 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1995,6 +2179,8 @@ export namespace AbiBytes28 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 28-sized bytes
@@ -2023,6 +2209,10 @@ export namespace AbiBytes28 {
 }
 
 export class AbiBytes29 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2065,6 +2255,8 @@ export namespace AbiBytes29 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 29-sized bytes
@@ -2093,6 +2285,10 @@ export namespace AbiBytes29 {
 }
 
 export class AbiBytes30 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2135,6 +2331,8 @@ export namespace AbiBytes30 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 30-sized bytes
@@ -2163,6 +2361,10 @@ export namespace AbiBytes30 {
 }
 
 export class AbiBytes31 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2205,6 +2407,8 @@ export namespace AbiBytes31 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 31-sized bytes
@@ -2233,6 +2437,10 @@ export namespace AbiBytes31 {
 }
 
 export class AbiBytes32 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2275,6 +2483,8 @@ export namespace AbiBytes32 {
   
   export class Packed {
   
+    readonly kind = "static"
+
     constructor(
       /**
        * 32-sized bytes

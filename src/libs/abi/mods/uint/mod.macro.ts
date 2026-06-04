@@ -9,6 +9,10 @@ $$(() => {
     code.push(`
 export class AbiUint${i * 8} {
 
+  static readonly kind = "static"
+
+  readonly kind = "static"
+
   constructor(
     /**
      * 32-sized bytes
@@ -56,6 +60,8 @@ export class AbiUint${i * 8} {
 export namespace AbiUint${i * 8} {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**

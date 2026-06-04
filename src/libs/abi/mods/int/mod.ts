@@ -2,6 +2,10 @@ import { Cursor } from "@hazae41/cursor"
 
 export class AbiInt8 {
 
+  static readonly kind = "static"
+
+  readonly kind = "static"
+
   constructor(
     /**
      * 32-sized bytes
@@ -68,6 +72,8 @@ export class AbiInt8 {
 export namespace AbiInt8 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -126,6 +132,10 @@ export namespace AbiInt8 {
 }
 
 export class AbiInt16 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -193,6 +203,8 @@ export class AbiInt16 {
 export namespace AbiInt16 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -251,6 +263,10 @@ export namespace AbiInt16 {
 }
 
 export class AbiInt24 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -318,6 +334,8 @@ export class AbiInt24 {
 export namespace AbiInt24 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -376,6 +394,10 @@ export namespace AbiInt24 {
 }
 
 export class AbiInt32 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -443,6 +465,8 @@ export class AbiInt32 {
 export namespace AbiInt32 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -501,6 +525,10 @@ export namespace AbiInt32 {
 }
 
 export class AbiInt40 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -568,6 +596,8 @@ export class AbiInt40 {
 export namespace AbiInt40 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -626,6 +656,10 @@ export namespace AbiInt40 {
 }
 
 export class AbiInt48 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -693,6 +727,8 @@ export class AbiInt48 {
 export namespace AbiInt48 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -751,6 +787,10 @@ export namespace AbiInt48 {
 }
 
 export class AbiInt56 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -818,6 +858,8 @@ export class AbiInt56 {
 export namespace AbiInt56 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -876,6 +918,10 @@ export namespace AbiInt56 {
 }
 
 export class AbiInt64 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -943,6 +989,8 @@ export class AbiInt64 {
 export namespace AbiInt64 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -1001,6 +1049,10 @@ export namespace AbiInt64 {
 }
 
 export class AbiInt72 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1068,6 +1120,8 @@ export class AbiInt72 {
 export namespace AbiInt72 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -1126,6 +1180,10 @@ export namespace AbiInt72 {
 }
 
 export class AbiInt80 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1193,6 +1251,8 @@ export class AbiInt80 {
 export namespace AbiInt80 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -1251,6 +1311,10 @@ export namespace AbiInt80 {
 }
 
 export class AbiInt88 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1318,6 +1382,8 @@ export class AbiInt88 {
 export namespace AbiInt88 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -1376,6 +1442,10 @@ export namespace AbiInt88 {
 }
 
 export class AbiInt96 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1443,6 +1513,8 @@ export class AbiInt96 {
 export namespace AbiInt96 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -1501,6 +1573,10 @@ export namespace AbiInt96 {
 }
 
 export class AbiInt104 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1568,6 +1644,8 @@ export class AbiInt104 {
 export namespace AbiInt104 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -1626,6 +1704,10 @@ export namespace AbiInt104 {
 }
 
 export class AbiInt112 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1693,6 +1775,8 @@ export class AbiInt112 {
 export namespace AbiInt112 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -1751,6 +1835,10 @@ export namespace AbiInt112 {
 }
 
 export class AbiInt120 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1818,6 +1906,8 @@ export class AbiInt120 {
 export namespace AbiInt120 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -1876,6 +1966,10 @@ export namespace AbiInt120 {
 }
 
 export class AbiInt128 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -1943,6 +2037,8 @@ export class AbiInt128 {
 export namespace AbiInt128 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -2001,6 +2097,10 @@ export namespace AbiInt128 {
 }
 
 export class AbiInt136 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2068,6 +2168,8 @@ export class AbiInt136 {
 export namespace AbiInt136 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -2126,6 +2228,10 @@ export namespace AbiInt136 {
 }
 
 export class AbiInt144 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2193,6 +2299,8 @@ export class AbiInt144 {
 export namespace AbiInt144 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -2251,6 +2359,10 @@ export namespace AbiInt144 {
 }
 
 export class AbiInt152 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2318,6 +2430,8 @@ export class AbiInt152 {
 export namespace AbiInt152 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -2376,6 +2490,10 @@ export namespace AbiInt152 {
 }
 
 export class AbiInt160 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2443,6 +2561,8 @@ export class AbiInt160 {
 export namespace AbiInt160 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -2501,6 +2621,10 @@ export namespace AbiInt160 {
 }
 
 export class AbiInt168 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2568,6 +2692,8 @@ export class AbiInt168 {
 export namespace AbiInt168 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -2626,6 +2752,10 @@ export namespace AbiInt168 {
 }
 
 export class AbiInt176 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2693,6 +2823,8 @@ export class AbiInt176 {
 export namespace AbiInt176 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -2751,6 +2883,10 @@ export namespace AbiInt176 {
 }
 
 export class AbiInt184 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2818,6 +2954,8 @@ export class AbiInt184 {
 export namespace AbiInt184 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -2876,6 +3014,10 @@ export namespace AbiInt184 {
 }
 
 export class AbiInt192 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -2943,6 +3085,8 @@ export class AbiInt192 {
 export namespace AbiInt192 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -3001,6 +3145,10 @@ export namespace AbiInt192 {
 }
 
 export class AbiInt200 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -3068,6 +3216,8 @@ export class AbiInt200 {
 export namespace AbiInt200 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -3126,6 +3276,10 @@ export namespace AbiInt200 {
 }
 
 export class AbiInt208 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -3193,6 +3347,8 @@ export class AbiInt208 {
 export namespace AbiInt208 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -3251,6 +3407,10 @@ export namespace AbiInt208 {
 }
 
 export class AbiInt216 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -3318,6 +3478,8 @@ export class AbiInt216 {
 export namespace AbiInt216 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -3376,6 +3538,10 @@ export namespace AbiInt216 {
 }
 
 export class AbiInt224 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -3443,6 +3609,8 @@ export class AbiInt224 {
 export namespace AbiInt224 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -3501,6 +3669,10 @@ export namespace AbiInt224 {
 }
 
 export class AbiInt232 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -3568,6 +3740,8 @@ export class AbiInt232 {
 export namespace AbiInt232 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -3626,6 +3800,10 @@ export namespace AbiInt232 {
 }
 
 export class AbiInt240 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -3693,6 +3871,8 @@ export class AbiInt240 {
 export namespace AbiInt240 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -3751,6 +3931,10 @@ export namespace AbiInt240 {
 }
 
 export class AbiInt248 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -3818,6 +4002,8 @@ export class AbiInt248 {
 export namespace AbiInt248 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**
@@ -3876,6 +4062,10 @@ export namespace AbiInt248 {
 }
 
 export class AbiInt256 {
+
+  static readonly kind = "static"
+
+  readonly kind = "static"
 
   constructor(
     /**
@@ -3943,6 +4133,8 @@ export class AbiInt256 {
 export namespace AbiInt256 {
   
   export class Packed {
+
+    readonly kind = "static"
   
     constructor(
       /**

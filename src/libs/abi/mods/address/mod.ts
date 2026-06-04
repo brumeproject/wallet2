@@ -2,6 +2,10 @@ import { Cursor } from "@hazae41/cursor";
 
 export class AbiAddress {
 
+  static readonly kind = "static"
+
+  readonly kind = "static"
+
   constructor(
     /**
      * 20-sized bytes
@@ -42,6 +46,8 @@ export class AbiAddress {
 export namespace AbiAddress {
 
   export class Packed {
+
+    readonly kind = "static"
 
     constructor(
       /**
