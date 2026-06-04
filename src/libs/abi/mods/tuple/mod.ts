@@ -12,7 +12,7 @@ export class AbiReadableTuple<T extends unknown[]> {
   from(froms: T) {
     let offset = froms.length * 32
 
-    const array = new Array<unknown>()
+    const intos = new Array<unknown>()
     const heads = new Array<AbiWritable<unknown>>()
     const tails = new Array<AbiWritable<unknown>>()
 
@@ -25,7 +25,7 @@ export class AbiReadableTuple<T extends unknown[]> {
       if (type.kind === "dynamic") {
         const pointer = AbiUint32.from(BigInt(offset))
 
-        array.push(from)
+        intos.push(from)
         heads.push(pointer)
         tails.push(value)
 
@@ -34,19 +34,19 @@ export class AbiReadableTuple<T extends unknown[]> {
         continue
       }
 
-      array.push(from)
+      intos.push(from)
       heads.push(value)
 
       continue
     }
 
-    return new AbiWritableTuple<T>(array as T, heads, tails, offset)
+    return new AbiWritableTuple<T>(intos as T, heads, tails, offset)
   }
 
   read(cursor: Cursor) {
     const start = cursor.offset
 
-    const array = new Array<unknown>()
+    const intos = new Array<unknown>()
     const heads = new Array<AbiWritable<unknown>>()
     const tails = new Array<AbiWritable<unknown>>()
 
@@ -65,7 +65,7 @@ export class AbiReadableTuple<T extends unknown[]> {
 
         limit = subcursor.offset
 
-        array.push(value.into())
+        intos.push(value.into())
         heads.push(pointer)
         tails.push(value)
 
@@ -73,7 +73,7 @@ export class AbiReadableTuple<T extends unknown[]> {
       } else {
         const value = type.read(cursor)
 
-        array.push(value.into())
+        intos.push(value.into())
         heads.push(value)
 
         continue
@@ -82,7 +82,7 @@ export class AbiReadableTuple<T extends unknown[]> {
 
     cursor.offset = Math.max(cursor.offset, limit)
 
-    return new AbiWritableTuple<T>(array as T, heads, tails, cursor.offset - start)
+    return new AbiWritableTuple<T>(intos as T, heads, tails, cursor.offset - start)
   }
 
 }
@@ -90,7 +90,7 @@ export class AbiReadableTuple<T extends unknown[]> {
 export class AbiWritableTuple<T extends unknown[]> {
 
   constructor(
-    readonly value: T,
+    readonly intos: T,
     readonly heads: AbiWritable<unknown>[],
     readonly tails: AbiWritable<unknown>[],
     readonly sized: number,
@@ -111,7 +111,7 @@ export class AbiWritableTuple<T extends unknown[]> {
   }
 
   into() {
-    return this.value
+    return this.intos
   }
 
 }
