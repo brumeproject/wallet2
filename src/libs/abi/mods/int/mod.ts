@@ -10,12 +10,23 @@ export class AbiInt8 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 128n
+    const full = 256n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 7n
-    const full = 2n ** 8n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -36,11 +47,14 @@ export class AbiInt8 {
   }
 
   into() {
-    const half = 2n ** 7n
-    const full = 2n ** 8n
+    const half = 128n
+    const full = 256n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 1, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(31, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -58,10 +72,18 @@ export namespace AbiInt8 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 7n
-      const full = 2n ** 8n
+      const half = 128n
+      const full = 256n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(2, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -78,11 +100,14 @@ export namespace AbiInt8 {
     }
 
     into() {
-      const half = 2n ** 7n
-      const full = 2n ** 8n
+      const half = 128n
+      const full = 256n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -100,12 +125,23 @@ export class AbiInt16 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 32768n
+    const full = 65536n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 15n
-    const full = 2n ** 16n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -126,11 +162,14 @@ export class AbiInt16 {
   }
 
   into() {
-    const half = 2n ** 15n
-    const full = 2n ** 16n
+    const half = 32768n
+    const full = 65536n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 2, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(30, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -148,10 +187,18 @@ export namespace AbiInt16 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 15n
-      const full = 2n ** 16n
+      const half = 32768n
+      const full = 65536n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(4, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -168,11 +215,14 @@ export namespace AbiInt16 {
     }
 
     into() {
-      const half = 2n ** 15n
-      const full = 2n ** 16n
+      const half = 32768n
+      const full = 65536n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -190,12 +240,23 @@ export class AbiInt24 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 8388608n
+    const full = 16777216n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 23n
-    const full = 2n ** 24n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -216,11 +277,14 @@ export class AbiInt24 {
   }
 
   into() {
-    const half = 2n ** 23n
-    const full = 2n ** 24n
+    const half = 8388608n
+    const full = 16777216n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 3, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(29, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -238,10 +302,18 @@ export namespace AbiInt24 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 23n
-      const full = 2n ** 24n
+      const half = 8388608n
+      const full = 16777216n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(6, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -258,11 +330,14 @@ export namespace AbiInt24 {
     }
 
     into() {
-      const half = 2n ** 23n
-      const full = 2n ** 24n
+      const half = 8388608n
+      const full = 16777216n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -280,12 +355,23 @@ export class AbiInt32 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 2147483648n
+    const full = 4294967296n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 31n
-    const full = 2n ** 32n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -306,11 +392,14 @@ export class AbiInt32 {
   }
 
   into() {
-    const half = 2n ** 31n
-    const full = 2n ** 32n
+    const half = 2147483648n
+    const full = 4294967296n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 4, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(28, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -328,10 +417,18 @@ export namespace AbiInt32 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 31n
-      const full = 2n ** 32n
+      const half = 2147483648n
+      const full = 4294967296n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(8, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -348,11 +445,14 @@ export namespace AbiInt32 {
     }
 
     into() {
-      const half = 2n ** 31n
-      const full = 2n ** 32n
+      const half = 2147483648n
+      const full = 4294967296n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -370,12 +470,23 @@ export class AbiInt40 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 549755813888n
+    const full = 1099511627776n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 39n
-    const full = 2n ** 40n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -396,11 +507,14 @@ export class AbiInt40 {
   }
 
   into() {
-    const half = 2n ** 39n
-    const full = 2n ** 40n
+    const half = 549755813888n
+    const full = 1099511627776n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 5, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(27, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -418,10 +532,18 @@ export namespace AbiInt40 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 39n
-      const full = 2n ** 40n
+      const half = 549755813888n
+      const full = 1099511627776n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(10, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -438,11 +560,14 @@ export namespace AbiInt40 {
     }
 
     into() {
-      const half = 2n ** 39n
-      const full = 2n ** 40n
+      const half = 549755813888n
+      const full = 1099511627776n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -460,12 +585,23 @@ export class AbiInt48 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 140737488355328n
+    const full = 281474976710656n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 47n
-    const full = 2n ** 48n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -486,11 +622,14 @@ export class AbiInt48 {
   }
 
   into() {
-    const half = 2n ** 47n
-    const full = 2n ** 48n
+    const half = 140737488355328n
+    const full = 281474976710656n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 6, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(26, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -508,10 +647,18 @@ export namespace AbiInt48 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 47n
-      const full = 2n ** 48n
+      const half = 140737488355328n
+      const full = 281474976710656n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(12, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -528,11 +675,14 @@ export namespace AbiInt48 {
     }
 
     into() {
-      const half = 2n ** 47n
-      const full = 2n ** 48n
+      const half = 140737488355328n
+      const full = 281474976710656n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -550,12 +700,23 @@ export class AbiInt56 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 36028797018963968n
+    const full = 72057594037927936n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 55n
-    const full = 2n ** 56n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -576,11 +737,14 @@ export class AbiInt56 {
   }
 
   into() {
-    const half = 2n ** 55n
-    const full = 2n ** 56n
+    const half = 36028797018963968n
+    const full = 72057594037927936n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 7, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(25, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -598,10 +762,18 @@ export namespace AbiInt56 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 55n
-      const full = 2n ** 56n
+      const half = 36028797018963968n
+      const full = 72057594037927936n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(14, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -618,11 +790,14 @@ export namespace AbiInt56 {
     }
 
     into() {
-      const half = 2n ** 55n
-      const full = 2n ** 56n
+      const half = 36028797018963968n
+      const full = 72057594037927936n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -640,12 +815,23 @@ export class AbiInt64 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 9223372036854775808n
+    const full = 18446744073709551616n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 63n
-    const full = 2n ** 64n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -666,11 +852,14 @@ export class AbiInt64 {
   }
 
   into() {
-    const half = 2n ** 63n
-    const full = 2n ** 64n
+    const half = 9223372036854775808n
+    const full = 18446744073709551616n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 8, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(24, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -688,10 +877,18 @@ export namespace AbiInt64 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 63n
-      const full = 2n ** 64n
+      const half = 9223372036854775808n
+      const full = 18446744073709551616n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(16, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -708,11 +905,14 @@ export namespace AbiInt64 {
     }
 
     into() {
-      const half = 2n ** 63n
-      const full = 2n ** 64n
+      const half = 9223372036854775808n
+      const full = 18446744073709551616n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -730,12 +930,23 @@ export class AbiInt72 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 2361183241434822606848n
+    const full = 4722366482869645213696n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 71n
-    const full = 2n ** 72n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -756,11 +967,14 @@ export class AbiInt72 {
   }
 
   into() {
-    const half = 2n ** 71n
-    const full = 2n ** 72n
+    const half = 2361183241434822606848n
+    const full = 4722366482869645213696n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 9, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(23, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -778,10 +992,18 @@ export namespace AbiInt72 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 71n
-      const full = 2n ** 72n
+      const half = 2361183241434822606848n
+      const full = 4722366482869645213696n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(18, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -798,11 +1020,14 @@ export namespace AbiInt72 {
     }
 
     into() {
-      const half = 2n ** 71n
-      const full = 2n ** 72n
+      const half = 2361183241434822606848n
+      const full = 4722366482869645213696n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -820,12 +1045,23 @@ export class AbiInt80 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 604462909807314587353088n
+    const full = 1208925819614629174706176n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 79n
-    const full = 2n ** 80n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -846,11 +1082,14 @@ export class AbiInt80 {
   }
 
   into() {
-    const half = 2n ** 79n
-    const full = 2n ** 80n
+    const half = 604462909807314587353088n
+    const full = 1208925819614629174706176n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 10, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(22, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -868,10 +1107,18 @@ export namespace AbiInt80 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 79n
-      const full = 2n ** 80n
+      const half = 604462909807314587353088n
+      const full = 1208925819614629174706176n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(20, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -888,11 +1135,14 @@ export namespace AbiInt80 {
     }
 
     into() {
-      const half = 2n ** 79n
-      const full = 2n ** 80n
+      const half = 604462909807314587353088n
+      const full = 1208925819614629174706176n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -910,12 +1160,23 @@ export class AbiInt88 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 154742504910672534362390528n
+    const full = 309485009821345068724781056n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 87n
-    const full = 2n ** 88n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -936,11 +1197,14 @@ export class AbiInt88 {
   }
 
   into() {
-    const half = 2n ** 87n
-    const full = 2n ** 88n
+    const half = 154742504910672534362390528n
+    const full = 309485009821345068724781056n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 11, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(21, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -958,10 +1222,18 @@ export namespace AbiInt88 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 87n
-      const full = 2n ** 88n
+      const half = 154742504910672534362390528n
+      const full = 309485009821345068724781056n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(22, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -978,11 +1250,14 @@ export namespace AbiInt88 {
     }
 
     into() {
-      const half = 2n ** 87n
-      const full = 2n ** 88n
+      const half = 154742504910672534362390528n
+      const full = 309485009821345068724781056n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1000,12 +1275,23 @@ export class AbiInt96 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 39614081257132168796771975168n
+    const full = 79228162514264337593543950336n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 95n
-    const full = 2n ** 96n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1026,11 +1312,14 @@ export class AbiInt96 {
   }
 
   into() {
-    const half = 2n ** 95n
-    const full = 2n ** 96n
+    const half = 39614081257132168796771975168n
+    const full = 79228162514264337593543950336n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 12, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(20, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1048,10 +1337,18 @@ export namespace AbiInt96 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 95n
-      const full = 2n ** 96n
+      const half = 39614081257132168796771975168n
+      const full = 79228162514264337593543950336n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(24, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1068,11 +1365,14 @@ export namespace AbiInt96 {
     }
 
     into() {
-      const half = 2n ** 95n
-      const full = 2n ** 96n
+      const half = 39614081257132168796771975168n
+      const full = 79228162514264337593543950336n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1090,12 +1390,23 @@ export class AbiInt104 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 10141204801825835211973625643008n
+    const full = 20282409603651670423947251286016n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 103n
-    const full = 2n ** 104n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1116,11 +1427,14 @@ export class AbiInt104 {
   }
 
   into() {
-    const half = 2n ** 103n
-    const full = 2n ** 104n
+    const half = 10141204801825835211973625643008n
+    const full = 20282409603651670423947251286016n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 13, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(19, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1138,10 +1452,18 @@ export namespace AbiInt104 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 103n
-      const full = 2n ** 104n
+      const half = 10141204801825835211973625643008n
+      const full = 20282409603651670423947251286016n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(26, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1158,11 +1480,14 @@ export namespace AbiInt104 {
     }
 
     into() {
-      const half = 2n ** 103n
-      const full = 2n ** 104n
+      const half = 10141204801825835211973625643008n
+      const full = 20282409603651670423947251286016n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1180,12 +1505,23 @@ export class AbiInt112 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 2596148429267413814265248164610048n
+    const full = 5192296858534827628530496329220096n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 111n
-    const full = 2n ** 112n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1206,11 +1542,14 @@ export class AbiInt112 {
   }
 
   into() {
-    const half = 2n ** 111n
-    const full = 2n ** 112n
+    const half = 2596148429267413814265248164610048n
+    const full = 5192296858534827628530496329220096n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 14, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(18, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1228,10 +1567,18 @@ export namespace AbiInt112 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 111n
-      const full = 2n ** 112n
+      const half = 2596148429267413814265248164610048n
+      const full = 5192296858534827628530496329220096n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(28, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1248,11 +1595,14 @@ export namespace AbiInt112 {
     }
 
     into() {
-      const half = 2n ** 111n
-      const full = 2n ** 112n
+      const half = 2596148429267413814265248164610048n
+      const full = 5192296858534827628530496329220096n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1270,12 +1620,23 @@ export class AbiInt120 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 664613997892457936451903530140172288n
+    const full = 1329227995784915872903807060280344576n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 119n
-    const full = 2n ** 120n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1296,11 +1657,14 @@ export class AbiInt120 {
   }
 
   into() {
-    const half = 2n ** 119n
-    const full = 2n ** 120n
+    const half = 664613997892457936451903530140172288n
+    const full = 1329227995784915872903807060280344576n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 15, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(17, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1318,10 +1682,18 @@ export namespace AbiInt120 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 119n
-      const full = 2n ** 120n
+      const half = 664613997892457936451903530140172288n
+      const full = 1329227995784915872903807060280344576n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(30, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1338,11 +1710,14 @@ export namespace AbiInt120 {
     }
 
     into() {
-      const half = 2n ** 119n
-      const full = 2n ** 120n
+      const half = 664613997892457936451903530140172288n
+      const full = 1329227995784915872903807060280344576n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1360,12 +1735,23 @@ export class AbiInt128 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 170141183460469231731687303715884105728n
+    const full = 340282366920938463463374607431768211456n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 127n
-    const full = 2n ** 128n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1386,11 +1772,14 @@ export class AbiInt128 {
   }
 
   into() {
-    const half = 2n ** 127n
-    const full = 2n ** 128n
+    const half = 170141183460469231731687303715884105728n
+    const full = 340282366920938463463374607431768211456n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 16, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(16, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1408,10 +1797,18 @@ export namespace AbiInt128 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 127n
-      const full = 2n ** 128n
+      const half = 170141183460469231731687303715884105728n
+      const full = 340282366920938463463374607431768211456n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(32, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1428,11 +1825,14 @@ export namespace AbiInt128 {
     }
 
     into() {
-      const half = 2n ** 127n
-      const full = 2n ** 128n
+      const half = 170141183460469231731687303715884105728n
+      const full = 340282366920938463463374607431768211456n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1450,12 +1850,23 @@ export class AbiInt136 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 43556142965880123323311949751266331066368n
+    const full = 87112285931760246646623899502532662132736n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 135n
-    const full = 2n ** 136n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1476,11 +1887,14 @@ export class AbiInt136 {
   }
 
   into() {
-    const half = 2n ** 135n
-    const full = 2n ** 136n
+    const half = 43556142965880123323311949751266331066368n
+    const full = 87112285931760246646623899502532662132736n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 17, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(15, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1498,10 +1912,18 @@ export namespace AbiInt136 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 135n
-      const full = 2n ** 136n
+      const half = 43556142965880123323311949751266331066368n
+      const full = 87112285931760246646623899502532662132736n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(34, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1518,11 +1940,14 @@ export namespace AbiInt136 {
     }
 
     into() {
-      const half = 2n ** 135n
-      const full = 2n ** 136n
+      const half = 43556142965880123323311949751266331066368n
+      const full = 87112285931760246646623899502532662132736n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1540,12 +1965,23 @@ export class AbiInt144 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 11150372599265311570767859136324180752990208n
+    const full = 22300745198530623141535718272648361505980416n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 143n
-    const full = 2n ** 144n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1566,11 +2002,14 @@ export class AbiInt144 {
   }
 
   into() {
-    const half = 2n ** 143n
-    const full = 2n ** 144n
+    const half = 11150372599265311570767859136324180752990208n
+    const full = 22300745198530623141535718272648361505980416n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 18, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(14, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1588,10 +2027,18 @@ export namespace AbiInt144 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 143n
-      const full = 2n ** 144n
+      const half = 11150372599265311570767859136324180752990208n
+      const full = 22300745198530623141535718272648361505980416n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(36, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1608,11 +2055,14 @@ export namespace AbiInt144 {
     }
 
     into() {
-      const half = 2n ** 143n
-      const full = 2n ** 144n
+      const half = 11150372599265311570767859136324180752990208n
+      const full = 22300745198530623141535718272648361505980416n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1630,12 +2080,23 @@ export class AbiInt152 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 2854495385411919762116571938898990272765493248n
+    const full = 5708990770823839524233143877797980545530986496n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 151n
-    const full = 2n ** 152n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1656,11 +2117,14 @@ export class AbiInt152 {
   }
 
   into() {
-    const half = 2n ** 151n
-    const full = 2n ** 152n
+    const half = 2854495385411919762116571938898990272765493248n
+    const full = 5708990770823839524233143877797980545530986496n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 19, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(13, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1678,10 +2142,18 @@ export namespace AbiInt152 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 151n
-      const full = 2n ** 152n
+      const half = 2854495385411919762116571938898990272765493248n
+      const full = 5708990770823839524233143877797980545530986496n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(38, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1698,11 +2170,14 @@ export namespace AbiInt152 {
     }
 
     into() {
-      const half = 2n ** 151n
-      const full = 2n ** 152n
+      const half = 2854495385411919762116571938898990272765493248n
+      const full = 5708990770823839524233143877797980545530986496n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1720,12 +2195,23 @@ export class AbiInt160 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 730750818665451459101842416358141509827966271488n
+    const full = 1461501637330902918203684832716283019655932542976n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 159n
-    const full = 2n ** 160n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1746,11 +2232,14 @@ export class AbiInt160 {
   }
 
   into() {
-    const half = 2n ** 159n
-    const full = 2n ** 160n
+    const half = 730750818665451459101842416358141509827966271488n
+    const full = 1461501637330902918203684832716283019655932542976n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 20, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(12, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1768,10 +2257,18 @@ export namespace AbiInt160 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 159n
-      const full = 2n ** 160n
+      const half = 730750818665451459101842416358141509827966271488n
+      const full = 1461501637330902918203684832716283019655932542976n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(40, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1788,11 +2285,14 @@ export namespace AbiInt160 {
     }
 
     into() {
-      const half = 2n ** 159n
-      const full = 2n ** 160n
+      const half = 730750818665451459101842416358141509827966271488n
+      const full = 1461501637330902918203684832716283019655932542976n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1810,12 +2310,23 @@ export class AbiInt168 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 187072209578355573530071658587684226515959365500928n
+    const full = 374144419156711147060143317175368453031918731001856n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 167n
-    const full = 2n ** 168n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1836,11 +2347,14 @@ export class AbiInt168 {
   }
 
   into() {
-    const half = 2n ** 167n
-    const full = 2n ** 168n
+    const half = 187072209578355573530071658587684226515959365500928n
+    const full = 374144419156711147060143317175368453031918731001856n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 21, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(11, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1858,10 +2372,18 @@ export namespace AbiInt168 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 167n
-      const full = 2n ** 168n
+      const half = 187072209578355573530071658587684226515959365500928n
+      const full = 374144419156711147060143317175368453031918731001856n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(42, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1878,11 +2400,14 @@ export namespace AbiInt168 {
     }
 
     into() {
-      const half = 2n ** 167n
-      const full = 2n ** 168n
+      const half = 187072209578355573530071658587684226515959365500928n
+      const full = 374144419156711147060143317175368453031918731001856n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1900,12 +2425,23 @@ export class AbiInt176 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 47890485652059026823698344598447161988085597568237568n
+    const full = 95780971304118053647396689196894323976171195136475136n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 175n
-    const full = 2n ** 176n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -1926,11 +2462,14 @@ export class AbiInt176 {
   }
 
   into() {
-    const half = 2n ** 175n
-    const full = 2n ** 176n
+    const half = 47890485652059026823698344598447161988085597568237568n
+    const full = 95780971304118053647396689196894323976171195136475136n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 22, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(10, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -1948,10 +2487,18 @@ export namespace AbiInt176 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 175n
-      const full = 2n ** 176n
+      const half = 47890485652059026823698344598447161988085597568237568n
+      const full = 95780971304118053647396689196894323976171195136475136n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(44, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1968,11 +2515,14 @@ export namespace AbiInt176 {
     }
 
     into() {
-      const half = 2n ** 175n
-      const full = 2n ** 176n
+      const half = 47890485652059026823698344598447161988085597568237568n
+      const full = 95780971304118053647396689196894323976171195136475136n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -1990,12 +2540,23 @@ export class AbiInt184 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 12259964326927110866866776217202473468949912977468817408n
+    const full = 24519928653854221733733552434404946937899825954937634816n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 183n
-    const full = 2n ** 184n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2016,11 +2577,14 @@ export class AbiInt184 {
   }
 
   into() {
-    const half = 2n ** 183n
-    const full = 2n ** 184n
+    const half = 12259964326927110866866776217202473468949912977468817408n
+    const full = 24519928653854221733733552434404946937899825954937634816n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 23, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(9, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2038,10 +2602,18 @@ export namespace AbiInt184 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 183n
-      const full = 2n ** 184n
+      const half = 12259964326927110866866776217202473468949912977468817408n
+      const full = 24519928653854221733733552434404946937899825954937634816n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(46, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2058,11 +2630,14 @@ export namespace AbiInt184 {
     }
 
     into() {
-      const half = 2n ** 183n
-      const full = 2n ** 184n
+      const half = 12259964326927110866866776217202473468949912977468817408n
+      const full = 24519928653854221733733552434404946937899825954937634816n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -2080,12 +2655,23 @@ export class AbiInt192 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 3138550867693340381917894711603833208051177722232017256448n
+    const full = 6277101735386680763835789423207666416102355444464034512896n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 191n
-    const full = 2n ** 192n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2106,11 +2692,14 @@ export class AbiInt192 {
   }
 
   into() {
-    const half = 2n ** 191n
-    const full = 2n ** 192n
+    const half = 3138550867693340381917894711603833208051177722232017256448n
+    const full = 6277101735386680763835789423207666416102355444464034512896n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 24, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(8, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2128,10 +2717,18 @@ export namespace AbiInt192 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 191n
-      const full = 2n ** 192n
+      const half = 3138550867693340381917894711603833208051177722232017256448n
+      const full = 6277101735386680763835789423207666416102355444464034512896n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(48, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2148,11 +2745,14 @@ export namespace AbiInt192 {
     }
 
     into() {
-      const half = 2n ** 191n
-      const full = 2n ** 192n
+      const half = 3138550867693340381917894711603833208051177722232017256448n
+      const full = 6277101735386680763835789423207666416102355444464034512896n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -2170,12 +2770,23 @@ export class AbiInt200 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 803469022129495137770981046170581301261101496891396417650688n
+    const full = 1606938044258990275541962092341162602522202993782792835301376n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 199n
-    const full = 2n ** 200n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2196,11 +2807,14 @@ export class AbiInt200 {
   }
 
   into() {
-    const half = 2n ** 199n
-    const full = 2n ** 200n
+    const half = 803469022129495137770981046170581301261101496891396417650688n
+    const full = 1606938044258990275541962092341162602522202993782792835301376n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 25, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(7, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2218,10 +2832,18 @@ export namespace AbiInt200 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 199n
-      const full = 2n ** 200n
+      const half = 803469022129495137770981046170581301261101496891396417650688n
+      const full = 1606938044258990275541962092341162602522202993782792835301376n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(50, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2238,11 +2860,14 @@ export namespace AbiInt200 {
     }
 
     into() {
-      const half = 2n ** 199n
-      const full = 2n ** 200n
+      const half = 803469022129495137770981046170581301261101496891396417650688n
+      const full = 1606938044258990275541962092341162602522202993782792835301376n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -2260,12 +2885,23 @@ export class AbiInt208 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 205688069665150755269371147819668813122841983204197482918576128n
+    const full = 411376139330301510538742295639337626245683966408394965837152256n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 207n
-    const full = 2n ** 208n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2286,11 +2922,14 @@ export class AbiInt208 {
   }
 
   into() {
-    const half = 2n ** 207n
-    const full = 2n ** 208n
+    const half = 205688069665150755269371147819668813122841983204197482918576128n
+    const full = 411376139330301510538742295639337626245683966408394965837152256n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 26, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(6, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2308,10 +2947,18 @@ export namespace AbiInt208 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 207n
-      const full = 2n ** 208n
+      const half = 205688069665150755269371147819668813122841983204197482918576128n
+      const full = 411376139330301510538742295639337626245683966408394965837152256n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(52, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2328,11 +2975,14 @@ export namespace AbiInt208 {
     }
 
     into() {
-      const half = 2n ** 207n
-      const full = 2n ** 208n
+      const half = 205688069665150755269371147819668813122841983204197482918576128n
+      const full = 411376139330301510538742295639337626245683966408394965837152256n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -2350,12 +3000,23 @@ export class AbiInt216 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 52656145834278593348959013841835216159447547700274555627155488768n
+    const full = 105312291668557186697918027683670432318895095400549111254310977536n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 215n
-    const full = 2n ** 216n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2376,11 +3037,14 @@ export class AbiInt216 {
   }
 
   into() {
-    const half = 2n ** 215n
-    const full = 2n ** 216n
+    const half = 52656145834278593348959013841835216159447547700274555627155488768n
+    const full = 105312291668557186697918027683670432318895095400549111254310977536n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 27, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(5, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2398,10 +3062,18 @@ export namespace AbiInt216 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 215n
-      const full = 2n ** 216n
+      const half = 52656145834278593348959013841835216159447547700274555627155488768n
+      const full = 105312291668557186697918027683670432318895095400549111254310977536n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(54, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2418,11 +3090,14 @@ export namespace AbiInt216 {
     }
 
     into() {
-      const half = 2n ** 215n
-      const full = 2n ** 216n
+      const half = 52656145834278593348959013841835216159447547700274555627155488768n
+      const full = 105312291668557186697918027683670432318895095400549111254310977536n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -2440,12 +3115,23 @@ export class AbiInt224 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 13479973333575319897333507543509815336818572211270286240551805124608n
+    const full = 26959946667150639794667015087019630673637144422540572481103610249216n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 223n
-    const full = 2n ** 224n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2466,11 +3152,14 @@ export class AbiInt224 {
   }
 
   into() {
-    const half = 2n ** 223n
-    const full = 2n ** 224n
+    const half = 13479973333575319897333507543509815336818572211270286240551805124608n
+    const full = 26959946667150639794667015087019630673637144422540572481103610249216n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 28, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(4, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2488,10 +3177,18 @@ export namespace AbiInt224 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 223n
-      const full = 2n ** 224n
+      const half = 13479973333575319897333507543509815336818572211270286240551805124608n
+      const full = 26959946667150639794667015087019630673637144422540572481103610249216n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(56, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2508,11 +3205,14 @@ export namespace AbiInt224 {
     }
 
     into() {
-      const half = 2n ** 223n
-      const full = 2n ** 224n
+      const half = 13479973333575319897333507543509815336818572211270286240551805124608n
+      const full = 26959946667150639794667015087019630673637144422540572481103610249216n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -2530,12 +3230,23 @@ export class AbiInt232 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 3450873173395281893717377931138512726225554486085193277581262111899648n
+    const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 231n
-    const full = 2n ** 232n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2556,11 +3267,14 @@ export class AbiInt232 {
   }
 
   into() {
-    const half = 2n ** 231n
-    const full = 2n ** 232n
+    const half = 3450873173395281893717377931138512726225554486085193277581262111899648n
+    const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 29, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(3, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2578,10 +3292,18 @@ export namespace AbiInt232 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 231n
-      const full = 2n ** 232n
+      const half = 3450873173395281893717377931138512726225554486085193277581262111899648n
+      const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(58, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2598,11 +3320,14 @@ export namespace AbiInt232 {
     }
 
     into() {
-      const half = 2n ** 231n
-      const full = 2n ** 232n
+      const half = 3450873173395281893717377931138512726225554486085193277581262111899648n
+      const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -2620,12 +3345,23 @@ export class AbiInt240 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 883423532389192164791648750371459257913741948437809479060803100646309888n
+    const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 239n
-    const full = 2n ** 240n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2646,11 +3382,14 @@ export class AbiInt240 {
   }
 
   into() {
-    const half = 2n ** 239n
-    const full = 2n ** 240n
+    const half = 883423532389192164791648750371459257913741948437809479060803100646309888n
+    const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 30, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(2, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2668,10 +3407,18 @@ export namespace AbiInt240 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 239n
-      const full = 2n ** 240n
+      const half = 883423532389192164791648750371459257913741948437809479060803100646309888n
+      const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(60, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2688,11 +3435,14 @@ export namespace AbiInt240 {
     }
 
     into() {
-      const half = 2n ** 239n
-      const full = 2n ** 240n
+      const half = 883423532389192164791648750371459257913741948437809479060803100646309888n
+      const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -2710,12 +3460,23 @@ export class AbiInt248 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 226156424291633194186662080095093570025917938800079226639565593765455331328n
+    const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 247n
-    const full = 2n ** 248n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2736,11 +3497,14 @@ export class AbiInt248 {
   }
 
   into() {
-    const half = 2n ** 247n
-    const full = 2n ** 248n
+    const half = 226156424291633194186662080095093570025917938800079226639565593765455331328n
+    const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 31, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(1, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2758,10 +3522,18 @@ export namespace AbiInt248 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 247n
-      const full = 2n ** 248n
+      const half = 226156424291633194186662080095093570025917938800079226639565593765455331328n
+      const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(62, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2778,11 +3550,14 @@ export namespace AbiInt248 {
     }
 
     into() {
-      const half = 2n ** 247n
-      const full = 2n ** 248n
+      const half = 226156424291633194186662080095093570025917938800079226639565593765455331328n
+      const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 
@@ -2800,12 +3575,23 @@ export class AbiInt256 {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = 57896044618658097711785492504343953926634992332820282019728792003956564819968n
+    const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** 255n
-    const full = 2n ** 256n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -2826,11 +3612,14 @@ export class AbiInt256 {
   }
 
   into() {
-    const half = 2n ** 255n
-    const full = 2n ** 256n
+    const half = 57896044618658097711785492504343953926634992332820282019728792003956564819968n
+    const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
 
-    const value = BigInt(`0x${this.value.subarray(32 - 32, 32).toHex()}`)
+    const value = BigInt(`0x${this.value.subarray(0, 32).toHex()}`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -2848,10 +3637,18 @@ export namespace AbiInt256 {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** 255n
-      const full = 2n ** 256n
+      const half = 57896044618658097711785492504343953926634992332820282019728792003956564819968n
+      const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(64, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2868,11 +3665,14 @@ export namespace AbiInt256 {
     }
 
     into() {
-      const half = 2n ** 255n
-      const full = 2n ** 256n
+      const half = 57896044618658097711785492504343953926634992332820282019728792003956564819968n
+      const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
 
       const value = BigInt(`0x${this.value.toHex()}`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 

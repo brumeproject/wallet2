@@ -17,9 +17,12 @@ export class AbiUint${i * 8} {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** ${i * 8}n
+    const full = ${2n ** BigInt(i * 8)}n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -40,7 +43,7 @@ export class AbiUint${i * 8} {
   }
 
   into() {
-    return BigInt(\`0x\${this.value.subarray(32 - ${i}, 32).toHex()}\`)
+    return BigInt(\`0x\${this.value.subarray(${32 - i}, 32).toHex()}\`)
   }
 
 }
@@ -57,9 +60,12 @@ export namespace AbiUint${i * 8} {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** ${i * 8}n
+      const full = ${2n ** BigInt(i * 8)}n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(${i * 2}, "0")
       const raw = Uint8Array.fromHex(hex)

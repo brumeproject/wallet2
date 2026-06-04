@@ -10,9 +10,12 @@ export class AbiUint8 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 8n
+    const full = 256n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -33,7 +36,7 @@ export class AbiUint8 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 1, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(31, 32).toHex()}`)
   }
 
 }
@@ -50,9 +53,12 @@ export namespace AbiUint8 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 8n
+      const full = 256n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(2, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -86,9 +92,12 @@ export class AbiUint16 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 16n
+    const full = 65536n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -109,7 +118,7 @@ export class AbiUint16 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 2, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(30, 32).toHex()}`)
   }
 
 }
@@ -126,9 +135,12 @@ export namespace AbiUint16 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 16n
+      const full = 65536n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(4, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -162,9 +174,12 @@ export class AbiUint24 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 24n
+    const full = 16777216n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -185,7 +200,7 @@ export class AbiUint24 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 3, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(29, 32).toHex()}`)
   }
 
 }
@@ -202,9 +217,12 @@ export namespace AbiUint24 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 24n
+      const full = 16777216n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(6, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -238,9 +256,12 @@ export class AbiUint32 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 32n
+    const full = 4294967296n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -261,7 +282,7 @@ export class AbiUint32 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 4, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(28, 32).toHex()}`)
   }
 
 }
@@ -278,9 +299,12 @@ export namespace AbiUint32 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 32n
+      const full = 4294967296n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(8, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -314,9 +338,12 @@ export class AbiUint40 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 40n
+    const full = 1099511627776n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -337,7 +364,7 @@ export class AbiUint40 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 5, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(27, 32).toHex()}`)
   }
 
 }
@@ -354,9 +381,12 @@ export namespace AbiUint40 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 40n
+      const full = 1099511627776n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(10, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -390,9 +420,12 @@ export class AbiUint48 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 48n
+    const full = 281474976710656n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -413,7 +446,7 @@ export class AbiUint48 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 6, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(26, 32).toHex()}`)
   }
 
 }
@@ -430,9 +463,12 @@ export namespace AbiUint48 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 48n
+      const full = 281474976710656n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(12, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -466,9 +502,12 @@ export class AbiUint56 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 56n
+    const full = 72057594037927936n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -489,7 +528,7 @@ export class AbiUint56 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 7, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(25, 32).toHex()}`)
   }
 
 }
@@ -506,9 +545,12 @@ export namespace AbiUint56 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 56n
+      const full = 72057594037927936n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(14, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -542,9 +584,12 @@ export class AbiUint64 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 64n
+    const full = 18446744073709551616n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -565,7 +610,7 @@ export class AbiUint64 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 8, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(24, 32).toHex()}`)
   }
 
 }
@@ -582,9 +627,12 @@ export namespace AbiUint64 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 64n
+      const full = 18446744073709551616n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(16, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -618,9 +666,12 @@ export class AbiUint72 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 72n
+    const full = 4722366482869645213696n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -641,7 +692,7 @@ export class AbiUint72 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 9, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(23, 32).toHex()}`)
   }
 
 }
@@ -658,9 +709,12 @@ export namespace AbiUint72 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 72n
+      const full = 4722366482869645213696n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(18, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -694,9 +748,12 @@ export class AbiUint80 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 80n
+    const full = 1208925819614629174706176n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -717,7 +774,7 @@ export class AbiUint80 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 10, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(22, 32).toHex()}`)
   }
 
 }
@@ -734,9 +791,12 @@ export namespace AbiUint80 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 80n
+      const full = 1208925819614629174706176n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(20, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -770,9 +830,12 @@ export class AbiUint88 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 88n
+    const full = 309485009821345068724781056n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -793,7 +856,7 @@ export class AbiUint88 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 11, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(21, 32).toHex()}`)
   }
 
 }
@@ -810,9 +873,12 @@ export namespace AbiUint88 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 88n
+      const full = 309485009821345068724781056n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(22, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -846,9 +912,12 @@ export class AbiUint96 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 96n
+    const full = 79228162514264337593543950336n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -869,7 +938,7 @@ export class AbiUint96 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 12, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(20, 32).toHex()}`)
   }
 
 }
@@ -886,9 +955,12 @@ export namespace AbiUint96 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 96n
+      const full = 79228162514264337593543950336n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(24, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -922,9 +994,12 @@ export class AbiUint104 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 104n
+    const full = 20282409603651670423947251286016n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -945,7 +1020,7 @@ export class AbiUint104 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 13, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(19, 32).toHex()}`)
   }
 
 }
@@ -962,9 +1037,12 @@ export namespace AbiUint104 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 104n
+      const full = 20282409603651670423947251286016n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(26, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -998,9 +1076,12 @@ export class AbiUint112 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 112n
+    const full = 5192296858534827628530496329220096n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1021,7 +1102,7 @@ export class AbiUint112 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 14, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(18, 32).toHex()}`)
   }
 
 }
@@ -1038,9 +1119,12 @@ export namespace AbiUint112 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 112n
+      const full = 5192296858534827628530496329220096n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(28, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1074,9 +1158,12 @@ export class AbiUint120 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 120n
+    const full = 1329227995784915872903807060280344576n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1097,7 +1184,7 @@ export class AbiUint120 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 15, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(17, 32).toHex()}`)
   }
 
 }
@@ -1114,9 +1201,12 @@ export namespace AbiUint120 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 120n
+      const full = 1329227995784915872903807060280344576n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(30, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1150,9 +1240,12 @@ export class AbiUint128 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 128n
+    const full = 340282366920938463463374607431768211456n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1173,7 +1266,7 @@ export class AbiUint128 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 16, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(16, 32).toHex()}`)
   }
 
 }
@@ -1190,9 +1283,12 @@ export namespace AbiUint128 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 128n
+      const full = 340282366920938463463374607431768211456n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(32, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1226,9 +1322,12 @@ export class AbiUint136 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 136n
+    const full = 87112285931760246646623899502532662132736n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1249,7 +1348,7 @@ export class AbiUint136 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 17, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(15, 32).toHex()}`)
   }
 
 }
@@ -1266,9 +1365,12 @@ export namespace AbiUint136 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 136n
+      const full = 87112285931760246646623899502532662132736n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(34, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1302,9 +1404,12 @@ export class AbiUint144 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 144n
+    const full = 22300745198530623141535718272648361505980416n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1325,7 +1430,7 @@ export class AbiUint144 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 18, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(14, 32).toHex()}`)
   }
 
 }
@@ -1342,9 +1447,12 @@ export namespace AbiUint144 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 144n
+      const full = 22300745198530623141535718272648361505980416n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(36, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1378,9 +1486,12 @@ export class AbiUint152 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 152n
+    const full = 5708990770823839524233143877797980545530986496n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1401,7 +1512,7 @@ export class AbiUint152 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 19, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(13, 32).toHex()}`)
   }
 
 }
@@ -1418,9 +1529,12 @@ export namespace AbiUint152 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 152n
+      const full = 5708990770823839524233143877797980545530986496n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(38, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1454,9 +1568,12 @@ export class AbiUint160 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 160n
+    const full = 1461501637330902918203684832716283019655932542976n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1477,7 +1594,7 @@ export class AbiUint160 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 20, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(12, 32).toHex()}`)
   }
 
 }
@@ -1494,9 +1611,12 @@ export namespace AbiUint160 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 160n
+      const full = 1461501637330902918203684832716283019655932542976n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(40, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1530,9 +1650,12 @@ export class AbiUint168 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 168n
+    const full = 374144419156711147060143317175368453031918731001856n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1553,7 +1676,7 @@ export class AbiUint168 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 21, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(11, 32).toHex()}`)
   }
 
 }
@@ -1570,9 +1693,12 @@ export namespace AbiUint168 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 168n
+      const full = 374144419156711147060143317175368453031918731001856n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(42, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1606,9 +1732,12 @@ export class AbiUint176 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 176n
+    const full = 95780971304118053647396689196894323976171195136475136n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1629,7 +1758,7 @@ export class AbiUint176 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 22, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(10, 32).toHex()}`)
   }
 
 }
@@ -1646,9 +1775,12 @@ export namespace AbiUint176 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 176n
+      const full = 95780971304118053647396689196894323976171195136475136n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(44, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1682,9 +1814,12 @@ export class AbiUint184 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 184n
+    const full = 24519928653854221733733552434404946937899825954937634816n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1705,7 +1840,7 @@ export class AbiUint184 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 23, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(9, 32).toHex()}`)
   }
 
 }
@@ -1722,9 +1857,12 @@ export namespace AbiUint184 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 184n
+      const full = 24519928653854221733733552434404946937899825954937634816n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(46, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1758,9 +1896,12 @@ export class AbiUint192 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 192n
+    const full = 6277101735386680763835789423207666416102355444464034512896n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1781,7 +1922,7 @@ export class AbiUint192 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 24, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(8, 32).toHex()}`)
   }
 
 }
@@ -1798,9 +1939,12 @@ export namespace AbiUint192 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 192n
+      const full = 6277101735386680763835789423207666416102355444464034512896n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(48, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1834,9 +1978,12 @@ export class AbiUint200 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 200n
+    const full = 1606938044258990275541962092341162602522202993782792835301376n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1857,7 +2004,7 @@ export class AbiUint200 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 25, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(7, 32).toHex()}`)
   }
 
 }
@@ -1874,9 +2021,12 @@ export namespace AbiUint200 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 200n
+      const full = 1606938044258990275541962092341162602522202993782792835301376n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(50, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1910,9 +2060,12 @@ export class AbiUint208 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 208n
+    const full = 411376139330301510538742295639337626245683966408394965837152256n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -1933,7 +2086,7 @@ export class AbiUint208 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 26, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(6, 32).toHex()}`)
   }
 
 }
@@ -1950,9 +2103,12 @@ export namespace AbiUint208 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 208n
+      const full = 411376139330301510538742295639337626245683966408394965837152256n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(52, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -1986,9 +2142,12 @@ export class AbiUint216 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 216n
+    const full = 105312291668557186697918027683670432318895095400549111254310977536n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -2009,7 +2168,7 @@ export class AbiUint216 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 27, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(5, 32).toHex()}`)
   }
 
 }
@@ -2026,9 +2185,12 @@ export namespace AbiUint216 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 216n
+      const full = 105312291668557186697918027683670432318895095400549111254310977536n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(54, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2062,9 +2224,12 @@ export class AbiUint224 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 224n
+    const full = 26959946667150639794667015087019630673637144422540572481103610249216n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -2085,7 +2250,7 @@ export class AbiUint224 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 28, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(4, 32).toHex()}`)
   }
 
 }
@@ -2102,9 +2267,12 @@ export namespace AbiUint224 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 224n
+      const full = 26959946667150639794667015087019630673637144422540572481103610249216n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(56, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2138,9 +2306,12 @@ export class AbiUint232 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 232n
+    const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -2161,7 +2332,7 @@ export class AbiUint232 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 29, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(3, 32).toHex()}`)
   }
 
 }
@@ -2178,9 +2349,12 @@ export namespace AbiUint232 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 232n
+      const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(58, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2214,9 +2388,12 @@ export class AbiUint240 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 240n
+    const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -2237,7 +2414,7 @@ export class AbiUint240 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 30, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(2, 32).toHex()}`)
   }
 
 }
@@ -2254,9 +2431,12 @@ export namespace AbiUint240 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 240n
+      const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(60, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2290,9 +2470,12 @@ export class AbiUint248 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 248n
+    const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -2313,7 +2496,7 @@ export class AbiUint248 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 31, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(1, 32).toHex()}`)
   }
 
 }
@@ -2330,9 +2513,12 @@ export namespace AbiUint248 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 248n
+      const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(62, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -2366,9 +2552,12 @@ export class AbiUint256 {
   ) {}
 
   static from(value: bigint) {
-    const full = 2n ** 256n
+    const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
 
-    value = ((value % full) + full) % full
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
     
     const hex = value.toString(16).padStart(64, "0")
     const raw = Uint8Array.fromHex(hex)
@@ -2389,7 +2578,7 @@ export class AbiUint256 {
   }
 
   into() {
-    return BigInt(`0x${this.value.subarray(32 - 32, 32).toHex()}`)
+    return BigInt(`0x${this.value.subarray(0, 32).toHex()}`)
   }
 
 }
@@ -2406,9 +2595,12 @@ export namespace AbiUint256 {
     ) {}
 
     static from(value: bigint) {
-      const full = 2n ** 256n
+      const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
 
-      value = ((value % full) + full) % full
+      /**
+       * Unsign and clamp the value to the allowed range
+       */
+      value = (value < 0n ? -value : value) % full
       
       const hex = value.toString(16).padStart(64, "0")
       const raw = Uint8Array.fromHex(hex)

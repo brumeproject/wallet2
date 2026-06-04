@@ -17,12 +17,23 @@ export class AbiInt${i * 8} {
   ) {}
 
   static from(value: bigint) {
-    const padding = value < 0 ? "f" : "0"
+    const half = ${2n ** BigInt(i * 8 - 1)}n
+    const full = ${2n ** BigInt(i * 8)}n
+    
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
 
-    const half = 2n ** ${i * 8 - 1}n
-    const full = 2n ** ${i * 8}n
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
 
-    value = ((value % half) + full) % full
+    /**
+     * Determine the padding based on the sign
+     */
+    const padding = value < half ? "0" : "f"
     
     const hex = value.toString(16).padStart(64, padding)
     const raw = Uint8Array.fromHex(hex)
@@ -43,11 +54,14 @@ export class AbiInt${i * 8} {
   }
 
   into() {
-    const half = 2n ** ${i * 8 - 1}n
-    const full = 2n ** ${i * 8}n
+    const half = ${2n ** BigInt(i * 8 - 1)}n
+    const full = ${2n ** BigInt(i * 8)}n
 
-    const value = BigInt(\`0x\${this.value.subarray(32 - ${i}, 32).toHex()}\`)
+    const value = BigInt(\`0x\${this.value.subarray(${32 - i}, 32).toHex()}\`)
 
+    /**
+     * Restore the sign based on which half of the range the value falls into
+     */
     return value < half ? value : value - full
   }
 
@@ -65,10 +79,18 @@ export namespace AbiInt${i * 8} {
     ) {}
 
     static from(value: bigint) {
-      const half = 2n ** ${i * 8 - 1}n
-      const full = 2n ** ${i * 8}n
+      const half = ${2n ** BigInt(i * 8 - 1)}n
+      const full = ${2n ** BigInt(i * 8)}n
 
-      value = ((value % half) + full) % full
+      /**
+       * Clamp the value to the allowed range
+       */
+      value = value % (half + (value < 0n ? 1n : 0n))
+
+      /**
+       * Cheap two's complement
+       */
+      value = (value + full) % full
       
       const hex = value.toString(16).padStart(${i * 2}, "0")
       const raw = Uint8Array.fromHex(hex)
@@ -85,11 +107,14 @@ export namespace AbiInt${i * 8} {
     }
 
     into() {
-      const half = 2n ** ${i * 8 - 1}n
-      const full = 2n ** ${i * 8}n
+      const half = ${2n ** BigInt(i * 8 - 1)}n
+      const full = ${2n ** BigInt(i * 8)}n
 
       const value = BigInt(\`0x\${this.value.toHex()}\`)
 
+      /**
+       * Restore the sign based on which half of the range the value falls into
+       */
       return value < half ? value : value - full
     }
 

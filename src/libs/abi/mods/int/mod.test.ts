@@ -1,19 +1,29 @@
-import { AbiInt32 } from "@/libs/abi/mods/int/mod.ts";
-import { Writable } from "@hazae41/binary";
-import { test } from "@hazae41/phobos";
+import { AbiInt8 } from "@/libs/abi/mods/int/mod.ts";
+import { Readable, Writable } from "@hazae41/binary";
+import { assert, test } from "@hazae41/phobos";
 
-function f(value: bigint) {
-  const raw = Writable.writeToBytes(AbiInt32.Packed.from(value))
+test("int8", () => {
+  function f(from: bigint, into: bigint, hex: string) {
+    const raw = Writable.writeToBytes(AbiInt8.from(from))
 
-  console.log(raw.toHex())
+    assert(raw.toHex() === hex, "hex should match")
 
-  // console.log(value, Readable.readFromBytes(AbiInt32, raw).into())
-}
+    assert(Readable.readFromBytes(AbiInt8, raw).into() === into, "value should match")
+  }
 
-test("int", () => {
-  f(42n)
-  f(127n)
-  f(-127n)
-  f(-1n)
-  f(129n)
+  f(0n, 0n, "0000000000000000000000000000000000000000000000000000000000000000")
+
+  f(1n, 1n, "0000000000000000000000000000000000000000000000000000000000000001")
+  f(-1n, -1n, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+
+  f(42n, 42n, "000000000000000000000000000000000000000000000000000000000000002a")
+
+  f(127n, 127n, "000000000000000000000000000000000000000000000000000000000000007f")
+  f(-128n, -128n, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80")
+
+  f(128n, 0n, "0000000000000000000000000000000000000000000000000000000000000000")
+  f(129n, 1n, "0000000000000000000000000000000000000000000000000000000000000001")
+
+  f(-129n, 0n, "0000000000000000000000000000000000000000000000000000000000000000")
+  f(-130n, -1n, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
 })
