@@ -6,8 +6,6 @@ export class AbiBytes {
 
   static readonly kind = "dynamic"
 
-  readonly kind = "dynamic"
-
   constructor(
     readonly value: Uint8Array
   ) { }
@@ -52,8 +50,6 @@ export namespace AbiBytes {
 
   export class Packed {
 
-    readonly kind = "dynamic"
-
     constructor(
       readonly value: Uint8Array
     ) { }
@@ -90,8 +86,6 @@ $$(() => {
 export class AbiBytes${i} {
 
   static readonly kind = "static"
-
-  readonly kind = "static"
 
   constructor(
     /**
@@ -133,8 +127,6 @@ export class AbiBytes${i} {
 export namespace AbiBytes${i} {
   
   export class Packed {
-  
-    readonly kind = "static"
 
     constructor(
       /**

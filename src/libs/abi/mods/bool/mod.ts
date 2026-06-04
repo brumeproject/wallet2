@@ -28,8 +28,6 @@ export namespace AbiBool {
 
 export class AbiTrue {
 
-  readonly kind = "static"
-
   size() {
     return 32
   }
@@ -52,8 +50,6 @@ export namespace AbiTrue {
 
   export class Packed {
 
-    readonly kind = "static"
-
     size() {
       return 1
     }
@@ -71,8 +67,6 @@ export namespace AbiTrue {
 }
 
 export class AbiFalse {
-
-  readonly kind = "static"
 
   size() {
     return 32
@@ -95,8 +89,6 @@ export class AbiFalse {
 export namespace AbiFalse {
 
   export class Packed {
-
-    readonly kind = "static"
 
     size() {
       return 1

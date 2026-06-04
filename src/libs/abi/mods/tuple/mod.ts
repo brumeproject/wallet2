@@ -1,36 +1,54 @@
+import { AbiReadable } from "@/libs/abi/mods/readable/mod.ts";
 import { AbiUint32 } from "@/libs/abi/mods/uint/mod.ts";
+import { AbiWritable } from "@/libs/abi/mods/writable/mod.ts";
 import { Cursor } from "@hazae41/cursor";
 
-export interface AbiReadable {
-
-  readonly kind: "static" | "dynamic"
-
-  read(cursor: Cursor): AbiWritable
-
-}
-
-export interface AbiWritable {
-
-  readonly kind: "static" | "dynamic"
-
-  size(): number
-
-  write(cursor: Cursor): void
-
-}
-
-export class AbiReadableTuple {
+export class AbiReadableTuple<T extends unknown[]> {
 
   constructor(
-    readonly types: AbiReadable[]
+    readonly types: AbiReadable.All<T>
   ) { }
+
+  from(froms: T) {
+    let offset = froms.length * 32
+
+    const array = new Array<unknown>()
+    const heads = new Array<AbiWritable<unknown>>()
+    const tails = new Array<AbiWritable<unknown>>()
+
+    for (let i = 0; i < this.types.length; i++) {
+      const from = froms[i]
+      const type = this.types[i]
+
+      const value = type.from(from)
+
+      if (type.kind === "dynamic") {
+        const pointer = AbiUint32.from(offset)
+
+        array.push(from)
+        heads.push(pointer)
+        tails.push(value)
+
+        offset += value.size()
+
+        continue
+      }
+
+      array.push(from)
+      heads.push(value)
+
+      continue
+    }
+
+    return new AbiWritableTuple<T>(array as T, heads, tails, offset)
+  }
 
   read(cursor: Cursor) {
     const start = cursor.offset
 
-    const array = new Array<AbiWritable>()
-    const heads = new Array<AbiWritable>()
-    const tails = new Array<AbiWritable>()
+    const array = new Array<unknown>()
+    const heads = new Array<AbiWritable<unknown>>()
+    const tails = new Array<AbiWritable<unknown>>()
 
     let limit = start
 
@@ -47,7 +65,7 @@ export class AbiReadableTuple {
 
         limit = subcursor.offset
 
-        array.push(value)
+        array.push(value.into())
         heads.push(pointer)
         tails.push(value)
 
@@ -55,7 +73,7 @@ export class AbiReadableTuple {
       } else {
         const value = type.read(cursor)
 
-        array.push(value)
+        array.push(value.into())
         heads.push(value)
 
         continue
@@ -64,50 +82,19 @@ export class AbiReadableTuple {
 
     cursor.offset = Math.max(cursor.offset, limit)
 
-    return new AbiWritableTuple(array, heads, tails, cursor.offset - start)
+    return new AbiWritableTuple<T>(array as T, heads, tails, cursor.offset - start)
   }
 
 }
 
-export class AbiWritableTuple {
+export class AbiWritableTuple<T extends unknown[]> {
 
   constructor(
-    readonly array: AbiWritable[],
-    readonly heads: AbiWritable[],
-    readonly tails: AbiWritable[],
+    readonly array: T,
+    readonly heads: AbiWritable<unknown>[],
+    readonly tails: AbiWritable<unknown>[],
     readonly sized: number,
   ) { }
-
-  static from(values: AbiWritable[]) {
-    let offset = values.length * 32
-
-    const array = new Array<AbiWritable>()
-    const heads = new Array<AbiWritable>()
-    const tails = new Array<AbiWritable>()
-
-    for (const value of values) {
-      const size = value.size()
-
-      if (value.kind === "dynamic") {
-        const pointer = AbiUint32.from(offset)
-
-        array.push(value)
-        heads.push(pointer)
-        tails.push(value)
-
-        offset += size
-
-        continue
-      }
-
-      array.push(value)
-      heads.push(value)
-
-      continue
-    }
-
-    return new AbiWritableTuple(array, heads, tails, offset)
-  }
 
   size() {
     return this.sized

@@ -5,8 +5,6 @@ export class AbiString {
 
   static readonly kind = "dynamic"
 
-  readonly kind = "dynamic"
-
   constructor(
     readonly value: Uint8Array
   ) { }
@@ -50,8 +48,6 @@ export class AbiString {
 export namespace AbiString {
 
   export class Packed {
-
-    readonly kind = "dynamic"
 
     constructor(
       readonly value: Uint8Array

@@ -11,8 +11,6 @@ export class AbiInt${i * 8} {
 
   static readonly kind = "static"
 
-  readonly kind = "static"
-
   constructor(
     /**
      * 32-sized bytes
@@ -79,8 +77,6 @@ export class AbiInt${i * 8} {
 export namespace AbiInt${i * 8} {
   
   export class Packed {
-
-    readonly kind = "static"
   
     constructor(
       /**
