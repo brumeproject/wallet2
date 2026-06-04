@@ -1,4 +1,66 @@
-import { Cursor } from "@hazae41/cursor"
+import { AbiUint32 } from "@/libs/abi/mods/uint/mod.ts";
+import { Cursor } from "@hazae41/cursor";
+export class AbiBytes {
+
+  constructor(
+    readonly value: Uint8Array
+  ) { }
+
+  static from(value: Uint8Array) {
+    return new AbiBytes(value)
+  }
+
+  static read(cursor: Cursor) {
+    const length = Number(AbiUint32.read(cursor).into())
+    const padded = Math.ceil(length / 32) * 32
+
+    const value = new Uint8Array(cursor.read(length))
+
+    cursor.offset += padded - length
+
+    return new AbiBytes(value)
+  }
+
+  size() {
+    return 32 + Math.ceil(this.value.length / 32) * 32
+  }
+
+  write(cursor: Cursor) {
+    const length = this.value.length
+    const padded = Math.ceil(length / 32) * 32
+
+    AbiUint32.from(length).write(cursor)
+
+    cursor.write(this.value)
+
+    cursor.offset += padded - length
+  }
+
+}
+
+export namespace AbiBytes {
+
+  export class Packed {
+
+    constructor(
+      readonly value: Uint8Array
+    ) { }
+
+    size() {
+      return 32 + this.value.length
+    }
+
+    write(cursor: Cursor) {
+      const length = this.value.length
+
+      AbiUint32.Packed.from(length).write(cursor)
+
+      cursor.write(this.value)
+    }
+
+  }
+
+}
 
 export class AbiBytes1 {
 

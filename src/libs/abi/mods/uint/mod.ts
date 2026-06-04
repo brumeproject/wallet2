@@ -9,8 +9,13 @@ export class AbiUint8 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 256n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -52,8 +57,13 @@ export namespace AbiUint8 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 256n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -91,8 +101,13 @@ export class AbiUint16 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 65536n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -134,8 +149,13 @@ export namespace AbiUint16 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 65536n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -173,8 +193,13 @@ export class AbiUint24 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 16777216n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -216,8 +241,13 @@ export namespace AbiUint24 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 16777216n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -255,8 +285,13 @@ export class AbiUint32 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 4294967296n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -298,8 +333,13 @@ export namespace AbiUint32 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 4294967296n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -337,8 +377,13 @@ export class AbiUint40 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 1099511627776n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -380,8 +425,13 @@ export namespace AbiUint40 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 1099511627776n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -419,8 +469,13 @@ export class AbiUint48 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 281474976710656n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -462,8 +517,13 @@ export namespace AbiUint48 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 281474976710656n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -501,8 +561,13 @@ export class AbiUint56 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 72057594037927936n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -544,8 +609,13 @@ export namespace AbiUint56 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 72057594037927936n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -583,8 +653,13 @@ export class AbiUint64 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 18446744073709551616n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -626,8 +701,13 @@ export namespace AbiUint64 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 18446744073709551616n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -665,8 +745,13 @@ export class AbiUint72 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 4722366482869645213696n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -708,8 +793,13 @@ export namespace AbiUint72 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 4722366482869645213696n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -747,8 +837,13 @@ export class AbiUint80 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 1208925819614629174706176n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -790,8 +885,13 @@ export namespace AbiUint80 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 1208925819614629174706176n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -829,8 +929,13 @@ export class AbiUint88 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 309485009821345068724781056n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -872,8 +977,13 @@ export namespace AbiUint88 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 309485009821345068724781056n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -911,8 +1021,13 @@ export class AbiUint96 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 79228162514264337593543950336n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -954,8 +1069,13 @@ export namespace AbiUint96 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 79228162514264337593543950336n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -993,8 +1113,13 @@ export class AbiUint104 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 20282409603651670423947251286016n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1036,8 +1161,13 @@ export namespace AbiUint104 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 20282409603651670423947251286016n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1075,8 +1205,13 @@ export class AbiUint112 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 5192296858534827628530496329220096n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1118,8 +1253,13 @@ export namespace AbiUint112 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 5192296858534827628530496329220096n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1157,8 +1297,13 @@ export class AbiUint120 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 1329227995784915872903807060280344576n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1200,8 +1345,13 @@ export namespace AbiUint120 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 1329227995784915872903807060280344576n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1239,8 +1389,13 @@ export class AbiUint128 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 340282366920938463463374607431768211456n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1282,8 +1437,13 @@ export namespace AbiUint128 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 340282366920938463463374607431768211456n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1321,8 +1481,13 @@ export class AbiUint136 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 87112285931760246646623899502532662132736n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1364,8 +1529,13 @@ export namespace AbiUint136 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 87112285931760246646623899502532662132736n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1403,8 +1573,13 @@ export class AbiUint144 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 22300745198530623141535718272648361505980416n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1446,8 +1621,13 @@ export namespace AbiUint144 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 22300745198530623141535718272648361505980416n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1485,8 +1665,13 @@ export class AbiUint152 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 5708990770823839524233143877797980545530986496n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1528,8 +1713,13 @@ export namespace AbiUint152 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 5708990770823839524233143877797980545530986496n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1567,8 +1757,13 @@ export class AbiUint160 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 1461501637330902918203684832716283019655932542976n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1610,8 +1805,13 @@ export namespace AbiUint160 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 1461501637330902918203684832716283019655932542976n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1649,8 +1849,13 @@ export class AbiUint168 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 374144419156711147060143317175368453031918731001856n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1692,8 +1897,13 @@ export namespace AbiUint168 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 374144419156711147060143317175368453031918731001856n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1731,8 +1941,13 @@ export class AbiUint176 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 95780971304118053647396689196894323976171195136475136n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1774,8 +1989,13 @@ export namespace AbiUint176 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 95780971304118053647396689196894323976171195136475136n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1813,8 +2033,13 @@ export class AbiUint184 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 24519928653854221733733552434404946937899825954937634816n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1856,8 +2081,13 @@ export namespace AbiUint184 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 24519928653854221733733552434404946937899825954937634816n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1895,8 +2125,13 @@ export class AbiUint192 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 6277101735386680763835789423207666416102355444464034512896n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -1938,8 +2173,13 @@ export namespace AbiUint192 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 6277101735386680763835789423207666416102355444464034512896n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -1977,8 +2217,13 @@ export class AbiUint200 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 1606938044258990275541962092341162602522202993782792835301376n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -2020,8 +2265,13 @@ export namespace AbiUint200 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 1606938044258990275541962092341162602522202993782792835301376n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -2059,8 +2309,13 @@ export class AbiUint208 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 411376139330301510538742295639337626245683966408394965837152256n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -2102,8 +2357,13 @@ export namespace AbiUint208 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 411376139330301510538742295639337626245683966408394965837152256n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -2141,8 +2401,13 @@ export class AbiUint216 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 105312291668557186697918027683670432318895095400549111254310977536n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -2184,8 +2449,13 @@ export namespace AbiUint216 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 105312291668557186697918027683670432318895095400549111254310977536n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -2223,8 +2493,13 @@ export class AbiUint224 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 26959946667150639794667015087019630673637144422540572481103610249216n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -2266,8 +2541,13 @@ export namespace AbiUint224 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 26959946667150639794667015087019630673637144422540572481103610249216n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -2305,8 +2585,13 @@ export class AbiUint232 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -2348,8 +2633,13 @@ export namespace AbiUint232 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -2387,8 +2677,13 @@ export class AbiUint240 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -2430,8 +2725,13 @@ export namespace AbiUint240 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -2469,8 +2769,13 @@ export class AbiUint248 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -2512,8 +2817,13 @@ export namespace AbiUint248 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
@@ -2551,8 +2861,13 @@ export class AbiUint256 {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint) {
+  static from(value: bigint | number | string) {
     const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
+
+    /**
+     * Convert to bigint or throw
+     */
+    value = BigInt(value)
 
     /**
      * Unsign and clamp the value to the allowed range
@@ -2594,8 +2909,13 @@ export namespace AbiUint256 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint) {
+    static from(value: bigint | number | string) {
       const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
+
+      /**
+       * Convert to bigint or throw
+       */
+      value = BigInt(value)
 
       /**
        * Unsign and clamp the value to the allowed range
