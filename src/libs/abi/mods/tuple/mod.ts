@@ -90,7 +90,7 @@ export class AbiReadableTuple<T extends unknown[]> {
 export class AbiWritableTuple<T extends unknown[]> {
 
   constructor(
-    readonly array: T,
+    readonly value: T,
     readonly heads: AbiWritable<unknown>[],
     readonly tails: AbiWritable<unknown>[],
     readonly sized: number,
@@ -111,7 +111,7 @@ export class AbiWritableTuple<T extends unknown[]> {
   }
 
   into() {
-    return this.array
+    return this.value
   }
 
 }
