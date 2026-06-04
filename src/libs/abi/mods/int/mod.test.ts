@@ -27,3 +27,27 @@ test("int8", () => {
   f(-129n, 0n, "0000000000000000000000000000000000000000000000000000000000000000")
   f(-130n, -1n, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
 })
+
+test("int8 packed", () => {
+  function f(from: bigint, hex: string) {
+    const raw = Writable.writeToBytes(AbiInt8.Packed.from(from))
+
+    assert(raw.toHex() === hex, "hex should match")
+  }
+
+  f(0n, "00")
+
+  f(1n, "01")
+  f(-1n, "ff")
+
+  f(42n, "2a")
+
+  f(127n, "7f")
+  f(-128n, "80")
+
+  f(128n, "00")
+  f(129n, "01")
+
+  f(-129n, "00")
+  f(-130n, "ff")
+})

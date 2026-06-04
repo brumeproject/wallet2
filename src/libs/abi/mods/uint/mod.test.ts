@@ -2,7 +2,7 @@ import { AbiUint8 } from "@/libs/abi/mods/uint/mod.ts";
 import { Readable, Writable } from "@hazae41/binary";
 import { assert, test } from "@hazae41/phobos";
 
-test("uint", () => {
+test("uint8", () => {
   function f(from: bigint, into: bigint, hex: string) {
     const raw = Writable.writeToBytes(AbiUint8.from(from))
 
