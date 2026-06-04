@@ -23,7 +23,7 @@ export class AbiReadableTuple<T extends unknown[]> {
       const value = type.from(from)
 
       if (type.kind === "dynamic") {
-        const pointer = AbiUint32.from(offset)
+        const pointer = AbiUint32.from(BigInt(offset))
 
         array.push(from)
         heads.push(pointer)

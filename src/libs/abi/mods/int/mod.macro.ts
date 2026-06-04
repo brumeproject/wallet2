@@ -18,14 +18,9 @@ export class AbiInt${i * 8} {
     readonly value: Uint8Array
   ) {}
 
-  static from(value: bigint | number | string) {
+  static from(value: bigint) {
     const half = ${2n ** BigInt(i * 8 - 1)}n
     const full = ${2n ** BigInt(i * 8)}n
-
-    /**
-     * Convert to bigint or throw
-     */
-    value = BigInt(value)
     
     /**
      * Clamp the value to the allowed range
@@ -85,14 +80,9 @@ export namespace AbiInt${i * 8} {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: bigint | number | string) {
+    static from(value: bigint) {
       const half = ${2n ** BigInt(i * 8 - 1)}n
       const full = ${2n ** BigInt(i * 8)}n
-
-      /**
-       * Convert to bigint or throw
-       */
-      value = BigInt(value)
 
       /**
        * Clamp the value to the allowed range

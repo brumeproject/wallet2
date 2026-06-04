@@ -31,7 +31,7 @@ export class AbiBytes {
     const length = this.value.length
     const padded = Math.ceil(length / 32) * 32
 
-    AbiUint32.from(length).write(cursor)
+    AbiUint32.from(BigInt(length)).write(cursor)
 
     cursor.write(this.value)
 
@@ -63,7 +63,7 @@ export namespace AbiBytes {
     write(cursor: Cursor) {
       const length = this.value.length
 
-      AbiUint32.Packed.from(length).write(cursor)
+      AbiUint32.Packed.from(BigInt(length)).write(cursor)
 
       cursor.write(this.value)
     }
