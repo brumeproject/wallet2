@@ -8,6 +8,8 @@ import { EIP712, EIP712Data } from "@/libs/eip712/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
+import { Spinner } from "@/libs/spinner/mod.tsx";
+import { useSubmit } from "@/libs/submit/mod.ts";
 import { base58 } from "@hazae41/base58";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -52,6 +54,28 @@ export function CryptoRequestAnchor(props: { index: number } & { $entry: KDBX.In
   const color = useMemo(() => {
     return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
+
+  const getTypeOrThrow = useCallback((params: WcSessionRequestParams) => {
+    const { request } = params
+
+    if (request.method === "eth_sendTransaction")
+      return "transaction"
+    if (request.method === "solana_signTransaction")
+      return "transaction"
+
+    if (request.method === "personal_sign")
+      return "signature"
+    if (request.method === "eth_signTypedData_v4")
+      return "signature"
+    if (request.method === "solana_signMessage")
+      return "signature"
+
+    throw new WcUnsupportedMethodsError()
+  }, [])
+
+  const type = useMemo(() => {
+    return Result.runAndWrapSync(() => getTypeOrThrow(request.params))
+  }, [request])
 
   return <Fragment>
     <SubpathProvider value={hash}>
@@ -116,8 +140,12 @@ export function CryptoRequestAnchor(props: { index: number } & { $entry: KDBX.In
         <div className="not-@[12rem]:hidden h-4 grow" />
         <div className="not-@[12rem]:hidden flex flex-wrap items-center gap-2">
           <div className="bg-default-contrast rounded-xl po-1 flex items-center gap-2">
-            <Outline.CubeTransparentIcon className="size-5" />
-            Signature
+            {type.getOrNull() === "transaction" && <Outline.CubeIcon className="size-5" />}
+            {type.getOrNull() === "signature" && <Outline.CubeTransparentIcon className="size-5" />}
+            {type.isErr() && <Outline.QuestionMarkCircleIcon className="size-5" />}
+            {type.getOrNull() === "transaction" && Lang.match({ en: "Transaction", zh: "交易", hi: "लेनदेन", es: "Transacción", ar: "معاملة", fr: "Transaction", de: "Transaktion", ru: "Транзакция", pt: "Transação", ja: "トランザクション", pa: "ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ", bn: "লেনদেন", id: "Transaksi", ur: "ٹرانزیکشن", ms: "Transaksi", it: "Transazione", tr: "İşlem", ta: "பரிவர்த்தனை", te: "లావాదేవి", ko: "트랜잭션", vi: "Giao dịch", pl: "Transakcja", ro: "Tranzacție", nl: "Transactie", el: "Συναλλαγή ", th: "ธุรกรรม ", cs: "Transakce ", hu: "Tranzakció ", sv: "Transaktion ", da: "Transaktion" })}
+            {type.getOrNull() === "signature" && Lang.match({ en: "Signature", zh: "签名", hi: "हस्ताक्षर", es: "Firma", ar: "توقيع", fr: "Signature", de: "Unterschrift", ru: "Подпись", pt: "Assinatura", ja: "署名", pa: "ਦਸਤਖਤ", bn: "স্বাক্ষর", id: "Tanda tangan", ur: "دستخط", ms: "Tanda tangan", it: "Firma", tr: "İmza", ta: "கையொப்பம்", te: "సంతకం", ko: "서명", vi: "Chữ ký", pl: "Podpis", ro: "Semnătură", nl: "Handtekening", el: "Υπογραφή ", th: "ลายเซ็น ", cs: "Podpis ", hu: "Aláírás ", sv: "Signatur ", da: "Signatur" })}
+            {type.isErr() && Lang.match({ en: "Unknown", zh: "未知", hi: "अज्ञात", es: "Desconocido", ar: "غير معروف", fr: "Inconnu", de: "Unbekannt", ru: "Неизвестно", pt: "Desconhecido", ja: "不明", pa: "ਅਣਜਾਣ", bn: "অজানা", id: "Tidak diketahui", ur: "نامعلوم", ms: "Tidak diketahui", it: "Sconosciuto", tr: "Bilinmeyen", ta: "அறியப்படாதது", te: "తెలియని", ko: "알 수 없음", vi: "Không xác định", pl: "Nieznany", ro: "Necunoscut", nl: "Onbekend", el: "Άγνωστο ", th: "ไม่ทราบ ", cs: "Neznámý ", hu: "Ismeretlen ", sv: "Okänd ", da: "Ukendt" })}
           </div>
         </div>
       </div>
@@ -327,12 +355,12 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
-  const approve = useCallback(() => {
-    respondOrThrow(request.params).then(request.resolve).catch(request.reject).finally(() => close(true))
+  const approve = useSubmit(async () => {
+    await respondOrThrow(request.params).then(request.resolve).catch(request.reject).finally(() => close(true))
   }, [request, respondOrThrow, close])
 
-  const decline = useCallback(() => {
-    Promise.reject(new WcUserRejectedError()).catch(request.reject).finally(() => close(true))
+  const decline = useSubmit(async () => {
+    await Promise.reject(new WcUserRejectedError()).catch(request.reject).finally(() => close(true))
   }, [request, close])
 
   const getChainOrThrow = useCallback((params: WcSessionRequestParams) => {
@@ -367,6 +395,14 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
   const getMessageOrThrow = useCallback((params: WcSessionRequestParams) => {
     const { request } = params
+
+    if (request.method === "eth_sendTransaction") {
+      const [proposal] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+
+      const { to, data, value } = proposal
+
+      return JSON.stringify({ to, data, value }, null, 2)
+    }
 
     if (request.method === "personal_sign") {
       const [message] = request.params as [string]
@@ -420,7 +456,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       <div className="flex flex-col items-center justify-center">
         {type.getOrNull() === "transaction" &&
           <FlipCard
-            type="Transaction"
+            type={Lang.match({ en: "Transaction", zh: "交易", hi: "लेनदेन", es: "Transacción", ar: "معاملة", fr: "Transaction", de: "Transaktion", ru: "Транзакция", pt: "Transação", ja: "トランザクション", pa: "ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ", bn: "লেনদেন", id: "Transaksi", ur: "ٹرانزیکشن", ms: "Transaksi", it: "Transazione", tr: "İşlem", ta: "பரிவர்த்தனை", te: "లావాదేవి", ko: "트랜잭션", vi: "Giao dịch", pl: "Transakcja", ro: "Tranzacție", nl: "Transactie", el: "Συναλλαγή ", th: "ธุรกรรม ", cs: "Transakce ", hu: "Tranzakció ", sv: "Transaktion ", da: "Transaktion" })}
             title={title}
             subtitle={subtitle}
             color={color}
@@ -430,7 +466,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             onFlipChange={setFlipped} />}
         {type.getOrNull() === "signature" &&
           <FlipCard
-            type="Signature"
+            type={Lang.match({ en: "Signature", zh: "签名", hi: "हस्ताक्षर", es: "Firma", ar: "توقيع", fr: "Signature", de: "Unterschrift", ru: "Подпись", pt: "Assinatura", ja: "署名", pa: "ਦਸਤਖਤ", bn: "স্বাক্ষর", id: "Tanda tangan", ur: "دستخط", ms: "Tanda tangan", it: "Firma", tr: "İmza", ta: "கையொப்பம்", te: "సంతకం", ko: "서명", vi: "Chữ ký", pl: "Podpis", ro: "Semnătură", nl: "Handtekening", el: "Υπογραφή ", th: "ลายเซ็น ", cs: "Podpis ", hu: "Aláírás ", sv: "Signatur ", da: "Signatur" })}
             title={title}
             subtitle={subtitle}
             color={color}
@@ -440,12 +476,12 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             onFlipChange={setFlipped} />}
         {type.isErr() &&
           <FlipCard
-            type="Unknown"
+            type={Lang.match({ en: "Unknown", zh: "未知", hi: "अज्ञात", es: "Desconocido", ar: "غير معروف", fr: "Inconnu", de: "Unbekannt", ru: "Неизвестно", pt: "Desconhecido", ja: "不明", pa: "ਅਣਜਾਣ", bn: "অজানা", id: "Tidak diketahui", ur: "نامعلوم", ms: "Tidak diketahui", it: "Sconosciuto", tr: "Bilinmeyen", ta: "அறியப்படாதது", te: "తెలియని", ko: "알 수 없음", vi: "Không xác định", pl: "Nieznany", ro: "Necunoscut", nl: "Onbekend", el: "Άγνωστο ", th: "ไม่ทราบ ", cs: "Neznámý ", hu: "Ismeretlen ", sv: "Okänd ", da: "Ukendt" })}
             title={title}
             subtitle={subtitle}
             color={color}
             index={subaccount}
-            icon={<Outline.CubeTransparentIcon className="size-5" />}
+            icon={<Outline.QuestionMarkCircleIcon className="size-5" />}
             flip={flipped}
             onFlipChange={setFlipped} />}
       </div>
@@ -482,14 +518,19 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <div className="flex items-center flex-wrap-reverse gap-2">
           <WideContrastButton
             type="button"
-            onClick={decline}>
+            disabled={decline.running}
+            onClick={decline.execute}>
+            {decline.running ? <Spinner className="size-5 animate-spin" /> : <Outline.NoSymbolIcon className="size-5" />}
             {Lang.match({ en: "Decline", zh: "拒绝", hi: "अस्वीकृत करें", es: "Rechazar", ar: "رفض", fr: "Refuser", de: "Ablehnen", ru: "Отклонить", pt: "Recusar", ja: "拒否", pa: "ਅਸਵੀਕਾਰ ਕਰੋ", bn: "প্রত্যাখ্যান করুন", id: "Tolak", ur: "رد کریں", ms: "Tolak", it: "Rifiuta", tr: "Reddet", ta: "நிராகரிக்கவும்", te: "తిరస్కరించండి", ko: "거부", vi: "Từ chối", pl: "Odrzuć", ro: "Respinge", nl: "Afwijzen", el: "Απορρίπτω ", th: "ปฏิเสธ ", cs: "Odmítnout ", hu: "Elutasítás ", sv: "Avvisa ", da: "Afvis" })}
           </WideContrastButton>
-          <WideOppositeButton
-            type="button"
-            onClick={approve}>
-            {Lang.match({ en: "Approve", zh: "批准", hi: "स्वीकृत करें", es: "Aprobar", ar: "وافق", fr: "Approuver", de: "Genehmigen", ru: "Одобрить", pt: "Aprovar", ja: "承認", pa: "ਮਨਜ਼ੂਰ ਕਰੋ", bn: "অনুমোদন করুন", id: "Setujui", ur: "منظور کریں", ms: "Setujui", it: "Approva", tr: "Onayla", ta: "அனுமதிக்கவும்", te: "అనుమతించండి", ko: "승인", vi: "Phê duyệt", pl: "Zatwierdź", ro: "Aprobați", nl: "Goedkeuren", el: "Εγκρίνω ", th: "อนุมัติ ", cs: "Schválit ", hu: "Jóváhagyás ", sv: "Godkänn ", da: "Godkend" })}
-          </WideOppositeButton>
+          {type.isOk() &&
+            <WideOppositeButton
+              type="button"
+              disabled={approve.running}
+              onClick={approve.execute}>
+              {approve.running ? <Spinner className="size-5 animate-spin" /> : <Outline.CheckCircleIcon className="size-5" />}
+              {Lang.match({ en: "Approve", zh: "批准", hi: "स्वीकृत करें", es: "Aprobar", ar: "وافق", fr: "Approuver", de: "Genehmigen", ru: "Одобрить", pt: "Aprovar", ja: "承認", pa: "ਮਨਜ਼ੂਰ ਕਰੋ", bn: "অনুমোদন করুন", id: "Setujui", ur: "منظور کریں", ms: "Setujui", it: "Approva", tr: "Onayla", ta: "அனுமதிக்கவும்", te: "అనుమతించండి", ko: "승인", vi: "Phê duyệt", pl: "Zatwierdź", ro: "Aprobați", nl: "Goedkeuren", el: "Εγκρίνω ", th: "อนุมัติ ", cs: "Schválit ", hu: "Jóváhagyás ", sv: "Godkänn ", da: "Godkend" })}
+            </WideOppositeButton>}
         </div>
       </form>
     </div>
