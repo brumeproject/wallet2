@@ -45,8 +45,11 @@ export class AbiWritablePack<T extends readonly unknown[]> {
   }
 
   write(cursor: Cursor) {
+    // 
+
     for (const pack of this.packs)
       pack.write(cursor)
+
     return
   }
 
