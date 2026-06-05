@@ -32,6 +32,20 @@ export class AbiUint${i * 8} {
     return new AbiUint${i * 8}(raw)
   }
 
+  static pack(value: bigint) {
+    const full = ${2n ** BigInt(i * 8)}n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(${i * 2}, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint${i * 8}.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint${i * 8}(new Uint8Array(cursor.read(32)))
   }
@@ -60,20 +74,6 @@ export namespace AbiUint${i * 8} {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = ${2n ** BigInt(i * 8)}n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(${i * 2}, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length

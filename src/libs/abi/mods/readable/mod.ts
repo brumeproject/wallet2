@@ -10,3 +10,9 @@ export interface AbiReadable<T = unknown> {
   read(cursor: Cursor): AbiWritable<T>
 
 }
+
+export interface AbiPackable<T = unknown> extends AbiReadable<T> {
+
+  pack(value: T): AbiWritable<T>
+
+}

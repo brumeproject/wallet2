@@ -3,7 +3,7 @@ import { AbiUint32 } from "@/libs/abi/mods/uint/mod.ts";
 import { AbiWritable } from "@/libs/abi/mods/writable/mod.ts";
 import { Cursor } from "@hazae41/cursor";
 
-export class AbiReadableTuple<T extends unknown[]> {
+export class AbiReadableTuple<T extends readonly unknown[]> {
 
   constructor(
     readonly types: { [K in keyof T]: AbiReadable<T[K]> }
@@ -43,7 +43,7 @@ export class AbiReadableTuple<T extends unknown[]> {
       continue
     }
 
-    return new AbiWritableTuple<T>(intos as T, heads, tails, offset)
+    return new AbiWritableTuple<T>(intos as unknown as T, heads, tails, offset)
   }
 
   read(cursor: Cursor) {
@@ -87,12 +87,12 @@ export class AbiReadableTuple<T extends unknown[]> {
 
     cursor.offset = offset
 
-    return new AbiWritableTuple<T>(intos as T, heads, tails, offset)
+    return new AbiWritableTuple<T>(intos as unknown as T, heads, tails, offset)
   }
 
 }
 
-export class AbiWritableTuple<T extends unknown[]> {
+export class AbiWritableTuple<T extends readonly unknown[]> {
 
   constructor(
     readonly intos: T,

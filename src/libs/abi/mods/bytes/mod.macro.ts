@@ -14,6 +14,10 @@ export class AbiBytes {
     return new AbiBytes(value)
   }
 
+  static pack(value: Uint8Array) {
+    return new AbiBytes.Packed(value)
+  }
+
   static read(cursor: Cursor) {
     const length = Number(AbiUint32.read(cursor).into())
     const padded = Math.ceil(length / 32) * 32
@@ -54,19 +58,11 @@ export namespace AbiBytes {
       readonly value: Uint8Array
     ) { }
 
-    static from(value: Uint8Array) {
-      return new Packed(value)
-    }
-
     size() {
-      return 32 + this.value.length
+      return this.value.length
     }
 
     write(cursor: Cursor) {
-      const length = this.value.length
-
-      AbiUint32.Packed.from(BigInt(length)).write(cursor)
-
       cursor.write(this.value)
     }
 
@@ -96,6 +92,10 @@ export class AbiBytes${i} {
 
   static from(value: Uint8Array) {
     return new AbiBytes${i}(value.subarray(0, ${i}))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes${i}.Packed(value.subarray(0, ${i}))
   }
 
   static read(cursor: Cursor) {
@@ -134,10 +134,6 @@ export namespace AbiBytes${i} {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, ${i}))
-    }
 
     size() {
       return this.value.length

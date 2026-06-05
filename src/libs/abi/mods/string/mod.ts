@@ -13,6 +13,10 @@ export class AbiString {
     return new AbiString(new TextEncoder().encode(value))
   }
 
+  static pack(value: string) {
+    return new AbiString.Packed(new TextEncoder().encode(value))
+  }
+
   static read(cursor: Cursor) {
     const length = Number(AbiUint32.read(cursor).into())
     const padded = Math.ceil(length / 32) * 32
@@ -53,19 +57,11 @@ export namespace AbiString {
       readonly value: Uint8Array
     ) { }
 
-    static from(value: string) {
-      return new Packed(new TextEncoder().encode(value))
-    }
-
     size() {
-      return 32 + this.value.length
+      return this.value.length
     }
 
     write(cursor: Cursor) {
-      const length = this.value.length
-
-      AbiUint32.Packed.from(BigInt(length)).write(cursor)
-
       cursor.write(this.value)
     }
 

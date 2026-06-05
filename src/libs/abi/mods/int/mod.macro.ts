@@ -43,6 +43,26 @@ export class AbiInt${i * 8} {
     return new AbiInt${i * 8}(raw)
   }
 
+  static pack(value: bigint) {
+    const half = ${2n ** BigInt(i * 8 - 1)}n
+    const full = ${2n ** BigInt(i * 8)}n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(${i * 2}, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt${i * 8}.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt${i * 8}(new Uint8Array(cursor.read(32)))
   }
@@ -79,26 +99,6 @@ export namespace AbiInt${i * 8} {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = ${2n ** BigInt(i * 8 - 1)}n
-      const full = ${2n ** BigInt(i * 8)}n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(${i * 2}, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length

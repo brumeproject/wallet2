@@ -12,6 +12,10 @@ export class AbiBytes {
     return new AbiBytes(value)
   }
 
+  static pack(value: Uint8Array) {
+    return new AbiBytes.Packed(value)
+  }
+
   static read(cursor: Cursor) {
     const length = Number(AbiUint32.read(cursor).into())
     const padded = Math.ceil(length / 32) * 32
@@ -52,19 +56,11 @@ export namespace AbiBytes {
       readonly value: Uint8Array
     ) { }
 
-    static from(value: Uint8Array) {
-      return new Packed(value)
-    }
-
     size() {
-      return 32 + this.value.length
+      return this.value.length
     }
 
     write(cursor: Cursor) {
-      const length = this.value.length
-
-      AbiUint32.Packed.from(BigInt(length)).write(cursor)
-
       cursor.write(this.value)
     }
 
@@ -89,6 +85,10 @@ export class AbiBytes1 {
 
   static from(value: Uint8Array) {
     return new AbiBytes1(value.subarray(0, 1))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes1.Packed(value.subarray(0, 1))
   }
 
   static read(cursor: Cursor) {
@@ -128,10 +128,6 @@ export namespace AbiBytes1 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 1))
-    }
-
     size() {
       return this.value.length
     }
@@ -161,6 +157,10 @@ export class AbiBytes2 {
 
   static from(value: Uint8Array) {
     return new AbiBytes2(value.subarray(0, 2))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes2.Packed(value.subarray(0, 2))
   }
 
   static read(cursor: Cursor) {
@@ -200,10 +200,6 @@ export namespace AbiBytes2 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 2))
-    }
-
     size() {
       return this.value.length
     }
@@ -233,6 +229,10 @@ export class AbiBytes3 {
 
   static from(value: Uint8Array) {
     return new AbiBytes3(value.subarray(0, 3))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes3.Packed(value.subarray(0, 3))
   }
 
   static read(cursor: Cursor) {
@@ -272,10 +272,6 @@ export namespace AbiBytes3 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 3))
-    }
-
     size() {
       return this.value.length
     }
@@ -305,6 +301,10 @@ export class AbiBytes4 {
 
   static from(value: Uint8Array) {
     return new AbiBytes4(value.subarray(0, 4))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes4.Packed(value.subarray(0, 4))
   }
 
   static read(cursor: Cursor) {
@@ -344,10 +344,6 @@ export namespace AbiBytes4 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 4))
-    }
-
     size() {
       return this.value.length
     }
@@ -377,6 +373,10 @@ export class AbiBytes5 {
 
   static from(value: Uint8Array) {
     return new AbiBytes5(value.subarray(0, 5))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes5.Packed(value.subarray(0, 5))
   }
 
   static read(cursor: Cursor) {
@@ -416,10 +416,6 @@ export namespace AbiBytes5 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 5))
-    }
-
     size() {
       return this.value.length
     }
@@ -449,6 +445,10 @@ export class AbiBytes6 {
 
   static from(value: Uint8Array) {
     return new AbiBytes6(value.subarray(0, 6))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes6.Packed(value.subarray(0, 6))
   }
 
   static read(cursor: Cursor) {
@@ -488,10 +488,6 @@ export namespace AbiBytes6 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 6))
-    }
-
     size() {
       return this.value.length
     }
@@ -521,6 +517,10 @@ export class AbiBytes7 {
 
   static from(value: Uint8Array) {
     return new AbiBytes7(value.subarray(0, 7))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes7.Packed(value.subarray(0, 7))
   }
 
   static read(cursor: Cursor) {
@@ -560,10 +560,6 @@ export namespace AbiBytes7 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 7))
-    }
-
     size() {
       return this.value.length
     }
@@ -593,6 +589,10 @@ export class AbiBytes8 {
 
   static from(value: Uint8Array) {
     return new AbiBytes8(value.subarray(0, 8))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes8.Packed(value.subarray(0, 8))
   }
 
   static read(cursor: Cursor) {
@@ -632,10 +632,6 @@ export namespace AbiBytes8 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 8))
-    }
-
     size() {
       return this.value.length
     }
@@ -665,6 +661,10 @@ export class AbiBytes9 {
 
   static from(value: Uint8Array) {
     return new AbiBytes9(value.subarray(0, 9))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes9.Packed(value.subarray(0, 9))
   }
 
   static read(cursor: Cursor) {
@@ -704,10 +704,6 @@ export namespace AbiBytes9 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 9))
-    }
-
     size() {
       return this.value.length
     }
@@ -737,6 +733,10 @@ export class AbiBytes10 {
 
   static from(value: Uint8Array) {
     return new AbiBytes10(value.subarray(0, 10))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes10.Packed(value.subarray(0, 10))
   }
 
   static read(cursor: Cursor) {
@@ -776,10 +776,6 @@ export namespace AbiBytes10 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 10))
-    }
-
     size() {
       return this.value.length
     }
@@ -809,6 +805,10 @@ export class AbiBytes11 {
 
   static from(value: Uint8Array) {
     return new AbiBytes11(value.subarray(0, 11))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes11.Packed(value.subarray(0, 11))
   }
 
   static read(cursor: Cursor) {
@@ -848,10 +848,6 @@ export namespace AbiBytes11 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 11))
-    }
-
     size() {
       return this.value.length
     }
@@ -881,6 +877,10 @@ export class AbiBytes12 {
 
   static from(value: Uint8Array) {
     return new AbiBytes12(value.subarray(0, 12))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes12.Packed(value.subarray(0, 12))
   }
 
   static read(cursor: Cursor) {
@@ -920,10 +920,6 @@ export namespace AbiBytes12 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 12))
-    }
-
     size() {
       return this.value.length
     }
@@ -953,6 +949,10 @@ export class AbiBytes13 {
 
   static from(value: Uint8Array) {
     return new AbiBytes13(value.subarray(0, 13))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes13.Packed(value.subarray(0, 13))
   }
 
   static read(cursor: Cursor) {
@@ -992,10 +992,6 @@ export namespace AbiBytes13 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 13))
-    }
-
     size() {
       return this.value.length
     }
@@ -1025,6 +1021,10 @@ export class AbiBytes14 {
 
   static from(value: Uint8Array) {
     return new AbiBytes14(value.subarray(0, 14))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes14.Packed(value.subarray(0, 14))
   }
 
   static read(cursor: Cursor) {
@@ -1064,10 +1064,6 @@ export namespace AbiBytes14 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 14))
-    }
-
     size() {
       return this.value.length
     }
@@ -1097,6 +1093,10 @@ export class AbiBytes15 {
 
   static from(value: Uint8Array) {
     return new AbiBytes15(value.subarray(0, 15))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes15.Packed(value.subarray(0, 15))
   }
 
   static read(cursor: Cursor) {
@@ -1136,10 +1136,6 @@ export namespace AbiBytes15 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 15))
-    }
-
     size() {
       return this.value.length
     }
@@ -1169,6 +1165,10 @@ export class AbiBytes16 {
 
   static from(value: Uint8Array) {
     return new AbiBytes16(value.subarray(0, 16))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes16.Packed(value.subarray(0, 16))
   }
 
   static read(cursor: Cursor) {
@@ -1208,10 +1208,6 @@ export namespace AbiBytes16 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 16))
-    }
-
     size() {
       return this.value.length
     }
@@ -1241,6 +1237,10 @@ export class AbiBytes17 {
 
   static from(value: Uint8Array) {
     return new AbiBytes17(value.subarray(0, 17))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes17.Packed(value.subarray(0, 17))
   }
 
   static read(cursor: Cursor) {
@@ -1280,10 +1280,6 @@ export namespace AbiBytes17 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 17))
-    }
-
     size() {
       return this.value.length
     }
@@ -1313,6 +1309,10 @@ export class AbiBytes18 {
 
   static from(value: Uint8Array) {
     return new AbiBytes18(value.subarray(0, 18))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes18.Packed(value.subarray(0, 18))
   }
 
   static read(cursor: Cursor) {
@@ -1352,10 +1352,6 @@ export namespace AbiBytes18 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 18))
-    }
-
     size() {
       return this.value.length
     }
@@ -1385,6 +1381,10 @@ export class AbiBytes19 {
 
   static from(value: Uint8Array) {
     return new AbiBytes19(value.subarray(0, 19))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes19.Packed(value.subarray(0, 19))
   }
 
   static read(cursor: Cursor) {
@@ -1424,10 +1424,6 @@ export namespace AbiBytes19 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 19))
-    }
-
     size() {
       return this.value.length
     }
@@ -1457,6 +1453,10 @@ export class AbiBytes20 {
 
   static from(value: Uint8Array) {
     return new AbiBytes20(value.subarray(0, 20))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes20.Packed(value.subarray(0, 20))
   }
 
   static read(cursor: Cursor) {
@@ -1496,10 +1496,6 @@ export namespace AbiBytes20 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 20))
-    }
-
     size() {
       return this.value.length
     }
@@ -1529,6 +1525,10 @@ export class AbiBytes21 {
 
   static from(value: Uint8Array) {
     return new AbiBytes21(value.subarray(0, 21))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes21.Packed(value.subarray(0, 21))
   }
 
   static read(cursor: Cursor) {
@@ -1568,10 +1568,6 @@ export namespace AbiBytes21 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 21))
-    }
-
     size() {
       return this.value.length
     }
@@ -1601,6 +1597,10 @@ export class AbiBytes22 {
 
   static from(value: Uint8Array) {
     return new AbiBytes22(value.subarray(0, 22))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes22.Packed(value.subarray(0, 22))
   }
 
   static read(cursor: Cursor) {
@@ -1640,10 +1640,6 @@ export namespace AbiBytes22 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 22))
-    }
-
     size() {
       return this.value.length
     }
@@ -1673,6 +1669,10 @@ export class AbiBytes23 {
 
   static from(value: Uint8Array) {
     return new AbiBytes23(value.subarray(0, 23))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes23.Packed(value.subarray(0, 23))
   }
 
   static read(cursor: Cursor) {
@@ -1712,10 +1712,6 @@ export namespace AbiBytes23 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 23))
-    }
-
     size() {
       return this.value.length
     }
@@ -1745,6 +1741,10 @@ export class AbiBytes24 {
 
   static from(value: Uint8Array) {
     return new AbiBytes24(value.subarray(0, 24))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes24.Packed(value.subarray(0, 24))
   }
 
   static read(cursor: Cursor) {
@@ -1784,10 +1784,6 @@ export namespace AbiBytes24 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 24))
-    }
-
     size() {
       return this.value.length
     }
@@ -1817,6 +1813,10 @@ export class AbiBytes25 {
 
   static from(value: Uint8Array) {
     return new AbiBytes25(value.subarray(0, 25))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes25.Packed(value.subarray(0, 25))
   }
 
   static read(cursor: Cursor) {
@@ -1856,10 +1856,6 @@ export namespace AbiBytes25 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 25))
-    }
-
     size() {
       return this.value.length
     }
@@ -1889,6 +1885,10 @@ export class AbiBytes26 {
 
   static from(value: Uint8Array) {
     return new AbiBytes26(value.subarray(0, 26))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes26.Packed(value.subarray(0, 26))
   }
 
   static read(cursor: Cursor) {
@@ -1928,10 +1928,6 @@ export namespace AbiBytes26 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 26))
-    }
-
     size() {
       return this.value.length
     }
@@ -1961,6 +1957,10 @@ export class AbiBytes27 {
 
   static from(value: Uint8Array) {
     return new AbiBytes27(value.subarray(0, 27))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes27.Packed(value.subarray(0, 27))
   }
 
   static read(cursor: Cursor) {
@@ -2000,10 +2000,6 @@ export namespace AbiBytes27 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 27))
-    }
-
     size() {
       return this.value.length
     }
@@ -2033,6 +2029,10 @@ export class AbiBytes28 {
 
   static from(value: Uint8Array) {
     return new AbiBytes28(value.subarray(0, 28))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes28.Packed(value.subarray(0, 28))
   }
 
   static read(cursor: Cursor) {
@@ -2072,10 +2072,6 @@ export namespace AbiBytes28 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 28))
-    }
-
     size() {
       return this.value.length
     }
@@ -2105,6 +2101,10 @@ export class AbiBytes29 {
 
   static from(value: Uint8Array) {
     return new AbiBytes29(value.subarray(0, 29))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes29.Packed(value.subarray(0, 29))
   }
 
   static read(cursor: Cursor) {
@@ -2144,10 +2144,6 @@ export namespace AbiBytes29 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 29))
-    }
-
     size() {
       return this.value.length
     }
@@ -2177,6 +2173,10 @@ export class AbiBytes30 {
 
   static from(value: Uint8Array) {
     return new AbiBytes30(value.subarray(0, 30))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes30.Packed(value.subarray(0, 30))
   }
 
   static read(cursor: Cursor) {
@@ -2216,10 +2216,6 @@ export namespace AbiBytes30 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 30))
-    }
-
     size() {
       return this.value.length
     }
@@ -2249,6 +2245,10 @@ export class AbiBytes31 {
 
   static from(value: Uint8Array) {
     return new AbiBytes31(value.subarray(0, 31))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes31.Packed(value.subarray(0, 31))
   }
 
   static read(cursor: Cursor) {
@@ -2288,10 +2288,6 @@ export namespace AbiBytes31 {
       readonly value: Uint8Array
     ) {}
 
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 31))
-    }
-
     size() {
       return this.value.length
     }
@@ -2321,6 +2317,10 @@ export class AbiBytes32 {
 
   static from(value: Uint8Array) {
     return new AbiBytes32(value.subarray(0, 32))
+  }
+
+  static pack(value: Uint8Array) {
+    return new AbiBytes32.Packed(value.subarray(0, 32))
   }
 
   static read(cursor: Cursor) {
@@ -2359,10 +2359,6 @@ export namespace AbiBytes32 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: Uint8Array) {
-      return new Packed(value.subarray(0, 32))
-    }
 
     size() {
       return this.value.length

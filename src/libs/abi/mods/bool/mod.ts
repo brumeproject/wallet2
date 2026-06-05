@@ -16,6 +16,10 @@ export namespace AbiBool {
     return value ? new AbiTrue() : new AbiFalse()
   }
 
+  export function pack(value: boolean) {
+    return value ? new AbiTrue.Packed() : new AbiFalse.Packed()
+  }
+
   export function read(cursor: Cursor) {
     cursor.offset += 31
 

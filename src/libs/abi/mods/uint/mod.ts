@@ -25,6 +25,20 @@ export class AbiUint8 {
     return new AbiUint8(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 256n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(2, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint8.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint8(new Uint8Array(cursor.read(32)))
   }
@@ -53,20 +67,6 @@ export namespace AbiUint8 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 256n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(2, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -109,6 +109,20 @@ export class AbiUint16 {
     return new AbiUint16(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 65536n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(4, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint16.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint16(new Uint8Array(cursor.read(32)))
   }
@@ -137,20 +151,6 @@ export namespace AbiUint16 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 65536n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(4, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -193,6 +193,20 @@ export class AbiUint24 {
     return new AbiUint24(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 16777216n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(6, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint24.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint24(new Uint8Array(cursor.read(32)))
   }
@@ -221,20 +235,6 @@ export namespace AbiUint24 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 16777216n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(6, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -277,6 +277,20 @@ export class AbiUint32 {
     return new AbiUint32(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 4294967296n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(8, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint32.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint32(new Uint8Array(cursor.read(32)))
   }
@@ -305,20 +319,6 @@ export namespace AbiUint32 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 4294967296n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(8, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -361,6 +361,20 @@ export class AbiUint40 {
     return new AbiUint40(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 1099511627776n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(10, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint40.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint40(new Uint8Array(cursor.read(32)))
   }
@@ -389,20 +403,6 @@ export namespace AbiUint40 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 1099511627776n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(10, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -445,6 +445,20 @@ export class AbiUint48 {
     return new AbiUint48(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 281474976710656n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(12, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint48.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint48(new Uint8Array(cursor.read(32)))
   }
@@ -473,20 +487,6 @@ export namespace AbiUint48 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 281474976710656n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(12, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -529,6 +529,20 @@ export class AbiUint56 {
     return new AbiUint56(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 72057594037927936n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(14, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint56.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint56(new Uint8Array(cursor.read(32)))
   }
@@ -557,20 +571,6 @@ export namespace AbiUint56 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 72057594037927936n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(14, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -613,6 +613,20 @@ export class AbiUint64 {
     return new AbiUint64(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 18446744073709551616n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(16, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint64.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint64(new Uint8Array(cursor.read(32)))
   }
@@ -641,20 +655,6 @@ export namespace AbiUint64 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 18446744073709551616n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(16, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -697,6 +697,20 @@ export class AbiUint72 {
     return new AbiUint72(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 4722366482869645213696n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(18, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint72.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint72(new Uint8Array(cursor.read(32)))
   }
@@ -725,20 +739,6 @@ export namespace AbiUint72 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 4722366482869645213696n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(18, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -781,6 +781,20 @@ export class AbiUint80 {
     return new AbiUint80(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 1208925819614629174706176n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(20, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint80.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint80(new Uint8Array(cursor.read(32)))
   }
@@ -809,20 +823,6 @@ export namespace AbiUint80 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 1208925819614629174706176n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(20, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -865,6 +865,20 @@ export class AbiUint88 {
     return new AbiUint88(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 309485009821345068724781056n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(22, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint88.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint88(new Uint8Array(cursor.read(32)))
   }
@@ -893,20 +907,6 @@ export namespace AbiUint88 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 309485009821345068724781056n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(22, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -949,6 +949,20 @@ export class AbiUint96 {
     return new AbiUint96(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 79228162514264337593543950336n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(24, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint96.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint96(new Uint8Array(cursor.read(32)))
   }
@@ -977,20 +991,6 @@ export namespace AbiUint96 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 79228162514264337593543950336n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(24, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1033,6 +1033,20 @@ export class AbiUint104 {
     return new AbiUint104(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 20282409603651670423947251286016n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(26, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint104.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint104(new Uint8Array(cursor.read(32)))
   }
@@ -1061,20 +1075,6 @@ export namespace AbiUint104 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 20282409603651670423947251286016n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(26, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1117,6 +1117,20 @@ export class AbiUint112 {
     return new AbiUint112(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 5192296858534827628530496329220096n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(28, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint112.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint112(new Uint8Array(cursor.read(32)))
   }
@@ -1145,20 +1159,6 @@ export namespace AbiUint112 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 5192296858534827628530496329220096n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(28, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1201,6 +1201,20 @@ export class AbiUint120 {
     return new AbiUint120(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 1329227995784915872903807060280344576n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(30, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint120.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint120(new Uint8Array(cursor.read(32)))
   }
@@ -1229,20 +1243,6 @@ export namespace AbiUint120 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 1329227995784915872903807060280344576n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(30, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1285,6 +1285,20 @@ export class AbiUint128 {
     return new AbiUint128(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 340282366920938463463374607431768211456n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(32, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint128.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint128(new Uint8Array(cursor.read(32)))
   }
@@ -1313,20 +1327,6 @@ export namespace AbiUint128 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 340282366920938463463374607431768211456n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(32, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1369,6 +1369,20 @@ export class AbiUint136 {
     return new AbiUint136(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 87112285931760246646623899502532662132736n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(34, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint136.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint136(new Uint8Array(cursor.read(32)))
   }
@@ -1397,20 +1411,6 @@ export namespace AbiUint136 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 87112285931760246646623899502532662132736n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(34, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1453,6 +1453,20 @@ export class AbiUint144 {
     return new AbiUint144(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 22300745198530623141535718272648361505980416n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(36, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint144.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint144(new Uint8Array(cursor.read(32)))
   }
@@ -1481,20 +1495,6 @@ export namespace AbiUint144 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 22300745198530623141535718272648361505980416n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(36, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1537,6 +1537,20 @@ export class AbiUint152 {
     return new AbiUint152(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 5708990770823839524233143877797980545530986496n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(38, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint152.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint152(new Uint8Array(cursor.read(32)))
   }
@@ -1565,20 +1579,6 @@ export namespace AbiUint152 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 5708990770823839524233143877797980545530986496n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(38, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1621,6 +1621,20 @@ export class AbiUint160 {
     return new AbiUint160(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 1461501637330902918203684832716283019655932542976n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(40, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint160.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint160(new Uint8Array(cursor.read(32)))
   }
@@ -1649,20 +1663,6 @@ export namespace AbiUint160 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 1461501637330902918203684832716283019655932542976n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(40, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1705,6 +1705,20 @@ export class AbiUint168 {
     return new AbiUint168(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 374144419156711147060143317175368453031918731001856n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(42, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint168.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint168(new Uint8Array(cursor.read(32)))
   }
@@ -1733,20 +1747,6 @@ export namespace AbiUint168 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 374144419156711147060143317175368453031918731001856n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(42, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1789,6 +1789,20 @@ export class AbiUint176 {
     return new AbiUint176(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 95780971304118053647396689196894323976171195136475136n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(44, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint176.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint176(new Uint8Array(cursor.read(32)))
   }
@@ -1817,20 +1831,6 @@ export namespace AbiUint176 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 95780971304118053647396689196894323976171195136475136n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(44, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1873,6 +1873,20 @@ export class AbiUint184 {
     return new AbiUint184(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 24519928653854221733733552434404946937899825954937634816n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(46, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint184.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint184(new Uint8Array(cursor.read(32)))
   }
@@ -1901,20 +1915,6 @@ export namespace AbiUint184 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 24519928653854221733733552434404946937899825954937634816n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(46, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1957,6 +1957,20 @@ export class AbiUint192 {
     return new AbiUint192(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 6277101735386680763835789423207666416102355444464034512896n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(48, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint192.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint192(new Uint8Array(cursor.read(32)))
   }
@@ -1985,20 +1999,6 @@ export namespace AbiUint192 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 6277101735386680763835789423207666416102355444464034512896n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(48, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2041,6 +2041,20 @@ export class AbiUint200 {
     return new AbiUint200(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 1606938044258990275541962092341162602522202993782792835301376n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(50, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint200.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint200(new Uint8Array(cursor.read(32)))
   }
@@ -2069,20 +2083,6 @@ export namespace AbiUint200 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 1606938044258990275541962092341162602522202993782792835301376n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(50, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2125,6 +2125,20 @@ export class AbiUint208 {
     return new AbiUint208(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 411376139330301510538742295639337626245683966408394965837152256n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(52, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint208.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint208(new Uint8Array(cursor.read(32)))
   }
@@ -2153,20 +2167,6 @@ export namespace AbiUint208 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 411376139330301510538742295639337626245683966408394965837152256n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(52, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2209,6 +2209,20 @@ export class AbiUint216 {
     return new AbiUint216(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 105312291668557186697918027683670432318895095400549111254310977536n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(54, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint216.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint216(new Uint8Array(cursor.read(32)))
   }
@@ -2237,20 +2251,6 @@ export namespace AbiUint216 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 105312291668557186697918027683670432318895095400549111254310977536n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(54, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2293,6 +2293,20 @@ export class AbiUint224 {
     return new AbiUint224(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 26959946667150639794667015087019630673637144422540572481103610249216n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(56, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint224.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint224(new Uint8Array(cursor.read(32)))
   }
@@ -2321,20 +2335,6 @@ export namespace AbiUint224 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 26959946667150639794667015087019630673637144422540572481103610249216n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(56, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2377,6 +2377,20 @@ export class AbiUint232 {
     return new AbiUint232(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(58, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint232.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint232(new Uint8Array(cursor.read(32)))
   }
@@ -2405,20 +2419,6 @@ export namespace AbiUint232 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(58, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2461,6 +2461,20 @@ export class AbiUint240 {
     return new AbiUint240(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(60, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint240.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint240(new Uint8Array(cursor.read(32)))
   }
@@ -2489,20 +2503,6 @@ export namespace AbiUint240 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(60, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2545,6 +2545,20 @@ export class AbiUint248 {
     return new AbiUint248(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(62, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint248.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint248(new Uint8Array(cursor.read(32)))
   }
@@ -2573,20 +2587,6 @@ export namespace AbiUint248 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(62, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2629,6 +2629,20 @@ export class AbiUint256 {
     return new AbiUint256(raw)
   }
 
+  static pack(value: bigint) {
+    const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
+
+    /**
+     * Unsign and clamp the value to the allowed range
+     */
+    value = (value < 0n ? -value : value) % full
+    
+    const hex = value.toString(16).padStart(64, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiUint256.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiUint256(new Uint8Array(cursor.read(32)))
   }
@@ -2657,20 +2671,6 @@ export namespace AbiUint256 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
-
-      /**
-       * Unsign and clamp the value to the allowed range
-       */
-      value = (value < 0n ? -value : value) % full
-      
-      const hex = value.toString(16).padStart(64, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length

@@ -15,6 +15,10 @@ export class AbiAddress {
     return new AbiAddress(Uint8Array.fromHex(value.slice(2)))
   }
 
+  static pack(value: string) {
+    return new AbiAddress.Packed(Uint8Array.fromHex(value.slice(2)))
+  }
+
   static read(cursor: Cursor) {
     cursor.offset += 12
 
@@ -51,10 +55,6 @@ export namespace AbiAddress {
        */
       readonly value: Uint8Array
     ) { }
-
-    static from(value: string) {
-      return new Packed(Uint8Array.fromHex(value.slice(2)))
-    }
 
     size() {
       return 20

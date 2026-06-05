@@ -31,7 +31,7 @@ test("uint8", () => {
 
 test("uint8 packed", () => {
   function f(from: bigint, hex: string) {
-    const raw = Writable.writeToBytes(AbiUint8.Packed.from(from))
+    const raw = Writable.writeToBytes(AbiUint8.pack(from))
 
     assert(raw.toHex() === hex, "hex should match")
   }

@@ -36,6 +36,26 @@ export class AbiInt8 {
     return new AbiInt8(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 128n
+    const full = 256n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(2, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt8.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt8(new Uint8Array(cursor.read(32)))
   }
@@ -72,26 +92,6 @@ export namespace AbiInt8 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 128n
-      const full = 256n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(2, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -153,6 +153,26 @@ export class AbiInt16 {
     return new AbiInt16(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 32768n
+    const full = 65536n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(4, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt16.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt16(new Uint8Array(cursor.read(32)))
   }
@@ -189,26 +209,6 @@ export namespace AbiInt16 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 32768n
-      const full = 65536n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(4, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -270,6 +270,26 @@ export class AbiInt24 {
     return new AbiInt24(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 8388608n
+    const full = 16777216n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(6, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt24.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt24(new Uint8Array(cursor.read(32)))
   }
@@ -306,26 +326,6 @@ export namespace AbiInt24 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 8388608n
-      const full = 16777216n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(6, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -387,6 +387,26 @@ export class AbiInt32 {
     return new AbiInt32(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 2147483648n
+    const full = 4294967296n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(8, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt32.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt32(new Uint8Array(cursor.read(32)))
   }
@@ -423,26 +443,6 @@ export namespace AbiInt32 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 2147483648n
-      const full = 4294967296n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(8, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -504,6 +504,26 @@ export class AbiInt40 {
     return new AbiInt40(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 549755813888n
+    const full = 1099511627776n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(10, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt40.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt40(new Uint8Array(cursor.read(32)))
   }
@@ -540,26 +560,6 @@ export namespace AbiInt40 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 549755813888n
-      const full = 1099511627776n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(10, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -621,6 +621,26 @@ export class AbiInt48 {
     return new AbiInt48(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 140737488355328n
+    const full = 281474976710656n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(12, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt48.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt48(new Uint8Array(cursor.read(32)))
   }
@@ -657,26 +677,6 @@ export namespace AbiInt48 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 140737488355328n
-      const full = 281474976710656n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(12, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -738,6 +738,26 @@ export class AbiInt56 {
     return new AbiInt56(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 36028797018963968n
+    const full = 72057594037927936n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(14, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt56.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt56(new Uint8Array(cursor.read(32)))
   }
@@ -774,26 +794,6 @@ export namespace AbiInt56 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 36028797018963968n
-      const full = 72057594037927936n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(14, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -855,6 +855,26 @@ export class AbiInt64 {
     return new AbiInt64(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 9223372036854775808n
+    const full = 18446744073709551616n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(16, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt64.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt64(new Uint8Array(cursor.read(32)))
   }
@@ -891,26 +911,6 @@ export namespace AbiInt64 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 9223372036854775808n
-      const full = 18446744073709551616n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(16, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -972,6 +972,26 @@ export class AbiInt72 {
     return new AbiInt72(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 2361183241434822606848n
+    const full = 4722366482869645213696n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(18, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt72.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt72(new Uint8Array(cursor.read(32)))
   }
@@ -1008,26 +1028,6 @@ export namespace AbiInt72 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 2361183241434822606848n
-      const full = 4722366482869645213696n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(18, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1089,6 +1089,26 @@ export class AbiInt80 {
     return new AbiInt80(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 604462909807314587353088n
+    const full = 1208925819614629174706176n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(20, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt80.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt80(new Uint8Array(cursor.read(32)))
   }
@@ -1125,26 +1145,6 @@ export namespace AbiInt80 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 604462909807314587353088n
-      const full = 1208925819614629174706176n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(20, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1206,6 +1206,26 @@ export class AbiInt88 {
     return new AbiInt88(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 154742504910672534362390528n
+    const full = 309485009821345068724781056n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(22, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt88.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt88(new Uint8Array(cursor.read(32)))
   }
@@ -1242,26 +1262,6 @@ export namespace AbiInt88 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 154742504910672534362390528n
-      const full = 309485009821345068724781056n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(22, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1323,6 +1323,26 @@ export class AbiInt96 {
     return new AbiInt96(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 39614081257132168796771975168n
+    const full = 79228162514264337593543950336n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(24, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt96.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt96(new Uint8Array(cursor.read(32)))
   }
@@ -1359,26 +1379,6 @@ export namespace AbiInt96 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 39614081257132168796771975168n
-      const full = 79228162514264337593543950336n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(24, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1440,6 +1440,26 @@ export class AbiInt104 {
     return new AbiInt104(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 10141204801825835211973625643008n
+    const full = 20282409603651670423947251286016n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(26, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt104.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt104(new Uint8Array(cursor.read(32)))
   }
@@ -1476,26 +1496,6 @@ export namespace AbiInt104 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 10141204801825835211973625643008n
-      const full = 20282409603651670423947251286016n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(26, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1557,6 +1557,26 @@ export class AbiInt112 {
     return new AbiInt112(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 2596148429267413814265248164610048n
+    const full = 5192296858534827628530496329220096n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(28, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt112.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt112(new Uint8Array(cursor.read(32)))
   }
@@ -1593,26 +1613,6 @@ export namespace AbiInt112 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 2596148429267413814265248164610048n
-      const full = 5192296858534827628530496329220096n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(28, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1674,6 +1674,26 @@ export class AbiInt120 {
     return new AbiInt120(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 664613997892457936451903530140172288n
+    const full = 1329227995784915872903807060280344576n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(30, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt120.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt120(new Uint8Array(cursor.read(32)))
   }
@@ -1710,26 +1730,6 @@ export namespace AbiInt120 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 664613997892457936451903530140172288n
-      const full = 1329227995784915872903807060280344576n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(30, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1791,6 +1791,26 @@ export class AbiInt128 {
     return new AbiInt128(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 170141183460469231731687303715884105728n
+    const full = 340282366920938463463374607431768211456n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(32, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt128.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt128(new Uint8Array(cursor.read(32)))
   }
@@ -1827,26 +1847,6 @@ export namespace AbiInt128 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 170141183460469231731687303715884105728n
-      const full = 340282366920938463463374607431768211456n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(32, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -1908,6 +1908,26 @@ export class AbiInt136 {
     return new AbiInt136(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 43556142965880123323311949751266331066368n
+    const full = 87112285931760246646623899502532662132736n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(34, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt136.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt136(new Uint8Array(cursor.read(32)))
   }
@@ -1944,26 +1964,6 @@ export namespace AbiInt136 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 43556142965880123323311949751266331066368n
-      const full = 87112285931760246646623899502532662132736n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(34, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2025,6 +2025,26 @@ export class AbiInt144 {
     return new AbiInt144(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 11150372599265311570767859136324180752990208n
+    const full = 22300745198530623141535718272648361505980416n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(36, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt144.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt144(new Uint8Array(cursor.read(32)))
   }
@@ -2061,26 +2081,6 @@ export namespace AbiInt144 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 11150372599265311570767859136324180752990208n
-      const full = 22300745198530623141535718272648361505980416n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(36, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2142,6 +2142,26 @@ export class AbiInt152 {
     return new AbiInt152(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 2854495385411919762116571938898990272765493248n
+    const full = 5708990770823839524233143877797980545530986496n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(38, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt152.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt152(new Uint8Array(cursor.read(32)))
   }
@@ -2178,26 +2198,6 @@ export namespace AbiInt152 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 2854495385411919762116571938898990272765493248n
-      const full = 5708990770823839524233143877797980545530986496n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(38, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2259,6 +2259,26 @@ export class AbiInt160 {
     return new AbiInt160(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 730750818665451459101842416358141509827966271488n
+    const full = 1461501637330902918203684832716283019655932542976n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(40, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt160.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt160(new Uint8Array(cursor.read(32)))
   }
@@ -2295,26 +2315,6 @@ export namespace AbiInt160 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 730750818665451459101842416358141509827966271488n
-      const full = 1461501637330902918203684832716283019655932542976n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(40, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2376,6 +2376,26 @@ export class AbiInt168 {
     return new AbiInt168(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 187072209578355573530071658587684226515959365500928n
+    const full = 374144419156711147060143317175368453031918731001856n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(42, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt168.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt168(new Uint8Array(cursor.read(32)))
   }
@@ -2412,26 +2432,6 @@ export namespace AbiInt168 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 187072209578355573530071658587684226515959365500928n
-      const full = 374144419156711147060143317175368453031918731001856n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(42, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2493,6 +2493,26 @@ export class AbiInt176 {
     return new AbiInt176(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 47890485652059026823698344598447161988085597568237568n
+    const full = 95780971304118053647396689196894323976171195136475136n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(44, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt176.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt176(new Uint8Array(cursor.read(32)))
   }
@@ -2529,26 +2549,6 @@ export namespace AbiInt176 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 47890485652059026823698344598447161988085597568237568n
-      const full = 95780971304118053647396689196894323976171195136475136n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(44, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2610,6 +2610,26 @@ export class AbiInt184 {
     return new AbiInt184(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 12259964326927110866866776217202473468949912977468817408n
+    const full = 24519928653854221733733552434404946937899825954937634816n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(46, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt184.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt184(new Uint8Array(cursor.read(32)))
   }
@@ -2646,26 +2666,6 @@ export namespace AbiInt184 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 12259964326927110866866776217202473468949912977468817408n
-      const full = 24519928653854221733733552434404946937899825954937634816n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(46, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2727,6 +2727,26 @@ export class AbiInt192 {
     return new AbiInt192(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 3138550867693340381917894711603833208051177722232017256448n
+    const full = 6277101735386680763835789423207666416102355444464034512896n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(48, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt192.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt192(new Uint8Array(cursor.read(32)))
   }
@@ -2763,26 +2783,6 @@ export namespace AbiInt192 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 3138550867693340381917894711603833208051177722232017256448n
-      const full = 6277101735386680763835789423207666416102355444464034512896n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(48, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2844,6 +2844,26 @@ export class AbiInt200 {
     return new AbiInt200(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 803469022129495137770981046170581301261101496891396417650688n
+    const full = 1606938044258990275541962092341162602522202993782792835301376n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(50, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt200.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt200(new Uint8Array(cursor.read(32)))
   }
@@ -2880,26 +2900,6 @@ export namespace AbiInt200 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 803469022129495137770981046170581301261101496891396417650688n
-      const full = 1606938044258990275541962092341162602522202993782792835301376n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(50, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -2961,6 +2961,26 @@ export class AbiInt208 {
     return new AbiInt208(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 205688069665150755269371147819668813122841983204197482918576128n
+    const full = 411376139330301510538742295639337626245683966408394965837152256n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(52, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt208.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt208(new Uint8Array(cursor.read(32)))
   }
@@ -2997,26 +3017,6 @@ export namespace AbiInt208 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 205688069665150755269371147819668813122841983204197482918576128n
-      const full = 411376139330301510538742295639337626245683966408394965837152256n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(52, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -3078,6 +3078,26 @@ export class AbiInt216 {
     return new AbiInt216(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 52656145834278593348959013841835216159447547700274555627155488768n
+    const full = 105312291668557186697918027683670432318895095400549111254310977536n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(54, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt216.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt216(new Uint8Array(cursor.read(32)))
   }
@@ -3114,26 +3134,6 @@ export namespace AbiInt216 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 52656145834278593348959013841835216159447547700274555627155488768n
-      const full = 105312291668557186697918027683670432318895095400549111254310977536n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(54, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -3195,6 +3195,26 @@ export class AbiInt224 {
     return new AbiInt224(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 13479973333575319897333507543509815336818572211270286240551805124608n
+    const full = 26959946667150639794667015087019630673637144422540572481103610249216n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(56, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt224.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt224(new Uint8Array(cursor.read(32)))
   }
@@ -3231,26 +3251,6 @@ export namespace AbiInt224 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 13479973333575319897333507543509815336818572211270286240551805124608n
-      const full = 26959946667150639794667015087019630673637144422540572481103610249216n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(56, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -3312,6 +3312,26 @@ export class AbiInt232 {
     return new AbiInt232(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 3450873173395281893717377931138512726225554486085193277581262111899648n
+    const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(58, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt232.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt232(new Uint8Array(cursor.read(32)))
   }
@@ -3348,26 +3368,6 @@ export namespace AbiInt232 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 3450873173395281893717377931138512726225554486085193277581262111899648n
-      const full = 6901746346790563787434755862277025452451108972170386555162524223799296n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(58, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -3429,6 +3429,26 @@ export class AbiInt240 {
     return new AbiInt240(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 883423532389192164791648750371459257913741948437809479060803100646309888n
+    const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(60, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt240.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt240(new Uint8Array(cursor.read(32)))
   }
@@ -3465,26 +3485,6 @@ export namespace AbiInt240 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 883423532389192164791648750371459257913741948437809479060803100646309888n
-      const full = 1766847064778384329583297500742918515827483896875618958121606201292619776n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(60, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -3546,6 +3546,26 @@ export class AbiInt248 {
     return new AbiInt248(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 226156424291633194186662080095093570025917938800079226639565593765455331328n
+    const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(62, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt248.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt248(new Uint8Array(cursor.read(32)))
   }
@@ -3582,26 +3602,6 @@ export namespace AbiInt248 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 226156424291633194186662080095093570025917938800079226639565593765455331328n
-      const full = 452312848583266388373324160190187140051835877600158453279131187530910662656n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(62, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
@@ -3663,6 +3663,26 @@ export class AbiInt256 {
     return new AbiInt256(raw)
   }
 
+  static pack(value: bigint) {
+    const half = 57896044618658097711785492504343953926634992332820282019728792003956564819968n
+    const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
+
+    /**
+     * Clamp the value to the allowed range
+     */
+    value = value % (half + (value < 0n ? 1n : 0n))
+
+    /**
+     * Cheap two's complement
+     */
+    value = (value + full) % full
+    
+    const hex = value.toString(16).padStart(64, "0")
+    const raw = Uint8Array.fromHex(hex)
+
+    return new AbiInt256.Packed(raw)
+  }
+
   static read(cursor: Cursor) {
     return new AbiInt256(new Uint8Array(cursor.read(32)))
   }
@@ -3699,26 +3719,6 @@ export namespace AbiInt256 {
        */
       readonly value: Uint8Array
     ) {}
-
-    static from(value: bigint) {
-      const half = 57896044618658097711785492504343953926634992332820282019728792003956564819968n
-      const full = 115792089237316195423570985008687907853269984665640564039457584007913129639936n
-
-      /**
-       * Clamp the value to the allowed range
-       */
-      value = value % (half + (value < 0n ? 1n : 0n))
-
-      /**
-       * Cheap two's complement
-       */
-      value = (value + full) % full
-      
-      const hex = value.toString(16).padStart(64, "0")
-      const raw = Uint8Array.fromHex(hex)
-
-      return new Packed(raw)
-    }
 
     size() {
       return this.value.length
