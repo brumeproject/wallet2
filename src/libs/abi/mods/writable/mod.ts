@@ -9,9 +9,3 @@ export interface AbiWritable<T = unknown> {
   into(): T
 
 }
-
-export namespace AbiWritable {
-
-  export type All<T extends unknown[]> = { [K in keyof T]: AbiWritable<T[K]> }
-
-}

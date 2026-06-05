@@ -6,7 +6,7 @@ import { Cursor } from "@hazae41/cursor";
 export class AbiReadableTuple<T extends unknown[]> {
 
   constructor(
-    readonly types: AbiReadable.All<T>
+    readonly types: { [K in keyof T]: AbiReadable<T[K]> }
   ) { }
 
   get kind() {

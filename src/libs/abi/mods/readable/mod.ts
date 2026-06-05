@@ -10,9 +10,3 @@ export interface AbiReadable<T = unknown> {
   read(cursor: Cursor): AbiWritable<T>
 
 }
-
-export namespace AbiReadable {
-
-  export type All<T extends unknown[]> = { [K in keyof T]: AbiReadable<T[K]> }
-
-}
