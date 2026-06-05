@@ -3,26 +3,27 @@ import { AbiUint32 } from "@/libs/abi/mods/uint/mod.ts";
 import { AbiWritable } from "@/libs/abi/mods/writable/mod.ts";
 import { Cursor } from "@hazae41/cursor";
 
-export class AbiReadableTuple<T extends unknown[]> {
+export class AbiReadableArray<T, N extends number> {
 
   constructor(
-    readonly types: AbiReadable.All<T>
+    readonly type: AbiReadable<T>,
+    readonly size: N
   ) { }
 
   get kind() {
-    return this.types.find(type => type.kind === "dynamic") ? "dynamic" : "static"
+    return this.type.kind
   }
 
-  from(froms: T) {
-    const intos = new Array<unknown>()
+  from(froms: T[] & { length: N }) {
+    const intos = new Array<T>()
     const heads = new Array<AbiWritable>()
     const tails = new Array<AbiWritable>()
 
-    let offset = this.types.length * 32
+    let offset = this.size * 32
 
-    for (let i = 0; i < this.types.length; i++) {
+    for (let i = 0; i < this.size; i++) {
       const from = froms[i]
-      const type = this.types[i]
+      const type = this.type
       const data = type.from(from)
 
       if (type.kind === "dynamic") {
@@ -43,20 +44,20 @@ export class AbiReadableTuple<T extends unknown[]> {
       continue
     }
 
-    return new AbiWritableTuple<T>(intos as T, heads, tails, offset)
+    return new AbiWritableArray<T, N>(intos as T[] & { length: N }, heads, tails, offset)
   }
 
   read(cursor: Cursor) {
     const start = cursor.offset
 
-    const intos = new Array<unknown>()
+    const intos = new Array<T>()
     const heads = new Array<AbiWritable>()
     const tails = new Array<AbiWritable>()
 
-    let offset = this.types.length * 32
+    let offset = this.size * 32
 
-    for (let i = 0; i < this.types.length; i++) {
-      const type = this.types[i]
+    for (let i = 0; i < this.size; i++) {
+      const type = this.type
 
       if (type.kind === "dynamic") {
         const pointer = AbiUint32.read(cursor)
@@ -87,15 +88,15 @@ export class AbiReadableTuple<T extends unknown[]> {
 
     cursor.offset = offset
 
-    return new AbiWritableTuple<T>(intos as T, heads, tails, offset)
+    return new AbiWritableArray<T, N>(intos as T[] & { length: N }, heads, tails, cursor.offset - start)
   }
 
 }
 
-export class AbiWritableTuple<T extends unknown[]> {
+export class AbiWritableArray<T, N extends number> {
 
   constructor(
-    readonly intos: T,
+    readonly intos: T[] & { length: N },
     readonly heads: AbiWritable[],
     readonly tails: AbiWritable[],
     readonly sized: number,

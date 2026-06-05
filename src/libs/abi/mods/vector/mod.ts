@@ -3,26 +3,26 @@ import { AbiUint32 } from "@/libs/abi/mods/uint/mod.ts";
 import { AbiWritable } from "@/libs/abi/mods/writable/mod.ts";
 import { Cursor } from "@hazae41/cursor";
 
-export class AbiReadableTuple<T extends unknown[]> {
+export class AbiReadableVector<T> {
+
+  readonly kind = "dynamic"
 
   constructor(
-    readonly types: AbiReadable.All<T>
+    readonly type: AbiReadable<T>
   ) { }
 
-  get kind() {
-    return this.types.find(type => type.kind === "dynamic") ? "dynamic" : "static"
-  }
+  from(froms: T[]) {
+    const length = froms.length
 
-  from(froms: T) {
-    const intos = new Array<unknown>()
+    const intos = new Array<T>()
     const heads = new Array<AbiWritable>()
     const tails = new Array<AbiWritable>()
 
-    let offset = this.types.length * 32
+    let offset = length * 32
 
-    for (let i = 0; i < this.types.length; i++) {
+    for (let i = 0; i < length; i++) {
       const from = froms[i]
-      const type = this.types[i]
+      const type = this.type
       const data = type.from(from)
 
       if (type.kind === "dynamic") {
@@ -43,20 +43,22 @@ export class AbiReadableTuple<T extends unknown[]> {
       continue
     }
 
-    return new AbiWritableTuple<T>(intos as T, heads, tails, offset)
+    return new AbiWritableVector<T>(intos, heads, tails, offset)
   }
 
   read(cursor: Cursor) {
+    const length = Number(AbiUint32.read(cursor).into())
+
     const start = cursor.offset
 
-    const intos = new Array<unknown>()
+    const intos = new Array<T>()
     const heads = new Array<AbiWritable>()
     const tails = new Array<AbiWritable>()
 
-    let offset = this.types.length * 32
+    let offset = length * 32
 
-    for (let i = 0; i < this.types.length; i++) {
-      const type = this.types[i]
+    for (let i = 0; i < length; i++) {
+      const type = this.type
 
       if (type.kind === "dynamic") {
         const pointer = AbiUint32.read(cursor)
@@ -87,25 +89,27 @@ export class AbiReadableTuple<T extends unknown[]> {
 
     cursor.offset = offset
 
-    return new AbiWritableTuple<T>(intos as T, heads, tails, offset)
+    return new AbiWritableVector<T>(intos, heads, tails, cursor.offset - start)
   }
 
 }
 
-export class AbiWritableTuple<T extends unknown[]> {
+export class AbiWritableVector<T> {
 
   constructor(
-    readonly intos: T,
+    readonly intos: T[],
     readonly heads: AbiWritable[],
     readonly tails: AbiWritable[],
     readonly sized: number,
   ) { }
 
   size() {
-    return this.sized
+    return 32 + this.sized
   }
 
   write(cursor: Cursor) {
+    AbiUint32.from(BigInt(this.intos.length)).write(cursor)
+
     for (const head of this.heads)
       head.write(cursor)
 

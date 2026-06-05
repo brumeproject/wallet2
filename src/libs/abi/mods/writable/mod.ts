@@ -1,6 +1,6 @@
 import { Cursor } from "@hazae41/cursor";
 
-export interface AbiWritable<T> {
+export interface AbiWritable<T = unknown> {
 
   size(): number
 

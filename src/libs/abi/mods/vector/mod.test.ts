@@ -1,0 +1,16 @@
+import { AbiString } from "@/libs/abi/mods/string/mod.ts";
+import { AbiReadableTuple } from "@/libs/abi/mods/tuple/mod.ts";
+import { AbiReadableVector } from "@/libs/abi/mods/vector/mod.ts";
+import { Readable } from "@hazae41/binary";
+import { test } from "@hazae41/phobos";
+
+test("vector", () => {
+  const Vector = new AbiReadableVector(AbiString)
+  const Tuple = new AbiReadableTuple([Vector])
+
+  const tuple1 = Tuple.from([["hello", "world"]])
+  const tuple2 = Readable.readFromBytes(Tuple, Uint8Array.fromHex("0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000568656c6c6f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005776f726c64000000000000000000000000000000000000000000000000000000"))
+
+  console.log(tuple1.into()) // -> ["hello", "world"]
+  console.log(tuple2.into()) // -> ["hello", "world"]
+})
