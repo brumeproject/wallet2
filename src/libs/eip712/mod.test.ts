@@ -1,8 +1,8 @@
-import { EIP712Data } from "@/libs/eip712/mod.ts";
+import { EIP712 } from "@/libs/eip712/mod.ts";
 import { test } from "@hazae41/phobos";
 
 test("eip712 #1", () => {
-  const hash = EIP712Data.hash({
+  const hash = EIP712.hash({
     types: {
       EIP712Domain: [
         { name: 'name', type: 'string' },
@@ -44,7 +44,7 @@ test("eip712 #1", () => {
 })
 
 test("eip712 #2", () => {
-  const hash = EIP712Data.hash({
+  const hash = EIP712.hash({
     primaryType: 'Mail',
     domain: {
       name: 'Ether Mail',
@@ -80,7 +80,7 @@ test("eip712 #2", () => {
 })
 
 test("eip712 #3", () => {
-  const hash = EIP712Data.hash({
+  const hash = EIP712.hash({
     primaryType: 'Mail',
     domain: {
       name: 'Ether Mail 🥵',

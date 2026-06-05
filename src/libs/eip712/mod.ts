@@ -44,10 +44,7 @@ export class EIP712Context {
 
 }
 
-/**
- * a.k.a. signTypedData_v4 / EIP-712
- */
-export namespace EIP712Data {
+export namespace EIP712 {
 
   export function encode(data: EIP712Data) {
     const { types, domain, primaryType, message } = data
@@ -74,12 +71,7 @@ export namespace EIP712Data {
     return cursor.bytes
   }
 
-  /**
-   * This is the function you are probably looking for
-   * @param data 
-   * @returns 
-   */
-  export function hash(data: EIP712Data): Uint8Array {
+  export function hash(data: EIP712Data) {
     return keccak256.digest(encode(data))
   }
 
