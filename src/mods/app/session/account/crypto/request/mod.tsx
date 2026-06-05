@@ -4,6 +4,7 @@ import { chainlist } from "@/libs/chainlist/mod.ts";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
 import { UnsignedTransaction0 } from "@/libs/eip155/mods/transaction0/mod.ts";
 import { UnsignedTransaction2 } from "@/libs/eip155/mods/transaction2/mod.ts";
+import { EIP712, EIP712Data } from "@/libs/eip712/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
@@ -283,6 +284,27 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       return `0x${signed.toHex()}`
     }
 
+    if (request.method === "eth_signTypedData_v4") {
+      const [account, data] = request.params as [string, string]
+
+      const current = await getEthereumOrThrow()
+
+      if (current == null)
+        throw new WcUnsupportedAccountsError()
+      if (account.toLowerCase() !== current.toLowerCase())
+        throw new WcUnsupportedAccountsError()
+
+      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
+
+      const digest = EIP712.hash(JSON.parse(data))
+      const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
+
+      signed[64] += 27
+
+      return `0x${signed.toHex()}`
+    }
+
     if (request.method === "solana_signMessage") {
       const { message, pubkey } = request.params as { message: string, pubkey: string }
 
@@ -335,6 +357,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
     if (request.method === "personal_sign")
       return "signature"
+    if (request.method === "eth_signTypedData_v4")
+      return "signature"
     if (request.method === "solana_signMessage")
       return "signature"
 
@@ -351,6 +375,14 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       const msgtxt = new TextDecoder().decode(msgraw)
 
       return msgtxt
+    }
+
+    if (request.method === "eth_signTypedData_v4") {
+      const [account, data] = request.params as [string, string]
+
+      const { domain, message } = JSON.parse(data) as EIP712Data
+
+      return JSON.stringify({ domain, message }, null, 2)
     }
 
     if (request.method === "solana_signMessage") {
