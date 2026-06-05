@@ -76,14 +76,14 @@ export class AbiReadableArray<T, N extends number> {
         tails.push(data)
 
         continue
-      } else {
-        const data = type.read(cursor)
-
-        intos.push(data.into())
-        heads.push(data)
-
-        continue
       }
+
+      const data = type.read(cursor)
+
+      intos.push(data.into())
+      heads.push(data)
+
+      continue
     }
 
     cursor.offset = offset

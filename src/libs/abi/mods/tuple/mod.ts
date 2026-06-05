@@ -75,14 +75,14 @@ export class AbiReadableTuple<T extends unknown[]> {
         tails.push(data)
 
         continue
-      } else {
-        const data = type.read(cursor)
-
-        intos.push(data.into())
-        heads.push(data)
-
-        continue
       }
+
+      const data = type.read(cursor)
+
+      intos.push(data.into())
+      heads.push(data)
+
+      continue
     }
 
     cursor.offset = offset
