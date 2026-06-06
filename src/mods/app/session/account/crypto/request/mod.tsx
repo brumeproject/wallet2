@@ -20,6 +20,7 @@ import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
+import { Fixed } from "@hazae41/fixed";
 import { RpcCounter, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { keccak256 } from "@hazae41/keccak256";
@@ -500,8 +501,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         if (from !== current.toLowerCase() && to !== current.toLowerCase())
           continue
 
-        const value = BigInt(log.data)
-
         if (address !== "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
           const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
             method: "eth_call",
@@ -513,20 +512,24 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             params: [{ to: address, data: "0x313ce567" }, "latest"]
           }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
 
+          const value = Number(new Fixed(BigInt(log.data), Number(decimals)).toString())
+
           if (from === current.toLowerCase())
-            transfers.push({ value: BigInt(-value).toString(), symbol })
+            transfers.push({ value: (value * (-1)), symbol })
 
           if (to === current.toLowerCase())
-            transfers.push({ value: BigInt(value).toString(), symbol })
+            transfers.push({ value: (value * (+1)), symbol })
 
           continue
         }
 
+        const value = Number(new Fixed(BigInt(log.data), 18).toString())
+
         if (from === current.toLowerCase())
-          transfers.push({ value: BigInt(-value).toString(), symbol: "ETH" })
+          transfers.push({ value: (value * (-1)), symbol: "ETH" })
 
         if (to === current.toLowerCase())
-          transfers.push({ value: BigInt(value).toString(), symbol: "ETH" })
+          transfers.push({ value: (value * (+1)), symbol: "ETH" })
 
         continue
       }
@@ -549,7 +552,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return Result.runAndWrapSync(() => getMessageOrThrow(request.params)).getOrNull()
   }, [request])
 
-  const [transfers, setTransfers] = useState<Nullable<Result<{ value: string, symbol: string }[]>>>()
+  const [transfers, setTransfers] = useState<Nullable<Result<{ value: number, symbol: string }[]>>>()
 
   useEffect(() => {
     getTransfersOrThrow(request.params).then(setTransfers).catch((console.warn))
@@ -646,7 +649,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               {Lang.match({ en: "Could not simulate transaction.", zh: "无法模拟交易。", hi: "लेनदेन का अनुकरण नहीं कर सका।", es: "No se pudo simular la transacción.", ar: "تعذر محاكاة المعاملة.", fr: "Impossible de simuler la transaction.", de: "Transaktion konnte nicht simuliert werden.", ru: "Не удалось смоделировать транзакцию.", pt: "Não foi possível simular a transação.", ja: "トランザクションをシミュレートできませんでした。", pa: "ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ ਸਿਮੂਲੇਟ ਨਹੀਂ ਕਰ ਸਕਿਆ।", bn: "লেনদেন সিমুলেট করা যায়নি।", id: "Tidak dapat mensimulasikan transaksi.", ur: "ٹرانزیکشن کی نقل نہیں کر سکا۔", ms: "Tidak dapat mensimulasikan transaksi.", it: "Impossibile simulare la transazione.", tr: "İşlem simüle edilemedi.", ta: "பரிவர்த்தனை சிமுலேட் செய்ய முடியவில்லை.", te: "ట్రాన్సాక్షన్‌ను అనుకరించలేకపోయింది.", ko: "트랜잭션을 시뮬레이트할 수 없습니다.", vi: "Không thể mô phỏng giao dịch.", pl: "Nie można zasymulować transakcji.", ro: "Nu s-a putut simula tranzacția.", nl: "Kon de transactie niet simuleren.", el: "Δεν ήταν δυνατή η προσομοίωση της συναλλαγής ", th: "ไม่สามารถจำลองธุรกรรมได้ ", cs: "Nelze simulovat transakci ", hu: "Nem sikerült szimulálni a tranzakciót ", sv: "Kunde inte simulera transaktionen ", da: "Kunne ikke simulere transaktionen" })}
             </div>}
             {transfers?.isOk() && <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
-              {JSON.stringify(transfers.get(), null, 2)}
+              {transfers.get().map(({ value, symbol }) => value.toLocaleString(Lang.get(), { style: "currency", currency: "USD", currencyDisplay: "code", notation: "compact", signDisplay: "always" }).replaceAll("USD", symbol)).join("\n")}
             </pre>}
           </div>
         </Fragment>
