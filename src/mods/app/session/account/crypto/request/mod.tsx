@@ -1,3 +1,7 @@
+import { base16 } from "@/libs/abi/libs/base16/mod.ts";
+import { abi } from "@/libs/abi/mods/abi/mod.ts";
+import { AbiString } from "@/libs/abi/mods/string/mod.ts";
+import { AbiUint256 } from "@/libs/abi/mods/uint/mod.ts";
 import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
 import { chainlist } from "@/libs/chainlist/mod.ts";
@@ -8,6 +12,7 @@ import { EIP712, EIP712Data } from "@/libs/eip712/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
+import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useSubmit } from "@/libs/submit/mod.ts";
 import { base58 } from "@hazae41/base58";
@@ -21,9 +26,9 @@ import { keccak256 } from "@hazae41/keccak256";
 import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedChainsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
 import { PathBoard } from "@hazae41/modal";
 import { useCloseContext } from "@hazae41/react-close-context";
-import { Result } from "@hazae41/result-and-option";
+import { Err, Ok, Result } from "@hazae41/result-and-option";
 import { secp256k1 } from "@hazae41/secp256k1";
-import React, { Fragment, useCallback, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 
 React;
 
@@ -353,7 +358,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     }
 
     throw new WcUnsupportedMethodsError()
-  }, [])
+  }, [seedphrase, getEthereumOrThrow, getSolanaOrThrow, requestOrThrow])
 
   const approve = useSubmit(async () => {
     await respondOrThrow(request.params).then(request.resolve).catch(request.reject).finally(() => close(true))
@@ -371,6 +376,14 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
     if (request.method === "solana_signTransaction")
       return "Solana"
+
+    if (request.method === "eth_signTypedData_v4") {
+      const [account, data] = request.params as [string, string]
+
+      const { domain } = JSON.parse(data) as EIP712Data
+
+      return chainlist.find(chain => chain.chainId === Number(domain.chainId))?.name
+    }
 
     throw new WcUnsupportedMethodsError()
   }, [])
@@ -396,14 +409,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const getMessageOrThrow = useCallback((params: WcSessionRequestParams) => {
     const { request } = params
 
-    if (request.method === "eth_sendTransaction") {
-      const [proposal] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
-
-      const { to, data, value } = proposal
-
-      return JSON.stringify({ to, data, value }, null, 2)
-    }
-
     if (request.method === "personal_sign") {
       const [message] = request.params as [string]
 
@@ -416,9 +421,9 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (request.method === "eth_signTypedData_v4") {
       const [account, data] = request.params as [string, string]
 
-      const { domain, message } = JSON.parse(data) as EIP712Data
+      const { message } = JSON.parse(data) as EIP712Data
 
-      return JSON.stringify({ domain, message }, null, 2)
+      return JSON.stringify(message, null, 2)
     }
 
     if (request.method === "solana_signMessage") {
@@ -433,16 +438,120 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
+  const getTransfersOrThrow = useCallback(async (params: WcSessionRequestParams) => {
+    const { request, chainId } = params
+
+    if (request.method === "eth_sendTransaction") {
+      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+
+      const chainId = Number(params.chainId.split(":")[1])
+      const chain = chainlist.find(chain => chain.chainId === chainId)
+
+      if (chain == null)
+        throw new WcUnsupportedChainsError()
+
+      const current = await getEthereumOrThrow()
+
+      if (current == null)
+        throw new WcUnsupportedAccountsError()
+      if (from.toLowerCase() !== current.toLowerCase())
+        throw new WcUnsupportedAccountsError()
+
+      const calls = [{ from, to, data, value }]
+
+      const payload = {
+        blockStateCalls: [{ calls }],
+        validation: false,
+        traceTransfers: true
+      }
+
+      interface CallResultLog {
+        readonly address: `0x${string}`
+        readonly topics: `0x${string}`[]
+        readonly data: `0x${string}`
+      }
+
+      interface CallResult {
+        readonly status: `0x${string}`,
+        readonly logs: CallResultLog[]
+      }
+
+      const [{ calls: [result] }] = await requestOrThrow<[{ calls: [CallResult] }]>(chain.rpc, {
+        method: "eth_simulateV1",
+        params: [payload, "latest"]
+      }).then(r => r.getOrThrow())
+
+      if (result.status !== "0x1")
+        return Err.void()
+
+      const transfers = []
+
+      for (const log of result.logs) {
+        const { address, topics } = log
+
+        const [event] = topics
+
+        if (event !== "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
+          continue
+
+        const from = `0x${topics[1].slice(-40)}`
+        const to = `0x${topics[2].slice(-40)}`
+        const value = BigInt(log.data)
+
+        if (address !== "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
+          const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
+            method: "eth_call",
+            params: [{ to: address, data: "0x95d89b41" }, "latest"]
+            // }).then(r => [r.getOrThrow()])
+          }).then(r => abi.decode([AbiString], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
+
+          const [decimals] = await requestOrThrow<`0x${string}`>(chain.rpc, {
+            method: "eth_call",
+            params: [{ to: address, data: "0x313ce567" }, "latest"]
+          }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
+
+          console.log(decimals)
+
+          if (from === current.toLowerCase())
+            transfers.push({ value: BigInt(-value).toString(), symbol })
+
+          if (to === current.toLowerCase())
+            transfers.push({ value: BigInt(value).toString(), symbol })
+
+          continue
+        }
+
+        if (from === current.toLowerCase())
+          transfers.push({ value: BigInt(-value).toString(), symbol: "ETH" })
+
+        if (to === current.toLowerCase())
+          transfers.push({ value: BigInt(value).toString(), symbol: "ETH" })
+
+        continue
+      }
+
+      return new Ok(transfers)
+    }
+
+    throw new WcUnsupportedMethodsError()
+  }, [getEthereumOrThrow, getSolanaOrThrow, requestOrThrow])
+
   const type = useMemo(() => {
-    return Result.runAndWrapSync(() => getTypeOrThrow(request.params))
+    return Result.runAndWrapSync(() => getTypeOrThrow(request.params)).getOrNull()
   }, [request])
 
   const chain = useMemo(() => {
-    return Result.runAndWrapSync(() => getChainOrThrow(request.params))
+    return Result.runAndWrapSync(() => getChainOrThrow(request.params)).getOrNull()
   }, [request])
 
   const message = useMemo(() => {
-    return Result.runAndWrapSync(() => getMessageOrThrow(request.params))
+    return Result.runAndWrapSync(() => getMessageOrThrow(request.params)).getOrNull()
+  }, [request])
+
+  const [transfers, setTransfers] = useState<Nullable<Result<{ value: string, symbol: string }[]>>>()
+
+  useEffect(() => {
+    getTransfersOrThrow(request.params).then(setTransfers).catch((console.warn))
   }, [request])
 
   return <Fragment>
@@ -454,7 +563,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       </div>
       <div className="h-6" />
       <div className="flex flex-col items-center justify-center">
-        {type.getOrNull() === "transaction" &&
+        {type === "transaction" &&
           <FlipCard
             type={Lang.match({ en: "Transaction", zh: "交易", hi: "लेनदेन", es: "Transacción", ar: "معاملة", fr: "Transaction", de: "Transaktion", ru: "Транзакция", pt: "Transação", ja: "トランザクション", pa: "ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ", bn: "লেনদেন", id: "Transaksi", ur: "ٹرانزیکشن", ms: "Transaksi", it: "Transazione", tr: "İşlem", ta: "பரிவர்த்தனை", te: "లావాదేవి", ko: "트랜잭션", vi: "Giao dịch", pl: "Transakcja", ro: "Tranzacție", nl: "Transactie", el: "Συναλλαγή ", th: "ธุรกรรม ", cs: "Transakce ", hu: "Tranzakció ", sv: "Transaktion ", da: "Transaktion" })}
             title={title}
@@ -464,7 +573,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             icon={<Outline.CubeIcon className="size-5" />}
             flip={flipped}
             onFlipChange={setFlipped} />}
-        {type.getOrNull() === "signature" &&
+        {type === "signature" &&
           <FlipCard
             type={Lang.match({ en: "Signature", zh: "签名", hi: "हस्ताक्षर", es: "Firma", ar: "توقيع", fr: "Signature", de: "Unterschrift", ru: "Подпись", pt: "Assinatura", ja: "署名", pa: "ਦਸਤਖਤ", bn: "স্বাক্ষর", id: "Tanda tangan", ur: "دستخط", ms: "Tanda tangan", it: "Firma", tr: "İmza", ta: "கையொப்பம்", te: "సంతకం", ko: "서명", vi: "Chữ ký", pl: "Podpis", ro: "Semnătură", nl: "Handtekening", el: "Υπογραφή ", th: "ลายเซ็น ", cs: "Podpis ", hu: "Aláírás ", sv: "Signatur ", da: "Signatur" })}
             title={title}
@@ -474,7 +583,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             icon={<Outline.CubeTransparentIcon className="size-5" />}
             flip={flipped}
             onFlipChange={setFlipped} />}
-        {type.isErr() &&
+        {type == null &&
           <FlipCard
             type={Lang.match({ en: "Unknown", zh: "未知", hi: "अज्ञात", es: "Desconocido", ar: "غير معروف", fr: "Inconnu", de: "Unbekannt", ru: "Неизвестно", pt: "Desconhecido", ja: "不明", pa: "ਅਣਜਾਣ", bn: "অজানা", id: "Tidak diketahui", ur: "نامعلوم", ms: "Tidak diketahui", it: "Sconosciuto", tr: "Bilinmeyen", ta: "அறியப்படாதது", te: "తెలియని", ko: "알 수 없음", vi: "Không xác định", pl: "Nieznany", ro: "Necunoscut", nl: "Onbekend", el: "Άγνωστο ", th: "ไม่ทราบ ", cs: "Neznámý ", hu: "Ismeretlen ", sv: "Okänd ", da: "Ukendt" })}
             title={title}
@@ -490,16 +599,23 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <input className="hidden"
           autoComplete="off"
           name="username" />
-        {chain.isOk() && <Fragment>
+        {chain != null && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
             {Lang.match({ en: "Chain", zh: "链", hi: "चेन", es: "Cadena", ar: "سلسلة", fr: "Chaîne", de: "Kette", ru: "Цепочка", pt: "Cadeia", ja: "チェーン", pa: "ਚੇਨ", bn: "চেইন", id: "Rantai", ur: "چین", ms: "Rantai", it: "Catena", tr: "Zincir", ta: "செயின்", te: "చెయిన్", ko: "체인", vi: "Chuỗi", pl: "Łańcuch", ro: "Lanț", nl: "Ketting", el: "Αλυσίδα ", th: "เชน ", cs: "Řetěz ", hu: "Lánc ", sv: "Kedja ", da: "Kæde" })}
           </div>
           <div className="text-default-contrast">
-            {chain.get()}
+            {Lang.match({ en: "The blockchain network of the request.", zh: "请求的区块链网络。", hi: "अनुरोध का ब्लॉकचेन नेटवर्क।", es: "La red blockchain de la solicitud.", ar: "شبكة البلوكشين للطلب.", fr: "Le réseau blockchain de la requête.", de: "Das Blockchain-Netzwerk der Anfrage.", ru: "Блокчейн-сеть запроса.", pt: "A rede blockchain da solicitação.", ja: "リクエストのブロックチェーンネットワーク。", pa: "ਬੇਨਤੀ ਦਾ ਬਲਾਕਚੇਨ ਨੈੱਟਵਰਕ।", bn: "অনুরোধের ব্লকচেইন নেটওয়ার্ক।", id: "Jaringan blockchain dari permintaan.", ur: "درخواست کا بلاکچین نیٹ ورک۔", ms: "Rantai blok dari permintaan.", it: "La rete blockchain della richiesta.", tr: "İsteğin blok zinciri ağı.", ta: "கோரிக்கையின் பிளாக்செயின் நெட்வொர்க்.", te: "అభ్యర్థన యొక్క బ్లాక్‌చైన్ నెట్‌వర్క్.", ko: "요청의 블록체인 네트워크입니다.", vi: "Mạng blockchain của yêu cầu.", pl: "Sieć blockchain żądania.", ro: "Rețeaua blockchain a cererii.", nl: "Het blockchain-netwerk van het verzoek.", el: "Το δίκτυο blockchain του αιτήματος ", th: "เครือข่ายบล็อกเชนของคำขอ ", cs: "Blockchain síť požadavku ", hu: "A kérés blokklánc hálózata ", sv: "Blockkedjanätverket för förfrågan ", da: "Blockchain-netværket for anmodningen" })}
+          </div>
+          <div className="h-4" />
+          <div className="border border-default-contrast po-2 rounded-xl flex items-center gap-4">
+            <input className="w-full focus-visible:outline-none"
+              readOnly
+              autoComplete="off"
+              value={chain} />
           </div>
         </Fragment>}
-        {message.isOk() && <Fragment>
+        {message != null && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
             {Lang.match({ en: "Message", zh: "消息", hi: "संदेश", es: "Mensaje", ar: "رسالة", fr: "Message", de: "Nachricht", ru: "Сообщение", pt: "Mensagem", ja: "メッセージ", pa: "ਸੰਦੇਸ਼", bn: "বার্তা", id: "Pesan", ur: "پیغام", ms: "Mesej", it: "Messaggio", tr: "Mesaj", ta: "செய்தி", te: "సందేశం", ko: "메시지", vi: "Tin nhắn", pl: "Wiadomość", ro: "Mesaj", nl: "Bericht", el: "Μήνυμα ", th: "ข้อความ ", cs: "Zpráva ", hu: "Üzenet ", sv: "Meddelande ", da: "Besked" })}
@@ -510,7 +626,34 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           <div className="h-4" />
           <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
             <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
-              {message.get()}
+              {message}
+            </pre>
+          </div>
+        </Fragment>}
+        <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            {Lang.match({ en: "Transfers", zh: "转账", hi: "स्थानांतरण", es: "Transferencias", ar: "التحويلات", fr: "Transferts", de: "Überweisungen", ru: "Переводы", pt: "Transferências", ja: "転送", pa: "ਟ੍ਰਾਂਸਫਰ", bn: "স্থানান্তর", id: "Transfer", ur: "منتقلیاں", ms: "Transfer", it: "Trasferimenti", tr: "Transferler", ta: "பரிமாற்றங்கள்", te: "ట్రాన్స్ఫర్స్", ko: "전송", vi: "Chuyển khoản", pl: "Transfery", ro: "Transferuri", nl: "Overboekingen", el: "Μεταφορές ", th: "การโอน ", cs: "Převody ", hu: "Átutalások ", sv: "Överföringar ", da: "Overførsler" })}
+          </div>
+          <div className="text-default-contrast">
+            {Lang.match({ en: "The detected asset transfers of the request.", zh: "请求的检测到的资产转移。", hi: "अनुरोध के पता लगाए गए संपत्ति स्थानांतरण।", es: "Las transferencias de activos detectadas de la solicitud.", ar: "تحويلات الأصول المكتشفة من الطلب.", fr: "Les transferts d'actifs détectés de la requête.", de: "Die erkannten Asset-Transfers der Anfrage.", ru: "Обнаруженные переводы активов запроса.", pt: "As transferências de ativos detectadas da solicitação.", ja: "リクエストの検出された資産転送。", pa: "ਬੇਨਤੀ ਦੇ ਪਤਾ ਲੱਗੇ ਐਸੈੱਟ ਟ੍ਰਾਂਸਫਰ।", bn: "অনুরোধের সনাক্ত করা परिसंपत्ति स्थानांतरण।", id: "Transfer aset yang terdeteksi dari permintaan.", ur: "درخواست سے پتہ چلنے والی اثاثہ منتقلیاں۔", ms: "Transfer aset yang terdeteksi dari permintaan.", it: "I trasferimenti di asset rilevati della richiesta.", tr: "İstekten tespit edilen varlık transferleri.", ta: "கோரிக்கையின் கண்டறியப்பட்ட சொத்து பரிமாற்றங்கள்.", te: "అభ్యర్థన నుండి గుర్తించిన ఆస్తి బదిలీలు.", ko: "요청에서 감지된 자산 전송입니다.", vi: "Các chuyển khoản tài sản được phát hiện của yêu cầu.", pl: "Wykryte transfery aktywów żądania.", ro: "Transferurile de active detectate ale cererii.", nl: "De gedetecteerde asset-overboekingen van het verzoek.", el: "Οι ανιχνευμένες μεταφορές περιουσιακών στοιχείων του αιτήματος ", th: "การโอนสินทรัพย์ที่ตรวจพบของคำขอ ", cs: "Zjištěné převody aktiv požadavku ", hu: "A kérés észlelt eszközátutalásai ", sv: "De upptäckta tillgångsöverföringarna av förfrågan ", da: "De registrerede aktivoverførsler af anmodningen" })}
+          </div>
+          <div className="h-4" />
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+            {transfers == null && <Spinner className="size-5 animate-spin" />}
+            {transfers?.isErr() && <div className="text-default-contrast">
+              {Lang.match({ en: "Could not simulate transaction.", zh: "无法模拟交易。", hi: "लेनदेन का अनुकरण नहीं कर सका।", es: "No se pudo simular la transacción.", ar: "تعذر محاكاة المعاملة.", fr: "Impossible de simuler la transaction.", de: "Transaktion konnte nicht simuliert werden.", ru: "Не удалось смоделировать транзакцию.", pt: "Não foi possível simular a transação.", ja: "トランザクションをシミュレートできませんでした。", pa: "ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ ਸਿਮੂਲੇਟ ਨਹੀਂ ਕਰ ਸਕਿਆ।", bn: "লেনদেন সিমুলেট করা যায়নি।", id: "Tidak dapat mensimulasikan transaksi.", ur: "ٹرانزیکشن کی نقل نہیں کر سکا۔", ms: "Tidak dapat mensimulasikan transaksi.", it: "Impossibile simulare la transazione.", tr: "İşlem simüle edilemedi.", ta: "பரிவர்த்தனை சிமுலேட் செய்ய முடியவில்லை.", te: "ట్రాన్సాక్షన్‌ను అనుకరించలేకపోయింది.", ko: "트랜잭션을 시뮬레이트할 수 없습니다.", vi: "Không thể mô phỏng giao dịch.", pl: "Nie można zasymulować transakcji.", ro: "Nu s-a putut simula tranzacția.", nl: "Kon de transactie niet simuleren.", el: "Δεν ήταν δυνατή η προσομοίωση της συναλλαγής ", th: "ไม่สามารถจำลองธุรกรรมได้ ", cs: "Nelze simulovat transakci ", hu: "Nem sikerült szimulálni a tranzakciót ", sv: "Kunde inte simulera transaktionen ", da: "Kunne ikke simulere transaktionen" })}
+            </div>}
+            {transfers?.isOk() && <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
+              {JSON.stringify(transfers.get(), null, 2)}
+            </pre>}
+          </div>
+        </Fragment>
+        {type == null && <Fragment>
+          <div className="h-6" />
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+            <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
+              {JSON.stringify(request.params.request, null, 2)}
             </pre>
           </div>
         </Fragment>}
@@ -523,7 +666,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {decline.running ? <Spinner className="size-5 animate-spin" /> : <Outline.NoSymbolIcon className="size-5" />}
             {Lang.match({ en: "Decline", zh: "拒绝", hi: "अस्वीकृत करें", es: "Rechazar", ar: "رفض", fr: "Refuser", de: "Ablehnen", ru: "Отклонить", pt: "Recusar", ja: "拒否", pa: "ਅਸਵੀਕਾਰ ਕਰੋ", bn: "প্রত্যাখ্যান করুন", id: "Tolak", ur: "رد کریں", ms: "Tolak", it: "Rifiuta", tr: "Reddet", ta: "நிராகரிக்கவும்", te: "తిరస్కరించండి", ko: "거부", vi: "Từ chối", pl: "Odrzuć", ro: "Respinge", nl: "Afwijzen", el: "Απορρίπτω ", th: "ปฏิเสธ ", cs: "Odmítnout ", hu: "Elutasítás ", sv: "Avvisa ", da: "Afvis" })}
           </WideContrastButton>
-          {type.isOk() &&
+          {type != null &&
             <WideOppositeButton
               type="button"
               disabled={approve.running}
