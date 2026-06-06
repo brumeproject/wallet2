@@ -439,11 +439,31 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
+  type Transfer =
+    | TokenTransfer
+    | OwnershipTransfer
+
+  interface TokenTransfer {
+    readonly type: "token"
+    readonly contract: string
+    readonly from: string
+    readonly to: string
+    readonly value: number
+    readonly symbol: string
+  }
+
+  interface OwnershipTransfer {
+    readonly type: "ownership"
+    readonly contract: string
+    readonly from: string
+    readonly to: string
+  }
+
   const getTransfersOrThrow = useCallback(async (params: WcSessionRequestParams) => {
-    const { request, chainId } = params
+    const { request } = params
 
     if (request.method === "eth_sendTransaction") {
-      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+      const [{ data, from, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
 
       const chainId = Number(params.chainId.split(":")[1])
       const chain = chainlist.find(chain => chain.chainId === chainId)
@@ -485,51 +505,58 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (result.status !== "0x1")
         return Err.void()
 
-      const transfers = []
+      const transfers = new Array<Transfer>()
 
       for (const log of result.logs) {
         const { address, topics } = log
 
         const [event] = topics
 
-        if (event !== "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
-          continue
+        if (event === "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef") {
+          let from = `0x${topics[1].slice(-40)}`
+          let to = `0x${topics[2].slice(-40)}`
 
-        const from = `0x${topics[1].slice(-40)}`
-        const to = `0x${topics[2].slice(-40)}`
+          if (from.toLowerCase() === current.toLowerCase())
+            from = "you"
+          if (to.toLowerCase() === current.toLowerCase())
+            to = "you"
 
-        if (from !== current.toLowerCase() && to !== current.toLowerCase())
-          continue
+          if (address !== "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
+            const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
+              method: "eth_call",
+              params: [{ to: address, data: "0x95d89b41" }, "latest"]
+            }).then(r => abi.decode([AbiString], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
 
-        if (address !== "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
-          const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
-            method: "eth_call",
-            params: [{ to: address, data: "0x95d89b41" }, "latest"]
-          }).then(r => abi.decode([AbiString], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
+            const [decimals] = await requestOrThrow<`0x${string}`>(chain.rpc, {
+              method: "eth_call",
+              params: [{ to: address, data: "0x313ce567" }, "latest"]
+            }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
 
-          const [decimals] = await requestOrThrow<`0x${string}`>(chain.rpc, {
-            method: "eth_call",
-            params: [{ to: address, data: "0x313ce567" }, "latest"]
-          }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
+            const value = Number(new Fixed(BigInt(log.data), Number(decimals)).toString())
 
-          const value = Number(new Fixed(BigInt(log.data), Number(decimals)).toString())
+            transfers.push({ type: "token", contract: address, from, to, value, symbol })
 
-          if (from === current.toLowerCase())
-            transfers.push({ value: (value * (-1)), symbol })
+            continue
+          }
 
-          if (to === current.toLowerCase())
-            transfers.push({ value: (value * (+1)), symbol })
+          const value = Number(new Fixed(BigInt(log.data), 18).toString())
+
+          transfers.push({ type: "token", contract: "(native)", from, to, value, symbol: "ETH" })
 
           continue
         }
 
-        const value = Number(new Fixed(BigInt(log.data), 18).toString())
+        if (event === "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+          let from = `0x${topics[1].slice(-40)}`
+          let to = `0x${topics[2].slice(-40)}`
 
-        if (from === current.toLowerCase())
-          transfers.push({ value: (value * (-1)), symbol: "ETH" })
+          if (from.toLowerCase() === current.toLowerCase())
+            from = "you"
+          if (to.toLowerCase() === current.toLowerCase())
+            to = "you"
 
-        if (to === current.toLowerCase())
-          transfers.push({ value: (value * (+1)), symbol: "ETH" })
+          transfers.push({ type: "ownership", contract: address, from, to })
+        }
 
         continue
       }
@@ -552,7 +579,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return Result.runAndWrapSync(() => getMessageOrThrow(request.params)).getOrNull()
   }, [request])
 
-  const [transfers, setTransfers] = useState<Nullable<Result<{ value: number, symbol: string }[]>>>()
+  const [transfers, setTransfers] = useState<Nullable<Result<Transfer[]>>>()
 
   useEffect(() => {
     getTransfersOrThrow(request.params).then(setTransfers).catch((console.warn))
@@ -643,14 +670,53 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {Lang.match({ en: "The detected asset transfers of the request.", zh: "请求的检测到的资产转移。", hi: "अनुरोध के पता लगाए गए संपत्ति स्थानांतरण।", es: "Las transferencias de activos detectadas de la solicitud.", ar: "تحويلات الأصول المكتشفة من الطلب.", fr: "Les transferts d'actifs détectés de la requête.", de: "Die erkannten Asset-Transfers der Anfrage.", ru: "Обнаруженные переводы активов запроса.", pt: "As transferências de ativos detectadas da solicitação.", ja: "リクエストの検出された資産転送。", pa: "ਬੇਨਤੀ ਦੇ ਪਤਾ ਲੱਗੇ ਐਸੈੱਟ ਟ੍ਰਾਂਸਫਰ।", bn: "অনুরোধের সনাক্ত করা परिसंपत्ति स्थानांतरण।", id: "Transfer aset yang terdeteksi dari permintaan.", ur: "درخواست سے پتہ چلنے والی اثاثہ منتقلیاں۔", ms: "Transfer aset yang terdeteksi dari permintaan.", it: "I trasferimenti di asset rilevati della richiesta.", tr: "İstekten tespit edilen varlık transferleri.", ta: "கோரிக்கையின் கண்டறியப்பட்ட சொத்து பரிமாற்றங்கள்.", te: "అభ్యర్థన నుండి గుర్తించిన ఆస్తి బదిలీలు.", ko: "요청에서 감지된 자산 전송입니다.", vi: "Các chuyển khoản tài sản được phát hiện của yêu cầu.", pl: "Wykryte transfery aktywów żądania.", ro: "Transferurile de active detectate ale cererii.", nl: "De gedetecteerde asset-overboekingen van het verzoek.", el: "Οι ανιχνευμένες μεταφορές περιουσιακών στοιχείων του αιτήματος ", th: "การโอนสินทรัพย์ที่ตรวจพบของคำขอ ", cs: "Zjištěné převody aktiv požadavku ", hu: "A kérés észlelt eszközátutalásai ", sv: "De upptäckta tillgångsöverföringarna av förfrågan ", da: "De registrerede aktivoverførsler af anmodningen" })}
           </div>
           <div className="h-4" />
-          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+          <div className="flex flex-col gap-2 border border-default-contrast rounded-xl p-6">
             {transfers == null && <Spinner className="size-5 animate-spin" />}
             {transfers?.isErr() && <div className="text-default-contrast">
               {Lang.match({ en: "Could not simulate transaction.", zh: "无法模拟交易。", hi: "लेनदेन का अनुकरण नहीं कर सका।", es: "No se pudo simular la transacción.", ar: "تعذر محاكاة المعاملة.", fr: "Impossible de simuler la transaction.", de: "Transaktion konnte nicht simuliert werden.", ru: "Не удалось смоделировать транзакцию.", pt: "Não foi possível simular a transação.", ja: "トランザクションをシミュレートできませんでした。", pa: "ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ ਸਿਮੂਲੇਟ ਨਹੀਂ ਕਰ ਸਕਿਆ।", bn: "লেনদেন সিমুলেট করা যায়নি।", id: "Tidak dapat mensimulasikan transaksi.", ur: "ٹرانزیکشن کی نقل نہیں کر سکا۔", ms: "Tidak dapat mensimulasikan transaksi.", it: "Impossibile simulare la transazione.", tr: "İşlem simüle edilemedi.", ta: "பரிவர்த்தனை சிமுலேட் செய்ய முடியவில்லை.", te: "ట్రాన్సాక్షన్‌ను అనుకరించలేకపోయింది.", ko: "트랜잭션을 시뮬레이트할 수 없습니다.", vi: "Không thể mô phỏng giao dịch.", pl: "Nie można zasymulować transakcji.", ro: "Nu s-a putut simula tranzacția.", nl: "Kon de transactie niet simuleren.", el: "Δεν ήταν δυνατή η προσομοίωση της συναλλαγής ", th: "ไม่สามารถจำลองธุรกรรมได้ ", cs: "Nelze simulovat transakci ", hu: "Nem sikerült szimulálni a tranzakciót ", sv: "Kunde inte simulera transaktionen ", da: "Kunne ikke simulere transaktionen" })}
             </div>}
-            {transfers?.isOk() && <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
-              {transfers.get().map(({ value, symbol }) => value.toLocaleString(Lang.get(), { style: "currency", currency: "USD", currencyDisplay: "code", notation: "compact", signDisplay: "always" }).replaceAll("USD", symbol)).join("\n")}
-            </pre>}
+            {transfers?.getOrNull()?.map((transfer, index) => <Fragment key={index}>
+              {transfer.type === "token" && <Fragment>
+                <div className="flex flex-col bg-default-contrast po-2 rounded-xl">
+                  <div className="font-medium">
+                    {transfer.value.toLocaleString(Lang.get(), { style: "currency", currency: "USD", currencyDisplay: "code", notation: "compact" }).replaceAll("USD", transfer.symbol)}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Outline.ArrowLongDownIcon className="size-5" />
+                    <div className="flex flex-col truncate">
+                      <div className="not-data-[you=true]:text-default-contrast truncate"
+                        data-you={transfer.from === "you"}>
+                        {transfer.from === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.from}
+                      </div>
+                      <div className="not-data-[you=true]:text-default-contrast truncate"
+                        data-you={transfer.to === "you"}>
+                        {transfer.to === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.to}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Fragment>}
+              {transfer.type === "ownership" && <Fragment>
+                <div className="flex flex-col bg-default-contrast po-2 rounded-xl">
+                  <div className="font-medium">
+                    {transfer.contract}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Outline.ArrowLongDownIcon className="size-5" />
+                    <div className="flex flex-col truncate">
+                      <div className="not-data-[you=true]:text-default-contrast truncate"
+                        data-you={transfer.from === "you"}>
+                        {transfer.from === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.from}
+                      </div>
+                      <div className="not-data-[you=true]:text-default-contrast truncate"
+                        data-you={transfer.to === "you"}>
+                        {transfer.to === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.to}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Fragment>}
+            </Fragment>)}
           </div>
         </Fragment>
         {type == null && <Fragment>
