@@ -496,6 +496,10 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
         const from = `0x${topics[1].slice(-40)}`
         const to = `0x${topics[2].slice(-40)}`
+
+        if (from !== current.toLowerCase() && to !== current.toLowerCase())
+          continue
+
         const value = BigInt(log.data)
 
         if (address !== "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
@@ -510,7 +514,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             params: [{ to: address, data: "0x313ce567" }, "latest"]
           }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
 
-          console.log(decimals)
+          console.log(address, symbol, decimals)
 
           if (from === current.toLowerCase())
             transfers.push({ value: BigInt(-value).toString(), symbol })
