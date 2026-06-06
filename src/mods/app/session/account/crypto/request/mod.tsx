@@ -506,15 +506,12 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
             method: "eth_call",
             params: [{ to: address, data: "0x95d89b41" }, "latest"]
-            // }).then(r => [r.getOrThrow()])
           }).then(r => abi.decode([AbiString], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
 
           const [decimals] = await requestOrThrow<`0x${string}`>(chain.rpc, {
             method: "eth_call",
             params: [{ to: address, data: "0x313ce567" }, "latest"]
           }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
-
-          console.log(address, symbol, decimals)
 
           if (from === current.toLowerCase())
             transfers.push({ value: BigInt(-value).toString(), symbol })
