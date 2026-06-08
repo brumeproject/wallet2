@@ -16,7 +16,7 @@ import { useSessionContext } from "@/mods/app/session/mod.tsx";
 import { Writable } from "@hazae41/binary";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import * as KDBX from "@hazae41/kdbx";
-import { IrnClient, WalletConnect, WcChannel, WcSession, WcSessionRequestParams } from "@hazae41/latrine";
+import { IrnClient, WalletConnect, WcChannel, WcSession, WcSessionRequestParams, WcUnsupportedMethodsError } from "@hazae41/latrine";
 import { PathBoard, PathPaper } from "@hazae41/modal";
 import { useCloseContext } from "@hazae41/react-close-context";
 import React, { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
@@ -427,6 +427,23 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const session = new WcSession(channel)
 
     const onRequest = async (params: WcSessionRequestParams<unknown>) => {
+      const { request } = params
+
+      if (request.method === "eth_sendTransaction")
+        return await handle(params)
+      if (request.method === "eth_signTypedData_v4")
+        return await handle(params)
+      if (request.method === "personal_sign")
+        return await handle(params)
+      if (request.method === "solana_signTransaction")
+        return await handle(params)
+      if (request.method === "solana_signMessage")
+        return await handle(params)
+
+      throw new WcUnsupportedMethodsError()
+    }
+
+    const handle = async (params: WcSessionRequestParams<unknown>) => {
       using stack = new DisposableStack()
 
       const { promise, resolve, reject } = Promise.withResolvers<unknown>()

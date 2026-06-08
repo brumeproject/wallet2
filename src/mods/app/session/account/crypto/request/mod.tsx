@@ -5,6 +5,7 @@ import { AbiUint256 } from "@/libs/abi/mods/uint/mod.ts";
 import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
 import { chainlist } from "@/libs/chainlist/mod.ts";
+import { useCopy } from "@/libs/copy/mod.ts";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
 import { UnsignedTransaction0 } from "@/libs/eip155/mods/transaction0/mod.ts";
 import { UnsignedTransaction2 } from "@/libs/eip155/mods/transaction2/mod.ts";
@@ -439,7 +440,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
-  type Transfer =
+  type Event =
     | TokenTransfer
     | OwnershipTransfer
 
@@ -459,7 +460,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     readonly to: string
   }
 
-  const getTransfersOrThrow = useCallback(async (params: WcSessionRequestParams) => {
+  const getSimulationOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request } = params
 
     if (request.method === "eth_sendTransaction") {
@@ -505,7 +506,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (result.status !== "0x1")
         return Err.void()
 
-      const transfers = new Array<Transfer>()
+      const events = new Array<Event>()
 
       for (const log of result.logs) {
         const { address, topics } = log
@@ -534,14 +535,16 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
             const value = Number(new Fixed(BigInt(log.data), Number(decimals)).toString())
 
-            transfers.push({ type: "token", contract: address, from, to, value, symbol })
+            events.push({ type: "token", contract: address, from, to, value, symbol })
 
             continue
           }
 
-          const value = Number(new Fixed(BigInt(log.data), 18).toString())
+          const { symbol, decimals } = chain.nativeCurrency
 
-          transfers.push({ type: "token", contract: "(native)", from, to, value, symbol: "ETH" })
+          const value = Number(new Fixed(BigInt(log.data), decimals).toString())
+
+          events.push({ type: "token", contract: "(native)", from, to, value, symbol })
 
           continue
         }
@@ -555,13 +558,13 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           if (to.toLowerCase() === current.toLowerCase())
             to = "you"
 
-          transfers.push({ type: "ownership", contract: address, from, to })
+          events.push({ type: "ownership", contract: address, from, to })
         }
 
         continue
       }
 
-      return new Ok(transfers)
+      return new Ok(events)
     }
 
     throw new WcUnsupportedMethodsError()
@@ -579,11 +582,33 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return Result.runAndWrapSync(() => getMessageOrThrow(request.params)).getOrNull()
   }, [request])
 
-  const [transfers, setTransfers] = useState<Nullable<Result<Transfer[]>>>()
+  const [simulation, setSimulation] = useState<Nullable<Result<Event[]>>>()
 
   useEffect(() => {
-    getTransfersOrThrow(request.params).then(setTransfers).catch((console.warn))
+    getSimulationOrThrow(request.params).then(setSimulation).catch((console.warn))
   }, [request])
+
+  const getPromptOrThrow = useCallback((params: WcSessionRequestParams, simulation: Result<Event[]>) => {
+    const { request, chainId } = params
+
+    if (request.method === "eth_sendTransaction") {
+      const [{ gas, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+
+      const transaction = { chainId, gas, to, value, reverts: simulation.isErr(), events: simulation.getOrNull() }
+
+      return Lang.match({ en: "I am about to sign a transaction. Help me understand what I am signing and what the consequences are. Be concise and warn me of any potential risks. Here is the transaction and its simulation:", zh: "我即将签署一笔交易。请帮助我理解我正在签署的内容及其后果。请简明扼要，并提醒我任何潜在风险。以下是交易及其模拟：", hi: "मैं एक लेनदेन पर हस्ताक्षर करने वाला हूँ। कृपया मुझे समझने में मदद करें कि मैं क्या हस्ताक्षर कर रहा हूँ और इसके परिणाम क्या होंगे। संक्षेप में बताएं और किसी भी संभावित जोखिम के बारे में चेतावनी दें। यहाँ लेनदेन और इसका सिमुलेशन है:", es: "Estoy a punto de firmar una transacción. Ayúdame a entender lo que estoy firmando y cuáles son las consecuencias. Sé conciso y adviérteme de cualquier riesgo potencial. Aquí está la transacción y su simulación:", ar: "أنا على وشك توقيع معاملة. ساعدني في فهم ما أوقع عليه وما هي العواقب. كن موجزًا وحذرني من أي مخاطر محتملة. إليك المعاملة ومحاكاتها:", fr: "Je suis sur le point de signer une transaction. Aidez-moi à comprendre ce que je signe et quelles en sont les conséquences. Soyez concis et avertissez-moi de tout risque potentiel. Voici la transaction et sa simulation :", de: "Ich bin dabei, eine Transaktion zu unterschreiben. Helfen Sie mir zu verstehen, was ich unterschreibe und welche Konsequenzen es hat. Seien Sie prägnant und warnen Sie mich vor möglichen Risiken. Hier ist die Transaktion und ihre Simulation:", ru: "Я собираюсь подписать транзакцию. Помогите мне понять, что я подписываю и каковы последствия. Будьте кратки и предупредите меня о любых потенциальных рисках. Вот транзакция и ее симуляция:", pt: "Estou prestes a assinar uma transação. Ajude-me a entender o que estou assinando e quais são as consequências. Seja conciso e me avise sobre quaisquer riscos potenciais. Aqui está a transação e sua simulação:", ja: "私はトランザクションに署名しようとしています。私が何に署名しているのか、そしてその結果が何であるかを理解するのを手伝ってください。簡潔にし、潜在的なリスクについて警告してください。ここにトランザクションとそのシミュレーションがあります:", pa: "ਮੈਂ ਇੱਕ ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ 'ਤੇ ਦਸਤਖਤ ਕਰਨ ਵਾਲਾ ਹਾਂ। ਮੈਨੂੰ ਸਮਝਣ ਵਿੱਚ ਮਦਦ ਕਰੋ ਕਿ ਮੈਂ ਕੀ ਸਾਈਨ ਕਰ ਰਿਹਾ ਹਾਂ ਅਤੇ ਇਸ ਦੇ ਨਤੀਜੇ ਕੀ ਹੋਣਗੇ। ਸੰਖੇਪ ਵਿੱਚ ਹੋਵੋ ਅਤੇ ਕਿਸੇ ਵੀ ਸੰਭਾਵਤ ਖਤਰੇ ਬਾਰੇ ਚੇਤਾਵਨੀ ਦਿਓ। ਇੱਥੇ ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ ਅਤੇ ਇਸ ਦੀ ਸਿਮੂਲੇਸ਼ਨ ਹੈ:", bn: "আমি একটি লেনদেনে সাইন করতে যাচ্ছি। আমাকে সাহায্য করুন বুঝতে আমি কি সাইন করছি এবং এর ফলাফল কি হবে। সংক্ষিপ্ত হোন এবং আমাকে সম্ভাব্য ঝুঁকি সম্পর্কে সতর্ক করুন। এখানে লেনদেন এবং এর সিমুলেশন রয়েছে:", id: "Saya akan menandatangani transaksi. Bantu saya memahami apa yang saya tandatangani dan apa konsekuensinya. Jadilah singkat dan beri tahu saya tentang potensi risiko. Berikut adalah transaksi dan simulasinya:", ur: "میں ایک ٹرانزیکشن پر دستخط کرنے والا ہوں۔ مجھے سمجھنے میں مدد کریں کہ میں کیا سائن کر رہا ہوں اور اس کے نتائج کیا ہوں گے۔ مختصر رہیں اور مجھے کسی بھی ممکنہ خطرے کے بارے میں آگاہ کریں۔ یہاں ٹرانزیکشن اور اس کی نقل ہے:", ms: "Saya akan menandatangani transaksi. Bantu saya memahami apa yang saya tandatangani dan apa konsekuensinya. Jadilah singkat dan beri tahu saya tentang potensi risiko. Berikut adalah transaksi dan simulasinya:", it: "Sto per firmare una transazione. Aiutami a capire cosa sto firmando e quali sono le conseguenze. Sii conciso e avvisami di eventuali rischi potenziali. Ecco la transazione e la sua simulazione:", tr: "Bir işlemi imzalamak üzereyim. Ne imzaladığımı ve sonuçlarının ne olacağını anlamama yardımcı olun. Kısa olun ve potansiyel riskler hakkında beni uyarın. İşte işlem ve simülasyonu:", ta: "நான் ஒரு பரிவர்த்தனை கையெழுத்திடப்போகிறேன். நான் என்ன கையெழுத்திடுகிறேன் மற்றும் அதன் விளைவுகள் என்ன என்பதை புரிந்துகொள்ள உதவுங்கள். சுருக்கமாக இருங்கள் மற்றும் எந்தவொரு சாத்தியமான அபாயங்களையும் எச்சரிக்கவும். இங்கே பரிவர்த்தனை மற்றும் அதன் சிமுலேஷன் உள்ளது:", te: "నేను ఒక లావాదేవి పై సంతకం చేయబోతున్నాను. నేను ఏమి సంతకం చేస్తున్నాను మరియు దాని పరిణామాలు ఏమిటో అర్థం చేసుకోవడంలో నాకు సహాయం చేయండి. సంక్షిప్తంగా ఉండండి మరియు ఏవైనా సంభావ్య ప్రమాదాల గురించి నాకు హెచ్చరించండి. ఇక్కడ లావాదేవి మరియు దాని అనుకరణ ఉంది:", ko: "저는 거래에 서명하려고 합니다. 내가 무엇에 서명하고 있는지, 그리고 그 결과가 무엇인지 이해하는 데 도움을 주세요. 간결하게 작성하고 잠재적인 위험에 대해 경고하세요. 여기에 거래와 시뮬레이션이 있습니다:", vi: "Tôi sắp ký một giao dịch. Hãy giúp tôi hiểu tôi đang ký gì và hậu quả của nó là gì. Hãy ngắn gọn và cảnh báo tôi về bất kỳ rủi ro tiềm ẩn nào. Đây là giao dịch và mô phỏng của nó:", pl: "Zamierzam podpisać transakcję. Pomóż mi zrozumieć, co podpisuję i jakie są tego konsekwencje. Bądź zwięzły i ostrzeż mnie o wszelkich potencjalnych zagrożeniach. Oto transakcja i jej symulacja:", ro: "Sunt pe cale să semnez o tranzacție. Ajută-mă să înțeleg ce semnez și care sunt consecințele. Fii concis și avertizează-mă cu privire la orice riscuri potențiale. Iată tranzacția și simularea acesteia:", nl: "Ik sta op het punt een transactie te ondertekenen. Help me begrijpen wat ik onderteken en wat de gevolgen zijn. Wees beknopt en waarschuw me voor eventuele risico's. Hier is de transactie en de simulatie ervan:", el: "Είμαι έτοιμος να υπογράψω μια συναλλαγή. Βοηθήστε με να καταλάβω τι υπογράφω και ποιες είναι οι συνέπειες. Να είστε συνοπτικοί και να με προειδοποιείτε για τυχόν πιθανούς κινδύνους. Εδώ είναι η συναλλαγή και η προσομοίωσή της:", th: "ฉันกำลังจะเซ็นชื่อในธุรกรรม ช่วยฉันเข้าใจว่าฉันกำลังเซ็นอะไรและผลที่ตามมาคืออะไร โปรดสั้น ๆ และเตือนฉันเกี่ยวกับความเสี่ยงที่อาจเกิดขึ้น นี่คือธุรกรรมและการจำลองของมัน:", cs: "Chystám se podepsat transakci. Pomozte mi pochopit, co podepisuji a jaké jsou důsledky. Buďte struční a varujte mě před jakýmikoli potenciálními riziky. Zde je transakce a její simulace:", hu: "Tranzakciót fogok aláírni. Segítsen megérteni, mit írok alá és mik a következmények. Legyen tömör és figyelmeztessen minden lehetséges kockázatra. Itt van a tranzakció és annak szimulációja:", sv: "Jag är på väg att skriva under en transaktion. Hjälp mig att förstå vad jag skriver under och vilka konsekvenser det har. Var kortfattad och varna mig för eventuella risker. Här är transaktionen och dess simulering:", da: "Jeg er ved at underskrive en transaktion. Hjælp mig med at forstå, hvad jeg underskriver, og hvad konsekvenserne er. Vær kortfattet og advare mig om eventuelle potentielle risici. Her er transaktionen og dens simulering:" }) + "\n\n" + JSON.stringify(transaction, null, 2)
+    }
+
+    throw new WcUnsupportedMethodsError()
+  }, [])
+
+  const prompt = useMemo(() => {
+    if (simulation == null)
+      return
+    return Result.runAndWrapSync(() => getPromptOrThrow(request.params, simulation)).getOrNull()
+  }, [simulation])
+
+  const copyThePrompt = useCopy(prompt)
 
   return <Fragment>
     <div className="flex flex-col grow p-6">
@@ -614,16 +639,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             icon={<Outline.CubeTransparentIcon className="size-5" />}
             flip={flipped}
             onFlipChange={setFlipped} />}
-        {type == null &&
-          <FlipCard
-            type={Lang.match({ en: "Unknown", zh: "未知", hi: "अज्ञात", es: "Desconocido", ar: "غير معروف", fr: "Inconnu", de: "Unbekannt", ru: "Неизвестно", pt: "Desconhecido", ja: "不明", pa: "ਅਣਜਾਣ", bn: "অজানা", id: "Tidak diketahui", ur: "نامعلوم", ms: "Tidak diketahui", it: "Sconosciuto", tr: "Bilinmeyen", ta: "அறியப்படாதது", te: "తెలియని", ko: "알 수 없음", vi: "Không xác định", pl: "Nieznany", ro: "Necunoscut", nl: "Onbekend", el: "Άγνωστο ", th: "ไม่ทราบ ", cs: "Neznámý ", hu: "Ismeretlen ", sv: "Okänd ", da: "Ukendt" })}
-            title={title}
-            subtitle={subtitle}
-            color={color}
-            index={subaccount}
-            icon={<Outline.QuestionMarkCircleIcon className="size-5" />}
-            flip={flipped}
-            onFlipChange={setFlipped} />}
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
@@ -639,7 +654,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {Lang.match({ en: "The blockchain network of the request.", zh: "请求的区块链网络。", hi: "अनुरोध का ब्लॉकचेन नेटवर्क।", es: "La red blockchain de la solicitud.", ar: "شبكة البلوكشين للطلب.", fr: "Le réseau blockchain de la requête.", de: "Das Blockchain-Netzwerk der Anfrage.", ru: "Блокчейн-сеть запроса.", pt: "A rede blockchain da solicitação.", ja: "リクエストのブロックチェーンネットワーク。", pa: "ਬੇਨਤੀ ਦਾ ਬਲਾਕਚੇਨ ਨੈੱਟਵਰਕ।", bn: "অনুরোধের ব্লকচেইন নেটওয়ার্ক।", id: "Jaringan blockchain dari permintaan.", ur: "درخواست کا بلاکچین نیٹ ورک۔", ms: "Rantai blok dari permintaan.", it: "La rete blockchain della richiesta.", tr: "İsteğin blok zinciri ağı.", ta: "கோரிக்கையின் பிளாக்செயின் நெட்வொர்க்.", te: "అభ్యర్థన యొక్క బ్లాక్‌చైన్ నెట్‌వర్క్.", ko: "요청의 블록체인 네트워크입니다.", vi: "Mạng blockchain của yêu cầu.", pl: "Sieć blockchain żądania.", ro: "Rețeaua blockchain a cererii.", nl: "Het blockchain-netwerk van het verzoek.", el: "Το δίκτυο blockchain του αιτήματος ", th: "เครือข่ายบล็อกเชนของคำขอ ", cs: "Blockchain síť požadavku ", hu: "A kérés blokklánc hálózata ", sv: "Blockkedjanätverket för förfrågan ", da: "Blockchain-netværket for anmodningen" })}
           </div>
           <div className="h-4" />
-          <div className="border border-default-contrast po-2 rounded-xl flex items-center gap-4">
+          <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4">
             <input className="w-full focus-visible:outline-none"
               readOnly
               autoComplete="off"
@@ -661,70 +676,28 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             </pre>
           </div>
         </Fragment>}
-        <Fragment>
+        {type === "transaction" && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
-            {Lang.match({ en: "Transfers", zh: "转账", hi: "स्थानांतरण", es: "Transferencias", ar: "التحويلات", fr: "Transferts", de: "Überweisungen", ru: "Переводы", pt: "Transferências", ja: "転送", pa: "ਟ੍ਰਾਂਸਫਰ", bn: "স্থানান্তর", id: "Transfer", ur: "منتقلیاں", ms: "Transfer", it: "Trasferimenti", tr: "Transferler", ta: "பரிமாற்றங்கள்", te: "ట్రాన్స్ఫర్స్", ko: "전송", vi: "Chuyển khoản", pl: "Transfery", ro: "Transferuri", nl: "Overboekingen", el: "Μεταφορές ", th: "การโอน ", cs: "Převody ", hu: "Átutalások ", sv: "Överföringar ", da: "Overførsler" })}
+            {Lang.match({ en: "Summary", zh: "摘要", hi: "सारांश", es: "Resumen", ar: "ملخص", fr: "Résumé", de: "Zusammenfassung", ru: "Резюме", pt: "Resumo", ja: "概要", pa: "ਸਾਰ", bn: "সারাংশ", id: "Ringkasan", ur: "خلاصہ", ms: "Ringkasan", it: "Sommario", tr: "Özet", ta: "சுருக்கம்", te: "సారాంశం", ko: "요약", vi: "Tóm tắt", pl: "Podsumowanie", ro: "Rezumat", nl: "Samenvatting", el: "Σύνοψη ", th: "สรุป ", cs: "Souhrn ", hu: "Összefoglaló ", sv: "Sammanfattning ", da: "Resumé" })}
           </div>
           <div className="text-default-contrast">
-            {Lang.match({ en: "The detected asset transfers of the request.", zh: "请求的检测到的资产转移。", hi: "अनुरोध के पता लगाए गए संपत्ति स्थानांतरण।", es: "Las transferencias de activos detectadas de la solicitud.", ar: "تحويلات الأصول المكتشفة من الطلب.", fr: "Les transferts d'actifs détectés de la requête.", de: "Die erkannten Asset-Transfers der Anfrage.", ru: "Обнаруженные переводы активов запроса.", pt: "As transferências de ativos detectadas da solicitação.", ja: "リクエストの検出された資産転送。", pa: "ਬੇਨਤੀ ਦੇ ਪਤਾ ਲੱਗੇ ਐਸੈੱਟ ਟ੍ਰਾਂਸਫਰ।", bn: "অনুরোধের সনাক্ত করা परिसंपत्ति स्थानांतरण।", id: "Transfer aset yang terdeteksi dari permintaan.", ur: "درخواست سے پتہ چلنے والی اثاثہ منتقلیاں۔", ms: "Transfer aset yang terdeteksi dari permintaan.", it: "I trasferimenti di asset rilevati della richiesta.", tr: "İstekten tespit edilen varlık transferleri.", ta: "கோரிக்கையின் கண்டறியப்பட்ட சொத்து பரிமாற்றங்கள்.", te: "అభ్యర్థన నుండి గుర్తించిన ఆస్తి బదిలీలు.", ko: "요청에서 감지된 자산 전송입니다.", vi: "Các chuyển khoản tài sản được phát hiện của yêu cầu.", pl: "Wykryte transfery aktywów żądania.", ro: "Transferurile de active detectate ale cererii.", nl: "De gedetecteerde asset-overboekingen van het verzoek.", el: "Οι ανιχνευμένες μεταφορές περιουσιακών στοιχείων του αιτήματος ", th: "การโอนสินทรัพย์ที่ตรวจพบของคำขอ ", cs: "Zjištěné převody aktiv požadavku ", hu: "A kérés észlelt eszközátutalásai ", sv: "De upptäckta tillgångsöverföringarna av förfrågan ", da: "De registrerede aktivoverførsler af anmodningen" })}
+            {Lang.match({ en: "Request summary prompt for AI. Copy this prompt to your AI to help understand what you sign.", zh: "AI 的请求摘要提示。将此提示复制到您的 AI 中以帮助理解您签署的内容。", hi: "एआई के लिए अनुरोध सारांश संकेत। इस संकेत को अपनी एआई में कॉपी करें ताकि यह समझने में मदद मिल सके कि आप क्या साइन कर रहे हैं।", es: "Solicitud de resumen para IA. Copie este mensaje a su IA para ayudar a entender lo que firma.", ar: "ملخص الطلب للذكاء الاصطناعي. انسخ هذا الموجه إلى الذكاء الاصطناعي الخاص بك للمساعدة في فهم ما تقوم بتوقيعه.", fr: "Résumé de la demande pour l'IA. Copiez cette invite dans votre IA pour aider à comprendre ce que vous signez.", de: "Anforderungszusammenfassung für KI. Kopieren Sie diese Eingabeaufforderung in Ihre KI, um zu verstehen, was Sie unterschreiben.", ru: "Сводка запроса для ИИ. Скопируйте этот запрос в свой ИИ, чтобы помочь понять, что вы подписываете.", pt: "Resumo da solicitação para IA. Copie este prompt para sua IA para ajudar a entender o que você assina.", ja: "AI のリクエスト要約プロンプト。これを AI にコピーして、署名する内容を理解するのに役立ててください。", pa: "ਏਆਈ ਲਈ ਬੇਨਤੀ ਸਾਰ ਸੰਕੇਤ। ਇਸ संकेत को अपनी एआई में कॉपी करें ताकि यह समझने में मदद मिल सके कि आप क्या साइन कर रहे हैं।", bn: "এআই এর জন্য অনুরোধ সারাংশ প্রম্পট। আপনি যা সাইন করছেন তা বুঝতে সাহায্য করার জন্য এই প্রম্পটটি আপনার AI-তে কপি করুন।", id: "Ringkasan permintaan untuk AI. Salin prompt ini ke AI Anda untuk membantu memahami apa yang Anda tanda tangani.", ur: "AI کے لیے درخواست کا خلاصہ پرامپٹ۔ اس پرامپٹ کو اپنے AI میں کاپی کریں تاکہ یہ سمجھنے میں مدد مل سکے کہ آپ کیا سائن کر رہے ہیں۔", ms: "Ringkasan permintaan untuk AI. Salin prompt ini ke AI Anda untuk membantu memahami apa yang Anda tanda tangani.", it: "Riepilogo della richiesta per l'IA. Copia questo prompt nella tua IA per aiutarti a capire cosa stai firmando.", tr: "AI için istek özeti istemi. Ne imzaladığınızı anlamanıza yardımcı olmak için bu istemi AI'nize kopyalayın.", ta: "AI க்கான கோரிக்கை சுருக்கம். நீங்கள் என்ன கையெழுத்திடுகிறீர்கள் என்பதை புரிந்துகொள்ள உதவ இந்த ப்ராம்ப்டை உங்கள் AI க்கு நகலெடுக்கவும்.", te: "AI కోసం అభ్యర్థన సారాంశ ప్రాంప్ట్. మీరు ఏమి సంతకం చేస్తున్నారో అర్థం చేసుకోవడంలో సహాయపడటానికి ఈ ప్రాంప్ట్‌ను మీ AIకి కాపీ చేయండి.", ko: "AI를 위한 요청 요약 프롬프트입니다. 서명하는 내용을 이해하는 데 도움이 되도록 이 프롬프트를 AI에 복사하세요.", vi: "Yêu cầu tóm tắt cho AI. Sao chép lời nhắc này vào AI của bạn để giúp hiểu những gì bạn đang ký.", pl: "Podsumowanie żądania dla AI. Skopiuj ten prompt do swojego AI, aby pomóc zrozumieć, co podpisujesz.", ro: "Rezumatul cererii pentru AI. Copiați acest prompt în AI-ul dvs. pentru a vă ajuta să înțelegeți ce semnați.", nl: "Samenvatting van het verzoek voor AI. Kopieer deze prompt naar uw AI om te helpen begrijpen wat u ondertekent.", el: "Σύνοψη αιτήματος για AI. Αντιγράψτε αυτήν την προτροπή στο AI σας για να βοηθήσετε να καταλάβετε τι υπογράφετε ", th: "สรุปคำขอสำหรับ AI คัดลอกพรอมต์นี้ไปยัง AI ของคุณเพื่อช่วยให้เข้าใจว่าคุณกำลังเซ็นอะไร ", cs: "Souhrn požadavku pro AI. Zkopírujte tento prompt do svého AI, abyste pomohli pochopit, co podepisujete. ", hu: "Kérés összefoglaló az AI számára. Másolja ezt a promptot az AI-jába, hogy segítsen megérteni, mit ír alá. ", sv: "Förfrågningssammanfattning för AI. Kopiera denna prompt till din AI för att hjälpa dig förstå vad du undertecknar. ", da: "Anmodningsresumé for AI. Kopier denne prompt til din AI for at hjælpe med at forstå, hvad du underskriver." })}
           </div>
           <div className="h-4" />
-          <div className="flex flex-col gap-2 border border-default-contrast rounded-xl p-6">
-            {transfers == null && <Spinner className="size-5 animate-spin" />}
-            {transfers?.isErr() && <div className="text-default-contrast">
-              {Lang.match({ en: "Could not simulate transaction.", zh: "无法模拟交易。", hi: "लेनदेन का अनुकरण नहीं कर सका।", es: "No se pudo simular la transacción.", ar: "تعذر محاكاة المعاملة.", fr: "Impossible de simuler la transaction.", de: "Transaktion konnte nicht simuliert werden.", ru: "Не удалось смоделировать транзакцию.", pt: "Não foi possível simular a transação.", ja: "トランザクションをシミュレートできませんでした。", pa: "ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ ਸਿਮੂਲੇਟ ਨਹੀਂ ਕਰ ਸਕਿਆ।", bn: "লেনদেন সিমুলেট করা যায়নি।", id: "Tidak dapat mensimulasikan transaksi.", ur: "ٹرانزیکشن کی نقل نہیں کر سکا۔", ms: "Tidak dapat mensimulasikan transaksi.", it: "Impossibile simulare la transazione.", tr: "İşlem simüle edilemedi.", ta: "பரிவர்த்தனை சிமுலேட் செய்ய முடியவில்லை.", te: "ట్రాన్సాక్షన్‌ను అనుకరించలేకపోయింది.", ko: "트랜잭션을 시뮬레이트할 수 없습니다.", vi: "Không thể mô phỏng giao dịch.", pl: "Nie można zasymulować transakcji.", ro: "Nu s-a putut simula tranzacția.", nl: "Kon de transactie niet simuleren.", el: "Δεν ήταν δυνατή η προσομοίωση της συναλλαγής ", th: "ไม่สามารถจำลองธุรกรรมได้ ", cs: "Nelze simulovat transakci ", hu: "Nem sikerült szimulálni a tranzakciót ", sv: "Kunde inte simulera transaktionen ", da: "Kunne ikke simulere transaktionen" })}
-            </div>}
-            {transfers?.getOrNull()?.map((transfer, index) => <Fragment key={index}>
-              {transfer.type === "token" && <Fragment>
-                <div className="flex flex-col bg-default-contrast po-2 rounded-xl">
-                  <div className="font-medium">
-                    {transfer.value.toLocaleString(Lang.get(), { style: "currency", currency: "USD", currencyDisplay: "code", notation: "compact" }).replaceAll("USD", transfer.symbol)}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex flex-col truncate grow">
-                      <div className="not-data-[you=true]:text-default-contrast truncate"
-                        data-you={transfer.from === "you"}>
-                        {transfer.from === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.from}
-                      </div>
-                      <div className="not-data-[you=true]:text-default-contrast truncate"
-                        data-you={transfer.to === "you"}>
-                        {transfer.to === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.to}
-                      </div>
-                    </div>
-                    <Outline.ArrowLongDownIcon className="size-5" />
-                  </div>
-                </div>
-              </Fragment>}
-              {transfer.type === "ownership" && <Fragment>
-                <div className="flex flex-col bg-default-contrast po-2 rounded-xl">
-                  <div className="font-medium">
-                    {transfer.contract}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Outline.ArrowLongDownIcon className="size-5" />
-                    <div className="flex flex-col truncate">
-                      <div className="not-data-[you=true]:text-default-contrast truncate"
-                        data-you={transfer.from === "you"}>
-                        {transfer.from === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.from}
-                      </div>
-                      <div className="not-data-[you=true]:text-default-contrast truncate"
-                        data-you={transfer.to === "you"}>
-                        {transfer.to === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.to}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Fragment>}
-            </Fragment>)}
+          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="w-full resize-none focus-visible:outline-none"
+              readOnly
+              rows={9}
+              value={prompt || Lang.match({ en: "Loading...", zh: "加载中...", hi: "लोड हो रहा है...", es: "Cargando...", ar: "جار التحميل...", fr: "Chargement...", de: "Wird geladen...", ru: "Загрузка...", pt: "Carregando...", ja: "読み込み中...", pa: "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...", bn: "লোড হচ্ছে...", id: "Memuat...", ur: "لوڈ ہو رہا ہے...", ms: "Memuat...", it: "Caricamento...", tr: "Yükleniyor...", ta: "ஏற்றுகிறது...", te: "లోడ్ అవుతోంది...", ko: "로딩 중...", vi: "Đang tải...", pl: "Ładowanie...", ro: "Se încarcă...", nl: "Laden...", el: "Φόρτωση...", th: "กำลังโหลด...", cs: "Načítání...", hu: "Betöltés...", sv: "Laddar...", da: "Indlæser..." })} />
           </div>
-        </Fragment>
-        {type == null && <Fragment>
-          <div className="h-6" />
-          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-            <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
-              {JSON.stringify(request.params.request, null, 2)}
-            </pre>
+          <div className="h-2" />
+          <div className="flex items-center flex-wrap-reverse gap-2">
+            <WideContrastButton
+              onClick={copyThePrompt.copyOrDisplay}>
+              {copyThePrompt.copied ? <Outline.CheckIcon className="size-5" /> : <Outline.DocumentDuplicateIcon className="size-5" />}
+              {copyThePrompt.copied ? Lang.match({ en: "Copied", zh: "已复制", hi: "कॉपी किया गया", es: "Copiado", ar: "تم النسخ", fr: "Copié", de: "Kopiert", ru: "Скопировано", pt: "Copiado", ja: "コピーしました", pa: "ਨਕਲ ਕੀਤਾ", bn: "কপি করা হয়েছে", id: "Disalin", ur: "کاپی کیا گیا", ms: "Disalin", it: "Copiato", tr: "Kopyalandı", ta: "நகலெடுக்கப்பட்டது", te: "నకలించబడింది", ko: "복사됨", vi: "Đã sao chép", pl: "Skopiowano", ro: "Copiat", nl: "Gekopieerd", el: "Αντιγράφηκε ", th: "คัดลอกแล้ว ", cs: "Zkopírováno ", hu: "Másolva ", sv: "Kopierat ", da: "Kopieret" }) : Lang.match({ en: "Copy", zh: "复制", hi: "कॉपी करें", es: "Copiar", ar: "نسخ", fr: "Copier", de: "Kopieren", ru: "Копировать", pt: "Copiar", ja: "コピー", pa: "ਨਕਲ ਕਰੋ", bn: "কপি করুন", id: "Salin", ur: "کاپی کریں", ms: "Salin", it: "Copia", tr: "Kopyala", ta: "நகலெடுக்கவும்", te: "నకలించు", ko: "복사", vi: "Sao chép", pl: "Kopiuj", ro: "Copiați", nl: "Kopiëren", el: "Αντιγραφή ", th: "คัดลอก ", cs: "Kopírovat ", hu: "Másolás ", sv: "Kopiera ", da: "Kopier" })}
+            </WideContrastButton>
           </div>
         </Fragment>}
         <div className="h-8 grow" />
@@ -736,14 +709,13 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {decline.running ? <Spinner className="size-5 animate-spin" /> : <Outline.NoSymbolIcon className="size-5" />}
             {Lang.match({ en: "Decline", zh: "拒绝", hi: "अस्वीकृत करें", es: "Rechazar", ar: "رفض", fr: "Refuser", de: "Ablehnen", ru: "Отклонить", pt: "Recusar", ja: "拒否", pa: "ਅਸਵੀਕਾਰ ਕਰੋ", bn: "প্রত্যাখ্যান করুন", id: "Tolak", ur: "رد کریں", ms: "Tolak", it: "Rifiuta", tr: "Reddet", ta: "நிராகரிக்கவும்", te: "తిరస్కరించండి", ko: "거부", vi: "Từ chối", pl: "Odrzuć", ro: "Respinge", nl: "Afwijzen", el: "Απορρίπτω ", th: "ปฏิเสธ ", cs: "Odmítnout ", hu: "Elutasítás ", sv: "Avvisa ", da: "Afvis" })}
           </WideContrastButton>
-          {type != null &&
-            <WideOppositeButton
-              type="button"
-              disabled={approve.running}
-              onClick={approve.execute}>
-              {approve.running ? <Spinner className="size-5 animate-spin" /> : <Outline.CheckCircleIcon className="size-5" />}
-              {Lang.match({ en: "Approve", zh: "批准", hi: "स्वीकृत करें", es: "Aprobar", ar: "وافق", fr: "Approuver", de: "Genehmigen", ru: "Одобрить", pt: "Aprovar", ja: "承認", pa: "ਮਨਜ਼ੂਰ ਕਰੋ", bn: "অনুমোদন করুন", id: "Setujui", ur: "منظور کریں", ms: "Setujui", it: "Approva", tr: "Onayla", ta: "அனுமதிக்கவும்", te: "అనుమతించండి", ko: "승인", vi: "Phê duyệt", pl: "Zatwierdź", ro: "Aprobați", nl: "Goedkeuren", el: "Εγκρίνω ", th: "อนุมัติ ", cs: "Schválit ", hu: "Jóváhagyás ", sv: "Godkänn ", da: "Godkend" })}
-            </WideOppositeButton>}
+          <WideOppositeButton
+            type="button"
+            disabled={approve.running}
+            onClick={approve.execute}>
+            {approve.running ? <Spinner className="size-5 animate-spin" /> : <Outline.CheckCircleIcon className="size-5" />}
+            {Lang.match({ en: "Approve", zh: "批准", hi: "स्वीकृत करें", es: "Aprobar", ar: "وافق", fr: "Approuver", de: "Genehmigen", ru: "Одобрить", pt: "Aprovar", ja: "承認", pa: "ਮਨਜ਼ੂਰ ਕਰੋ", bn: "অনুমোদন করুন", id: "Setujui", ur: "منظور کریں", ms: "Setujui", it: "Approva", tr: "Onayla", ta: "அனுமதிக்கவும்", te: "అనుమతించండి", ko: "승인", vi: "Phê duyệt", pl: "Zatwierdź", ro: "Aprobați", nl: "Goedkeuren", el: "Εγκρίνω ", th: "อนุมัติ ", cs: "Schválit ", hu: "Jóváhagyás ", sv: "Godkänn ", da: "Godkend" })}
+          </WideOppositeButton>
         </div>
       </form>
     </div>
