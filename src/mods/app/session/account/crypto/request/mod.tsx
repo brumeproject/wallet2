@@ -682,8 +682,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                     {transfer.value.toLocaleString(Lang.get(), { style: "currency", currency: "USD", currencyDisplay: "code", notation: "compact" }).replaceAll("USD", transfer.symbol)}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Outline.ArrowLongDownIcon className="size-5" />
-                    <div className="flex flex-col truncate">
+                    <div className="flex flex-col truncate grow">
                       <div className="not-data-[you=true]:text-default-contrast truncate"
                         data-you={transfer.from === "you"}>
                         {transfer.from === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.from}
@@ -693,6 +692,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
                         {transfer.to === "you" ? Lang.match({ en: "You", zh: "你", hi: "आप", es: "Tú", ar: "أنت", fr: "Vous", de: "Du", ru: "Вы", pt: "Você", ja: "あなた", pa: "ਤੁਸੀਂ", bn: "তুমি", id: "Kamu", ur: "آپ", ms: "Anda", it: "Tu", tr: "Sen", ta: "நீங்கள்", te: "మీరు", ko: "당신", vi: "Bạn", pl: "Ty", ro: "Tu", nl: "Jij", el: "Εσύ ", th: "คุณ ", cs: "Ty ", hu: "Te ", sv: "Du ", da: "Du" }) : transfer.to}
                       </div>
                     </div>
+                    <Outline.ArrowLongDownIcon className="size-5" />
                   </div>
                 </div>
               </Fragment>}
