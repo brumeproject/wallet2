@@ -229,7 +229,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
 
       const chainId = Number(params.chainId.split(":")[1])
-      const chain = chainlist.find(chain => chain.chainId === chainId)
+      const chain = chainlist.find(chain => chain.chainId === Number(params.chainId.split(":")[1]))
 
       if (chain == null)
         throw new WcUnsupportedChainsError()
@@ -440,34 +440,13 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
-  type Event =
-    | TokenTransfer
-    | OwnershipTransfer
-
-  interface TokenTransfer {
-    readonly type: "token"
-    readonly contract: string
-    readonly from: string
-    readonly to: string
-    readonly value: number
-    readonly symbol: string
-  }
-
-  interface OwnershipTransfer {
-    readonly type: "ownership"
-    readonly contract: string
-    readonly from: string
-    readonly to: string
-  }
-
   const getSimulationOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request } = params
 
     if (request.method === "eth_sendTransaction") {
       const [{ data, from, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
 
-      const chainId = Number(params.chainId.split(":")[1])
-      const chain = chainlist.find(chain => chain.chainId === chainId)
+      const chain = chainlist.find(chain => chain.chainId === Number(params.chainId.split(":")[1]))
 
       if (chain == null)
         throw new WcUnsupportedChainsError()
@@ -506,7 +485,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (result.status !== "0x1")
         return Err.void()
 
-      const events = new Array<Event>()
+      const events = new Array<unknown>()
 
       for (const log of result.logs) {
         const { address, topics } = log
@@ -518,9 +497,9 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           let to = `0x${topics[2].slice(-40)}`
 
           if (from.toLowerCase() === current.toLowerCase())
-            from = "you"
+            from = "(you)"
           if (to.toLowerCase() === current.toLowerCase())
-            to = "you"
+            to = "(you)"
 
           if (address !== "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
             const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
@@ -533,32 +512,32 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               params: [{ to: address, data: "0x313ce567" }, "latest"]
             }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
 
-            const value = Number(new Fixed(BigInt(log.data), Number(decimals)).toString())
+            const value = new Fixed(BigInt(log.data), Number(decimals)).toString()
 
-            events.push({ type: "token", contract: address, from, to, value, symbol })
+            events.push({ event: "Transfer", contract: address, from, to, value, symbol })
 
             continue
           }
 
           const { symbol, decimals } = chain.nativeCurrency
 
-          const value = Number(new Fixed(BigInt(log.data), decimals).toString())
+          const value = new Fixed(BigInt(log.data), decimals).toString()
 
-          events.push({ type: "token", contract: "(native)", from, to, value, symbol })
+          events.push({ event: "Transfer", contract: "(native)", from, to, value, symbol })
 
           continue
         }
 
         if (event === "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
-          let from = `0x${topics[1].slice(-40)}`
-          let to = `0x${topics[2].slice(-40)}`
+          let previousOwner = `0x${topics[1].slice(-40)}`
+          let newOwner = `0x${topics[2].slice(-40)}`
 
-          if (from.toLowerCase() === current.toLowerCase())
-            from = "you"
-          if (to.toLowerCase() === current.toLowerCase())
-            to = "you"
+          if (previousOwner.toLowerCase() === current.toLowerCase())
+            previousOwner = "(you)"
+          if (newOwner.toLowerCase() === current.toLowerCase())
+            newOwner = "(you)"
 
-          events.push({ type: "ownership", contract: address, from, to })
+          events.push({ event: "OwnershipTransferred", contract: address, previousOwner, newOwner })
         }
 
         continue
@@ -582,21 +561,31 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return Result.runAndWrapSync(() => getMessageOrThrow(request.params)).getOrNull()
   }, [request])
 
-  const [simulation, setSimulation] = useState<Nullable<Result<Event[]>>>()
+  const [simulation, setSimulation] = useState<Nullable<Result<unknown[]>>>()
 
   useEffect(() => {
     getSimulationOrThrow(request.params).then(setSimulation).catch((console.warn))
   }, [request])
 
-  const getPromptOrThrow = useCallback((params: WcSessionRequestParams, simulation: Result<Event[]>) => {
+  const getPromptOrThrow = useCallback((params: WcSessionRequestParams, simulation: Result<unknown[]>) => {
     const { request, chainId } = params
 
     if (request.method === "eth_sendTransaction") {
-      const [{ gas, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+      const [params] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
 
-      const transaction = { chainId, gas, to, value, reverts: simulation.isErr(), events: simulation.getOrNull() }
+      const chain = chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))
 
-      return Lang.match({ en: "I am about to sign a transaction. Help me understand what I am signing and what the consequences are. Be concise and warn me of any potential risks. Here is the transaction and its simulation:", zh: "我即将签署一笔交易。请帮助我理解我正在签署的内容及其后果。请简明扼要，并提醒我任何潜在风险。以下是交易及其模拟：", hi: "मैं एक लेनदेन पर हस्ताक्षर करने वाला हूँ। कृपया मुझे समझने में मदद करें कि मैं क्या हस्ताक्षर कर रहा हूँ और इसके परिणाम क्या होंगे। संक्षेप में बताएं और किसी भी संभावित जोखिम के बारे में चेतावनी दें। यहाँ लेनदेन और इसका सिमुलेशन है:", es: "Estoy a punto de firmar una transacción. Ayúdame a entender lo que estoy firmando y cuáles son las consecuencias. Sé conciso y adviérteme de cualquier riesgo potencial. Aquí está la transacción y su simulación:", ar: "أنا على وشك توقيع معاملة. ساعدني في فهم ما أوقع عليه وما هي العواقب. كن موجزًا وحذرني من أي مخاطر محتملة. إليك المعاملة ومحاكاتها:", fr: "Je suis sur le point de signer une transaction. Aidez-moi à comprendre ce que je signe et quelles en sont les conséquences. Soyez concis et avertissez-moi de tout risque potentiel. Voici la transaction et sa simulation :", de: "Ich bin dabei, eine Transaktion zu unterschreiben. Helfen Sie mir zu verstehen, was ich unterschreibe und welche Konsequenzen es hat. Seien Sie prägnant und warnen Sie mich vor möglichen Risiken. Hier ist die Transaktion und ihre Simulation:", ru: "Я собираюсь подписать транзакцию. Помогите мне понять, что я подписываю и каковы последствия. Будьте кратки и предупредите меня о любых потенциальных рисках. Вот транзакция и ее симуляция:", pt: "Estou prestes a assinar uma transação. Ajude-me a entender o que estou assinando e quais são as consequências. Seja conciso e me avise sobre quaisquer riscos potenciais. Aqui está a transação e sua simulação:", ja: "私はトランザクションに署名しようとしています。私が何に署名しているのか、そしてその結果が何であるかを理解するのを手伝ってください。簡潔にし、潜在的なリスクについて警告してください。ここにトランザクションとそのシミュレーションがあります:", pa: "ਮੈਂ ਇੱਕ ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ 'ਤੇ ਦਸਤਖਤ ਕਰਨ ਵਾਲਾ ਹਾਂ। ਮੈਨੂੰ ਸਮਝਣ ਵਿੱਚ ਮਦਦ ਕਰੋ ਕਿ ਮੈਂ ਕੀ ਸਾਈਨ ਕਰ ਰਿਹਾ ਹਾਂ ਅਤੇ ਇਸ ਦੇ ਨਤੀਜੇ ਕੀ ਹੋਣਗੇ। ਸੰਖੇਪ ਵਿੱਚ ਹੋਵੋ ਅਤੇ ਕਿਸੇ ਵੀ ਸੰਭਾਵਤ ਖਤਰੇ ਬਾਰੇ ਚੇਤਾਵਨੀ ਦਿਓ। ਇੱਥੇ ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ ਅਤੇ ਇਸ ਦੀ ਸਿਮੂਲੇਸ਼ਨ ਹੈ:", bn: "আমি একটি লেনদেনে সাইন করতে যাচ্ছি। আমাকে সাহায্য করুন বুঝতে আমি কি সাইন করছি এবং এর ফলাফল কি হবে। সংক্ষিপ্ত হোন এবং আমাকে সম্ভাব্য ঝুঁকি সম্পর্কে সতর্ক করুন। এখানে লেনদেন এবং এর সিমুলেশন রয়েছে:", id: "Saya akan menandatangani transaksi. Bantu saya memahami apa yang saya tandatangani dan apa konsekuensinya. Jadilah singkat dan beri tahu saya tentang potensi risiko. Berikut adalah transaksi dan simulasinya:", ur: "میں ایک ٹرانزیکشن پر دستخط کرنے والا ہوں۔ مجھے سمجھنے میں مدد کریں کہ میں کیا سائن کر رہا ہوں اور اس کے نتائج کیا ہوں گے۔ مختصر رہیں اور مجھے کسی بھی ممکنہ خطرے کے بارے میں آگاہ کریں۔ یہاں ٹرانزیکشن اور اس کی نقل ہے:", ms: "Saya akan menandatangani transaksi. Bantu saya memahami apa yang saya tandatangani dan apa konsekuensinya. Jadilah singkat dan beri tahu saya tentang potensi risiko. Berikut adalah transaksi dan simulasinya:", it: "Sto per firmare una transazione. Aiutami a capire cosa sto firmando e quali sono le conseguenze. Sii conciso e avvisami di eventuali rischi potenziali. Ecco la transazione e la sua simulazione:", tr: "Bir işlemi imzalamak üzereyim. Ne imzaladığımı ve sonuçlarının ne olacağını anlamama yardımcı olun. Kısa olun ve potansiyel riskler hakkında beni uyarın. İşte işlem ve simülasyonu:", ta: "நான் ஒரு பரிவர்த்தனை கையெழுத்திடப்போகிறேன். நான் என்ன கையெழுத்திடுகிறேன் மற்றும் அதன் விளைவுகள் என்ன என்பதை புரிந்துகொள்ள உதவுங்கள். சுருக்கமாக இருங்கள் மற்றும் எந்தவொரு சாத்தியமான அபாயங்களையும் எச்சரிக்கவும். இங்கே பரிவர்த்தனை மற்றும் அதன் சிமுலேஷன் உள்ளது:", te: "నేను ఒక లావాదేవి పై సంతకం చేయబోతున్నాను. నేను ఏమి సంతకం చేస్తున్నాను మరియు దాని పరిణామాలు ఏమిటో అర్థం చేసుకోవడంలో నాకు సహాయం చేయండి. సంక్షిప్తంగా ఉండండి మరియు ఏవైనా సంభావ్య ప్రమాదాల గురించి నాకు హెచ్చరించండి. ఇక్కడ లావాదేవి మరియు దాని అనుకరణ ఉంది:", ko: "저는 거래에 서명하려고 합니다. 내가 무엇에 서명하고 있는지, 그리고 그 결과가 무엇인지 이해하는 데 도움을 주세요. 간결하게 작성하고 잠재적인 위험에 대해 경고하세요. 여기에 거래와 시뮬레이션이 있습니다:", vi: "Tôi sắp ký một giao dịch. Hãy giúp tôi hiểu tôi đang ký gì và hậu quả của nó là gì. Hãy ngắn gọn và cảnh báo tôi về bất kỳ rủi ro tiềm ẩn nào. Đây là giao dịch và mô phỏng của nó:", pl: "Zamierzam podpisać transakcję. Pomóż mi zrozumieć, co podpisuję i jakie są tego konsekwencje. Bądź zwięzły i ostrzeż mnie o wszelkich potencjalnych zagrożeniach. Oto transakcja i jej symulacja:", ro: "Sunt pe cale să semnez o tranzacție. Ajută-mă să înțeleg ce semnez și care sunt consecințele. Fii concis și avertizează-mă cu privire la orice riscuri potențiale. Iată tranzacția și simularea acesteia:", nl: "Ik sta op het punt een transactie te ondertekenen. Help me begrijpen wat ik onderteken en wat de gevolgen zijn. Wees beknopt en waarschuw me voor eventuele risico's. Hier is de transactie en de simulatie ervan:", el: "Είμαι έτοιμος να υπογράψω μια συναλλαγή. Βοηθήστε με να καταλάβω τι υπογράφω και ποιες είναι οι συνέπειες. Να είστε συνοπτικοί και να με προειδοποιείτε για τυχόν πιθανούς κινδύνους. Εδώ είναι η συναλλαγή και η προσομοίωσή της:", th: "ฉันกำลังจะเซ็นชื่อในธุรกรรม ช่วยฉันเข้าใจว่าฉันกำลังเซ็นอะไรและผลที่ตามมาคืออะไร โปรดสั้น ๆ และเตือนฉันเกี่ยวกับความเสี่ยงที่อาจเกิดขึ้น นี่คือธุรกรรมและการจำลองของมัน:", cs: "Chystám se podepsat transakci. Pomozte mi pochopit, co podepisuji a jaké jsou důsledky. Buďte struční a varujte mě před jakýmikoli potenciálními riziky. Zde je transakce a její simulace:", hu: "Tranzakciót fogok aláírni. Segítsen megérteni, mit írok alá és mik a következmények. Legyen tömör és figyelmeztessen minden lehetséges kockázatra. Itt van a tranzakció és annak szimulációja:", sv: "Jag är på väg att skriva under en transaktion. Hjälp mig att förstå vad jag skriver under och vilka konsekvenser det har. Var kortfattad och varna mig för eventuella risker. Här är transaktionen och dess simulering:", da: "Jeg er ved at underskrive en transaktion. Hjælp mig med at forstå, hvad jeg underskriver, og hvad konsekvenserne er. Vær kortfattet og advare mig om eventuelle potentielle risici. Her er transaktionen og dens simulering:" }) + "\n\n" + JSON.stringify(transaction, null, 2)
+      if (chain == null)
+        throw new WcUnsupportedChainsError()
+
+      const gas = BigInt(params.gas).toString()
+      const value = new Fixed(BigInt(params.value), Number(chain.nativeCurrency.decimals)).toString()
+
+      const transaction = { chain: chain.name, chainId: chain.chainId, gas, to: params.to, value, symbol: chain.nativeCurrency.symbol, reverts: simulation.isErr(), events: simulation.getOrNull() }
+
+      const prompt = Lang.match({ en: "I am about to sign a crypto transaction. Help me understand it. Do not go into details. Reply in one sentence if nothing feels off. Prefer well-known names over addresses. Here is the transaction and its simulation:", zh: "我即将签署一笔加密交易。帮我理解它。如果没有什么不对劲的地方，请用一句话回复。请优先使用知名名称而不是地址。以下是交易及其模拟：", hi: "मैं एक क्रिप्टो लेनदेन पर हस्ताक्षर करने वाला हूं। मेरी मदद करें इसे समझने में। यदि कुछ भी गलत नहीं लगता है तो एक वाक्य में जवाब दें। पतों के बजाय प्रसिद्ध नामों को प्राथमिकता दें। यहां लेनदेन और इसका सिमुलेशन है:", es: "Estoy a punto de firmar una transacción criptográfica. Ayúdame a entenderlo. Responde en una oración si no parece haber nada mal. Prefiere nombres conocidos sobre direcciones. Aquí está la transacción y su simulación:", ar: "أنا على وشك توقيع معاملة مشفرة. ساعدني في فهمها. لا تذهب إلى التفاصيل. رد بجملة واحدة إذا لم يكن هناك شيء مريب. فضل الأسماء المعروفة على العناوين. إليك المعاملة ومحاكاتها:", fr: "Je suis sur le point de signer une transaction cryptographique. Aidez-moi à la comprendre. Ne pas entrer dans les détails. Répondez en une phrase si rien ne semble anormal. Préférez les noms connus aux adresses. Voici la transaction et sa simulation:", de: "Ich bin dabei, eine Krypto-Transaktion zu signieren. Hilf mir, sie zu verstehen. Gehe nicht ins Detail. Antworte in einem Satz, wenn nichts verdächtig erscheint. Bevorzuge bekannte Namen gegenüber Adressen. Hier ist die Transaktion und ihre Simulation:", ru: "Я собираюсь подписать криптографическую транзакцию. Помогите мне понять ее. Не вдавайтесь в подробности. Ответьте одним предложением, если ничего не кажется подозрительным. Предпочитайте известные имена адресам. Вот транзакция и ее симуляция:", pt: "Estou prestes a assinar uma transação criptográfica. Ajude-me a entendê-la. Não entre em detalhes. Responda em uma frase se nada parecer errado. Prefira nomes conhecidos a endereços. Aqui está a transação e sua simulação:", ja: "暗号化されたトランザクションに署名しようとしています。理解するのを手伝ってください。詳細には立ち入らないでください。何もおかしいと感じない場合は、一文で返信してください。アドレスよりもよく知られた名前を優先してください。以下はトランザクションとそのシミュレーションです:", pa: "ਮੈਂ ਇੱਕ ਕ੍ਰਿਪਟੋ ਲੈਣ-ਦੇਣ 'ਤੇ ਦਸਤਖਤ ਕਰਨ ਵਾਲਾ ਹਾਂ। ਮੈਨੂੰ ਇਸਨੂੰ ਸਮਝਣ ਵਿੱਚ ਮਦਦ ਕਰੋ। ਵਿਸਥਾਰ ਵਿੱਚ ਨਾ ਜਾਓ। ਜੇ ਕੁਝ ਵੀ ਗਲਤ ਨਹੀਂ ਲੱਗਦਾ ਹੈ ਤਾਂ ਇੱਕ ਵਾਕ ਵਿੱਚ ਜਵਾਬ ਦਿਓ। ਪਤੇ ਦੀ ਬਜਾਏ ਜਾਣੇ-ਮाने ਨਾਮਾਂ ਨੂੰ ਤਰਜੀਹ ਦਿਓ। ਇੱਥੇ ਲੈਣ-ਦੇਣ ਅਤੇ ਇਸ ਦੀ ਸਿਮੂਲੇਸ਼ਨ ਹੈ:", bn: "আমি একটি ক্রিপ্টো লেনদেনে স্বাক্ষর করতে যাচ্ছি। আমাকে এটি বুঝতে সাহায্য করুন। বিস্তারিতভাবে না যান। যদি কিছুই অদ্ভুত না লাগে তবে একটি বাক্যে উত্তর দিন। ঠিকানার উপর পরিচিত নামগুলিকে অগ্রাধিকার দিন। এখানে লেনদেন এবং এর সিমুলেশন রয়েছে:", id: "Saya akan menandatangani transaksi kripto. Bantu saya memahaminya. Jangan masuk ke detail. Balas dalam satu kalimat jika tidak ada yang terasa aneh. Utamakan nama yang dikenal daripada alamat. Berikut adalah transaksi dan simulasinya:", ur: "میں ایک کرپٹو ٹرانزیکشن پر دستخط کرنے والا ہوں۔ مجھے اسے سمجھنے میں مدد کریں۔ تفصیلات میں نہ جائیں۔ اگر کچھ بھی عجیب نہیں لگتا ہے تو ایک جملے میں جواب دیں۔ پتوں کے بجائے معروف ناموں کو ترجیح دیں۔ یہاں ٹرانزیکشن اور اس کی سیمولیشن ہے:", ms: "Saya akan menandatangani transaksi kripto. Bantu saya memahaminya. Jangan masuk ke detail. Balas dalam satu kalimat jika tidak ada yang terasa aneh. Utamakan nama yang dikenal daripada alamat. Berikut adalah transaksi dan simulasinya:", it: "Sto per firmare una transazione crittografica. Aiutami a capirla. Non entrare nei dettagli. Rispondi in una frase se non sembra esserci nulla di strano. Preferisci nomi noti agli indirizzi. Ecco la transazione e la sua simulazione:", tr: "Kripto işlemi imzalamak üzereyim. Anlamama yardım et. Detaylara girmeyin. Hiçbir şey garip gelmiyorsa bir cümleyle cevap verin. Adresler yerine bilinen isimleri tercih edin. İşte işlem ve simülasyonu:", ta: "நான் ஒரு கிரிப்டோ பரிவர்த்தனையில் கையொப்பமிடப்போகிறேன். அதை புரிந்துகொள்ள எனக்கு உதவுங்கள். விவரங்களுக்கு செல்ல வேண்டாம். எதுவும் சந்தேகமாகத் தெரியவில்லை என்றால் ஒரு வாக்கியத்தில் பதிலளிக்கவும். முகவரிகளுக்கு பதிலாக பரிச்சயமான பெயர்களை முன்னுரிமை அளிக்கவும். இங்கே பரிவர்த்தனை மற்றும் அதன் சிமுலேஷன் உள்ளது:", te: "నేను ఒక క్రిప్టో లావాదేవిపై సంతకం చేయబోతున్నాను. దాన్ని అర్థం చేసుకోవడంలో నాకు సహాయం చేయండి. వివరాలకు వెళ్లవద్దు. ఏదైనా అనుమానాస్పదంగా కనిపించకపోతే ఒక వాక్యంలో జవాబు ఇవ్వండి. చిరునామాల కంటే బాగా తెలిసిన పేర్లను ప్రాధాన్యత ఇవ్వండి. ఇక్కడ లావాదేవీ మరియు దాని సిమ్యులేషన్ ఉంది:", ko: "암호화된 트랜잭션에 서명하려고 합니다. 이해하는 데 도움을 주세요. 세부 사항으로 들어가지 마세요. 이상한 점이 없으면 한 문장으로 답하세요. 주소보다 잘 알려진 이름을 선호하세요. 다음은 트랜잭션과 시뮬레이션입니다:", vi: "Tôi sắp ký một giao dịch tiền điện tử. Hãy giúp tôi hiểu nó. Đừng đi vào chi tiết. Trả lời trong một câu nếu không có gì cảm thấy sai. Ưu tiên tên nổi tiếng hơn địa chỉ. Đây là giao dịch và mô phỏng của nó:", pl: "Zaraz podpiszę transakcję kryptograficzną. Pomóż mi ją zrozumieć. Nie wchodź w szczegóły. Odpowiedz jednym zdaniem, jeśli nic nie wydaje się podejrzane. Preferuj znane nazwy nad adresami. Oto transakcja i jej symulacja:", ro: "Sunt pe cale să semnez o tranzacție criptografică. Ajută-mă să o înțeleg. Nu intra în detalii. Răspunde într-o propoziție dacă nu pare nimic suspect. Preferă numele cunoscute în locul adreselor. Iată tranzacția și simularea sa:", nl: "Ik sta op het punt een cryptotransactie te ondertekenen. Help me het te begrijpen. Ga niet in op details. Antwoord in één zin als er niets verdachts lijkt te zijn. Geef de voorkeur aan bekende namen boven adressen. Hier is de transactie en de simulatie ervan:", el: "Είμαι έτοιμος να υπογράψω μια κρυπτογραφική συναλλαγή. Βοηθήστε με να την καταλάβω. Μην μπείτε σε λεπτομέρειες. Απαντήστε σε μία πρόταση αν δεν φαίνεται τίποτα ύποπτο. Προτιμήστε γνωστά ονόματα αντί για διευθύνσεις. Εδώ είναι η συναλλαγή και η προσομοίωσή της:", th: "ฉันกำลังจะเซ็นชื่อธุรกรรมเข้ารหัส ช่วยฉันเข้าใจมัน อย่าเจาะลึกไปในรายละเอียด ตอบกลับในประโยคเดียวถ้าไม่มีอะไรน่าสงสัย โปรดใช้ชื่อที่รู้จักกันดีแทนที่อยู่ นี่คือธุรกรรมและการจำลองของมัน:", cs: "Chystám se podepsat kryptografickou transakci. Pomozte mi ji pochopit. Nechoďte do detailů. Odpovězte jednou větou, pokud se nezdá být nic podezřelého. Upřednostňujte známé názvy před adresami. Zde je transakce a její simulace:", hu: "Kripto tranzakció aláírása előtt állok. Segíts megérteni. Ne menj bele a részletekbe. Válaszolj egy mondatban, ha semmi sem tűnik gyanúsnak. Előnyben részesítendők a jól ismert nevek a címekkel szemben. Itt van a tranzakció és a szimulációja:", sv: "Jag är på väg att signera en kryptotransaktion. Hjälp mig att förstå den. Gå inte in på detaljer. Svara i en mening om inget verkar misstänkt. Föredra välkända namn framför adresser. Här är transaktionen och dess simulering:", da: "Jeg er ved at underskrive en kryptotransaktion. Hjælp mig med at forstå den. Gå ikke i detaljer. Svar i en sætning, hvis der ikke virker noget mistænkeligt. Foretræk velkendte navne frem for adresser. Her er transaktionen og dens simulering:" })
+
+      return prompt + "\n\n" + JSON.stringify(transaction, null, 2)
     }
 
     throw new WcUnsupportedMethodsError()
@@ -689,6 +678,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             <textarea className="w-full resize-none focus-visible:outline-none"
               readOnly
               rows={9}
+              dir={prompt ? "ltr" : "auto"}
               value={prompt || Lang.match({ en: "Loading...", zh: "加载中...", hi: "लोड हो रहा है...", es: "Cargando...", ar: "جار التحميل...", fr: "Chargement...", de: "Wird geladen...", ru: "Загрузка...", pt: "Carregando...", ja: "読み込み中...", pa: "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...", bn: "লোড হচ্ছে...", id: "Memuat...", ur: "لوڈ ہو رہا ہے...", ms: "Memuat...", it: "Caricamento...", tr: "Yükleniyor...", ta: "ஏற்றுகிறது...", te: "లోడ్ అవుతోంది...", ko: "로딩 중...", vi: "Đang tải...", pl: "Ładowanie...", ro: "Se încarcă...", nl: "Laden...", el: "Φόρτωση...", th: "กำลังโหลด...", cs: "Načítání...", hu: "Betöltés...", sv: "Laddar...", da: "Indlæser..." })} />
           </div>
           <div className="h-2" />
