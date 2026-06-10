@@ -427,7 +427,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
-  const getSimulationOrThrow = useCallback(async (params: WcSessionRequestParams) => {
+  const getEventsOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request } = params
 
     if (request.method === "eth_sendTransaction") {
@@ -486,29 +486,29 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           if (to.toLowerCase() === current.toLowerCase())
             to = "(you)"
 
-          if (address !== "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
-            const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
-              method: "eth_call",
-              params: [{ to: address, data: "0x95d89b41" }, "latest"]
-            }).then(r => abi.decode([AbiString], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
+          if (address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
+            const { symbol, decimals } = chain.nativeCurrency
 
-            const [decimals] = await requestOrThrow<`0x${string}`>(chain.rpc, {
-              method: "eth_call",
-              params: [{ to: address, data: "0x313ce567" }, "latest"]
-            }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
+            const value = new Fixed(BigInt(log.data), decimals).toString()
 
-            const value = new Fixed(BigInt(log.data), Number(decimals)).toString()
-
-            events.push({ event: "Transfer", contract: address, from, to, value, symbol })
+            events.push({ event: "Transfer", contract: "(native)", from, to, value, symbol })
 
             continue
           }
 
-          const { symbol, decimals } = chain.nativeCurrency
+          const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
+            method: "eth_call",
+            params: [{ to: address, data: "0x95d89b41" }, "latest"]
+          }).then(r => abi.decode([AbiString], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
 
-          const value = new Fixed(BigInt(log.data), decimals).toString()
+          const [decimals] = await requestOrThrow<`0x${string}`>(chain.rpc, {
+            method: "eth_call",
+            params: [{ to: address, data: "0x313ce567" }, "latest"]
+          }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
 
-          events.push({ event: "Transfer", contract: "(native)", from, to, value, symbol })
+          const value = new Fixed(BigInt(log.data), Number(decimals)).toString()
+
+          events.push({ event: "Transfer", contract: address, from, to, value, symbol })
 
           continue
         }
@@ -546,13 +546,13 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return Result.runAndWrapSync(() => getMessageOrThrow(request.params)).getOrNull()
   }, [request])
 
-  const [simulation, setSimulation] = useState<Nullable<Result<unknown[]>>>()
+  const [events, setEvents] = useState<Nullable<Result<unknown[]>>>()
 
   useEffect(() => {
-    getSimulationOrThrow(request.params).then(setSimulation).catch((console.warn))
+    getEventsOrThrow(request.params).then(setEvents).catch((console.warn))
   }, [request])
 
-  const getPromptOrThrow = useCallback((params: WcSessionRequestParams, simulation: Nullable<Result<unknown[]>>) => {
+  const getPromptOrThrow = useCallback((params: WcSessionRequestParams, events: Nullable<Result<unknown[]>>) => {
     const { request, chainId } = params
 
     if (request.method === "eth_sendTransaction") {
@@ -563,13 +563,13 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (chain == null)
         throw new WcUnsupportedChainsError()
 
-      if (simulation == null)
-        return Lang.match({ en: "Loading...", zh: "加载中...", hi: "लोड हो रहा है...", es: "Cargando...", ar: "جار التحميل...", fr: "Chargement...", de: "Laden...", ru: "Загрузка...", pt: "Carregando...", ja: "読み込み中...", pa: "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...", bn: "লোড হচ্ছে...", id: "Memuat...", ur: "لوڈ ہو رہا ہے...", ms: "Memuat...", it: "Caricamento in corso...", tr: "Yükleniyor...", ta: "சுமக்கப்படுகிறது...", te: "లోడ్ అవుతోంది...", ko: "로딩 중...", vi: "Đang tải...", pl: "Ładowanie...", ro: "Se încarcă...", nl: "Laden...", el: "Φόρτωση...", th: "กำลังโหลด...", cs: "Načítání...", hu: "Betöltés...", sv: "Laddar...", da: "Indlæser..." })
+      if (events == null)
+        return ""
 
       const gas = params.gas ? BigInt(params.gas).toString() : undefined
       const value = params.value ? new Fixed(BigInt(params.value), Number(chain.nativeCurrency.decimals)).toString() : undefined
 
-      const payload = { chain: chain.name, chainId: chain.chainId, gas, to: params.to, value, symbol: chain.nativeCurrency.symbol, reverts: simulation.isErr(), events: simulation.getOrNull() }
+      const payload = { chain: chain.name, chainId: chain.chainId, gas, to: params.to, value, symbol: chain.nativeCurrency.symbol, reverts: events.isErr(), events: events.getOrNull() }
 
       const prompt = Lang.match({ en: "I am about to sign a crypto transaction. Help me understand it. Do not go into details. Reply in one sentence if nothing feels off. Prefer well-known names over addresses. Here is the transaction and its simulation:", zh: "我即将签署一笔加密交易。帮我理解它。如果没有什么不对劲的地方，请用一句话回复。请优先使用知名名称而不是地址。以下是交易及其模拟：", hi: "मैं एक क्रिप्टो लेनदेन पर हस्ताक्षर करने वाला हूं। मेरी मदद करें इसे समझने में। यदि कुछ भी गलत नहीं लगता है तो एक वाक्य में जवाब दें। पतों के बजाय प्रसिद्ध नामों को प्राथमिकता दें। यहां लेनदेन और इसका सिमुलेशन है:", es: "Estoy a punto de firmar una transacción criptográfica. Ayúdame a entenderlo. Responde en una oración si no parece haber nada mal. Prefiere nombres conocidos sobre direcciones. Aquí está la transacción y su simulación:", ar: "أنا على وشك توقيع معاملة مشفرة. ساعدني في فهمها. لا تذهب إلى التفاصيل. رد بجملة واحدة إذا لم يكن هناك شيء مريب. فضل الأسماء المعروفة على العناوين. إليك المعاملة ومحاكاتها:", fr: "Je suis sur le point de signer une transaction cryptographique. Aidez-moi à la comprendre. Ne pas entrer dans les détails. Répondez en une phrase si rien ne semble anormal. Préférez les noms connus aux adresses. Voici la transaction et sa simulation:", de: "Ich bin dabei, eine Krypto-Transaktion zu signieren. Hilf mir, sie zu verstehen. Gehe nicht ins Detail. Antworte in einem Satz, wenn nichts verdächtig erscheint. Bevorzuge bekannte Namen gegenüber Adressen. Hier ist die Transaktion und ihre Simulation:", ru: "Я собираюсь подписать криптографическую транзакцию. Помогите мне понять ее. Не вдавайтесь в подробности. Ответьте одним предложением, если ничего не кажется подозрительным. Предпочитайте известные имена адресам. Вот транзакция и ее симуляция:", pt: "Estou prestes a assinar uma transação criptográfica. Ajude-me a entendê-la. Não entre em detalhes. Responda em uma frase se nada parecer errado. Prefira nomes conhecidos a endereços. Aqui está a transação e sua simulação:", ja: "暗号化されたトランザクションに署名しようとしています。理解するのを手伝ってください。詳細には立ち入らないでください。何もおかしいと感じない場合は、一文で返信してください。アドレスよりもよく知られた名前を優先してください。以下はトランザクションとそのシミュレーションです:", pa: "ਮੈਂ ਇੱਕ ਕ੍ਰਿਪਟੋ ਲੈਣ-ਦੇਣ 'ਤੇ ਦਸਤਖਤ ਕਰਨ ਵਾਲਾ ਹਾਂ। ਮੈਨੂੰ ਇਸਨੂੰ ਸਮਝਣ ਵਿੱਚ ਮਦਦ ਕਰੋ। ਵਿਸਥਾਰ ਵਿੱਚ ਨਾ ਜਾਓ। ਜੇ ਕੁਝ ਵੀ ਗਲਤ ਨਹੀਂ ਲੱਗਦਾ ਹੈ ਤਾਂ ਇੱਕ ਵਾਕ ਵਿੱਚ ਜਵਾਬ ਦਿਓ। ਪਤੇ ਦੀ ਬਜਾਏ ਜਾਣੇ-ਮाने ਨਾਮਾਂ ਨੂੰ ਤਰਜੀਹ ਦਿਓ। ਇੱਥੇ ਲੈਣ-ਦੇਣ ਅਤੇ ਇਸ ਦੀ ਸਿਮੂਲੇਸ਼ਨ ਹੈ:", bn: "আমি একটি ক্রিপ্টো লেনদেনে স্বাক্ষর করতে যাচ্ছি। আমাকে এটি বুঝতে সাহায্য করুন। বিস্তারিতভাবে না যান। যদি কিছুই অদ্ভুত না লাগে তবে একটি বাক্যে উত্তর দিন। ঠিকানার উপর পরিচিত নামগুলিকে অগ্রাধিকার দিন। এখানে লেনদেন এবং এর সিমুলেশন রয়েছে:", id: "Saya akan menandatangani transaksi kripto. Bantu saya memahaminya. Jangan masuk ke detail. Balas dalam satu kalimat jika tidak ada yang terasa aneh. Utamakan nama yang dikenal daripada alamat. Berikut adalah transaksi dan simulasinya:", ur: "میں ایک کرپٹو ٹرانزیکشن پر دستخط کرنے والا ہوں۔ مجھے اسے سمجھنے میں مدد کریں۔ تفصیلات میں نہ جائیں۔ اگر کچھ بھی عجیب نہیں لگتا ہے تو ایک جملے میں جواب دیں۔ پتوں کے بجائے معروف ناموں کو ترجیح دیں۔ یہاں ٹرانزیکشن اور اس کی سیمولیشن ہے:", ms: "Saya akan menandatangani transaksi kripto. Bantu saya memahaminya. Jangan masuk ke detail. Balas dalam satu kalimat jika tidak ada yang terasa aneh. Utamakan nama yang dikenal daripada alamat. Berikut adalah transaksi dan simulasinya:", it: "Sto per firmare una transazione crittografica. Aiutami a capirla. Non entrare nei dettagli. Rispondi in una frase se non sembra esserci nulla di strano. Preferisci nomi noti agli indirizzi. Ecco la transazione e la sua simulazione:", tr: "Kripto işlemi imzalamak üzereyim. Anlamama yardım et. Detaylara girmeyin. Hiçbir şey garip gelmiyorsa bir cümleyle cevap verin. Adresler yerine bilinen isimleri tercih edin. İşte işlem ve simülasyonu:", ta: "நான் ஒரு கிரிப்டோ பரிவர்த்தனையில் கையொப்பமிடப்போகிறேன். அதை புரிந்துகொள்ள எனக்கு உதவுங்கள். விவரங்களுக்கு செல்ல வேண்டாம். எதுவும் சந்தேகமாகத் தெரியவில்லை என்றால் ஒரு வாக்கியத்தில் பதிலளிக்கவும். முகவரிகளுக்கு பதிலாக பரிச்சயமான பெயர்களை முன்னுரிமை அளிக்கவும். இங்கே பரிவர்த்தனை மற்றும் அதன் சிமுலேஷன் உள்ளது:", te: "నేను ఒక క్రిప్టో లావాదేవిపై సంతకం చేయబోతున్నాను. దాన్ని అర్థం చేసుకోవడంలో నాకు సహాయం చేయండి. వివరాలకు వెళ్లవద్దు. ఏదైనా అనుమానాస్పదంగా కనిపించకపోతే ఒక వాక్యంలో జవాబు ఇవ్వండి. చిరునామాల కంటే బాగా తెలిసిన పేర్లను ప్రాధాన్యత ఇవ్వండి. ఇక్కడ లావాదేవీ మరియు దాని సిమ్యులేషన్ ఉంది:", ko: "암호화된 트랜잭션에 서명하려고 합니다. 이해하는 데 도움을 주세요. 세부 사항으로 들어가지 마세요. 이상한 점이 없으면 한 문장으로 답하세요. 주소보다 잘 알려진 이름을 선호하세요. 다음은 트랜잭션과 시뮬레이션입니다:", vi: "Tôi sắp ký một giao dịch tiền điện tử. Hãy giúp tôi hiểu nó. Đừng đi vào chi tiết. Trả lời trong một câu nếu không có gì cảm thấy sai. Ưu tiên tên nổi tiếng hơn địa chỉ. Đây là giao dịch và mô phỏng của nó:", pl: "Zaraz podpiszę transakcję kryptograficzną. Pomóż mi ją zrozumieć. Nie wchodź w szczegóły. Odpowiedz jednym zdaniem, jeśli nic nie wydaje się podejrzane. Preferuj znane nazwy nad adresami. Oto transakcja i jej symulacja:", ro: "Sunt pe cale să semnez o tranzacție criptografică. Ajută-mă să o înțeleg. Nu intra în detalii. Răspunde într-o propoziție dacă nu pare nimic suspect. Preferă numele cunoscute în locul adreselor. Iată tranzacția și simularea sa:", nl: "Ik sta op het punt een cryptotransactie te ondertekenen. Help me het te begrijpen. Ga niet in op details. Antwoord in één zin als er niets verdachts lijkt te zijn. Geef de voorkeur aan bekende namen boven adressen. Hier is de transactie en de simulatie ervan:", el: "Είμαι έτοιμος να υπογράψω μια κρυπτογραφική συναλλαγή. Βοηθήστε με να την καταλάβω. Μην μπείτε σε λεπτομέρειες. Απαντήστε σε μία πρόταση αν δεν φαίνεται τίποτα ύποπτο. Προτιμήστε γνωστά ονόματα αντί για διευθύνσεις. Εδώ είναι η συναλλαγή και η προσομοίωσή της:", th: "ฉันกำลังจะเซ็นชื่อธุรกรรมเข้ารหัส ช่วยฉันเข้าใจมัน อย่าเจาะลึกไปในรายละเอียด ตอบกลับในประโยคเดียวถ้าไม่มีอะไรน่าสงสัย โปรดใช้ชื่อที่รู้จักกันดีแทนที่อยู่ นี่คือธุรกรรมและการจำลองของมัน:", cs: "Chystám se podepsat kryptografickou transakci. Pomozte mi ji pochopit. Nechoďte do detailů. Odpovězte jednou větou, pokud se nezdá být nic podezřelého. Upřednostňujte známé názvy před adresami. Zde je transakce a její simulace:", hu: "Kripto tranzakció aláírása előtt állok. Segíts megérteni. Ne menj bele a részletekbe. Válaszolj egy mondatban, ha semmi sem tűnik gyanúsnak. Előnyben részesítendők a jól ismert nevek a címekkel szemben. Itt van a tranzakció és a szimulációja:", sv: "Jag är på väg att signera en kryptotransaktion. Hjälp mig att förstå den. Gå inte in på detaljer. Svara i en mening om inget verkar misstänkt. Föredra välkända namn framför adresser. Här är transaktionen och dess simulering:", da: "Jeg er ved at underskrive en kryptotransaktion. Hjælp mig med at forstå den. Gå ikke i detaljer. Svar i en sætning, hvis der ikke virker noget mistænkeligt. Foretræk velkendte navne frem for adresser. Her er transaktionen og dens simulering:" })
 
@@ -597,8 +597,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [])
 
   const prompt = useMemo(() => {
-    return Result.runAndWrapSync(() => getPromptOrThrow(request.params, simulation)).getOrNull()
-  }, [simulation])
+    return Result.runAndWrapSync(() => getPromptOrThrow(request.params, events)).getOrNull()
+  }, [events])
 
   const copyThePrompt = useCopy(prompt)
 
@@ -674,7 +674,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             {Lang.match({ en: "Summary", zh: "摘要", hi: "सारांश", es: "Resumen", ar: "ملخص", fr: "Résumé", de: "Zusammenfassung", ru: "Резюме", pt: "Resumo", ja: "概要", pa: "ਸਾਰ", bn: "সারাংশ", id: "Ringkasan", ur: "خلاصہ", ms: "Ringkasan", it: "Sommario", tr: "Özet", ta: "சுருக்கம்", te: "సారాంశం", ko: "요약", vi: "Tóm tắt", pl: "Podsumowanie", ro: "Rezumat", nl: "Samenvatting", el: "Σύνοψη ", th: "สรุป ", cs: "Souhrn ", hu: "Összefoglaló ", sv: "Sammanfattning ", da: "Resumé" })}
           </div>
           <div className="text-default-contrast">
-            {Lang.match({ en: "Request summary prompt for AI. Copy this prompt to your AI to help understand what you sign.", zh: "AI 的请求摘要提示。将此提示复制到您的 AI 中以帮助理解您签署的内容。", hi: "एआई के लिए अनुरोध सारांश संकेत। इस संकेत को अपनी एआई में कॉपी करें ताकि यह समझने में मदद मिल सके कि आप क्या साइन कर रहे हैं।", es: "Solicitud de resumen para IA. Copie este mensaje a su IA para ayudar a entender lo que firma.", ar: "ملخص الطلب للذكاء الاصطناعي. انسخ هذا الموجه إلى الذكاء الاصطناعي الخاص بك للمساعدة في فهم ما تقوم بتوقيعه.", fr: "Résumé de la demande pour l'IA. Copiez cette invite dans votre IA pour aider à comprendre ce que vous signez.", de: "Anforderungszusammenfassung für KI. Kopieren Sie diese Eingabeaufforderung in Ihre KI, um zu verstehen, was Sie unterschreiben.", ru: "Сводка запроса для ИИ. Скопируйте этот запрос в свой ИИ, чтобы помочь понять, что вы подписываете.", pt: "Resumo da solicitação para IA. Copie este prompt para sua IA para ajudar a entender o que você assina.", ja: "AI のリクエスト要約プロンプト。これを AI にコピーして、署名する内容を理解するのに役立ててください。", pa: "ਏਆਈ ਲਈ ਬੇਨਤੀ ਸਾਰ ਸੰਕੇਤ। ਇਸ संकेत को अपनी एआई में कॉपी करें ताकि यह समझने में मदद मिल सके कि आप क्या साइन कर रहे हैं।", bn: "এআই এর জন্য অনুরোধ সারাংশ প্রম্পট। আপনি যা সাইন করছেন তা বুঝতে সাহায্য করার জন্য এই প্রম্পটটি আপনার AI-তে কপি করুন।", id: "Ringkasan permintaan untuk AI. Salin prompt ini ke AI Anda untuk membantu memahami apa yang Anda tanda tangani.", ur: "AI کے لیے درخواست کا خلاصہ پرامپٹ۔ اس پرامپٹ کو اپنے AI میں کاپی کریں تاکہ یہ سمجھنے میں مدد مل سکے کہ آپ کیا سائن کر رہے ہیں۔", ms: "Ringkasan permintaan untuk AI. Salin prompt ini ke AI Anda untuk membantu memahami apa yang Anda tanda tangani.", it: "Riepilogo della richiesta per l'IA. Copia questo prompt nella tua IA per aiutarti a capire cosa stai firmando.", tr: "AI için istek özeti istemi. Ne imzaladığınızı anlamanıza yardımcı olmak için bu istemi AI'nize kopyalayın.", ta: "AI க்கான கோரிக்கை சுருக்கம். நீங்கள் என்ன கையெழுத்திடுகிறீர்கள் என்பதை புரிந்துகொள்ள உதவ இந்த ப்ராம்ப்டை உங்கள் AI க்கு நகலெடுக்கவும்.", te: "AI కోసం అభ్యర్థన సారాంశ ప్రాంప్ట్. మీరు ఏమి సంతకం చేస్తున్నారో అర్థం చేసుకోవడంలో సహాయపడటానికి ఈ ప్రాంప్ట్‌ను మీ AIకి కాపీ చేయండి.", ko: "AI를 위한 요청 요약 프롬프트입니다. 서명하는 내용을 이해하는 데 도움이 되도록 이 프롬프트를 AI에 복사하세요.", vi: "Yêu cầu tóm tắt cho AI. Sao chép lời nhắc này vào AI của bạn để giúp hiểu những gì bạn đang ký.", pl: "Podsumowanie żądania dla AI. Skopiuj ten prompt do swojego AI, aby pomóc zrozumieć, co podpisujesz.", ro: "Rezumatul cererii pentru AI. Copiați acest prompt în AI-ul dvs. pentru a vă ajuta să înțelegeți ce semnați.", nl: "Samenvatting van het verzoek voor AI. Kopieer deze prompt naar uw AI om te helpen begrijpen wat u ondertekent.", el: "Σύνοψη αιτήματος για AI. Αντιγράψτε αυτήν την προτροπή στο AI σας για να βοηθήσετε να καταλάβετε τι υπογράφετε ", th: "สรุปคำขอสำหรับ AI คัดลอกพรอมต์นี้ไปยัง AI ของคุณเพื่อช่วยให้เข้าใจว่าคุณกำลังเซ็นอะไร ", cs: "Souhrn požadavku pro AI. Zkopírujte tento prompt do svého AI, abyste pomohli pochopit, co podepisujete. ", hu: "Kérés összefoglaló az AI számára. Másolja ezt a promptot az AI-jába, hogy segítsen megérteni, mit ír alá. ", sv: "Förfrågningssammanfattning för AI. Kopiera denna prompt till din AI för att hjälpa dig förstå vad du undertecknar. ", da: "Anmodningsresumé for AI. Kopier denne prompt til din AI for at hjælpe med at forstå, hvad du underskriver." })}
+            {Lang.match({ en: "Copy this prompt to your AI to understand what you sign.", zh: "将此提示复制到您的 AI 中以了解您签署的内容。", hi: "इस प्रॉम्प्ट को अपनी AI में कॉपी करें ताकि आप समझ सकें कि आप क्या साइन कर रहे हैं।", es: "Copie este mensaje a su IA para entender lo que firma.", ar: "انسخ هذا الموجه إلى ذكاءك الاصطناعي لفهم ما توقع عليه.", fr: "Copiez cette invite dans votre IA pour comprendre ce que vous signez.", de: "Kopieren Sie diese Eingabeaufforderung in Ihre KI, um zu verstehen, was Sie unterschreiben.", ru: "Скопируйте этот запрос в свой ИИ, чтобы понять, что вы подписываете.", pt: "Copie este prompt para sua IA entender o que você assina.", ja: "このプロンプトをAIにコピーして、あなたが何に署名しているのか理解してください。", pa: "ਇਸ ਪ੍ਰੰਪਟ ਨੂੰ ਆਪਣੇ ਏਆਈ ਵਿੱਚ ਕਾਪੀ ਕਰੋ ਤਾਂ ਜੋ ਤੁਸੀਂ ਸਮਝ ਸਕੋ ਕਿ ਤੁਸੀਂ ਕੀ ਸਾਈਨ ਕਰ ਰਹੇ ਹੋ।", bn: "এই প্রম্পটটি আপনার AI-তে কপি করুন যাতে আপনি বুঝতে পারেন আপনি কী সাইন করছেন।", id: "Salin prompt ini ke AI Anda untuk memahami apa yang Anda tanda tangani.", ur: "اس پرامپٹ کو اپنے AI میں کاپی کریں تاکہ آپ سمجھ سکیں کہ آپ کیا سائن کر رہے ہیں۔", ms: "Salin prompt ini ke AI Anda untuk memahami apa yang Anda tanda tangani.", it: "Copia questo prompt nella tua IA per capire cosa stai firmando.", tr: "Bu istemi AI'ınıza kopyalayarak ne imzaladığınızı anlayın.", ta: "இந்த ப்ராம்ப்டை உங்கள் AI-க்கு நகலெடுக்கவும் நீங்கள் என்னை கையொப்பமிடுகிறீர்கள் என்பதை புரிந்துகொள்ளுங்கள்.", te: "ఈ ప్రాంప్ట్‌ను మీ AIకి కాపీ చేయండి మీరు ఏమ signing చేస్తున్నారో అర్థం చేసుకోండి.", ko: "이 프롬프트를 AI에 복사하여 서명하는 내용을 이해하세요.", vi: "Sao chép lời nhắc này vào AI của bạn để hiểu những gì bạn đang ký.", pl: "Skopiuj ten prompt do swojego AI, aby zrozumieć, co podpisujesz.", ro: "Copiați acest prompt în AI-ul dvs. pentru a înțelege ce semnați.", nl: "Kopieer deze prompt naar uw AI om te begrijpen wat u ondertekent.", el: "Αντιγράψτε αυτήν την προτροπή στο AI σας για να καταλάβετε τι υπογράφετε ", th: "คัดลอกพรอมต์นี้ไปยัง AI ของคุณเพื่อเข้าใจสิ่งที่คุณกำลังเซ็นสัญญา ", cs: "Zkopírujte tento prompt do svého AI, abyste pochopili, co podepisujete ", hu: "Másolja ezt a promptot az AI-jába, hogy megértse, mit ír alá ", sv: "Kopiera denna prompt till din AI för att förstå vad du signerar ", da: "Kopier denne prompt til din AI for at forstå, hvad du underskriver " })}
           </div>
           <div className="h-4" />
           <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
@@ -682,7 +682,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               readOnly
               rows={9}
               dir={prompt ? "ltr" : "auto"}
-              value={prompt} />
+              value={prompt || Lang.match({ en: "Loading...", zh: "加载中...", hi: "लोड हो रहा है...", es: "Cargando...", ar: "جار التحميل...", fr: "Chargement...", de: "Laden...", ru: "Загрузка...", pt: "Carregando...", ja: "読み込み中...", pa: "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...", bn: "লোড হচ্ছে...", id: "Memuat...", ur: "لوڈ ہو رہا ہے...", ms: "Memuat...", it: "Caricamento in corso...", tr: "Yükleniyor...", ta: "சுமக்கப்படுகிறது...", te: "లోడ్ అవుతోంది...", ko: "로딩 중...", vi: "Đang tải...", pl: "Ładowanie...", ro: "Se încarcă...", nl: "Laden...", el: "Φόρτωση...", th: "กำลังโหลด...", cs: "Načítání...", hu: "Betöltés...", sv: "Laddar...", da: "Indlæser..." })} />
           </div>
           <div className="h-2" />
           <div className="flex items-center flex-wrap-reverse gap-2">
