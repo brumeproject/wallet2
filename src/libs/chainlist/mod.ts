@@ -49,7 +49,7 @@ export interface ChaiEnsData {
 export interface SmallChainData {
   readonly chainId: number,
   readonly name: string,
-  readonly rpc: ChainRpcData
+  readonly rpc: string
   readonly nativeCurrency: ChainNativeCurrencyData
 }
 

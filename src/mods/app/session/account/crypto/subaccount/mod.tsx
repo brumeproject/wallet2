@@ -134,31 +134,23 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   }, [$entry])
 
   const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrNull()?.get()
+    return $entry.getStringByKeyOrThrow("SeedPhrase").getValueOrThrow().get()
   }, [$entry])
 
   const subentries = useMemo(() => {
     return [...session.value.kdbx.inner.content.value.document.querySelectorAll("Entry")].filter(e => !e.closest("History")).map(e => new KDBX.Inner.KeePassFile.Entry(e)).filter(e => e.getStringByKeyOrNull("Parent")?.getValueOrNull()?.get() === $entry.getUuidOrThrow().toString()).filter(e => e.getStringByKeyOrNull("Index")?.getValueOrNull()?.get() === subaccount.toString())
   }, [session, $entry, subaccount])
 
-  const getEthereumOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
+  const getEthereumAddressOrThrow = useCallback(async () => {
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
     const upub = secp256k1.SecretKey.import(xsig.key).publish().export(false)
 
     return `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
   }, [seedphrase, subaccount])
 
-  const getSolanaOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
+  const getSolanaAddressOrThrow = useCallback(async () => {
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
     const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
     const upub = await Ed25519.publish(xsig.key)
 
@@ -166,23 +158,13 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   }, [seedphrase, subaccount])
 
   const respond = useCallback(async (url: string, signal = new AbortController().signal): Promise<Nullable<WcSessionData>> => {
-    if (seedphrase == null)
-      return
-
     await using stack = new AsyncDisposableStack()
 
     const cleaner = new AbortController()
     stack.defer(() => cleaner.abort())
 
-    const ethereum = await getEthereumOrThrow()
-
-    if (ethereum == null)
-      return
-
-    const solana = await getSolanaOrThrow()
-
-    if (solana == null)
-      return
+    const ethereum = await getEthereumAddressOrThrow()
+    const solana = await getSolanaAddressOrThrow()
 
     const sticky = crypto.getRandomValues(new Uint8Array(32))
     const client = await IrnClient.open(WalletConnect.RELAY, sticky, "c6c9bacd35afa3eb9e6cccf6d8464395")
@@ -402,35 +384,22 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
   }, [$entry])
 
   const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrNull()?.get()
+    return $entry.getStringByKeyOrThrow("SeedPhrase").getValueOrThrow().get()
   }, [$entry])
 
   const [ethereum, setEthereum] = useState<Nullable<string>>()
+  const [solana, setSolana] = useState<Nullable<string>>()
 
-  const getEthereumOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
+  const getEthereumAddressOrThrow = useCallback(async () => {
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
     const upub = secp256k1.SecretKey.import(xsig.key).publish().export(false)
 
     return `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
   }, [seedphrase, subaccount])
 
-  useEffect(() => {
-    getEthereumOrThrow().then(setEthereum).catch(console.error)
-  }, [getEthereumOrThrow])
-
-  const [solana, setSolana] = useState<Nullable<string>>()
-
-  const getSolanaOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
+  const getSolanaAddressOrThrow = useCallback(async () => {
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
     const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
     const upub = await Ed25519.publish(xsig.key)
 
@@ -438,8 +407,12 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
   }, [seedphrase, subaccount])
 
   useEffect(() => {
-    getSolanaOrThrow().then(setSolana).catch(console.error)
-  }, [getSolanaOrThrow])
+    getEthereumAddressOrThrow().then(setEthereum).catch(console.error)
+  }, [getEthereumAddressOrThrow])
+
+  useEffect(() => {
+    getSolanaAddressOrThrow().then(setSolana).catch(console.error)
+  }, [getSolanaAddressOrThrow])
 
   const copyTheEthereum = useCopy(ethereum)
   const copyTheSolana = useCopy(solana)
@@ -549,34 +522,21 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
   }, [$entry])
 
   const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrNull()?.get()
+    return $entry.getStringByKeyOrThrow("SeedPhrase").getValueOrThrow().get()
   }, [$entry])
 
   const [ethereum, setEthereum] = useState<Nullable<string>>()
+  const [solana, setSolana] = useState<Nullable<string>>()
 
-  const getEthereumOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
+  const getEthereumKeyOrThrow = useCallback(async () => {
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
 
     return `0x${xsig.key.toHex()}`
   }, [seedphrase, subaccount])
 
-  useEffect(() => {
-    getEthereumOrThrow().then(setEthereum).catch(console.error)
-  }, [getEthereumOrThrow])
-
-  const [solana, setSolana] = useState<Nullable<string>>()
-
-  const getSolanaOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
+  const getSolanaKeyOrThrow = useCallback(async () => {
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
     const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
     const upub = await Ed25519.publish(xsig.key)
 
@@ -590,8 +550,12 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
   }, [seedphrase, subaccount])
 
   useEffect(() => {
-    getSolanaOrThrow().then(setSolana).catch(console.error)
-  }, [getSolanaOrThrow])
+    getEthereumKeyOrThrow().then(setEthereum).catch(console.error)
+  }, [getEthereumKeyOrThrow])
+
+  useEffect(() => {
+    getSolanaKeyOrThrow().then(setSolana).catch(console.error)
+  }, [getSolanaKeyOrThrow])
 
   const copyTheEthereum = useCopy(ethereum)
   const copyTheSolana = useCopy(solana)

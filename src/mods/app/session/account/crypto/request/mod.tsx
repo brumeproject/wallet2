@@ -167,6 +167,7 @@ export interface EIP1193TransactionRequest {
   readonly maxPriorityFeePerGas?: `0x${string}`
   readonly to?: `0x${string}`
   readonly value?: `0x${string}`
+  readonly nonce?: `0x${string}`
 }
 
 export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry } & { request: CryptoRequest }) {
@@ -189,27 +190,19 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [$entry])
 
   const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrNull("SeedPhrase")?.getValueOrNull()?.get()
+    return $entry.getStringByKeyOrThrow("SeedPhrase").getValueOrThrow().get()
   }, [$entry])
 
-  const getEthereumOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
+  const getEthereumAddressOrThrow = useCallback(async () => {
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
     const upub = secp256k1.SecretKey.import(xsig.key).publish().export(false)
 
     return `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
   }, [seedphrase, subaccount])
 
-  const getSolanaOrThrow = useCallback(async () => {
-    if (seedphrase == null)
-      return
-
+  const getSolanaAddressOrThrow = useCallback(async () => {
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-
     const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
     const upub = await Ed25519.publish(xsig.key)
 
@@ -231,69 +224,52 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const respondOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request } = params
 
-    if (seedphrase == null)
-      throw new WcUnsupportedAccountsError()
-
     if (request.method === "eth_sendTransaction") {
-      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value }] = request.params as [EIP1193TransactionRequest]
+      const [payload] = request.params as [EIP1193TransactionRequest]
 
-      const chainId = Number(params.chainId.split(":")[1])
+      const { data, from, to, value = 0n } = payload
+
       const chain = chainlist.find(chain => chain.chainId === Number(params.chainId.split(":")[1]))
 
       if (chain == null)
         throw new WcUnsupportedChainsError()
 
-      const current = await getEthereumOrThrow()
+      const current = await getEthereumAddressOrThrow()
 
-      if (current == null)
-        throw new WcUnsupportedAccountsError()
       if (from.toLowerCase() !== current.toLowerCase())
         throw new WcUnsupportedAccountsError()
 
-      const nonce = await requestOrThrow<`0x${string}`>(chain.rpc, {
-        method: "eth_getTransactionCount",
-        params: [current, "latest"]
-      }).then(r => r.getOrThrow())
+      const getTransactionOrThrow = async () => {
+        const { chainId } = chain
 
-      const transaction = await (async () => {
-        const sentValue = value || 0n
+        const [nonce = await requestOrThrow<`0x${string}`>(chain.rpc, {
+          method: "eth_getTransactionCount",
+          params: [current, "latest"]
+        }).then(r => r.getOrThrow())] = [payload.nonce]
 
-        const sentGas: `0x${string}` = gas || await requestOrThrow<`0x${string}`>(chain.rpc, {
+        const [gas = await requestOrThrow<`0x${string}`>(chain.rpc, {
           method: "eth_estimateGas",
           params: [{ to, data, value }]
+        }).then(r => r.getOrThrow())] = [payload.gas]
+
+        if (payload.gasPrice != null)
+          return EIP155UnsignedTransaction.from({ chainId, nonce, gasPrice: payload.gasPrice, startGas: gas, to, value, data })
+        if (payload.maxFeePerGas != null && payload.maxPriorityFeePerGas != null)
+          return EIP1559UnsignedTransaction.from({ chainId, nonce, maxFeePerGas: payload.maxFeePerGas, maxPriorityFeePerGas: payload.maxPriorityFeePerGas, gasLimit: gas, destination: to, amount: value, data })
+
+        const feeHistory = await requestOrThrow<{ baseFeePerGas: `0x${string}`, reward: `0x${string}`[][] }>(chain.rpc, {
+          method: "eth_feeHistory",
+          params: [1, "latest", [80]]
         }).then(r => r.getOrThrow())
 
-        if (gasPrice != null)
-          return EIP155UnsignedTransaction.from({ chainId, nonce, gasPrice, startGas: sentGas, to, value: sentValue, data })
-        if (maxFeePerGas != null && maxPriorityFeePerGas != null)
-          return EIP1559UnsignedTransaction.from({ chainId, nonce, maxFeePerGas, maxPriorityFeePerGas, gasLimit: sentGas, destination: to, amount: sentValue, data })
+        const baseFeePerGas = BigInt(feeHistory.baseFeePerGas)
+        const maxPriorityFeePerGas = BigInt(feeHistory.reward[0][0])
+        const maxFeePerGas = (baseFeePerGas * 2n) + maxPriorityFeePerGas
 
-        const liveBlockData = await requestOrThrow<{ baseFeePerGas?: `0x${string}` }>(chain.rpc, {
-          method: "eth_getBlockByNumber",
-          params: ["latest", false]
-        }).then(r => r.getOrThrow())
+        return EIP1559UnsignedTransaction.from({ chainId, nonce, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, destination: to, amount: value, data })
+      }
 
-        if (liveBlockData.baseFeePerGas != null) {
-          const liveMaxPriorityFeePerGas = await requestOrThrow<`0x${string}`>(chain.rpc, {
-            method: "eth_maxPriorityFeePerGas",
-            params: []
-          }).then(r => r.getOrThrow())
-
-          const baseFeePerGas = BigInt(liveBlockData.baseFeePerGas)
-
-          const maxPriorityFeePerGas = BigInt(liveMaxPriorityFeePerGas)
-          const maxFeePerGas = (baseFeePerGas * 2n) + maxPriorityFeePerGas
-
-          return EIP1559UnsignedTransaction.from({ chainId, nonce, gasLimit: sentGas, maxFeePerGas, maxPriorityFeePerGas, destination: to, amount: sentValue, data })
-        }
-
-        const sentGasPrice = await requestOrThrow<`0x${string}`>(chain.rpc, {
-          method: "eth_gasPrice",
-          params: []
-        }).then(r => r.getOrThrow())
-
-        return EIP155UnsignedTransaction.from({ chainId, nonce, gasPrice: sentGasPrice, startGas: sentGas, to, value: sentValue, data })
-      })()
+      const transaction = await getTransactionOrThrow()
 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
@@ -310,10 +286,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (request.method === "personal_sign") {
       const [message, account] = request.params as [string, string]
 
-      const current = await getEthereumOrThrow()
+      const current = await getEthereumAddressOrThrow()
 
-      if (current == null)
-        throw new WcUnsupportedAccountsError()
       if (account.toLowerCase() !== current.toLowerCase())
         throw new WcUnsupportedAccountsError()
 
@@ -338,10 +312,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (request.method === "eth_signTypedData_v4") {
       const [account, data] = request.params as [string, string]
 
-      const current = await getEthereumOrThrow()
+      const current = await getEthereumAddressOrThrow()
 
-      if (current == null)
-        throw new WcUnsupportedAccountsError()
       if (account.toLowerCase() !== current.toLowerCase())
         throw new WcUnsupportedAccountsError()
 
@@ -359,10 +331,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (request.method === "solana_signMessage") {
       const { message, pubkey } = request.params as { message: string, pubkey: string }
 
-      const current = await getSolanaOrThrow()
+      const current = await getSolanaAddressOrThrow()
 
-      if (current == null)
-        throw new WcUnsupportedAccountsError()
       if (pubkey !== current)
         throw new WcUnsupportedAccountsError()
 
@@ -376,7 +346,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     }
 
     throw new WcUnsupportedMethodsError()
-  }, [seedphrase, getEthereumOrThrow, getSolanaOrThrow, requestOrThrow])
+  }, [seedphrase, getEthereumAddressOrThrow, getSolanaAddressOrThrow, requestOrThrow])
 
   const approve = useSubmit(async () => {
     await respondOrThrow(request.params).then(request.resolve).catch(request.reject).finally(() => close(true))
@@ -467,10 +437,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (chain == null)
         throw new WcUnsupportedChainsError()
 
-      const current = await getEthereumOrThrow()
+      const current = await getEthereumAddressOrThrow()
 
-      if (current == null)
-        throw new WcUnsupportedAccountsError()
       if (from.toLowerCase() !== current.toLowerCase())
         throw new WcUnsupportedAccountsError()
 
@@ -563,7 +531,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     }
 
     throw new WcUnsupportedMethodsError()
-  }, [getEthereumOrThrow, getSolanaOrThrow, requestOrThrow])
+  }, [getEthereumAddressOrThrow, getSolanaAddressOrThrow, requestOrThrow])
 
   const type = useMemo(() => {
     return Result.runAndWrapSync(() => getTypeOrThrow(request.params)).getOrNull()
