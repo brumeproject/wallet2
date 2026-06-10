@@ -4,8 +4,6 @@ import { FlipCard } from "@/libs/card/mod.tsx";
 import { chainlist } from "@/libs/chainlist/mod.ts";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
-import { UnsignedTransaction0 } from "@/libs/eip155/mods/transaction0/mod.ts";
-import { UnsignedTransaction2 } from "@/libs/eip155/mods/transaction2/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
@@ -18,6 +16,8 @@ import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
+import { EIP155UnsignedTransaction } from "@hazae41/eip155";
+import { EIP1559UnsignedTransaction } from "@hazae41/eip1559";
 import { eip712, EIP712Data } from "@hazae41/eip712";
 import { Fixed } from "@hazae41/fixed";
 import { RpcCounter, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
@@ -158,6 +158,17 @@ export function CryptoRequestAnchor(props: { index: number } & { $entry: KDBX.In
   </Fragment>
 }
 
+export interface EIP1193TransactionRequest {
+  readonly data?: `0x${string}`
+  readonly from: `0x${string}`
+  readonly gas?: `0x${string}`
+  readonly gasPrice?: `0x${string}`
+  readonly maxFeePerGas?: `0x${string}`
+  readonly maxPriorityFeePerGas?: `0x${string}`
+  readonly to?: `0x${string}`
+  readonly value?: `0x${string}`
+}
+
 export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry } & { request: CryptoRequest }) {
   const { $entry, subaccount, $subentry, request } = props
 
@@ -224,7 +235,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       throw new WcUnsupportedAccountsError()
 
     if (request.method === "eth_sendTransaction") {
-      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value }] = request.params as [EIP1193TransactionRequest]
 
       const chainId = Number(params.chainId.split(":")[1])
       const chain = chainlist.find(chain => chain.chainId === Number(params.chainId.split(":")[1]))
@@ -245,10 +256,17 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       }).then(r => r.getOrThrow())
 
       const transaction = await (async () => {
-        if (maxFeePerGas != null && maxPriorityFeePerGas != null)
-          return UnsignedTransaction2.from({ chainId, data, to, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, value, nonce })
+        const sentValue = value || 0n
+
+        const sentGas: `0x${string}` = gas || await requestOrThrow<`0x${string}`>(chain.rpc, {
+          method: "eth_estimateGas",
+          params: [{ to, data, value }]
+        }).then(r => r.getOrThrow())
+
         if (gasPrice != null)
-          return UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice, value, nonce })
+          return EIP155UnsignedTransaction.from({ chainId, nonce, gasPrice, startGas: sentGas, to, value: sentValue, data })
+        if (maxFeePerGas != null && maxPriorityFeePerGas != null)
+          return EIP1559UnsignedTransaction.from({ chainId, nonce, maxFeePerGas, maxPriorityFeePerGas, gasLimit: sentGas, destination: to, amount: sentValue, data })
 
         const liveBlockData = await requestOrThrow<{ baseFeePerGas?: `0x${string}` }>(chain.rpc, {
           method: "eth_getBlockByNumber",
@@ -266,15 +284,15 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           const maxPriorityFeePerGas = BigInt(liveMaxPriorityFeePerGas)
           const maxFeePerGas = (baseFeePerGas * 2n) + maxPriorityFeePerGas
 
-          return UnsignedTransaction2.from({ chainId, data, to, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, value, nonce })
-        } else {
-          const liveGasPrice = await requestOrThrow<`0x${string}`>(chain.rpc, {
-            method: "eth_gasPrice",
-            params: []
-          }).then(r => r.getOrThrow())
-
-          return UnsignedTransaction0.from({ chainId, data, to, gasLimit: gas, gasPrice: liveGasPrice, value, nonce })
+          return EIP1559UnsignedTransaction.from({ chainId, nonce, gasLimit: sentGas, maxFeePerGas, maxPriorityFeePerGas, destination: to, amount: sentValue, data })
         }
+
+        const sentGasPrice = await requestOrThrow<`0x${string}`>(chain.rpc, {
+          method: "eth_gasPrice",
+          params: []
+        }).then(r => r.getOrThrow())
+
+        return EIP155UnsignedTransaction.from({ chainId, nonce, gasPrice: sentGasPrice, startGas: sentGas, to, value: sentValue, data })
       })()
 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
@@ -442,7 +460,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const { request } = params
 
     if (request.method === "eth_sendTransaction") {
-      const [{ data, from, to, value }] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+      const [{ data, from, to, value }] = request.params as [EIP1193TransactionRequest]
 
       const chain = chainlist.find(chain => chain.chainId === Number(params.chainId.split(":")[1]))
 
@@ -569,15 +587,15 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const { request, chainId } = params
 
     if (request.method === "eth_sendTransaction") {
-      const [params] = request.params as [{ data?: `0x${string}`, from: `0x${string}`, gas: `0x${string}`, gasPrice: `0x${string}`, maxFeePerGas?: `0x${string}`, maxPriorityFeePerGas?: `0x${string}`, to?: `0x${string}`, value: `0x${string}` }]
+      const [params] = request.params as [EIP1193TransactionRequest]
 
       const chain = chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))
 
       if (chain == null)
         throw new WcUnsupportedChainsError()
 
-      const gas = BigInt(params.gas).toString()
-      const value = new Fixed(BigInt(params.value), Number(chain.nativeCurrency.decimals)).toString()
+      const gas = params.gas ? BigInt(params.gas).toString() : undefined
+      const value = params.value ? new Fixed(BigInt(params.value), Number(chain.nativeCurrency.decimals)).toString() : undefined
 
       const transaction = { chain: chain.name, chainId: chain.chainId, gas, to: params.to, value, symbol: chain.nativeCurrency.symbol, reverts: simulation.isErr(), events: simulation.getOrNull() }
 
