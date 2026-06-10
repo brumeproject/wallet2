@@ -3,16 +3,17 @@
   "private": true,
   "version": "0.5.0",
   "scripts": {
+    "process": "zsh -c 'deno x --unstable-worker-options saumon ./src/**/**'",
     "examine": "deno lint ./src && deno check ./src && deno test ./src",
     "prepack": "deno x glace ./www --out=./out",
     "produce": "deno x glace ./www --out=./out & deno -RNE ./src/mods/srv/bin.ts",
-    "develop": "deno x glace ./www --out=./out --watch=./src,./www --dev & deno -RNE ./src/mods/srv/bin.ts --dev",
-    "process": "zsh -c 'deno x --unstable-worker-options saumon ./src/**/**'"
+    "develop": "deno x glace ./www --out=./out --watch=./src,./www --dev & deno -RNE ./src/mods/srv/bin.ts --dev"
   },
   "files": [
     "./out"
   ],
   "dependencies": {
+    "@hazae41/abi": "^1.0.0",
     "@hazae41/argon2": "^2.0.9",
     "@hazae41/base58": "^2.0.0",
     "@hazae41/binary": "2.1.1",
@@ -22,6 +23,7 @@
     "@hazae41/clade": "0.1.5",
     "@hazae41/cursor": "2.2.0",
     "@hazae41/disposable-stack-polyfill": "2.0.5",
+    "@hazae41/eip712": "^1.0.0",
     "@hazae41/fixed": "^2.0.2",
     "@hazae41/immutable": "2.1.3",
     "@hazae41/jsonrpc": "1.2.0",

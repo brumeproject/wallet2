@@ -1,3 +1,5 @@
+// deno-lint-ignore-file no-namespace
+
 export namespace base16 {
 
   export function padStart(self: string) {

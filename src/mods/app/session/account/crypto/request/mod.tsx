@@ -1,7 +1,4 @@
-import { base16 } from "@/libs/abi/libs/base16/mod.ts";
-import { abi } from "@/libs/abi/mods/abi/mod.ts";
-import { AbiString } from "@/libs/abi/mods/string/mod.ts";
-import { AbiUint256 } from "@/libs/abi/mods/uint/mod.ts";
+import { base16 } from "@/libs/base16/mod.ts";
 import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
 import { chainlist } from "@/libs/chainlist/mod.ts";
@@ -9,18 +6,19 @@ import { useCopy } from "@/libs/copy/mod.ts";
 import { Ed25519 } from "@/libs/ed25519/mod.ts";
 import { UnsignedTransaction0 } from "@/libs/eip155/mods/transaction0/mod.ts";
 import { UnsignedTransaction2 } from "@/libs/eip155/mods/transaction2/mod.ts";
-import { EIP712, EIP712Data } from "@/libs/eip712/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useSubmit } from "@/libs/submit/mod.ts";
+import { abi, AbiString, AbiUint256 } from "@hazae41/abi";
 import { base58 } from "@hazae41/base58";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
+import { eip712, EIP712Data } from "@hazae41/eip712";
 import { Fixed } from "@hazae41/fixed";
 import { RpcCounter, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
@@ -332,7 +330,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
 
-      const digest = EIP712.hash(JSON.parse(data))
+      const digest = eip712.hash(JSON.parse(data))
       const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
 
       signed[64] += 27
