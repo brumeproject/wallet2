@@ -269,7 +269,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     const key = session.channel.key.toBase64()
 
     return { jwk, tpc, key }
-  }, [seedphrase])
+  }, [seedphrase, subaccount])
 
   return <Fragment>
     <SubpathProvider value={hash}>

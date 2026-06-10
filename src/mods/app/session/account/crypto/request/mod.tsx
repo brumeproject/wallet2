@@ -346,7 +346,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     }
 
     throw new WcUnsupportedMethodsError()
-  }, [seedphrase, getEthereumAddressOrThrow, getSolanaAddressOrThrow, requestOrThrow])
+  }, [seedphrase, subaccount])
 
   const approve = useSubmit(async () => {
     await respondOrThrow(request.params).then(request.resolve).catch(request.reject).finally(() => close(true))
