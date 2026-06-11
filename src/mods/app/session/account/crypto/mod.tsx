@@ -398,7 +398,7 @@ export function CryptoAccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           <CryptoAccountExportPage $entry={$entry} />
         </PathBoard>}
     </SubpathProvider>
-    <div className="flex flex-col text-left gap-2">
+    <div className="flex flex-col gap-2">
       <CryptoAccountExportMenuAnchor />
       {trashed === false && <AccountMenuTrashButton $entry={$entry} close={close} />}
       {trashed === true && <AccountMenuUntrashButton $entry={$entry} close={close} />}

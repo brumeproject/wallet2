@@ -252,7 +252,7 @@ export function AccountAddMenu() {
           <CardAccountAddPage />
         </PathBoard>}
     </SubpathProvider>
-    <div className="flex flex-col text-left gap-2">
+    <div className="flex flex-col gap-2">
       <PasswordAccountAddMenuAnchor />
       <KeypairAccountAddMenuAnchor />
       <CryptoAccountAddMenuAnchor />

@@ -262,7 +262,7 @@ function SessionMenu(props: { logout(): void }) {
           <SessionExportPage />
         </PathBoard>}
     </SubpathProvider>
-    <div className="flex flex-col text-left gap-2">
+    <div className="flex flex-col gap-2">
       <SessionExportAnchor />
       <WideNakedMenuButton
         type="button"

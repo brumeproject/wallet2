@@ -348,7 +348,7 @@ export function CryptoSubaccountMenu(props: { $entry: KDBX.Inner.KeePassFile.Ent
           <CryptoSubaccountExportPage $entry={$entry} subaccount={subaccount} />
         </PathBoard>}
     </SubpathProvider>
-    <div className="flex flex-col text-left gap-2">
+    <div className="flex flex-col gap-2">
       <CryptoSubaccountAddressMenuAnchor />
       <CryptoSubaccountExportMenuAnchor />
     </div>

@@ -75,7 +75,7 @@ export function UserLoginMenu(props: { login(session: SessionData): void }) {
           <UserAddMenu />
         </PathPaper>}
     </SubpathProvider>
-    <div className="flex flex-col text-left gap-2">
+    <div className="flex flex-col gap-2">
       {users?.map(user =>
         <Fragment key={user.uuid}>
           <UserItem
@@ -120,7 +120,7 @@ function UserAddMenu() {
           <UserCreatePage />
         </PathBoard>}
     </SubpathProvider>
-    <div className="flex flex-col text-left gap-2">
+    <div className="flex flex-col gap-2">
       <UserCreateButton />
       <UserImportButton />
     </div>
@@ -941,7 +941,7 @@ function UserMenu(props: { user: UserData }) {
             <UserReimportFilePage user={user} />}
         </PathBoard>}
     </SubpathProvider>
-    <div className="flex flex-col text-left gap-2">
+    <div className="flex flex-col gap-2">
       <UserReimportButton />
       <UserRemoveButton user={user} />
     </div>

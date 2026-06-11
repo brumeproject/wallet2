@@ -479,7 +479,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
         <PathPaper>
-          <div className="flex flex-col text-left gap-2">
+          <div className="flex flex-col gap-2">
             {/* <WideNakedMenuButton>
               <Outline.PencilIcon className="size-5" />
               Edit

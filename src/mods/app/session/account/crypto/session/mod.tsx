@@ -615,7 +615,7 @@ export function CryptoSessionMenu(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }).catch(Errors.display), [encrypt, close])
 
   return <Fragment>
-    <div className="flex flex-col text-left gap-2">
+    <div className="flex flex-col gap-2">
       {session.value.user.fsfh != null &&
         <WideNakedMenuButton
           type="button"

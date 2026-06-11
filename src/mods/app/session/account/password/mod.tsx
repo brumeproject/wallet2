@@ -373,7 +373,7 @@ export function PasswordAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entr
     <SubpathProvider value={hash}>
       {hash.url.pathname === "/+" &&
         <PathPaper>
-          <div className="flex flex-col text-left gap-2">
+          <div className="flex flex-col gap-2">
             {/* <WideNakedMenuButton>
               <Outline.PencilIcon className="size-5" />
               Edit
@@ -738,7 +738,7 @@ export function PasswordMenu(props: { value: string } & { onChange(value: string
     return setPassword(result)
   }).catch(Errors.display), [])
 
-  return <div className="flex flex-col text-left gap-2">
+  return <div className="flex flex-col gap-2">
     <WideNakedMenuButton
       type="button"
       onClick={onDigicodeClick}>
