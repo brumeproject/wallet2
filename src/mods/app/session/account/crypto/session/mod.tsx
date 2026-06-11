@@ -503,10 +503,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           icon={<Outline.LinkIcon className="size-5" />}
           flip={flipped}
           onFlipChange={setFlipped} />
-        <div className="h-2" />
-        <div className="po-2 w-[min(20rem,100%)] bg-default-contrast text-default-contrast rounded-xl">
-          {Lang.match({ en: "Solana transactions are not supported.", zh: "不支持 Solana 交易。", hi: "सोलाना लेनदेन समर्थित नहीं हैं।", es: "Las transacciones de Solana no son compatibles.", ar: "معاملات سولانا غير مدعومة.", fr: "Les transactions Solana ne sont pas prises en charge.", de: "Solana-Transaktionen werden nicht unterstützt.", ru: "Транзакции Solana не поддерживаются.", pt: "As transações do Solana não são suportadas.", ja: "Solanaトランザクションはサポートされていません。", pa: "ਸੋਲਾਨਾ ਲੈਣ-ਦੇਣ ਸਹਿਯੋਗੀ ਨਹੀਂ ਹਨ।", bn: "সোলানা লেনদেন সমর্থিত নয়।", id: "Transaksi Solana tidak didukung.", ur: "سولانا ٹرانزیکشنز کی حمایت نہیں کی جاتی ہے۔", ms: "Transaksi Solana tidak didukung.", it: "Le transazioni Solana non sono supportate.", tr: "Solana işlemleri desteklenmiyor.", ta: "சோலானா பரிவர்த்தனைகள் ஆதரிக்கப்படவில்லை.", te: "సోలానా లావాదేవీలు మద్దతు ఇవ్వబడలేదు.", ko: "솔라나 트랜잭션은 지원되지 않습니다.", vi: "Giao dịch Solana không được hỗ trợ.", pl: "Transakcje Solana nie są obsługiwane.", ro: "Tranzacțiile Solana nu sunt suportate.", nl: "Solana-transacties worden niet ondersteund.", el: "Οι συναλλαγές Solana δεν υποστηρίζονται. ", th: "ไม่รองรับธุรกรรม Solana ", cs: "Transakce Solana nejsou podporovány. ", hu: "A Solana tranzakciók nem támogatottak. ", sv: "Solana-transaktioner stöds inte. ", da: "Solana-transaktioner understøttes ikke." })}
-        </div>
       </div>
       <form className="grow flex flex-col"
         onSubmit={Events.preventDefault}>
