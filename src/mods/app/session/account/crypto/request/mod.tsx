@@ -159,7 +159,7 @@ export function CryptoRequestAnchor(props: { index: number } & { $entry: KDBX.In
   </Fragment>
 }
 
-export interface EIP1193TransactionRequest {
+export interface EthSendTransactionParams {
   readonly data?: `0x${string}`
   readonly from: `0x${string}`
   readonly gas?: `0x${string}`
@@ -169,6 +169,17 @@ export interface EIP1193TransactionRequest {
   readonly to?: `0x${string}`
   readonly value?: `0x${string}`
   readonly nonce?: `0x${string}`
+}
+
+export interface EthSimulateCallLog {
+  readonly address: `0x${string}`
+  readonly topics: `0x${string}`[]
+  readonly data: `0x${string}`
+}
+
+export interface EthSimulateCall {
+  readonly status: `0x${string}`,
+  readonly logs: EthSimulateCallLog[]
 }
 
 export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry } & { request: CryptoRequest }) {
@@ -226,7 +237,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const { request } = params
 
     if (request.method === "eth_sendTransaction") {
-      const [payload] = request.params as [EIP1193TransactionRequest]
+      const [payload] = request.params as [EthSendTransactionParams]
 
       const { data, from, to, value = 0n } = payload
 
@@ -423,7 +434,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const { request } = params
 
     if (request.method === "eth_sendTransaction") {
-      const [{ data, from, to, value }] = request.params as [EIP1193TransactionRequest]
+      const [{ data, from, to, value }] = request.params as [EthSendTransactionParams]
 
       const chain = chainlist.find(chain => chain.chainId === Number(params.chainId.split(":")[1]))
 
@@ -443,18 +454,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         traceTransfers: true
       }
 
-      interface CallResultLog {
-        readonly address: `0x${string}`
-        readonly topics: `0x${string}`[]
-        readonly data: `0x${string}`
-      }
-
-      interface CallResult {
-        readonly status: `0x${string}`,
-        readonly logs: CallResultLog[]
-      }
-
-      const [{ calls: [result] }] = await requestOrThrow<[{ calls: [CallResult] }]>(chain.rpc, {
+      const [{ calls: [result] }] = await requestOrThrow<[{ calls: [EthSimulateCall] }]>(chain.rpc, {
         method: "eth_simulateV1",
         params: [payload, "latest"]
       }).then(r => r.getOrThrow())
@@ -548,7 +548,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const { request, chainId } = params
 
     if (request.method === "eth_sendTransaction") {
-      const [params] = request.params as [EIP1193TransactionRequest]
+      const [params] = request.params as [EthSendTransactionParams]
 
       const chain = chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))
 
