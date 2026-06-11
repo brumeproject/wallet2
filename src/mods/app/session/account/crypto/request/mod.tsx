@@ -526,24 +526,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [getEthereumAddressOrThrow, getSolanaAddressOrThrow, requestOrThrow])
 
-  const type = useMemo(() => {
-    return Result.runAndWrapSync(() => getTypeOrThrow(request.params)).getOrNull()
-  }, [request])
-
-  const chain = useMemo(() => {
-    return Result.runAndWrapSync(() => getChainOrThrow(request.params)).getOrNull()
-  }, [request])
-
-  const message = useMemo(() => {
-    return Result.runAndWrapSync(() => getMessageOrThrow(request.params)).getOrNull()
-  }, [request])
-
-  const [simulation, setSimulation] = useState<Nullable<Result<{ reverts: boolean, events: unknown[] }>>>()
-
-  useEffect(() => {
-    Result.runAndWrap(() => getSimulationOrThrow(request.params)).then(setSimulation)
-  }, [request])
-
   const getPromptOrThrow = useCallback((params: WcSessionRequestParams, simulation: Nullable<Result<{ reverts: boolean, events: unknown[] }>>) => {
     const { request, chainId } = params
 
@@ -589,6 +571,24 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
     throw new WcUnsupportedMethodsError()
   }, [])
+
+  const type = useMemo(() => {
+    return Result.runAndWrapSync(() => getTypeOrThrow(request.params)).getOrNull()
+  }, [request])
+
+  const chain = useMemo(() => {
+    return Result.runAndWrapSync(() => getChainOrThrow(request.params)).getOrNull()
+  }, [request])
+
+  const message = useMemo(() => {
+    return Result.runAndWrapSync(() => getMessageOrThrow(request.params)).getOrNull()
+  }, [request])
+
+  const [simulation, setSimulation] = useState<Nullable<Result<{ reverts: boolean, events: unknown[] }>>>()
+
+  useEffect(() => {
+    Result.runAndWrap(() => getSimulationOrThrow(request.params)).then(setSimulation)
+  }, [request])
 
   const prompt = useMemo(() => {
     return Result.runAndWrapSync(() => getPromptOrThrow(request.params, simulation)).getOrNull()
