@@ -423,8 +423,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (key == null)
       return
 
-    console.debug("Connecting...")
-
     const sticky = Uint8Array.fromBase64(jwk)
     const client = await IrnClient.open(WalletConnect.RELAY, sticky, "c6c9bacd35afa3eb9e6cccf6d8464395")
 
@@ -464,8 +462,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     session.addEventListener("close", () => setSession(undefined), { signal: session.closing })
 
     await session.open()
-
-    console.log(session.channel.client)
 
     setSession(session)
   }, [jwk, tpc, key])
