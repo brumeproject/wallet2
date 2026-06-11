@@ -7,6 +7,7 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { WideNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { useOnline } from "@/libs/online/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useSubmit } from "@/libs/submit/mod.ts";
 import { CryptoRequest, CryptoRequestAnchor } from "@/mods/app/session/account/crypto/request/mod.tsx";
@@ -409,6 +410,8 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $subentry.getStringByKeyOrNull("WalletConnectKey")?.getValueOrNull()?.get()
   }, [$subentry])
 
+  const online = useOnline()
+
   const [session, setSession] = useState<Nullable<WcSession>>()
   const [requests, setRequests] = useState<Array<CryptoRequest>>([])
 
@@ -419,6 +422,8 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       return
     if (key == null)
       return
+
+    console.debug("Connecting...")
 
     const sticky = Uint8Array.fromBase64(jwk)
     const client = await IrnClient.open(WalletConnect.RELAY, sticky, "c6c9bacd35afa3eb9e6cccf6d8464395")
@@ -460,15 +465,21 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
     await session.open()
 
+    console.log(session.channel.client)
+
     setSession(session)
   }, [jwk, tpc, key])
 
   useEffect(() => {
+    if (!online)
+      return
+    if (session != null)
+      return
     connectOrThrow().catch(console.error)
-  }, [connectOrThrow])
+  }, [session, online, connectOrThrow])
 
   useEffect(() => () => {
-    session?.channel.client.close()
+    session?.channel.client.socket.close()
   }, [session])
 
   return <Fragment>
@@ -509,12 +520,12 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <Fragment>
           <div className="h-6" />
           <div className="flex items-center gap-2">
-            {session != null &&
+            {(online === true && session != null) &&
               <span className="relative flex size-3">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
                 <span className="relative inline-flex size-3 rounded-full bg-red-500" />
               </span>}
-            {session == null &&
+            {(online === false || session == null) &&
               <Fragment>
                 <span className="size-3 rounded-full border-2 border-red-500" />
               </Fragment>}
