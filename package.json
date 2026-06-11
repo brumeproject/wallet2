@@ -1,7 +1,7 @@
 {
   "type": "module",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "scripts": {
     "process": "zsh -c 'deno x --unstable-worker-options saumon ./src/**/**'",
     "examine": "deno lint ./src && deno check ./src && deno test ./src",
