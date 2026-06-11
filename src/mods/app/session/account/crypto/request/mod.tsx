@@ -9,6 +9,7 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
+import { CompactUint16 } from "@/libs/solana/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useSubmit } from "@/libs/submit/mod.ts";
 import { abi, AbiString, AbiUint256 } from "@hazae41/abi";
@@ -236,6 +237,51 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const respondOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request } = params
 
+    if (request.method === "personal_sign") {
+      const [message, account] = request.params as [string, string]
+
+      const current = await getEthereumAddressOrThrow()
+
+      if (account.toLowerCase() !== current.toLowerCase())
+        throw new WcUnsupportedAccountsError()
+
+      const msgraw = Uint8Array.fromHex(message.slice(2))
+      const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
+
+      const payload = new Cursor(new Uint8Array(prefix.length + msgraw.length))
+      payload.write(prefix)
+      payload.write(msgraw)
+
+      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
+
+      const digest = keccak256.digest(payload.bytes)
+      const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
+
+      signed[64] += 27
+
+      return `0x${signed.toHex()}`
+    }
+
+    if (request.method === "eth_signTypedData_v4") {
+      const [account, data] = request.params as [string, string]
+
+      const current = await getEthereumAddressOrThrow()
+
+      if (account.toLowerCase() !== current.toLowerCase())
+        throw new WcUnsupportedAccountsError()
+
+      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
+
+      const digest = eip712.hash(JSON.parse(data))
+      const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
+
+      signed[64] += 27
+
+      return `0x${signed.toHex()}`
+    }
+
     if (request.method === "eth_sendTransaction") {
       const [payload] = request.params as [EthSendTransactionParams]
 
@@ -295,51 +341,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       }).then(r => r.getOrThrow())
     }
 
-    if (request.method === "personal_sign") {
-      const [message, account] = request.params as [string, string]
-
-      const current = await getEthereumAddressOrThrow()
-
-      if (account.toLowerCase() !== current.toLowerCase())
-        throw new WcUnsupportedAccountsError()
-
-      const msgraw = Uint8Array.fromHex(message.slice(2))
-      const prefix = new TextEncoder().encode(`\x19Ethereum Signed Message:\n${msgraw.length}`)
-
-      const payload = new Cursor(new Uint8Array(prefix.length + msgraw.length))
-      payload.write(prefix)
-      payload.write(msgraw)
-
-      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
-
-      const digest = keccak256.digest(payload.bytes)
-      const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
-
-      signed[64] += 27
-
-      return `0x${signed.toHex()}`
-    }
-
-    if (request.method === "eth_signTypedData_v4") {
-      const [account, data] = request.params as [string, string]
-
-      const current = await getEthereumAddressOrThrow()
-
-      if (account.toLowerCase() !== current.toLowerCase())
-        throw new WcUnsupportedAccountsError()
-
-      const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-      const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
-
-      const digest = eip712.hash(JSON.parse(data))
-      const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
-
-      signed[64] += 27
-
-      return `0x${signed.toHex()}`
-    }
-
     if (request.method === "solana_signMessage") {
       const { message, pubkey } = request.params as { message: string, pubkey: string }
 
@@ -357,6 +358,48 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       return { signature: base58.encode(sigraw) }
     }
 
+    if (request.method === "solana_signTransaction") {
+      const { transaction } = request.params as { transaction: string }
+
+      const current = await getSolanaAddressOrThrow()
+
+      const cursor = new Cursor(Uint8Array.fromBase64(transaction))
+
+      const sigcount = cursor.readUint8()
+      const sigstart = cursor.offset
+
+      cursor.offset += sigcount * 64
+
+      const version = cursor.getUint8() & 0x80
+
+      if (version !== 0)
+        cursor.offset++
+
+      cursor.offset += 3
+
+      const pubcount = CompactUint16.read(cursor).value
+
+      for (let i = 0; i < pubcount; i++) {
+        const pubraw = base58.encode(cursor.read(32))
+
+        if (pubraw !== current)
+          continue
+
+        const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+        const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
+
+        const msgraw = cursor.bytes.subarray(sigstart + (sigcount * 64))
+        const sigraw = new Uint8Array(await Ed25519.sign(xsig.key, msgraw))
+
+        cursor.offset = sigstart + (i * 64)
+        cursor.write(sigraw)
+
+        return { signature: base58.encode(sigraw), transaction: cursor.bytes.toBase64() }
+      }
+
+      throw new WcUnsupportedAccountsError()
+    }
+
     throw new WcUnsupportedMethodsError()
   }, [seedphrase, subaccount])
 
@@ -371,11 +414,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const getChainOrThrow = useCallback((params: WcSessionRequestParams) => {
     const { request, chainId } = params
 
-    if (request.method === "eth_sendTransaction")
-      return chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))?.name
-
-    if (request.method === "solana_signTransaction")
-      return "Solana"
+    if (request.method === "personal_sign")
+      return "Ethereum"
 
     if (request.method === "eth_signTypedData_v4") {
       const [account, data] = request.params as [string, string]
@@ -384,6 +424,14 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
       return chainlist.find(chain => chain.chainId === Number(domain.chainId))?.name
     }
+
+    if (request.method === "eth_sendTransaction")
+      return chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))?.name
+
+    if (request.method === "solana_signMessage")
+      return "Solana"
+    if (request.method === "solana_signTransaction")
+      return "Solana"
 
     throw new WcUnsupportedMethodsError()
   }, [])
