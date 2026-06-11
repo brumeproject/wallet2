@@ -248,8 +248,8 @@ export function CryptoSessionAddPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ.", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full resize-none focus-visible:outline-none"
+        <div className="bg-default-contrast p-1 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="po-2 w-full resize-none focus-visible:outline-none"
             rows={6}
             placeholder={Lang.match({ en: "I use this session for...", zh: "我使用此会话来...", hi: "मैं इस सत्र का उपयोग करता हूं...", es: "Uso esta sesión para...", ar: "أستخدم هذا الجلسة ل...", fr: "J'utilise cette session pour...", de: "Ich verwende diese Sitzung für...", ru: "Я использую эту сессию для...", pt: "Eu uso esta sessão para...", ja: "このセッションは...のために使用します", pa: "ਮੈਂ ਇਸ ਸੈਸ਼ਨ ਨੂੰ... ਲਈ ਵਰਤਦਾ ਹਾਂ", bn: "আমি এই সেশনটি... জন্য ব্যবহার করি", id: "Saya menggunakan sesi ini untuk...", ur: "میں اس سیشن کو... کے لیے استعمال کرتا ہوں", ms: "Saya menggunakan sesi ini untuk...", it: "Uso questa sessione per...", tr: "Bu oturumu... için kullanıyorum", ta: "நான் இந்த அமர்வை... க்காக பயன்படுத்துகிறேன்", te: "నేను ఈ సెషన్‌ను... కోసం ఉపయోగిస్తున్నాను", ko: "이 세션은...에 사용합니다", vi: "Tôi sử dụng phiên này cho...", pl: "Używam tej sesji do...", ro: "Eu uso esta sessão para...", nl: "Ik gebruik deze sessie voor...", el: "Χρησιμοποιώ αυτήν τη συνεδρία για...", th: "ฉันใช้เซสชันนี้สำหรับ...", cs: "Používám tuto relaci pro...", hu: "Ezt a munkamenetet arra használom, hogy...", sv: "Jag använder denna session för...", da: "Jeg bruger denne session til..." })}
             onChange={e => setNotes(e.target.value)}
@@ -527,7 +527,7 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
           </div>
           <div className="h-4" />
           <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl p-1">
-            <div className="grow flex flex-col overflow-y-scroll overscroll-y-none p-5">
+            <div className="grow flex flex-col overflow-y-scroll overscroll-y-none p-6">
               <div className="grow grid grid-cols-[repeat(auto-fit,min(20rem,100%))] justify-center content-center gap-4">
                 {requests.map((data, index) =>
                   <Fragment key={index}>

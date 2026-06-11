@@ -237,8 +237,8 @@ export function KeypairAccountAddPage() {
           {Lang.match({ en: "Your public key.", zh: "您的公钥。", hi: "आपकी सार्वजनिक कुंजी।", es: "Su clave pública.", ar: "مفتاحك العام.", fr: "Votre clé publique.", de: "Ihr öffentlicher Schlüssel.", ru: "Ваш публичный ключ.", pt: "Sua chave pública.", ja: "あなたの公開鍵。", pa: "ਤੁਹਾਡੀ ਪਬਲਿਕ ਕੀ।", bn: "আপনার পাবলিক কী।", id: "Kunci publik Anda.", ur: "آپ کی پبلک کی۔", ms: "Kunci publik anda.", it: "La tua chiave pubblica.", tr: "Genel anahtarınız.", ta: "உங்கள் பொது விசை.", te: "మీ పబ్లిక్ కీ.", ko: "당신의 공개 키.", vi: "Khóa công khai của bạn.", pl: "Twój klucz publiczny.", ro: "Cheia dvs. publică.", nl: "Uw publieke sleutel.", el: "Το δημόσιο κλειδί σας.", th: "คีย์สาธารณะของคุณ.", cs: "Váš veřejný klíč.", hu: "A nyilvános kulcsod.", sv: "Din offentliga nyckel.", da: "Din offentlige nøgle." })}
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full focus-visible:outline-none"
+        <div className="bg-default-contrast p-1 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="po-2 w-full focus-visible:outline-none"
             rows={3}
             autoComplete="off"
             onChange={e => setPubKey(e.target.value)}
@@ -252,8 +252,8 @@ export function KeypairAccountAddPage() {
           {Lang.match({ en: "Your private key.", zh: "您的私钥。", hi: "आपकी निजी कुंजी।", es: "Su clave privada.", ar: "مفتاحك الخاص.", fr: "Votre clé privée.", de: "Ihr privater Schlüssel.", ru: "Ваш приватный ключ.", pt: "Sua chave privada.", ja: "あなたの秘密鍵。", pa: "ਤੁਹਾਡੀ ਨਿੱਜੀ ਕੀ।", bn: "আপনার প্রাইভেট কী।", id: "Kunci pribadi Anda.", ur: "آپ کی نجی کی۔", ms: "Kunci pribadi anda.", it: "La tua chiave privata.", tr: "Özel anahtarınız.", ta: "உங்கள் தனிப்பட்ட விசை.", te: "మీ ప్రైవేట్ కీ.", ko: "당신의 개인 키.", vi: "Khóa riêng tư của bạn.", pl: "Twój klucz prywatny.", ro: "Cheia dvs. privată.", nl: "Uw privésleutel.", el: "Το ιδιωτικό σας κλειδί.", th: "คีย์ส่วนตัวของคุณ.", cs: "Váš soukromý klíč.", hu: "A privát kulcsod.", sv: "Din privata nyckel.", da: "Din private nøgle." })}
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
+        <div className="bg-default-contrast p-1 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="po-2 w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
             rows={9}
             autoComplete="off"
             onChange={e => setSigKey(e.target.value)}
@@ -332,8 +332,8 @@ export function KeypairAccountAddPage() {
           {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ.", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
         </div>
         <div className="h-4" />
-        <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-          <textarea className="w-full resize-none focus-visible:outline-none"
+        <div className="bg-default-contrast p-1 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+          <textarea className="po-2 w-full resize-none focus-visible:outline-none"
             rows={6}
             placeholder={Lang.match({ en: "I use this account for...", zh: "我使用这个账户来……", hi: "मैं इस खाते का उपयोग करता हूं...", es: "Uso esta cuenta para...", ar: "أستخدم هذا الحساب ل...", fr: "J'utilise ce compte pour...", de: "Ich benutze dieses Konto für...", ru: "Я использую эту учетную запись для...", pt: "Eu uso esta conta para...", ja: "このアカウントは...のために使用します", pa: "ਮੈਂ ਇਸ ਖਾਤੇ ਨੂੰ ... ਲਈ ਵਰਤਦਾ ਹਾਂ", bn: "আমি এই অ্যাকাউন্টটি ... জন্য ব্যবহার করি", id: "Saya menggunakan akun ini untuk...", ur: "میں اس اکاؤنٹ کو ... کے لیے استعمال کرتا ہوں", ms: "Saya menggunakan akun ini untuk...", it: "Uso questo account per...", tr: "Bu hesabı ... için kullanıyorum", ta: "நான் இந்த கணக்கை ... க்காக பயன்படுத்துகிறேன்", te: "నేను ఈ ఖాతాను ... కోసం ఉపయోగిస్తున్నాను", ko: "이 계정을 ...에 사용합니다.", vi: "Tôi sử dụng tài khoản này cho...", pl: "Używam tego konta do...", ro: "Folosesc acest cont pentru...", nl: "Ik gebruik dit account voor...", el: "Χρησιμοποιώ αυτόν τον λογαριασμό για...", th: "ฉันใช้บัญชีนี้สำหรับ...", cs: "Používám tento účet pro...", hu: "Ezt a fiókot arra használom, hogy...", sv: "Jag använder det här kontot för...", da: "Jeg bruger denne konto til..." })}
             onChange={e => setNotes(e.target.value)}
@@ -548,8 +548,8 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             {Lang.match({ en: "Your public key.", zh: "您的公钥。", hi: "आपकी सार्वजनिक कुंजी।", es: "Su clave pública.", ar: "المفتاح العام الخاص بك.", fr: "Votre clé publique.", de: "Ihr öffentlicher Schlüssel.", ru: "Ваш публичный ключ.", pt: "Sua chave pública.", ja: "あなたの公開鍵。", pa: "ਤੁਹਾਡੀ ਪਬਲਿਕ ਕੀ।", bn: "আপনার পাবলিক কী।", id: "Kunci publik Anda.", ur: "آپ کی پبلک کی۔", ms: "Kunci awam anda.", it: "La tua chiave pubblica.", tr: "Açık anahtarınız.", ta: "உங்கள் பொது விசை.", te: "మీ పబ్లిక్ కీ.", ko: "당신의 공개 키.", vi: "Khóa công khai của bạn.", pl: "Twój klucz publiczny.", ro: "Cheia dvs. publică.", nl: "Uw publieke sleutel.", el: "Το δημόσιο κλειδί σας.", th: "คีย์สาธารณะของคุณ.", cs: "Váš veřejný klíč.", hu: "A nyilvános kulcsod.", sv: "Din offentliga nyckel.", da: "Din offentlige nøgle." })}
           </div>
           <div className="h-4" />
-          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-            <textarea className="w-full focus-visible:outline-none"
+          <div className="bg-default-contrast p-1 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="po-2 w-full focus-visible:outline-none"
               rows={3}
               readOnly
               onFocus={e => e.currentTarget.select()}
@@ -579,8 +579,8 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             {Lang.match({ en: "Your private key.", zh: "您的私钥。", hi: "आपकी निजी कुंजी।", es: "Su clave privada.", ar: "المفتاح الخاص بك.", fr: "Votre clé privée.", de: "Ihr privater Schlüssel.", ru: "Ваш приватный ключ.", pt: "Sua chave privada.", ja: "あなたの秘密鍵。", pa: "ਤੁਹਾਡੀ ਪ੍ਰਾਈਵੇਟ ਕੀ।", bn: "আপনার প্রাইভেট কী।", id: "Kunci pribadi Anda.", ur: "آپ کی پرائیویٹ کی۔", ms: "Kunci peribadi anda.", it: "La tua chiave privata.", tr: "Özel anahtarınız.", ta: "உங்கள் தனிப்பட்ட விசை.", te: "మీ ప్రైవేట్ కీ.", ko: "당신의 개인 키.", vi: "Khóa riêng của bạn.", pl: "Twój klucz prywatny.", ro: "Cheia dvs. privată.", nl: "Uw privésleutel.", el: "Το ιδιωτικό σας κλειδί.", th: "คีย์ส่วนตัวของคุณ.", cs: "Váš soukromý klíč.", hu: "A privát kulcsod.", sv: "Din privata nyckel.", da: "Din private nøgle." })}
           </div>
           <div className="h-4" />
-          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-            <textarea className="w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
+          <div className="bg-default-contrast p-1 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="po-2 w-full data-[redacted=true]:blur-xs focus-visible:outline-none"
               rows={9}
               readOnly
               onFocus={e => flipped ? e.currentTarget.select() : undefined}
@@ -665,8 +665,8 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
             {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ.", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
           </div>
           <div className="h-4" />
-          <div className="bg-default-contrast po-2 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
-            <textarea className="w-full resize-none focus-visible:outline-none"
+          <div className="bg-default-contrast p-1 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="po-2 w-full resize-none focus-visible:outline-none"
               readOnly
               rows={6}
               value={notes} />
