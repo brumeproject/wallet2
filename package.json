@@ -24,7 +24,7 @@
     "@hazae41/cursor": "2.2.0",
     "@hazae41/disposable-stack-polyfill": "2.0.5",
     "@hazae41/eip155": "^1.0.1",
-    "@hazae41/eip1559": "^1.0.0",
+    "@hazae41/eip1559": "^1.0.1",
     "@hazae41/eip712": "^1.0.0",
     "@hazae41/fixed": "^2.0.2",
     "@hazae41/immutable": "2.1.3",
