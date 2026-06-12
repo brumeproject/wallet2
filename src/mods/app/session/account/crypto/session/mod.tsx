@@ -1,7 +1,6 @@
 import { InOther } from "@/libs/anchor/mod.tsx";
 import { InButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
-import { Ed25519 } from "@/libs/ed25519/mod.ts";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -15,11 +14,8 @@ import { CryptoRequest, CryptoRequestAnchor } from "@/mods/app/session/account/c
 import { WcSessionData } from "@/mods/app/session/account/crypto/subaccount/mod.tsx";
 import { ScanPage } from "@/mods/app/session/account/password/mod.tsx";
 import { useSessionContext } from "@/mods/app/session/mod.tsx";
-import { base58 } from "@hazae41/base58";
 import { Writable } from "@hazae41/binary";
-import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
-import { Ed25519SeedKey } from "@hazae41/clade";
 import * as KDBX from "@hazae41/kdbx";
 import { IrnClient, WalletConnect, WcChannel, WcSession, WcSessionRequestParams, WcUnsupportedMethodsError } from "@hazae41/latrine";
 import { PathBoard, PathPaper } from "@hazae41/modal";
@@ -418,14 +414,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $subentry.getStringByKeyOrNull("WalletConnectKey")?.getValueOrNull()?.get()
   }, [$subentry])
 
-  const getSolanaAddressOrThrow = useCallback(async () => {
-    const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-    const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
-    const upub = await Ed25519.publish(xsig.key)
-
-    return base58.encode(upub)
-  }, [seedphrase, subaccount])
-
   const online = useOnline()
 
   const [session, setSession] = useState<Nullable<WcSession>>()
@@ -438,8 +426,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       return
     if (key == null)
       return
-
-    const solana = await getSolanaAddressOrThrow()
 
     const sticky = Uint8Array.fromBase64(jwk)
     const client = await IrnClient.open(WalletConnect.RELAY, sticky, "c6c9bacd35afa3eb9e6cccf6d8464395")
@@ -457,10 +443,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       if (request.method === "eth_sendTransaction")
         return await prompt(params)
 
-      if (request.method === "solana_getAccounts")
-        return [solana]
-      if (request.method === "solana_requestAccounts")
-        return [solana]
       if (request.method === "solana_signMessage")
         return await prompt(params)
       if (request.method === "solana_signTransaction")
