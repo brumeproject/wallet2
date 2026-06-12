@@ -15,6 +15,7 @@ import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
+import { EIP55Address } from "@hazae41/eip55";
 import * as KDBX from "@hazae41/kdbx";
 import { keccak256 } from "@hazae41/keccak256";
 import { IrnClient, WalletConnect, WcPairing, WcPairingParams, WcSession, WcSessionProposeParams, WcSessionProposeResult } from "@hazae41/latrine";
@@ -145,8 +146,9 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
     const upub = secp256k1.SecretKey.import(xsig.key).publish().export(false)
+    const addr = `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
 
-    return `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
+    return EIP55Address.from(addr)
   }, [seedphrase, subaccount])
 
   const getSolanaAddressOrThrow = useCallback(async () => {
@@ -394,8 +396,9 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
     const upub = secp256k1.SecretKey.import(xsig.key).publish().export(false)
+    const addr = `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
 
-    return `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
+    return EIP55Address.from(addr)
   }, [seedphrase, subaccount])
 
   const getSolanaAddressOrThrow = useCallback(async () => {

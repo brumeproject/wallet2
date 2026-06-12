@@ -20,6 +20,7 @@ import { BitcoinSeedKey, Ed25519SeedKey } from "@hazae41/clade";
 import { Cursor } from "@hazae41/cursor";
 import { EIP155UnsignedTransaction } from "@hazae41/eip155";
 import { EIP1559UnsignedTransaction } from "@hazae41/eip1559";
+import { EIP55Address } from "@hazae41/eip55";
 import { eip712, EIP712Data } from "@hazae41/eip712";
 import { Fixed } from "@hazae41/fixed";
 import { RpcCounter, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
@@ -210,8 +211,9 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
     const upub = secp256k1.SecretKey.import(xsig.key).publish().export(false)
+    const addr = `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
 
-    return `0x${keccak256.digest(upub.slice(1)).slice(-20).toHex()}`
+    return EIP55Address.from(addr)
   }, [seedphrase, subaccount])
 
   const getSolanaAddressOrThrow = useCallback(async () => {
