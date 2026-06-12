@@ -9,7 +9,6 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
-import { CompactUint16 } from "@/libs/solana/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useSubmit } from "@/libs/submit/mod.ts";
 import { abi, AbiString, AbiUint256 } from "@hazae41/abi";
@@ -363,43 +362,18 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (request.method === "solana_signTransaction") {
       const { transaction } = request.params as { transaction: string }
 
-      const current = await getSolanaAddressOrThrow()
-
       const cursor = new Cursor(Uint8Array.fromBase64(transaction))
 
       const sigcount = cursor.readUint8()
       const sigstart = cursor.offset
 
-      cursor.offset += sigcount * 64
+      const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
+      const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
 
-      const version = cursor.getUint8() & 0x80
+      const msgraw = cursor.bytes.subarray(sigstart + (sigcount * 64))
+      const sigraw = new Uint8Array(await Ed25519.sign(xsig.key, msgraw))
 
-      if (version !== 0)
-        cursor.offset++
-
-      cursor.offset += 3
-
-      const pubcount = CompactUint16.read(cursor).value
-
-      for (let i = 0; i < pubcount; i++) {
-        const pubraw = base58.encode(cursor.read(32))
-
-        if (pubraw !== current)
-          continue
-
-        const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
-        const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
-
-        const msgraw = cursor.bytes.subarray(sigstart + (sigcount * 64))
-        const sigraw = new Uint8Array(await Ed25519.sign(xsig.key, msgraw))
-
-        cursor.offset = sigstart + (i * 64)
-        cursor.write(sigraw)
-
-        return { signature: base58.encode(sigraw), transaction: cursor.bytes.toBase64() }
-      }
-
-      throw new WcUnsupportedAccountsError()
+      return { signature: base58.encode(sigraw) }
     }
 
     throw new WcUnsupportedMethodsError()
