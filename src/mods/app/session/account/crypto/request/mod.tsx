@@ -22,7 +22,7 @@ import { EIP1559UnsignedTransaction } from "@hazae41/eip1559";
 import { EIP55Address } from "@hazae41/eip55";
 import { eip712, EIP712Data } from "@hazae41/eip712";
 import { Fixed } from "@hazae41/fixed";
-import { RpcCounter, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
+import { RpcCounter, RpcErrorInit, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { keccak256 } from "@hazae41/keccak256";
 import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedChainsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
@@ -172,16 +172,26 @@ export interface EthSendTransactionParams {
   readonly nonce?: `0x${string}`
 }
 
-export interface EthSimulateCallLog {
+export interface EthCallLog {
   readonly address: `0x${string}`
   readonly topics: `0x${string}`[]
   readonly data: `0x${string}`
 }
 
-export interface EthSimulateCall {
-  readonly status: `0x${string}`,
-  readonly logs: EthSimulateCallLog[]
+export type EthCall =
+  | EthGoodCall
+  | EthFailCall
+
+export interface EthGoodCall {
+  readonly status: `0x1`,
+  readonly logs: EthCallLog[]
 }
+
+export interface EthFailCall {
+  readonly status: `0x0`,
+  readonly error: RpcErrorInit
+}
+
 
 export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry } & { request: CryptoRequest }) {
   const { $entry, subaccount, $subentry, request } = props
@@ -206,7 +216,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrThrow("SeedPhrase").getValueOrThrow().get()
   }, [$entry])
 
-  const [simulation, setSimulation] = useState<Nullable<Result<{ reverts: boolean, events: unknown[] }>>>()
+  const [simulation, setSimulation] = useState<Nullable<Result<unknown>>>()
 
   const getEthereumAddressOrThrow = useCallback(async () => {
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
@@ -286,9 +296,9 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     }
 
     if (request.method === "eth_sendTransaction") {
-      const [payload] = request.params as [EthSendTransactionParams]
+      const [transaction] = request.params as [EthSendTransactionParams]
 
-      const { data, from, to, value = 0n } = payload
+      const { data, from, to, value = 0n } = transaction
 
       const chain = chainlist.find(chain => chain.chainId === Number(params.chainId.split(":")[1]))
 
@@ -306,17 +316,17 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         const [nonce = await requestOrThrow<`0x${string}`>(chain.rpc, {
           method: "eth_getTransactionCount",
           params: [current, "latest"]
-        }).then(r => r.getOrThrow())] = [payload.nonce]
+        }).then(r => r.getOrThrow())] = [transaction.nonce]
 
         const [gas = await requestOrThrow<`0x${string}`>(chain.rpc, {
           method: "eth_estimateGas",
           params: [{ to, data, value }]
-        }).then(r => r.getOrThrow())] = [payload.gas]
+        }).then(r => r.getOrThrow())] = [transaction.gas]
 
-        if (payload.gasPrice != null)
-          return EIP155UnsignedTransaction.from({ chainId, nonce, gasPrice: payload.gasPrice, startGas: gas, to, value, data })
-        if (payload.maxFeePerGas != null && payload.maxPriorityFeePerGas != null)
-          return EIP1559UnsignedTransaction.from({ chainId, nonce, maxFeePerGas: payload.maxFeePerGas, maxPriorityFeePerGas: payload.maxPriorityFeePerGas, gasLimit: gas, destination: to, amount: value, data })
+        if (transaction.gasPrice != null)
+          return EIP155UnsignedTransaction.from({ chainId, nonce, gasPrice: transaction.gasPrice, startGas: gas, to, value, data })
+        if (transaction.maxFeePerGas != null && transaction.maxPriorityFeePerGas != null)
+          return EIP1559UnsignedTransaction.from({ chainId, nonce, maxFeePerGas: transaction.maxFeePerGas, maxPriorityFeePerGas: transaction.maxPriorityFeePerGas, gasLimit: gas, destination: to, amount: value, data })
 
         const feeHistory = await requestOrThrow<{ baseFeePerGas: `0x${string}`[], reward: `0x${string}`[][] }>(chain.rpc, {
           method: "eth_feeHistory",
@@ -330,17 +340,17 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         return EIP1559UnsignedTransaction.from({ chainId, nonce, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, destination: to, amount: value, data })
       }
 
-      const transaction = await getTransactionOrThrow()
+      const utx = await getTransactionOrThrow()
 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
 
-      const digest = keccak256.digest(transaction.encode())
+      const digest = keccak256.digest(utx.encode())
       const signed = secp256k1.SecretKey.import(xsig.key).sign(digest).export()
 
       return await requestOrThrow<`0x${string}`>(chain.rpc, {
         method: "eth_sendRawTransaction",
-        params: [`0x${transaction.sign(signed).encode().toHex()}`]
+        params: [`0x${utx.sign(signed).encode().toHex()}`]
       }).then(r => r.getOrThrow())
     }
 
@@ -456,125 +466,123 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
-  const getSimulationOrThrow = useCallback(async (params: WcSessionRequestParams) => {
-    const { request } = params
+  const [error, setError] = useState<Nullable<string>>()
 
-    if (request.method !== "eth_sendTransaction")
-      throw new WcUnsupportedMethodsError()
+  const [tokens, setTokens] = useState<Array<{ contract?: string, value: number, symbol: string }>>()
 
-    const [{ data, from, to, value }] = request.params as [EthSendTransactionParams]
-
-    const chain = chainlist.find(chain => chain.chainId === Number(params.chainId.split(":")[1]))
-
-    if (chain == null)
-      throw new WcUnsupportedChainsError()
-
-    const current = await getEthereumAddressOrThrow()
-
-    if (from.toLowerCase() !== current.toLowerCase())
-      throw new WcUnsupportedAccountsError()
-
-    const calls = [{ from, to, data, value }]
-
-    const payload = {
-      blockStateCalls: [{ calls }],
-      validation: false,
-      traceTransfers: true
-    }
-
-    const [{ calls: [result] }] = await requestOrThrow<[{ calls: [EthSimulateCall] }]>(chain.rpc, {
-      method: "eth_simulateV1",
-      params: [payload, "latest"]
-    }).then(r => r.getOrThrow())
-
-    const events = new Array<unknown>()
-
-    if (result.status !== "0x1")
-      return { reverts: true, events }
-
-    for (const log of result.logs) {
-      const { address, topics } = log
-
-      const [event] = topics
-
-      if (event === "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef") {
-        let from = `0x${topics[1].slice(-40)}`
-        let to = `0x${topics[2].slice(-40)}`
-
-        if (from.toLowerCase() === current.toLowerCase())
-          from = "(you)"
-        if (to.toLowerCase() === current.toLowerCase())
-          to = "(you)"
-
-        if (address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
-          const { symbol, decimals } = chain.nativeCurrency
-
-          const value = new Fixed(BigInt(log.data), decimals).toString()
-
-          events.push({ event: "Transfer", contract: "(native)", from, to, value, symbol })
-
-          continue
-        }
-
-        const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
-          method: "eth_call",
-          params: [{ to: address, data: "0x95d89b41" }, "latest"]
-        }).then(r => abi.decode([AbiString], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
-
-        const [decimals] = await requestOrThrow<`0x${string}`>(chain.rpc, {
-          method: "eth_call",
-          params: [{ to: address, data: "0x313ce567" }, "latest"]
-        }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
-
-        const value = new Fixed(BigInt(log.data), Number(decimals)).toString()
-
-        events.push({ event: "Transfer", contract: address, from, to, value, symbol })
-
-        continue
-      }
-
-      if (event === "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
-        let previousOwner = `0x${topics[1].slice(-40)}`
-        let newOwner = `0x${topics[2].slice(-40)}`
-
-        if (previousOwner.toLowerCase() === current.toLowerCase())
-          previousOwner = "(you)"
-        if (newOwner.toLowerCase() === current.toLowerCase())
-          newOwner = "(you)"
-
-        events.push({ event: "OwnershipTransferred", contract: address, previousOwner, newOwner })
-      }
-
-      continue
-    }
-
-    return { reverts: false, events }
-  }, [getEthereumAddressOrThrow, getSolanaAddressOrThrow, requestOrThrow])
-
-  const getPromptOrThrow = useCallback((params: WcSessionRequestParams) => {
+  const simulateOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request, chainId } = params
 
     if (request.method === "eth_sendTransaction") {
-      const [params] = request.params as [EthSendTransactionParams]
+      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }] = request.params as [EthSendTransactionParams]
 
       const chain = chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))
 
       if (chain == null)
         throw new WcUnsupportedChainsError()
 
+      const current = await getEthereumAddressOrThrow()
+
+      if (from.toLowerCase() !== current.toLowerCase())
+        throw new WcUnsupportedAccountsError()
+
+      const call = { data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }
+      const body = { blockStateCalls: [{ calls: [call] }], validation: true, traceTransfers: true }
+
+      const [{ calls: [result] }] = await requestOrThrow<[{ calls: [EthCall] }]>(chain.rpc, {
+        method: "eth_simulateV1",
+        params: [body, "latest"]
+      }).then(r => r.getOrThrow())
+
+      if (result.status === "0x0")
+        setError(result.error.message)
+
+      if (result.status === "0x1") {
+        const tokens = new Array<{ contract?: string, value: number, symbol: string }>()
+
+        for (const log of result.logs) {
+          const { address, topics } = log
+
+          const [event] = topics
+
+          if (event === "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef") {
+            const from = `0x${topics[1].slice(-40)}`
+            const to = `0x${topics[2].slice(-40)}`
+
+            if (![from.toLowerCase(), to.toLowerCase()].includes(current.toLowerCase()))
+              continue
+
+            if (address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
+              const { symbol, decimals } = chain.nativeCurrency
+
+              const value = Number(new Fixed(BigInt(log.data), decimals).toString())
+
+              if (from.toLowerCase() === current.toLowerCase())
+                tokens.push({ value: -value, symbol })
+              if (to.toLowerCase() === current.toLowerCase())
+                tokens.push({ value: +value, symbol })
+
+              continue
+            }
+
+            const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
+              method: "eth_call",
+              params: [{ to: address, data: "0x95d89b41" }, "latest"]
+            }).then(r => abi.decode([AbiString], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
+
+            const [decimals] = await requestOrThrow<`0x${string}`>(chain.rpc, {
+              method: "eth_call",
+              params: [{ to: address, data: "0x313ce567" }, "latest"]
+            }).then(r => abi.decode([AbiUint256], Uint8Array.fromHex(base16.padStart(r.getOrThrow().slice(2)))))
+
+            const value = Number(new Fixed(BigInt(log.data), Number(decimals)).toString())
+
+            if (from.toLowerCase() === current.toLowerCase())
+              tokens.push({ contract: address, value: -value, symbol })
+            if (to.toLowerCase() === current.toLowerCase())
+              tokens.push({ contract: address, value: +value, symbol })
+
+            continue
+          }
+
+          // if (event === "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+          //   let previousOwner = `0x${topics[1].slice(-40)}`
+          //   let newOwner = `0x${topics[2].slice(-40)}`
+
+          //   if (previousOwner.toLowerCase() === current.toLowerCase())
+          //     previousOwner = "(you)"
+          //   if (newOwner.toLowerCase() === current.toLowerCase())
+          //     newOwner = "(you)"
+
+          //   // events.push({ event: "OwnershipTransferred", contract: address, previousOwner, newOwner })
+          // }
+
+          continue
+        }
+
+        setTokens(tokens)
+      }
+
+      return result
+    }
+
+    throw new WcUnsupportedMethodsError()
+  }, [getEthereumAddressOrThrow, getSolanaAddressOrThrow, requestOrThrow])
+
+  const getPromptOrThrow = useCallback((params: WcSessionRequestParams) => {
+    const { request, chainId } = params
+
+    if (request.method === "eth_sendTransaction") {
+      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }] = request.params as [EthSendTransactionParams]
+
       if (simulation == null)
-        return Lang.match({ en: "Loading...", zh: "加载中...", hi: "लोड हो रहा है...", es: "Cargando...", ar: "جار التحميل...", fr: "Chargement...", de: "Laden...", ru: "Загрузка...", pt: "Carregando...", ja: "読み込み中...", pa: "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...", bn: "লোড হচ্ছে...", id: "Memuat...", ur: "لوڈ ہو رہا ہے...", ms: "Memuat...", it: "Caricamento in corso...", tr: "Yükleniyor...", ta: "பதிவேற்றுகிறது...", te: "లోడ్ అవుతోంది...", ko: "로딩 중...", vi: "Đang tải...", pl: "Ładowanie...", ro: "Se încarcă...", nl: "Laden...", el: "Φόρτωση...", th: "กำลังโหลด...", cs: "Načítání...", hu: "Betöltés...", sv: "Laddar...", da: "Indlæser..." })
+        return
       if (simulation.isErr())
-        return Lang.match({ en: "Could not simulate the transaction.", zh: "无法模拟交易。", hi: "लेनदेन का अनुकरण नहीं कर सका।", es: "No se pudo simular la transacción.", ar: "تعذر محاكاة المعاملة.", fr: "Impossible de simuler la transaction.", de: "Die Transaktion konnte nicht simuliert werden.", ru: "Не удалось смоделировать транзакцию.", pt: "Não foi possível simular a transação.", ja: "トランザクションをシミュレートできませんでした。", pa: "ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ ਦਾ ਸਿਮੂਲੇਸ਼ਨ ਨਹੀਂ ਕਰ ਸਕਿਆ।", bn: "লেনদেন সিমুলেট করতে ব্যর্থ।", id: "Tidak dapat mensimulasikan transaksi.", ur: "ٹرانزیکشن کی نقل نہیں کر سکا۔", ms: "Tidak dapat mensimulasikan transaksi.", it: "Impossibile simulare la transazione.", tr: "İşlem simüle edilemedi.", ta: "பரிவர்த்தனையை சிமுலேட் செய்ய முடியவில்லை.", te: "లావాదేవీని అనుకరించలేకపోయింది.", ko: "트랜잭션을 시뮬레이트할 수 없습니다.", vi: "Không thể mô phỏng giao dịch.", pl: "Nie można zasymulować transakcji.", ro: "Nu s-a putut simula tranzacția.", nl: "Kan de transactie niet simuleren.", el: "Δεν ήταν δυνατή η προσομοίωση της συναλλαγής.", th: "ไม่สามารถจำลองธุรกรรมได้.", cs: "Nelze simulovat transakci.", hu: "Nem lehet szimulálni a tranzakciót.", sv: "Kunde inte simulera transaktionen.", da: "Kunne ikke simulere transaktionen." })
-
-      const gas = params.gas ? BigInt(params.gas).toString() : undefined
-      const value = params.value ? new Fixed(BigInt(params.value), Number(chain.nativeCurrency.decimals)).toString() : undefined
-
-      const payload = { chain: chain.name, chainId: chain.chainId, gas, to: params.to, value, symbol: chain.nativeCurrency.symbol, reverts: simulation.isErr(), events: simulation.getOrNull() }
+        return
 
       const prompt = Lang.match({ en: "I am about to sign a crypto transaction. Help me understand it. Do not go into details. Reply in one sentence if nothing feels off. Prefer well-known names over addresses. Here is the transaction:", zh: "我即将签署一笔加密交易。帮我理解它。如果没有什么不对劲的地方，请用一句话回复。优先使用知名名称而不是地址。以下是交易内容：", hi: "मैं एक क्रिप्टो लेनदेन पर हस्ताक्षर करने वाला हूं। मेरी मदद करें इसे समझने में। यदि कुछ भी गलत नहीं लगता है तो एक वाक्य में जवाब दें। पतों के बजाय प्रसिद्ध नामों को प्राथमिकता दें। यहां लेनदेन है:", es: "Estoy a punto de firmar una transacción criptográfica. Ayúdame a entenderlo. No entres en detalles. Responde en una oración si no parece haber nada mal. Prefiere nombres conocidos sobre direcciones. Aquí está la transacción:", ar: "أنا على وشك توقيع معاملة مشفرة. ساعدني في فهمها. لا تذهب إلى التفاصيل. رد بجملة واحدة إذا لم يكن هناك شيء مريب. فضل الأسماء المعروفة على العناوين. إليك المعاملة:", fr: "Je suis sur le point de signer une transaction cryptographique. Aidez-moi à la comprendre. Ne pas entrer dans les détails. Répondez en une phrase si rien ne semble anormal. Préférez les noms connus aux adresses. Voici la transaction:", de: "Ich bin dabei, eine kryptografische Transaktion zu signieren. Hilf mir, sie zu verstehen. Gehe nicht ins Detail. Antworte in einem Satz, wenn nichts verdächtig erscheint. Bevorzuge bekannte Namen gegenüber Adressen. Hier ist die Transaktion:", ru: "Я собираюсь подписать криптографическую транзакцию. Помогите мне понять ее. Не вдавайтесь в подробности. Ответьте одним предложением, если ничего не кажется подозрительным. Предпочитайте известные имена адресам. Вот транзакция:", pt: "Estou prestes a assinar uma transação criptográfica. Ajude-me a entendê-la. Não entre em detalhes. Responda em uma frase se nada parecer errado. Prefira nomes conhecidos a endereços. Aqui está a transação:", ja: "暗号化されたトランザクションに署名しようとしています。理解するのを手伝ってください。詳細には立ち入らないでください。何もおかしいと感じない場合は、一文で返信してください。アドレスよりもよく知られた名前を優先してください。以下はトランザクションです:", pa: "ਮੈਂ ਇੱਕ ਕ੍ਰਿਪਟੋ ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ 'ਤੇ ਦਸਤਖਤ ਕਰਨ ਵਾਲਾ ਹਾਂ। ਮੈਨੂੰ ਇਸਨੂੰ ਸਮਝਣ ਵਿੱਚ ਮਦਦ ਕਰੋ। ਵਿਸਥਾਰ ਵਿੱਚ ਨਾ ਜਾਓ। ਜੇ ਕੁਝ ਵੀ ਗਲਤ ਨਹੀਂ ਲੱਗਦਾ ਹੈ ਤਾਂ ਇੱਕ ਵਾਕ ਵਿੱਚ ਜਵਾਬ ਦਿਓ। ਪਤੇ ਦੀ ਬਜਾਏ ਜਾਣੇ-ਪਹਚਾਣੇ ਨਾਮਾਂ ਨੂੰ ਤਰਜੀਹ ਦਿਓ। ਇੱਥੇ ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨ ਹੈ:", bn: "আমি একটি ক্রিপ্টো লেনদেনে স্বাক্ষর করতে যাচ্ছি। আমাকে এটি বুঝতে সাহায্য করুন। বিস্তারিতভাবে না যান। যদি কিছুই অদ্ভুত না লাগে তবে একটি বাক্যে উত্তর দিন। ঠিকানার উপর পরিচিত নাম পছন্দ করুন। এখানে লেনদেনটি রয়েছে:", id: "Saya akan menandatangani transaksi kripto. Bantu saya memahaminya. Jangan masuk ke detail. Balas dalam satu kalimat jika tidak ada yang terasa aneh. Preferensi nama yang dikenal daripada alamat. Berikut transaksinya:", ur: "میں ایک کرپٹو ٹرانزیکشن پر دستخط کرنے والا ہوں۔ مجھے اسے سمجھنے میں مدد کریں۔ تفصیلات میں نہ جائیں۔ اگر کچھ بھی عجیب نہیں لگتا ہے تو ایک جملے میں جواب دیں۔ پتوں پر معروف ناموں کو ترجیح دیں۔ یہاں ٹرانزیکشن ہے:", ms: "Saya akan menandatangani transaksi kripto. Bantu saya memahaminya. Jangan masuk ke detail. Balas dalam satu kalimat jika tidak ada yang terasa aneh. Preferensi nama yang dikenal daripada alamat. Berikut transaksinya:", it: "Sto per firmare una transazione crittografica. Aiutami a capirla. Non entrare nei dettagli. Rispondi in una frase se non sembra esserci nulla di strano. Preferisci nomi noti agli indirizzi. Ecco la transazione:", tr: "Kripto bir işlem imzalamak üzereyim. Anlamama yardım et. Detaylara girmeyin. Hiçbir şey garip gelmiyorsa bir cümleyle cevap verin. Adresler yerine bilinen isimlere öncelik verin. İşte işlem:", ta: "நான் ஒரு கிரிப்டோ பரிவர்த்தனையில் கையொப்பமிடப்போகிறேன். அதை புரிந்துகொள்ள எனக்கு உதவுங்கள். விவரங்களுக்கு செல்ல வேண்டாம். எதுவும் சந்தேகமாகத் தெரியவில்லை என்றால் ஒரு வாக்கியத்தில் பதிலளிக்கவும். முகவரிகளுக்கு பதிலாக பரிச்சயமான பெயர்களை முன்னுரிமை அளிக்கவும். இங்கே பரிவர்த்தனை உள்ளது:", te: "నేను ఒక క్రిప్టో లావాదేవీపై సంతకం చేయబోతున్నాను. దాన్ని అర్థం చేసుకోవడంలో నాకు సహాయం చేయండి. వివరాలకు వెళ్లవద్దు. ఏదైనా అనుమానాస్పదంగా కనిపించకపోతే ఒక వాక్యంలో జవాబు ఇవ్వండి. చిరునామాల కంటే బాగా తెలిసిన పేర్లకు ప్రాధాన్యత ఇవ్వండి. ఇక్కడ లావాదేవీ ఉంది:", ko: "암호화된 트랜잭션에 서명하려고 합니다. 이해하는 데 도움을 주세요. 세부 사항으로 들어가지 마세요. 이상한 점이 없으면 한 문장으로 답하세요. 주소보다 잘 알려진 이름을 선호하세요. 트랜잭션은 다음과 같습니다:", vi: "Tôi sắp ký một giao dịch tiền điện tử. Hãy giúp tôi hiểu nó. Đừng đi vào chi tiết. Trả lời trong một câu nếu không có gì cảm thấy sai. Ưu tiên tên được biết đến hơn địa chỉ. Đây là giao dịch:", pl: "Zaraz podpiszę transakcję kryptograficzną. Pomóż mi ją zrozumieć. Nie wchodź w szczegóły. Odpowiedz jednym zdaniem, jeśli nic nie wydaje się podejrzane. Preferuj znane nazwy nad adresami. Oto transakcja:", ro: "Sunt pe cale să semnez o tranzacție criptografică. Ajută-mă să o înțeleg. Nu intra în detalii. Răspunde într-o propoziție dacă nu pare nimic suspect. Preferă numele cunoscute în locul adreselor. Iată tranzacția:", nl: "Ik sta op het punt een cryptotransactie te ondertekenen. Help me het te begrijpen. Ga niet in op details. Antwoord in één zin als er niets verdachts lijkt te zijn. Geef de voorkeur aan bekende namen boven adressen. Hier is de transactie:", el: "Είμαι έτοιμος να υπογράψω μια κρυπτογραφική συναλλαγή. Βοηθήστε με να την καταλάβω. Μην μπείτε σε λεπτομέρειες. Απαντήστε σε μία πρόταση αν δεν φαίνεται τίποτα ύποπτο. Προτιμήστε γνωστά ονόματα αντί για διευθύνσεις. Εδώ είναι η συναλλαγή:", th: "ฉันกำลังจะเซ็นชื่อในธุรกรรมเข้ารหัส ช่วยฉันเข้าใจมัน อย่าเจาะจงรายละเอียด ตอบกลับในหนึ่งประโยคถ้าไม่มีอะไรที่ดูผิดปกติ โปรดใช้ชื่อที่รู้จักกันดีแทนที่อยู่ นี่คือธุรกรรม:", cs: "Chystám se podepsat kryptografickou transakci. Pomozte mi ji pochopit. Nezabíhejte do detailů. Odpovězte jednou větou, pokud se nezdá být nic podezřelého. Upřednostňujte známá jména před adresami. Zde je transakce:", hu: "Kripto işlemi imzalamak üzereyim. Anlamama yardım et. Detaylara girmeyin. Hiçbir şey garip gelmiyorsa bir cümleyle cevap verin. Adresler yerine bilinen isimlere öncelik verin. İşte işlem:", sv: "Jag är på väg att signera en kryptotransaktion. Hjälp mig att förstå den. Gå inte in på detaljer. Svara i en mening om inget verkar misstänkt. Föredra välkända namn över adresser. Här är transaktionen:", da: "Jeg er ved at underskrive en kryptotransaktion. Hjælp mig med at forstå den. Gå ikke i detaljer. Svar i en sætning, hvis der ikke virker noget mistænkeligt. Foretræk velkendte navne frem for adresser. Her er transaktionen:" })
 
-      return prompt + "\n\n" + JSON.stringify(payload, null, 2)
+      return prompt + "\n\n" + JSON.stringify({ chainId, data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce, result: simulation.get() }, null, 2)
     }
 
     if (request.method === "eth_signTypedData_v4") {
@@ -582,16 +590,9 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
       const { domain, message, types, primaryType } = JSON.parse(data) as EIP712Data
 
-      const chain = chainlist.find(chain => chain.chainId === Number(domain.chainId))
-
-      if (chain == null)
-        throw new WcUnsupportedChainsError()
-
-      const payload = { chain: chain.name, chainId: chain.chainId, domain, message, types, primaryType }
-
       const prompt = Lang.match({ en: "I am about to sign a crypto message. Help me understand it. Do not go into details. Reply in one sentence if nothing feels off. Here is the message:", zh: "我即将签署一条加密消息。帮我理解它。如果没有什么不对劲的地方，请用一句话回复。以下是消息内容：", hi: "मैं एक क्रिप्टो संदेश पर हस्ताक्षर करने वाला हूं। मेरी मदद करें इसे समझने में। यदि कुछ भी गलत नहीं लगता है तो एक वाक्य में जवाब दें। यहां संदेश है:", es: "Estoy a punto de firmar un mensaje criptográfico. Ayúdame a entenderlo. No entres en detalles. Responde en una oración si no parece haber nada mal. Aquí está el mensaje:", ar: "أنا على وشك توقيع رسالة مشفرة. ساعدني في فهمها. لا تذهب إلى التفاصيل. رد بجملة واحدة إذا لم يكن هناك شيء مريب. إليك الرسالة:", fr: "Je suis sur le point de signer un message cryptographique. Aidez-moi à le comprendre. Ne pas entrer dans les détails. Répondez en une phrase si rien ne semble anormal. Voici le message:", de: "Ich bin dabei, eine kryptografische Nachricht zu signieren. Hilf mir, sie zu verstehen. Gehe nicht ins Detail. Antworte in einem Satz, wenn nichts verdächtig erscheint. Hier ist die Nachricht:", ru: "Я собираюсь подписать криптографическое сообщение. Помогите мне понять его. Не вдавайтесь в подробности. Ответьте одним предложением, если ничего не кажется подозрительным. Вот сообщение:", pt: "Estou prestes a assinar uma mensagem criptográfica. Ajude-me a entendê-la. Não entre em detalhes. Responda em uma frase se nada parecer errado. Aqui está a mensagem:", ja: "暗号化されたメッセージに署名しようとしています。理解するのを手伝ってください。詳細には立ち入らないでください。何もおかしいと感じない場合は、一文で返信してください。以下はメッセージです:", pa: "ਮੈਂ ਇੱਕ ਕ੍ਰਿਪਟੋ ਸੁਨੇਹੇ 'ਤੇ ਦਸਤਖਤ ਕਰਨ ਵਾਲਾ ਹਾਂ। ਮੈਨੂੰ ਇਸਨੂੰ ਸਮਝਣ ਵਿੱਚ ਮਦਦ ਕਰੋ। ਵਿਸਥਾਰ ਵਿੱਚ ਨਾ ਜਾਓ। ਜੇ ਕੁਝ ਵੀ ਗਲਤ ਨਹੀਂ ਲੱਗਦਾ ਹੈ ਤਾਂ ਇੱਕ ਵਾਕ ਵਿੱਚ ਜਵਾਬ ਦਿਓ। ਇੱਥੇ ਸੁਨੇਹਾ ਹੈ:", bn: "আমি একটি ক্রিপ্টো বার্তায় স্বাক্ষর করতে যাচ্ছি। আমাকে এটি বুঝতে সাহায্য করুন। বিস্তারিতভাবে না যান। যদি কিছুই অদ্ভুত না লাগে তবে একটি বাক্যে উত্তর দিন। এখানে বার্তাটি রয়েছে:", id: "Saya akan menandatangani pesan kripto. Bantu saya memahaminya. Jangan masuk ke detail. Balas dalam satu kalimat jika tidak ada yang terasa aneh. Berikut pesannya:", ur: "میں ایک کرپٹو پیغام پر دستخط کرنے والا ہوں۔ مجھے اسے سمجھنے میں مدد کریں۔ تفصیلات میں نہ جائیں۔ اگر کچھ بھی عجیب نہیں لگتا ہے تو ایک جملے میں جواب دیں۔ یہاں پیغام ہے:", ms: "Saya akan menandatangani pesan kripto. Bantu saya memahaminya. Jangan masuk ke detail. Balas dalam satu kalimat jika tidak ada yang terasa aneh. Berikut pesannya:", it: "Sto per firmare un messaggio crittografico. Aiutami a capirlo. Non entrare nei dettagli. Rispondi in una frase se non sembra esserci nulla di strano. Ecco il messaggio:", tr: "Kripto bir mesaj imzalamak üzereyim. Anlamama yardım et. Detaylara girmeyin. Hiçbir şey garip gelmiyorsa bir cümleyle cevap verin. İşte mesaj:", ta: "நான் ஒரு கிரிப்டோ செய்தியில் கையொப்பமிடப்போகிறேன். அதை புரிந்துகொள்ள எனக்கு உதவுங்கள். விவரங்களுக்கு செல்ல வேண்டாம். எதுவும் சந்தேகமாகத் தெரியவில்லை என்றால் ஒரு வாக்கியத்தில் பதிலளிக்கவும். இங்கே செய்தி உள்ளது:", te: "నేను ఒక క్రిప్టో సందేశంపై సంతకం చేయబోతున్నాను. దాన్ని అర్థం చేసుకోవడంలో నాకు సహాయం చేయండి. వివరాలకు వెళ్లవద్దు. ఏదైనా అనుమానాస్పదంగా కనిపించకపోతే ఒక వాక్యంలో జవాబు ఇవ్వండి. ఇక్కడ సందేశం ఉంది:", ko: "암호화된 메시지에 서명하려고 합니다. 이해하는 데 도움을 주세요. 세부 사항으로 들어가지 마세요. 이상한 점이 없으면 한 문장으로 답하세요. 다음은 메시지입니다:", vi: "Tôi sắp ký một tin nhắn mã hóa. Hãy giúp tôi hiểu nó. Đừng đi vào chi tiết. Trả lời trong một câu nếu không có gì cảm thấy sai. Đây là tin nhắn:", pl: "Zaraz podpiszę kryptograficzną wiadomość. Pomóż mi ją zrozumieć. Nie wchodź w szczegóły. Odpowiedz jednym zdaniem, jeśli nic nie wydaje się podejrzane. Oto wiadomość:", ro: "Sunt pe cale să semnez un mesaj criptografic. Ajută-mă să îl înțeleg. Nu intra în detalii. Răspunde într-o propoziție dacă nu pare nimic suspect. Iată mesajul:", nl: "Ik sta op het punt een cryptografisch bericht te ondertekenen. Help me het te begrijpen. Ga niet in op details. Antwoord in één zin als er niets verdachts lijkt te zijn. Hier is het bericht:", el: "Είμαι έτοιμος να υπογράψω ένα κρυπτογραφικό μήνυμα. Βοηθήστε με να το καταλάβω. Μην μπείτε σε λεπτομέρειες. Απαντήστε σε μία πρόταση αν δεν φαίνεται τίποτα ύποπτο. Εδώ είναι το μήνυμα:", th: "ฉันกำลังจะเซ็นชื่อข้อความเข้ารหัส ช่วยฉันเข้าใจมัน อย่าเจาะลึกไปในรายละเอียด ตอบกลับในประโยคเดียวถ้าไม่มีอะไรน่าสงสัย นี่คือข้อความ:", cs: "Chystám se podepsat kryptografickou zprávu. Pomozte mi ji pochopit. Nechoďte do detailů. Odpovězte jednou větou, pokud se nezdá být nic podezřelého. Zde je zpráva:", hu: "Kripto üzenetre készülök aláírni. Segíts megérteni. Ne menj bele a részletekbe. Válaszolj egy mondatban, ha semmi sem tűnik gyanúsnak. Itt van az üzenet:", sv: "Jag är på väg att signera ett kryptografiskt meddelande. Hjälp mig att förstå det. Gå inte in på detaljer. Svara i en mening om inget verkar misstänkt. Här är meddelandet:", da: "Jeg er ved at underskrive en kryptografisk besked. Hjælp mig med at forstå den. Gå ikke i detaljer. Svar i en sætning, hvis der ikke virker noget mistænkeligt. Her er beskeden..." })
 
-      return prompt + "\n\n" + JSON.stringify(payload, null, 2)
+      return prompt + "\n\n" + JSON.stringify({ chainId, domain, message, types, primaryType }, null, 2)
     }
 
     // if (request.method === "solana_signTransaction") {
@@ -630,7 +631,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [request, simulation])
 
   useEffect(() => {
-    Result.runAndWrap(() => getSimulationOrThrow(request.params)).then(setSimulation)
+    Result.runAndWrap(() => simulateOrThrow(request.params)).then(setSimulation)
   }, [request])
 
   const copyThePrompt = useCopy(prompt)
@@ -701,10 +702,40 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             </pre>
           </div>
         </Fragment>}
+        {error != null && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            {Lang.match({ en: "Error", zh: "错误", hi: "त्रुटि", es: "Error", ar: "خطأ", fr: "Erreur", de: "Fehler", ru: "Ошибка", pt: "Erro", ja: "エラー", pa: "ਗਲਤੀ", bn: "ত্রুটি", id: "Kesalahan", ur: "خرابی", ms: "Kesalahan", it: "Errore", tr: "Hata", ta: "பிழை", te: "లోపం", ko: "오류", vi: "Lỗi", pl: "Błąd", ro: "Eroare", nl: "Foutmelding", el: "Σφάλμα ", th: "ข้อผิดพลาด ", cs: "Chyba ", hu: "Hiba ", sv: "Fel ", da: "Fejl" })}
+          </div>
+          <div className="text-default-contrast">
+            {Lang.match({ en: "The request is likely to fail with this message.", zh: "请求可能会因该消息而失败。", hi: "यह संदेश अनुरोध को विफल कर सकता है।", es: "Es probable que la solicitud falle con este mensaje.", ar: "من المحتمل أن يفشل الطلب مع هذه الرسالة.", fr: "Il est probable que la requête échoue avec ce message.", de: "Die Anfrage schlägt wahrscheinlich mit dieser Nachricht fehl.", ru: "Запрос, вероятно, завершится неудачей с этим сообщением.", pt: "É provável que a solicitação falhe com esta mensagem.", ja: "このメッセージでリクエストが失敗する可能性があります。", pa: "ਇਹ ਸੁਨੇਹਾ ਨਾਲ ਬੇਨਤੀ ਅਸਫਲ ਹੋ ਸਕਦੀ ਹੈ।", bn: "এই বার্তাটি সহ অনুরোধটি ব্যর্থ হতে পারে।", id: "Permintaan kemungkinan akan gagal dengan pesan ini.", ur: "یہ پیغام درخواست کو ناکام بنا سکتا ہے۔", ms: "Permintaan kemungkinan akan gagal dengan pesan ini.", it: "È probabile che la richiesta fallisca con questo messaggio.", tr: "Bu mesajla istek başarısız olabilir.", ta: "இந்த செய்தியுடன் கோரிக்கை தோல்வியடையக்கூடும்.", te: "ఈ సందేశంతో అభ్యర్థన విఫలమవుతుంది.", ko: "이 메시지로 요청이 실패할 가능성이 있습니다.", vi: "Yêu cầu có thể thất bại với thông báo này.", pl: "Żądanie prawdopodobnie zakończy się niepowodzeniem z tym komunikatem.", ro: "Cererea este susceptibilă de a eșua cu acest mesaj.", nl: "Het verzoek zal waarschijnlijk mislukken met dit bericht.", el: "Το αίτημα πιθανότατα θα αποτύχει με αυτό το μήνυμα ", th: "คำขออาจล้มเหลวด้วยข้อความนี้ ", cs: "Žádost pravděpodobně selže s touto zprávou ", hu: "A kérés valószínűleg ezzel az üzenettel fog meghiúsulni ", sv: "Förfrågan kommer sannolikt att misslyckas med detta meddelande ", da: "Anmodningen vil sandsynligvis mislykkes med denne besked" })}
+          </div>
+          <div className="h-4" />
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+            <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
+              {error}
+            </pre>
+          </div>
+        </Fragment>}
+        {tokens != null && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            {Lang.match({ en: "Balance change", zh: "余额变动", hi: "बैलेंस परिवर्तन", es: "Cambio de saldo", ar: "تغيير الرصيد", fr: "Changement de solde", de: "Saldoänderung", ru: "Изменение баланса", pt: "Mudança de saldo", ja: "残高の変化", pa: "ਬੈਲੰਸ ਬਦਲਾਅ", bn: "ব্যালেন্স পরিবর্তন", id: "Perubahan saldo", ur: "بیلنس کی تبدیلی", ms: "Perubahan saldo", it: "Variazione del saldo", tr: "Bakiye değişikliği", ta: "சமநிலை மாற்றம்", te: "బ్యాలెన్స్ మార్పు", ko: "잔액 변경", vi: "Thay đổi số dư", pl: "Zmiana salda", ro: "Schimbare de sold", nl: "Saldo verandering ", el: "Αλλαγή υπολοίπου ", th: "การเปลี่ยนแปลงยอดคงเหลือ ", cs: "Změna zůstatku ", hu: "Egyenlegváltozás ", sv: "Saldoändring ", da: "Saldoændring" })}
+          </div>
+          <div className="text-default-contrast">
+            {Lang.match({ en: "The request is likely to change your balance of the following assets.", zh: "请求可能会更改您以下资产的余额。", hi: "अनुरोध संभवतः निम्नलिखित संपत्तियों के आपके बैलेंस को बदल देगा।", es: "Es probable que la solicitud cambie su saldo de los siguientes activos.", ar: "من المحتمل أن يغير الطلب رصيدك من الأصول التالية.", fr: "Il est probable que la requête modifie votre solde des actifs suivants.", de: "Die Anfrage wird wahrscheinlich Ihren Saldo der folgenden Vermögenswerte ändern.", ru: "Запрос, вероятно, изменит ваш баланс следующих активов.", pt: "É provável que a solicitação altere seu saldo dos seguintes ativos.", ja: "リクエストは、次の資産の残高を変更する可能性があります。", pa: "ਬੇਨਤੀ ਸੰਭਵਤ: ਹੇਠਾਂ ਦਿੱਤੇ ਗਏ ਐਸੈੱਟਾਂ ਦੇ ਤੁਹਾਡੇ ਬੈਲੰਸ ਨੂੰ ਬਦਲ ਦੇਵੇਗੀ।", bn: "অনুরোধটি সম্ভবত নিম্নলিখিত সম্পদের আপনার ব্যালেন্স পরিবর্তন করবে।", id: "Permintaan kemungkinan akan mengubah saldo Anda dari aset berikut.", ur: "یہ درخواست ممکنہ طور پر آپ کے مندرجہ ذیل اثاثوں کا بیلنس تبدیل کر دے گی۔", ms: "Permintaan kemungkinan akan mengubah saldo Anda dari aset berikut.", it: "È probabile che la richiesta modifichi il tuo saldo dei seguenti asset.", tr: "Bu isteğin aşağıdaki varlıkların bakiyenizi değiştirmesi muhtemeldir.", ta: "இந்த கோரிக்கை கீழ列ப்பட்ட சொத்துகளின் உங்கள் சமநிலையை மாற்றக்கூடும்.", te: "ఈ అభ్యర్థన క్రింది ఆస్తుల మీ బ్యాలెన్స్‌ను మార్చవచ్చు.", ko: "이 요청은 다음 자산의 잔액을 변경할 가능성이 있습니다.", vi: "Yêu cầu có thể thay đổi số dư của bạn từ các tài sản sau đây.", pl: "Żądanie prawdopodobnie zmieni Twój saldo następujących aktywów.", ro: "Cererea este susceptibilă de a vă schimba soldul următoarelor active.", nl: "Het verzoek zal waarschijnlijk uw saldo van de volgende activa wijzigen. ", el: "Το αίτημα πιθανότας θα αλλάξει το υπόλοιπό σας από τα ακόλουθα περιουσιακά στοιχεία ", th: "คำขออาจเปลี่ยนยอดคงเหลือของคุณจากสินทรัพย์ต่อไปนี้ ", cs: "Žádost pravděpodobně změní váš zůstatek z následujících aktiv ", hu: "A kérés valószínűleg megváltoztatja az egyenlegét a következő eszközökből ", sv: "Förfrågan kommer sannolikt att ändra din balans av följande tillgångar ", da: "Anmodningen vil sandsynligvis ændre din saldo af følgende aktiver" })}
+          </div>
+          <div className="h-4" />
+          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
+            <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
+              {tokens.map(token => token.value.toLocaleString(Lang.get(), { style: "currency", currency: "USD", currencyDisplay: "code", signDisplay: "always", maximumSignificantDigits: 4 }).replaceAll("USD", token.symbol)).join("\n")}
+            </pre>
+          </div>
+        </Fragment>}
         {prompt != null && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
-            {Lang.match({ en: "Summary", zh: "摘要", hi: "सारांश", es: "Resumen", ar: "ملخص", fr: "Résumé", de: "Zusammenfassung", ru: "Резюме", pt: "Resumo", ja: "概要", pa: "ਸਾਰ", bn: "সারাংশ", id: "Ringkasan", ur: "خلاصہ", ms: "Ringkasan", it: "Sommario", tr: "Özet", ta: "சுருக்கம்", te: "సారాంశం", ko: "요약", vi: "Tóm tắt", pl: "Podsumowanie", ro: "Rezumat", nl: "Samenvatting", el: "Σύνοψη ", th: "สรุป ", cs: "Souhrn ", hu: "Összefoglaló ", sv: "Sammanfattning ", da: "Resumé" })}
+            {Lang.match({ en: "Explanation", zh: "解释", hi: "व्याख्या", es: "Explicación", ar: "تفسير", fr: "Explication", de: "Erklärung", ru: "Объяснение", pt: "Explicação", ja: "説明", pa: "ਵਿਆਖਿਆ", bn: "ব্যাখ্যা", id: "Penjelasan", ur: "وضاحت", ms: "Penjelasan", it: "Spiegazione", tr: "Açıklama", ta: "விளக்கம்", te: "వివరణ", ko: "설명", vi: "Giải thích", pl: "Wyjaśnienie", ro: "Explicație", nl: "Uitleg", el: "Εξήγηση ", th: "คำอธิบาย ", cs: "Vysvětlení ", hu: "Magyarázat ", sv: "Förklaring ", da: "Forklaring" })}
           </div>
           <div className="text-default-contrast">
             {Lang.match({ en: "Copy this prompt to your AI to understand what you sign.", zh: "将此提示复制到您的 AI 中以了解您签署的内容。", hi: "इस प्रॉम्प्ट को अपनी AI में कॉपी करें ताकि आप समझ सकें कि आप क्या साइन कर रहे हैं।", es: "Copie este mensaje a su IA para entender lo que firma.", ar: "انسخ هذا الموجه إلى ذكاءك الاصطناعي لفهم ما توقع عليه.", fr: "Copiez cette invite dans votre IA pour comprendre ce que vous signez.", de: "Kopieren Sie diese Eingabeaufforderung in Ihre KI, um zu verstehen, was Sie unterschreiben.", ru: "Скопируйте этот запрос в свой ИИ, чтобы понять, что вы подписываете.", pt: "Copie este prompt para sua IA entender o que você assina.", ja: "このプロンプトをAIにコピーして、あなたが何に署名しているのか理解してください。", pa: "ਇਸ ਪ੍ਰੰਪਟ ਨੂੰ ਆਪਣੇ ਏਆਈ ਵਿੱਚ ਕਾਪੀ ਕਰੋ ਤਾਂ ਜੋ ਤੁਸੀਂ ਸਮਝ ਸਕੋ ਕਿ ਤੁਸੀਂ ਕੀ ਸਾਈਨ ਕਰ ਰਹੇ ਹੋ।", bn: "এই প্রম্পটটি আপনার AI-তে কপি করুন যাতে আপনি বুঝতে পারেন আপনি কী সাইন করছেন।", id: "Salin prompt ini ke AI Anda untuk memahami apa yang Anda tanda tangani.", ur: "اس پرامپٹ کو اپنے AI میں کاپی کریں تاکہ آپ سمجھ سکیں کہ آپ کیا سائن کر رہے ہیں۔", ms: "Salin prompt ini ke AI Anda untuk memahami apa yang Anda tanda tangani.", it: "Copia questo prompt nella tua IA per capire cosa stai firmando.", tr: "Bu istemi AI'ınıza kopyalayarak ne imzaladığınızı anlayın.", ta: "இந்த ப்ராம்ப்டை உங்கள் AI-க்கு நகலெடுக்கவும் நீங்கள் என்னை கையொப்பமிடுகிறீர்கள் என்பதை புரிந்துகொள்ளுங்கள்.", te: "ఈ ప్రాంప్ట్‌ను మీ AIకి కాపీ చేయండి మీరు ఏమ signing చేస్తున్నారో అర్థం చేసుకోండి.", ko: "이 프롬프트를 AI에 복사하여 서명하는 내용을 이해하세요.", vi: "Sao chép lời nhắc này vào AI của bạn để hiểu những gì bạn đang ký.", pl: "Skopiuj ten prompt do swojego AI, aby zrozumieć, co podpisujesz.", ro: "Copiați acest prompt în AI-ul dvs. pentru a înțelege ce semnați.", nl: "Kopieer deze prompt naar uw AI om te begrijpen wat u ondertekent.", el: "Αντιγράψτε αυτήν την προτροπή στο AI σας για να καταλάβετε τι υπογράφετε ", th: "คัดลอกพรอมต์นี้ไปยัง AI ของคุณเพื่อเข้าใจสิ่งที่คุณกำลังเซ็นสัญญา ", cs: "Zkopírujte tento prompt do svého AI, abyste pochopili, co podepisujete ", hu: "Másolja ezt a promptot az AI-jába, hogy megértse, mit ír alá ", sv: "Kopiera denna prompt till din AI för att förstå vad du signerar ", da: "Kopier denne prompt til din AI for at forstå, hvad du underskriver " })}
