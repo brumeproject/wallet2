@@ -2,7 +2,7 @@ import { WideContrastButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
 import { chainlist } from "@/libs/chainlist/mod.ts";
 import { useCopy } from "@/libs/copy/mod.ts";
-import { Ed25519 } from "@/libs/ed25519/mod.ts";
+import { ed25519 } from "@/libs/ed25519/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
@@ -154,7 +154,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
   const getSolanaAddressOrThrow = useCallback(async () => {
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
     const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
-    const upub = await Ed25519.publish(xsig.key)
+    const upub = await ed25519.publish(xsig.key)
 
     return base58.encode(upub)
   }, [seedphrase, subaccount])
@@ -406,7 +406,7 @@ export function CryptoSubaccountAddressPage(props: { $entry: KDBX.Inner.KeePassF
   const getSolanaAddressOrThrow = useCallback(async () => {
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
     const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
-    const upub = await Ed25519.publish(xsig.key)
+    const upub = await ed25519.publish(xsig.key)
 
     return base58.encode(upub)
   }, [seedphrase, subaccount])
@@ -543,7 +543,7 @@ export function CryptoSubaccountExportPage(props: { $entry: KDBX.Inner.KeePassFi
   const getSolanaKeyOrThrow = useCallback(async () => {
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
     const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
-    const upub = await Ed25519.publish(xsig.key)
+    const upub = await ed25519.publish(xsig.key)
 
     const concat = new Uint8Array(xsig.key.length + upub.length)
 

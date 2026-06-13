@@ -2,7 +2,7 @@ import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
 import { chainlist } from "@/libs/chainlist/mod.ts";
 import { useCopy } from "@/libs/copy/mod.ts";
-import { Ed25519 } from "@/libs/ed25519/mod.ts";
+import { ed25519 } from "@/libs/ed25519/mod.ts";
 import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
@@ -224,7 +224,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const getSolanaAddressOrThrow = useCallback(async () => {
     const seed = new Ed25519SeedKey(await BitcoinSeedPhrase.derive(seedphrase))
     const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
-    const upub = await Ed25519.publish(xsig.key)
+    const upub = await ed25519.publish(xsig.key)
 
     return base58.encode(upub)
   }, [seedphrase, subaccount])
@@ -360,7 +360,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
 
       const msgraw = new Uint8Array(base58.decode(message))
-      const sigraw = new Uint8Array(await Ed25519.sign(xsig.key, msgraw))
+      const sigraw = new Uint8Array(await ed25519.sign(xsig.key, msgraw))
 
       return { signature: base58.encode(sigraw) }
     }
@@ -377,7 +377,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       const xsig = await seed.derive(`m/44'/501'/${subaccount}'/0'`)
 
       const msgraw = cursor.bytes.subarray(sigstart + (sigcount * 64))
-      const sigraw = new Uint8Array(await Ed25519.sign(xsig.key, msgraw))
+      const sigraw = new Uint8Array(await ed25519.sign(xsig.key, msgraw))
 
       return { signature: base58.encode(sigraw) }
     }
