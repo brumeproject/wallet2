@@ -5,6 +5,7 @@ import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { useStoreContext } from "@/libs/store/mod.tsx";
+import { version } from "@/libs/version/mod.ts";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
 import { PathBoard, PathPaper, Wall } from "@hazae41/modal";
 import { CloseContext } from "@hazae41/react-close-context";
@@ -265,11 +266,21 @@ export function App() {
             </div>
           </div>
           <div className="h-[50dvh]" />
-          <a className="text-center hover:underline focus-visible:underline focus-visible:outline-none"
-            href="https://brume.tech"
-            target="_blank noreferrer">
-            {Lang.match({ en: "Made by cypherpunks", zh: "由赛博朋克制作", hi: "साइबरपंक द्वारा बनाया गया", es: "Hecho por cypherpunks", ar: "مصنوع من قبل سايفربانكس", fr: "Fait par des cypherpunks", de: "Hergestellt von Cypherpunks", ru: "Создано киберпанками", pt: "Feito por cypherpunks", ja: "サイバーパンクによって作られた", pa: "ਸਾਈਬਰਪੰਕਸ ਦੁਆਰਾ ਬਣਾਇਆ ਗਿਆ", bn: "সাইফারপাঙ্ক দ্বারা তৈরি", id: "Dibuat oleh cypherpunks", ur: "سائبرپنکس کے ذریعہ بنایا گیا", ms: "Dibuat oleh cypherpunks", it: "Realizzato da cypherpunks", tr: "Cypherpunks tarafından yapıldı", ta: "சைபர்பங்க்ஸ் மூலம் உருவாக்கப்பட்டது", te: "సైఫర్పంక్స్ ద్వారా తయారు చేయబడింది", ko: "사이버펑크가 제작", vi: "Được tạo bởi cypherpunks", pl: "Stworzone przez cypherpunks", ro: "Realizat de cypherpunks", nl: "Gemaakt door cypherpunks", el: "Κατασκευάστηκε από cypherpunks", th: "สร้างโดย cypherpunks", cs: "Vytvořeno cypherpunks", hu: "Cypherpunks által készített", sv: "Gjord av cypherpunks", da: "Lavet af cypherpunks" })}
-          </a>
+          <div className="flex items-center gap-2">
+            <a className="hover:underline focus-visible:underline focus-visible:outline-none"
+              href="https://brume.tech"
+              target="_blank noreferrer">
+              {Lang.match({ en: "Made by cypherpunks", zh: "由赛博朋克制作", hi: "साइबरपंक द्वारा बनाया गया", es: "Hecho por cypherpunks", ar: "مصنوع من قبل سايفربانكس", fr: "Fait par des cypherpunks", de: "Hergestellt von Cypherpunks", ru: "Создано киберпанками", pt: "Feito por cypherpunks", ja: "サイバーパンクによって作られた", pa: "ਸਾਈਬਰਪੰਕਸ ਦੁਆਰਾ ਬਣਾਇਆ ਗਿਆ", bn: "সাইফারপাঙ্ক দ্বারা তৈরি", id: "Dibuat oleh cypherpunks", ur: "سائبرپنکس کے ذریعہ بنایا گیا", ms: "Dibuat oleh cypherpunks", it: "Realizzato da cypherpunks", tr: "Cypherpunks tarafından yapıldı", ta: "சைபர்பங்க்ஸ் மூலம் உருவாக்கப்பட்டது", te: "సైఫర్పంక్స్ ద్వారా తయారు చేయబడింది", ko: "사이버펑크가 제작", vi: "Được tạo bởi cypherpunks", pl: "Stworzone przez cypherpunks", ro: "Realizat de cypherpunks", nl: "Gemaakt door cypherpunks", el: "Κατασκευάστηκε από cypherpunks", th: "สร้างโดย cypherpunks", cs: "Vytvořeno cypherpunks", hu: "Cypherpunks által készített", sv: "Gjord av cypherpunks", da: "Lavet af cypherpunks" })}
+            </a>
+            <div className="">
+              {`•`}
+            </div>
+            <a className="hover:underline focus-visible:underline focus-visible:outline-none"
+              href={`https://github.com/brumeproject/wallet2/releases/tag/v${version}`}
+              target="_blank noreferrer">
+              {version}
+            </a>
+          </div>
           <div className="h-4" />
         </div>
       </div>

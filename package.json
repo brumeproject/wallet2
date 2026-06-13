@@ -3,11 +3,13 @@
   "private": true,
   "version": "0.6.0",
   "scripts": {
-    "process": "zsh -c 'deno x --unstable-worker-options saumon ./src/**/**'",
+    "process:chainlist": "deno x --unstable-worker-options saumon ./src/libs/chainlist/mod.macro.ts",
+    "process:version": "deno x --unstable-worker-options saumon ./src/libs/version/mod.macro.ts",
     "examine": "deno lint ./src && deno check ./src && deno test ./src",
     "prepack": "deno x glace ./www --out=./out",
     "produce": "deno x glace ./www --out=./out & deno -RNE ./src/mods/srv/bin.ts",
-    "develop": "deno x glace ./www --out=./out --watch=./src,./www --dev & deno -RNE ./src/mods/srv/bin.ts --dev"
+    "develop": "deno x glace ./www --out=./out --watch=./src,./www --dev & deno -RNE ./src/mods/srv/bin.ts --dev",
+    "version": "npm run process:version"
   },
   "files": [
     "./out"
