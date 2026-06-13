@@ -9,7 +9,7 @@ import { Lang } from "@/libs/lang/mod.ts";
 import { WideNakedMenuAnchor } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useSubmit } from "@/libs/submit/mod.ts";
+import { useTask } from "@/libs/task/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -87,7 +87,7 @@ export function CryptoAccountAddPage() {
     return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, title, color, seedphrase, notes])
 
-  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
+  const writeOrDisplay = useTask(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -104,7 +104,7 @@ export function CryptoAccountAddPage() {
     close()
   }).catch(Errors.display), [encrypt, close])
 
-  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
+  const saveOrDisplay = useTask(() => Promise.try(async () => {
     const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })

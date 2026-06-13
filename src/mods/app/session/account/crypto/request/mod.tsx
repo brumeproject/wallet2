@@ -8,7 +8,7 @@ import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useSubmit } from "@/libs/submit/mod.ts";
+import { useTask } from "@/libs/task/mod.ts";
 import { base58 } from "@hazae41/base58";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -385,11 +385,11 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [seedphrase, subaccount])
 
-  const approve = useSubmit(() => Promise.try(async () => {
+  const approve = useTask(() => Promise.try(async () => {
     await respondOrThrow(request.params).then(request.resolve).then(() => close(true))
   }).catch(Errors.display), [request, respondOrThrow, close])
 
-  const decline = useSubmit(() => Promise.try(async () => {
+  const decline = useTask(() => Promise.try(async () => {
     await Promise.resolve(new WcUserRejectedError()).then(request.reject).then(() => close(true))
   }).catch(Errors.display), [request, close])
 

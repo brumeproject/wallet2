@@ -10,7 +10,7 @@ import { WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { ChildrenProps } from "@/libs/props/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useSubmit } from "@/libs/submit/mod.ts";
+import { useTask } from "@/libs/task/mod.ts";
 import { CardAccountAddPage } from "@/mods/app/session/account/card/mod.tsx";
 import { CryptoAccountAddPage } from "@/mods/app/session/account/crypto/mod.tsx";
 import { KeypairAccountAddPage } from "@/mods/app/session/account/keypair/mod.tsx";
@@ -310,7 +310,7 @@ export function SessionExportPage() {
     return Writable.writeToBytes(await kdbx.encrypt(composite))
   }, [session, pass])
 
-  const pickOrDisplay = useSubmit(() => Promise.try(async () => {
+  const pickOrDisplay = useTask(() => Promise.try(async () => {
     const fsfh = await window.showSaveFilePicker!({ id: "root", startIn: "documents", suggestedName: `wallet.kdbx`, types: [{ description: "KDBX", accept: { "application/kdbx": [".kdbx"] } }] })
 
     const content = await encrypt()
@@ -322,7 +322,7 @@ export function SessionExportPage() {
     close()
   }).catch(Errors.display), [encrypt, close])
 
-  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
+  const saveOrDisplay = useTask(() => Promise.try(async () => {
     const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })

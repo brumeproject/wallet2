@@ -11,7 +11,7 @@ import { WideNakedMenuAnchor, WideNakedMenuButton } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { Strings } from "@/libs/string/mod.ts";
-import { useSubmit } from "@/libs/submit/mod.ts";
+import { useTask } from "@/libs/task/mod.ts";
 import { useTotp } from "@/libs/totp/mod.ts";
 import { Writable } from "@hazae41/binary";
 import { MoneroSeedPhrase } from "@hazae41/broca";
@@ -103,7 +103,7 @@ export function PasswordAccountAddPage() {
     return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, title, color, username, password, totpseed, notes])
 
-  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
+  const writeOrDisplay = useTask(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -120,7 +120,7 @@ export function PasswordAccountAddPage() {
     close()
   }).catch(Errors.display), [encrypt, close])
 
-  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
+  const saveOrDisplay = useTask(() => Promise.try(async () => {
     const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })

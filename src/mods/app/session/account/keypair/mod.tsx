@@ -9,7 +9,7 @@ import { Lang } from "@/libs/lang/mod.ts";
 import { WideNakedMenuAnchor } from "@/libs/menu/mod.tsx";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
-import { useSubmit } from "@/libs/submit/mod.ts";
+import { useTask } from "@/libs/task/mod.ts";
 import { useTotp } from "@/libs/totp/mod.ts";
 import { PasswordInputAnchor, PasswordMenu, ScanPage, TotpPageAnchor } from "@/mods/app/session/account/password/mod.tsx";
 import { Writable } from "@hazae41/binary";
@@ -110,7 +110,7 @@ export function KeypairAccountAddPage() {
     return Writable.writeToBytes(await kdbx.encrypt(comp))
   }, [session, title, color, pubkey, sigkey, username, password, totpseed, notes])
 
-  const writeOrDisplay = useSubmit(() => Promise.try(async () => {
+  const writeOrDisplay = useTask(() => Promise.try(async () => {
     const fsfh = session.value.user.fsfh
 
     if (fsfh == null)
@@ -127,7 +127,7 @@ export function KeypairAccountAddPage() {
     close()
   }).catch(Errors.display), [encrypt, close])
 
-  const saveOrDisplay = useSubmit(() => Promise.try(async () => {
+  const saveOrDisplay = useTask(() => Promise.try(async () => {
     const content = await encrypt()
 
     const file = new File([content], "wallet.kdbx", { type: "application/kdbx" })
@@ -427,7 +427,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
   const copyThePassword = useCopy(password)
   const copyTheTotpcode = useCopy(totpcode)
 
-  const savePubKeyOrDisplay = useSubmit(() => Promise.try(async () => {
+  const savePubKeyOrDisplay = useTask(() => Promise.try(async () => {
     const content = pubkey || ""
 
     const file = new File([content], "key.pub", { type: "application/octet-stream" })
@@ -451,7 +451,7 @@ export function KeypairAccountPage(props: { $entry: KDBX.Inner.KeePassFile.Entry
     }
   }).catch(Errors.display), [pubkey])
 
-  const saveSigKeyOrDisplay = useSubmit(() => Promise.try(async () => {
+  const saveSigKeyOrDisplay = useTask(() => Promise.try(async () => {
     const content = sigkey || ""
 
     const file = new File([content], "key", { type: "application/octet-stream" })
