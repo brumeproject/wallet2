@@ -2,12 +2,22 @@
 
 The wallet with maximum security and privacy
 
+## Features
+
+- Password manager
+- TOTP authenticator
+- Ethereum and Solana signing (via WalletConnect)
+
 ## Usage
 
 ### Public
 
-You can just visit https://wallet.brume.tech and install it as a webapp
+https://wallet.brume.tech
 
-### Manual
+### Public (beta)
+
+https://beta.wallet.brume.tech
+
+### Self-hosted
 
 You can build and host it yourself [just like this template](https://github.com/hazae41/create-secure-webapp)
