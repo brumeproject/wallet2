@@ -9,7 +9,7 @@
     "prepack": "deno x glace ./www --out=./out",
     "produce": "deno x glace ./www --out=./out & deno -RNE ./src/mods/srv/bin.ts",
     "develop": "deno x glace ./www --out=./out --watch=./src,./www --dev & deno -RNE ./src/mods/srv/bin.ts --dev",
-    "version": "npm run process:version"
+    "version": "npm run process:version && git add ."
   },
   "files": [
     "./out"
