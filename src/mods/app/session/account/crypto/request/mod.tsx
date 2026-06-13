@@ -7,7 +7,6 @@ import { Errors } from "@/libs/errors/mod.ts";
 import { Events } from "@/libs/events/mod.ts";
 import { Outline } from "@/libs/heroicons/mod.ts";
 import { Lang } from "@/libs/lang/mod.ts";
-import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useSubmit } from "@/libs/submit/mod.ts";
 import { base58 } from "@hazae41/base58";
@@ -27,7 +26,7 @@ import { PathBoard } from "@hazae41/modal";
 import { useCloseContext } from "@hazae41/react-close-context";
 import { Result } from "@hazae41/result-and-option";
 import { secp256k1 } from "@hazae41/secp256k1";
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useMemo, useState } from "react";
 
 React;
 
@@ -212,8 +211,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   const seedphrase = useMemo(() => {
     return $entry.getStringByKeyOrThrow("SeedPhrase").getValueOrThrow().get()
   }, [$entry])
-
-  const [simulation, setSimulation] = useState<Nullable<Result<unknown>>>()
 
   const getEthereumAddressOrThrow = useCallback(async () => {
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
@@ -490,16 +487,29 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
       return result
     }
 
+    if (request.method === "solana_signTransaction") {
+      const { transaction } = request.params as { transaction: string }
+
+      const result = await requestOrThrow("https://api.mainnet.solana.com", {
+        method: "simulateTransaction",
+        params: [transaction, { encoding: "base64", commitment: "finalized" }]
+      }).then(r => r.getOrThrow())
+
+      return result
+    }
+
     throw new WcUnsupportedMethodsError()
   }, [getEthereumAddressOrThrow, getSolanaAddressOrThrow, requestOrThrow])
 
   const getDetailsOrThrow = useCallback((params: WcSessionRequestParams) => {
     const { request, chainId } = params
 
-    if (request.method === "eth_sendTransaction") {
-      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }] = request.params as [EthSendTransactionParams]
+    if (request.method === "personal_sign") {
+      const [message, account] = request.params as [string, string]
 
-      return JSON.stringify({ chainId, data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce, result: simulation?.getOrNull() }, null, 2)
+      const details = { message }
+
+      return JSON.stringify(details, null, 2)
     }
 
     if (request.method === "eth_signTypedData_v4") {
@@ -507,11 +517,37 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
       const { domain, message, types, primaryType } = JSON.parse(data) as EIP712Data
 
-      return JSON.stringify({ chainId, domain, message, types, primaryType }, null, 2)
+      const details = { chainId, domain, message, types, primaryType }
+
+      return JSON.stringify(details, null, 2)
+    }
+
+    if (request.method === "eth_sendTransaction") {
+      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }] = request.params as [EthSendTransactionParams]
+
+      const details = { chainId, data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }
+
+      return JSON.stringify(details, null, 2)
+    }
+
+    if (request.method === "solana_signMessage") {
+      const { message } = request.params as { message: string, pubkey: string }
+
+      const details = { message }
+
+      return JSON.stringify(details, null, 2)
+    }
+
+    if (request.method === "solana_signTransaction") {
+      const { transaction } = request.params as { transaction: string }
+
+      const details = { transaction }
+
+      return JSON.stringify(details, null, 2)
     }
 
     throw new WcUnsupportedMethodsError()
-  }, [simulation])
+  }, [])
 
   const type = useMemo(() => {
     return Result.runAndWrapSync(() => getTypeOrThrow(request.params)).getOrNull()
@@ -527,10 +563,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
   const details = useMemo(() => {
     return Result.runAndWrapSync(() => getDetailsOrThrow(request.params)).getOrNull()
-  }, [request, simulation])
-
-  useEffect(() => {
-    Result.runAndWrap(() => simulateOrThrow(request.params)).then(setSimulation)
   }, [request])
 
   const copyTheDetails = useCopy(details)
