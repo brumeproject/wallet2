@@ -54,26 +54,3 @@ if (process.env.NODE_ENV === "development") {
     event.waitUntil(self.clients.claim())
   })
 }
-
-// const foregrounds = new Set<RpcPort>()
-
-// self.addEventListener("message", async (event) => {
-//   if (event.origin !== self.origin)
-//     return
-//   if (event.source instanceof WindowClient === false)
-//     return
-
-//   const foreground = new RpcPort(event.ports[0])
-
-//   foreground.addEventListener("request", (event) => {
-//     return
-//   }, { signal: foreground.closing })
-
-//   foreground.addEventListener("close", () => {
-//     foregrounds.delete(foreground)
-//   }, { signal: foreground.closing })
-
-//   foregrounds.add(foreground)
-
-//   foreground.open()
-// })
