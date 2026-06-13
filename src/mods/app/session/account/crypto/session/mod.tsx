@@ -398,10 +398,6 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrNull("Color")?.getValueOrNull()?.get()
   }, [$entry])
 
-  const seedphrase = useMemo(() => {
-    return $entry.getStringByKeyOrThrow("SeedPhrase").getValueOrThrow().get()
-  }, [$entry])
-
   const jwk = useMemo(() => {
     return $subentry.getStringByKeyOrNull("WalletConnectJwk")?.getValueOrNull()?.get()
   }, [$subentry])
@@ -412,6 +408,10 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
   const key = useMemo(() => {
     return $subentry.getStringByKeyOrNull("WalletConnectKey")?.getValueOrNull()?.get()
+  }, [$subentry])
+
+  const notes = useMemo(() => {
+    return $subentry.getStringByKeyOrNull("Notes")?.getValueOrNull()?.get()
   }, [$subentry])
 
   const online = useOnline()
@@ -531,7 +531,7 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             </div>
           </div>
           <div className="text-default-contrast">
-            {Lang.match({ en: "Your requests will appear here. Only approve requests you understand.", zh: "您的请求将显示在这里。仅批准您理解的请求。", hi: "आपके अनुरोध यहां दिखाई देंगे। केवल उन अनुरोधों को मंजूरी दें जिन्हें आप समझते हैं।", es: "Sus solicitudes aparecerán aquí. Solo apruebe las solicitudes que entienda.", ar: "ستظهر طلباتك هنا. فقط وافق على الطلبات التي تفهمها.", fr: "Vos demandes apparaîtront ici. N'approuvez que les demandes que vous comprenez.", de: "Ihre Anfragen werden hier angezeigt. Genehmigen Sie nur Anfragen, die Sie verstehen.", ru: "Ваши запросы будут отображаться здесь. Одобряйте только те запросы, которые вы понимаете.", pt: "Suas solicitações aparecerão aqui. Aprove apenas as solicitações que você entende.", ja: "あなたのリクエストはここに表示されます。理解できるリクエストのみを承認してください。", pa: "ਤੁਹਾਡੇ ਬੇਨਤੀ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੀਆਂ। ਸਿਰਫ ਉਹ ਬੇਨਤੀਆਂ ਮਨਜ਼ੂਰ ਕਰੋ ਜੋ ਤੁਸੀਂ ਸਮਝਦੇ ਹੋ।", bn: "আপনার অনুরোধগুলি এখানে প্রদর্শিত হবে। শুধুমাত্র সেই অনুরোধগুলি অনুমোদন করুন যা আপনি বুঝতে পারেন।", id: "Permintaan Anda akan muncul di sini. Hanya setujui permintaan yang Anda pahami.", ur: "آپ کی درخواستیں یہاں ظاہر ہوں گی۔ صرف ان درخواستوں کو منظور کریں جنہیں آپ سمجھتے ہیں۔", ms: "Permintaan Anda akan muncul di sini. Hanya setujui permintaan yang Anda pahami.", it: "Le tue richieste appariranno qui. Approva solo le richieste che comprendi.", tr: "İstekleriniz burada görünecektir. Yalnızca anladığınız istekleri onaylayın.", ta: "உங்கள் கோரிக்கைகள் இங்கே தோன்றும். நீங்கள் புரிந்துகொள்ளும் கோரிக்கைகளை மட்டுமே ஒப்புக்கொள்ளுங்கள்.", te: "మీ అభ్యర్థనలు ఇక్కడ కనిపిస్తాయి. మీరు అర్థం చేసుకున్న అభ్యర్థనలను మాత్రమే ఆమోదించండి.", ko: "귀하의 요청이 여기에 표시됩니다. 이해하는 요청만 승인하십시오.", vi: "Yêu cầu của bạn sẽ xuất hiện ở đây. Chỉ chấp thuận các yêu cầu mà bạn hiểu.", pl: "Twoje żądania pojawią się tutaj. Zatwierdzaj tylko te żądania, które rozumiesz.", ro: "Cererile dvs. vor apărea aici. Aprobați doar cererile pe care le înțelegeți.", nl: "Uw verzoeken verschijnen hier. Keur alleen verzoeken goed die u begrijpt.", el: "Τα αιτήματά σας θα εμφανίζονται εδώ. Εγκρίνετε μόνο τα αιτήματα που καταλαβαίνετε. ", th: "คำขอของคุณจะปรากฏที่นี่ โปรดอนุมัติคำขอที่คุณเข้าใจเท่านั้น ", cs: "Vaše požadavky se zde zobrazí. Schvalte pouze požadavky, kterým rozumíte. ", hu: "Kérései itt jelennek meg. Csak azokat a kéréseket hagyja jóvá, amelyeket megért. ", sv: "Dina förfrågningar kommer att visas här. Godkänn endast förfrågningar som du förstår. ", da: "Dine anmodninger vises her. Godkend kun anmodninger, som du forstår." })}
+            {Lang.match({ en: "Your requests will appear here. Only approve requests you expect.", zh: "您的请求将显示在这里。仅批准您预期的请求。", hi: "आपके अनुरोध यहां दिखाई देंगे। केवल उन अनुरोधों को अनुमोदित करें जिनकी आप अपेक्षा करते हैं।", es: "Sus solicitudes aparecerán aquí. Solo apruebe las solicitudes que espera.", ar: "ستظهر طلباتك هنا. فقط قم بالموافقة على الطلبات التي تتوقعها.", fr: "Vos demandes apparaîtront ici. N'approuvez que les demandes que vous attendez.", de: "Ihre Anfragen werden hier angezeigt. Genehmigen Sie nur Anfragen, die Sie erwarten.", ru: "Ваши запросы появятся здесь. Одобряйте только те запросы, которые вы ожидаете.", pt: "Suas solicitações aparecerão aqui. Aprove apenas as solicitações que você espera.", ja: "あなたのリクエストはここに表示されます。予期するリクエストのみを承認してください。", pa: "ਤੁਹਾਡੇ ਬੇਨਤੀ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੀਆਂ। ਸਿਰਫ ਉਹ ਬੇਨਤੀਆਂ ਮਨਜ਼ੂਰ ਕਰੋ ਜੋ ਤੁਸੀਂ ਉਮੀਦ ਕਰਦੇ ਹੋ।", bn: "আপনার অনুরোধগুলি এখানে প্রদর্শিত হবে। শুধুমাত্র সেই অনুরোধগুলি অনুমোদন করুন যা আপনি আশা করেন।", id: "Permintaan Anda akan muncul di sini. Hanya setujui permintaan yang Anda harapkan.", ur: "آپ کی درخواستیں یہاں ظاہر ہوں گی۔ صرف ان درخواستوں کی منظوری دیں جن کی آپ توقع کرتے ہیں۔", ms: "Permintaan Anda akan muncul di sini. Hanya setujui permintaan yang Anda harapkan.", it: "Le tue richieste appariranno qui. Approva solo le richieste che ti aspetti.", tr: "İstekleriniz burada görünecektir. Yalnızca beklediğiniz istekleri onaylayın.", ta: "உங்கள் கோரிக்கைகள் இங்கே தோன்றும். நீங்கள் எதிர்பார்க்கும் கோரிக்கைகளை மட்டுமே ஒப்புக்கொள்ளுங்கள்.", te: "మీ అభ్యర్థనలు ఇక్కడ కనిపిస్తాయి. మీరు ఆశిస్తున్న అభ్యర్థనలను మాత్రమే ఆమోదించండి.", ko: "귀하의 요청이 여기에 표시됩니다. 예상되는 요청만 승인하십시오.", vi: "Yêu cầu của bạn sẽ xuất hiện ở đây. Chỉ chấp thuận các yêu cầu mà bạn mong đợi.", pl: "Twoje żądania pojawią się tutaj. Zatwierdzaj tylko te żądania, których oczekujesz.", ro: "Cererea dvs. va apărea aici. Aprobați numai cererile pe care le așteptați.", nl: "Uw verzoeken verschijnen hier. Keur alleen verzoeken goed die u verwacht.", el: "Τα αιτήματά σας θα εμφανίζονται εδώ. Εγκρίνετε μόνο τα αιτήματα που περιμένετε. ", th: "คำขอของคุณจะปรากฏที่นี่ โปรดอนุมัติคำขอที่คุณคาดหวังเท่านั้น ", cs: "Vaše požadavky se zde zobrazí. Schvalujte pouze požadavky, které očekáváte. ", hu: "Kérései itt jelennek meg. Csak azokat a kéréseket hagyja jóvá, amelyeket vár. ", sv: "Dina förfrågningar kommer att visas här. Godkänn endast förfrågningar som du förväntar dig. ", da: "Dine anmodninger vises her. Godkend kun anmodninger, som du forventer." })}
           </div>
           <div className="h-4" />
           <div className="grow flex flex-col overflow-y-auto border border-default-contrast rounded-xl p-1">
@@ -549,6 +549,22 @@ export function CryptoSessionPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             </div>
           </div>
         </Fragment>
+        {notes && <Fragment>
+          <div className="h-6" />
+          <div className="font-medium">
+            {Lang.match({ en: "Notes", zh: "备注", hi: "नोट्स", es: "Notas", ar: "ملاحظات", fr: "Notes", de: "Notizen", ru: "Заметки", pt: "Notas", ja: "ノート", pa: "ਨੋਟਸ", bn: "নোটস", id: "Catatan", ur: "نوٹس", ms: "Nota", it: "Note", tr: "Notlar", ta: "குறிப்புகள்", te: "గమనికలు", ko: "노트", vi: "Ghi chú", pl: "Notatki", ro: "Note", nl: "Notities", el: "Σημειώσεις", th: "บันทึก", cs: "Poznámky", hu: "Jegyzetek", sv: "Anteckningar", da: "Noter" })}
+          </div>
+          <div className="text-default-contrast">
+            {Lang.match({ en: "Any additional information.", zh: "任何附加信息。", hi: "कोई अतिरिक्त जानकारी।", es: "Cualquier información adicional.", ar: "أي معلومات إضافية.", fr: "Toute information supplémentaire.", de: "Alle zusätzlichen Informationen.", ru: "Любая дополнительная информация.", pt: "Qualquer informação adicional.", ja: "追加情報。", pa: "ਕੋਈ ਵੀ ਵਾਧੂ ਜਾਣਕਾਰੀ।", bn: "যেকোনও অতিরিক্ত তথ্য।", id: "Informasi tambahan apa pun.", ur: "کوئی اضافی معلومات۔", ms: "Sebarang maklumat tambahan.", it: "Qualsiasi informazione aggiuntiva.", tr: "Herhangi bir ek bilgi.", ta: "எந்தவொரு கூடுதல் தகவலும்.", te: "ఏదైనా అదనపు సమాచారం.", ko: "추가 정보.", vi: "Bất kỳ thông tin bổ sung nào.", pl: "Wszelkie dodatkowe informacje.", ro: "Orice informație suplimentară.", nl: "Eventuele aanvullende informatie.", el: "Οποιαδήποτε επιπλέον πληροφορία.", th: "ข้อมูลเพิ่มเติมใด ๆ.", cs: "Jakékoli další informace.", hu: "Bármilyen további információ.", sv: "Eventuell ytterligare information.", da: "Eventuelle yderligere oplysninger." })}
+          </div>
+          <div className="h-4" />
+          <div className="bg-default-contrast p-1 rounded-xl flex flex-col gap-4 [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2 [&:has(:focus-visible)]:outline-default-contrast">
+            <textarea className="po-2 w-full resize-none focus-visible:outline-none"
+              readOnly
+              rows={6}
+              value={notes} />
+          </div>
+        </Fragment>}
       </form>
     </div>
   </Fragment>

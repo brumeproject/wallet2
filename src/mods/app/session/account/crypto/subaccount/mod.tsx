@@ -169,7 +169,7 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
     const solana = await getSolanaAddressOrThrow()
 
     const sticky = crypto.getRandomValues(new Uint8Array(32))
-    const client = await IrnClient.open(WalletConnect.RELAY, sticky, "c6c9bacd35afa3eb9e6cccf6d8464395")
+    const client = await IrnClient.open(WalletConnect.RELAY, sticky, "c687bd046ecc774e67a31a3bef2ebcc8")
 
     stack.defer(() => client.close())
 
@@ -248,8 +248,6 @@ export function CryptoSubaccountPage(props: { $entry: KDBX.Inner.KeePassFile.Ent
           "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         ],
         methods: [
-          "solana_getAccounts",
-          "solana_requestAccounts",
           "solana_signMessage",
           "solana_signTransaction",
         ],
