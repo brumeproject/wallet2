@@ -1,6 +1,6 @@
 import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
-import { chainlist } from "@/libs/chainlist/mod.ts";
+import { chainlist, SmallChainData } from "@/libs/chainlist/mod.ts";
 import { useCopy } from "@/libs/copy/mod.ts";
 import { ed25519 } from "@/libs/ed25519/mod.ts";
 import { Errors } from "@/libs/errors/mod.ts";
@@ -17,8 +17,8 @@ import { Cursor } from "@hazae41/cursor";
 import { EIP155UnsignedTransaction } from "@hazae41/eip155";
 import { EIP1559UnsignedTransaction } from "@hazae41/eip1559";
 import { EIP55Address } from "@hazae41/eip55";
-import { eip712, EIP712Data } from "@hazae41/eip712";
-import { RpcCounter, RpcErrorInit, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
+import { eip712 } from "@hazae41/eip712";
+import { RpcCounter, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { keccak256 } from "@hazae41/keccak256";
 import { WcSessionRequestParams, WcUnsupportedAccountsError, WcUnsupportedChainsError, WcUnsupportedMethodsError, WcUserRejectedError } from "@hazae41/latrine";
@@ -168,27 +168,6 @@ export interface EthSendTransactionParams {
   readonly nonce?: `0x${string}`
 }
 
-export interface EthCallLog {
-  readonly address: `0x${string}`
-  readonly topics: `0x${string}`[]
-  readonly data: `0x${string}`
-}
-
-export type EthCall =
-  | EthGoodCall
-  | EthFailCall
-
-export interface EthGoodCall {
-  readonly status: `0x1`,
-  readonly logs: EthCallLog[]
-}
-
-export interface EthFailCall {
-  readonly status: `0x0`,
-  readonly error: RpcErrorInit
-}
-
-
 export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry } & { subaccount: number } & { $subentry: KDBX.Inner.KeePassFile.Entry } & { request: CryptoRequest }) {
   const { $entry, subaccount, $subentry, request } = props
 
@@ -241,8 +220,40 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return RpcResponse.from<T>(await response.json())
   }, [])
 
+  const getEthereumTransactionOrThrow = useCallback(async (chain: SmallChainData, params: EthSendTransactionParams) => {
+    const { chainId } = chain
+
+    const { data, to, value = 0n } = params
+
+    const [nonce = await requestOrThrow<`0x${string}`>(chain.rpc, {
+      method: "eth_getTransactionCount",
+      params: [params.from, "latest"]
+    }).then(r => r.getOrThrow())] = [params.nonce]
+
+    const [gas = await requestOrThrow<`0x${string}`>(chain.rpc, {
+      method: "eth_estimateGas",
+      params: [{ to, data, value }]
+    }).then(r => r.getOrThrow())] = [params.gas]
+
+    if (params.gasPrice != null)
+      return EIP155UnsignedTransaction.from({ chainId, nonce, gasPrice: params.gasPrice, startGas: gas, to, value, data })
+    if (params.maxFeePerGas != null && params.maxPriorityFeePerGas != null)
+      return EIP1559UnsignedTransaction.from({ chainId, nonce, maxFeePerGas: params.maxFeePerGas, maxPriorityFeePerGas: params.maxPriorityFeePerGas, gasLimit: gas, destination: to, amount: value, data })
+
+    const feeHistory = await requestOrThrow<{ baseFeePerGas: `0x${string}`[], reward: `0x${string}`[][] }>(chain.rpc, {
+      method: "eth_feeHistory",
+      params: [1, "latest", [80]]
+    }).then(r => r.getOrThrow())
+
+    const baseFeePerGas = BigInt(feeHistory.baseFeePerGas[0])
+    const maxPriorityFeePerGas = BigInt(feeHistory.reward[0][0])
+    const maxFeePerGas = (baseFeePerGas * 2n) + maxPriorityFeePerGas
+
+    return EIP1559UnsignedTransaction.from({ chainId, nonce, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, destination: to, amount: value, data })
+  }, [requestOrThrow])
+
   const respondOrThrow = useCallback(async (params: WcSessionRequestParams) => {
-    const { request } = params
+    const { chainId, request } = params
 
     if (request.method === "personal_sign") {
       const [message, account] = request.params as [string, string]
@@ -290,51 +301,19 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     }
 
     if (request.method === "eth_sendTransaction") {
-      const [transaction] = request.params as [EthSendTransactionParams]
+      const [params] = request.params as [EthSendTransactionParams]
 
-      const { data, from, to, value = 0n } = transaction
-
-      const chain = chainlist.find(chain => chain.chainId === Number(params.chainId.split(":")[1]))
+      const chain = chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))
 
       if (chain == null)
         throw new WcUnsupportedChainsError()
 
       const current = await getEthereumAddressOrThrow()
 
-      if (from.toLowerCase() !== current.toLowerCase())
+      if (params.from.toLowerCase() !== current.toLowerCase())
         throw new WcUnsupportedAccountsError()
 
-      const getTransactionOrThrow = async () => {
-        const { chainId } = chain
-
-        const [nonce = await requestOrThrow<`0x${string}`>(chain.rpc, {
-          method: "eth_getTransactionCount",
-          params: [current, "latest"]
-        }).then(r => r.getOrThrow())] = [transaction.nonce]
-
-        const [gas = await requestOrThrow<`0x${string}`>(chain.rpc, {
-          method: "eth_estimateGas",
-          params: [{ to, data, value }]
-        }).then(r => r.getOrThrow())] = [transaction.gas]
-
-        if (transaction.gasPrice != null)
-          return EIP155UnsignedTransaction.from({ chainId, nonce, gasPrice: transaction.gasPrice, startGas: gas, to, value, data })
-        if (transaction.maxFeePerGas != null && transaction.maxPriorityFeePerGas != null)
-          return EIP1559UnsignedTransaction.from({ chainId, nonce, maxFeePerGas: transaction.maxFeePerGas, maxPriorityFeePerGas: transaction.maxPriorityFeePerGas, gasLimit: gas, destination: to, amount: value, data })
-
-        const feeHistory = await requestOrThrow<{ baseFeePerGas: `0x${string}`[], reward: `0x${string}`[][] }>(chain.rpc, {
-          method: "eth_feeHistory",
-          params: [1, "latest", [80]]
-        }).then(r => r.getOrThrow())
-
-        const baseFeePerGas = BigInt(feeHistory.baseFeePerGas[0])
-        const maxPriorityFeePerGas = BigInt(feeHistory.reward[0][0])
-        const maxFeePerGas = (baseFeePerGas * 2n) + maxPriorityFeePerGas
-
-        return EIP1559UnsignedTransaction.from({ chainId, nonce, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, destination: to, amount: value, data })
-      }
-
-      const utx = await getTransactionOrThrow()
+      const utx = await getEthereumTransactionOrThrow(chain, params)
 
       const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
       const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
@@ -393,31 +372,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     await Promise.resolve(new WcUserRejectedError()).then(request.reject).then(() => close(true))
   }).catch(Errors.display), [request, close])
 
-  const getChainOrThrow = useCallback((params: WcSessionRequestParams) => {
-    const { request, chainId } = params
-
-    if (request.method === "personal_sign")
-      return "Ethereum"
-
-    if (request.method === "eth_signTypedData_v4") {
-      const [account, data] = request.params as [string, string]
-
-      const { domain } = JSON.parse(data) as EIP712Data
-
-      return chainlist.find(chain => chain.chainId === Number(domain.chainId))?.name
-    }
-
-    if (request.method === "eth_sendTransaction")
-      return chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))?.name
-
-    if (request.method === "solana_signMessage")
-      return "Solana"
-    if (request.method === "solana_signTransaction")
-      return "Solana"
-
-    throw new WcUnsupportedMethodsError()
-  }, [])
-
   const getTypeOrThrow = useCallback((params: WcSessionRequestParams) => {
     const { request } = params
 
@@ -460,101 +414,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
-  const simulateOrThrow = useCallback(async (params: WcSessionRequestParams) => {
-    const { request, chainId } = params
-
-    if (request.method === "eth_sendTransaction") {
-      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }] = request.params as [EthSendTransactionParams]
-
-      const chain = chainlist.find(chain => chain.chainId === Number(chainId.split(":")[1]))
-
-      if (chain == null)
-        throw new WcUnsupportedChainsError()
-
-      const current = await getEthereumAddressOrThrow()
-
-      if (from.toLowerCase() !== current.toLowerCase())
-        throw new WcUnsupportedAccountsError()
-
-      const call = { data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }
-      const body = { blockStateCalls: [{ calls: [call] }], validation: true, traceTransfers: true }
-
-      const [{ calls: [result] }] = await requestOrThrow<[{ calls: [EthCall] }]>(chain.rpc, {
-        method: "eth_simulateV1",
-        params: [body, "latest"]
-      }).then(r => r.getOrThrow())
-
-      return result
-    }
-
-    if (request.method === "solana_signTransaction") {
-      const { transaction } = request.params as { transaction: string }
-
-      const result = await requestOrThrow("https://api.mainnet.solana.com", {
-        method: "simulateTransaction",
-        params: [transaction, { encoding: "base64", commitment: "finalized" }]
-      }).then(r => r.getOrThrow())
-
-      return result
-    }
-
-    throw new WcUnsupportedMethodsError()
-  }, [getEthereumAddressOrThrow, getSolanaAddressOrThrow, requestOrThrow])
-
-  const getDetailsOrThrow = useCallback((params: WcSessionRequestParams) => {
-    const { request, chainId } = params
-
-    if (request.method === "personal_sign") {
-      const [message, account] = request.params as [string, string]
-
-      const details = { message }
-
-      return JSON.stringify(details, null, 2)
-    }
-
-    if (request.method === "eth_signTypedData_v4") {
-      const [account, data] = request.params as [string, string]
-
-      const { domain, message, types, primaryType } = JSON.parse(data) as EIP712Data
-
-      const details = { chainId, domain, message, types, primaryType }
-
-      return JSON.stringify(details, null, 2)
-    }
-
-    if (request.method === "eth_sendTransaction") {
-      const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }] = request.params as [EthSendTransactionParams]
-
-      const details = { chainId, data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }
-
-      return JSON.stringify(details, null, 2)
-    }
-
-    if (request.method === "solana_signMessage") {
-      const { message } = request.params as { message: string, pubkey: string }
-
-      const details = { message }
-
-      return JSON.stringify(details, null, 2)
-    }
-
-    if (request.method === "solana_signTransaction") {
-      const { transaction } = request.params as { transaction: string }
-
-      const details = { transaction }
-
-      return JSON.stringify(details, null, 2)
-    }
-
-    throw new WcUnsupportedMethodsError()
-  }, [])
-
   const type = useMemo(() => {
     return Result.runAndWrapSync(() => getTypeOrThrow(request.params)).getOrNull()
-  }, [request])
-
-  const chain = useMemo(() => {
-    return Result.runAndWrapSync(() => getChainOrThrow(request.params)).getOrNull()
   }, [request])
 
   const message = useMemo(() => {
@@ -562,7 +423,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [request])
 
   const details = useMemo(() => {
-    return Result.runAndWrapSync(() => getDetailsOrThrow(request.params)).getOrNull()
+    return JSON.stringify(request.params, null, 2)
   }, [request])
 
   const copyTheDetails = useCopy(details)
@@ -602,22 +463,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         <input className="hidden"
           autoComplete="off"
           name="username" />
-        {chain != null && <Fragment>
-          <div className="h-6" />
-          <div className="font-medium">
-            {Lang.match({ en: "Chain", zh: "链", hi: "चेन", es: "Cadena", ar: "سلسلة", fr: "Chaîne", de: "Kette", ru: "Цепочка", pt: "Cadeia", ja: "チェーン", pa: "ਚੇਨ", bn: "চেইন", id: "Rantai", ur: "چین", ms: "Rantai", it: "Catena", tr: "Zincir", ta: "செயின்", te: "చెయిన్", ko: "체인", vi: "Chuỗi", pl: "Łańcuch", ro: "Lanț", nl: "Ketting", el: "Αλυσίδα ", th: "เชน ", cs: "Řetěz ", hu: "Lánc ", sv: "Kedja ", da: "Kæde" })}
-          </div>
-          <div className="text-default-contrast">
-            {Lang.match({ en: "The blockchain network of the request.", zh: "请求的区块链网络。", hi: "अनुरोध का ब्लॉकचेन नेटवर्क।", es: "La red blockchain de la solicitud.", ar: "شبكة البلوكشين للطلب.", fr: "Le réseau blockchain de la requête.", de: "Das Blockchain-Netzwerk der Anfrage.", ru: "Блокчейн-сеть запроса.", pt: "A rede blockchain da solicitação.", ja: "リクエストのブロックチェーンネットワーク。", pa: "ਬੇਨਤੀ ਦਾ ਬਲਾਕਚੇਨ ਨੈੱਟਵਰਕ।", bn: "অনুরোধের ব্লকচেইন নেটওয়ার্ক।", id: "Jaringan blockchain dari permintaan.", ur: "درخواست کا بلاکچین نیٹ ورک۔", ms: "Rantai blok dari permintaan.", it: "La rete blockchain della richiesta.", tr: "İsteğin blok zinciri ağı.", ta: "கோரிக்கையின் பிளாக்செயின் நெட்வொர்க்.", te: "అభ్యర్థన యొక్క బ్లాక్‌చైన్ నెట్‌వర్క్.", ko: "요청의 블록체인 네트워크입니다.", vi: "Mạng blockchain của yêu cầu.", pl: "Sieć blockchain żądania.", ro: "Rețeaua blockchain a cererii.", nl: "Het blockchain-netwerk van het verzoek.", el: "Το δίκτυο blockchain του αιτήματος ", th: "เครือข่ายบล็อกเชนของคำขอ ", cs: "Blockchain síť požadavku ", hu: "A kérés blokklánc hálózata ", sv: "Blockkedjanätverket för förfrågan ", da: "Blockchain-netværket for anmodningen" })}
-          </div>
-          <div className="h-4" />
-          <div className="bg-default-contrast po-2 rounded-xl flex items-center gap-4">
-            <input className="w-full focus-visible:outline-none"
-              readOnly
-              autoComplete="off"
-              value={chain} />
-          </div>
-        </Fragment>}
         {message != null && <Fragment>
           <div className="h-6" />
           <div className="font-medium">
@@ -633,7 +478,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             </pre>
           </div>
         </Fragment>}
-        {details != null && <Fragment>
+        <Fragment>
           <div className="h-6" />
           <div className="font-medium">
             {Lang.match({ en: "Details", zh: "详情", hi: "विवरण", es: "Detalles", ar: "تفاصيل", fr: "Détails", de: "Einzelheiten", ru: "Подробности", pt: "Detalhes", ja: "詳細", pa: "ਵੇਰਵੇ", bn: "বিস্তারিত", id: "Detail", ur: "تفصیلات", ms: "Detail", it: "Dettagli", tr: "Detaylar", ta: "விவரங்கள்", te: "వివరాలు", ko: "세부 정보", vi: "Chi tiết", pl: "Szczegóły", ro: "Detalii", nl: "Details", el: "Λεπτομέρειες ", th: "รายละเอียด ", cs: "Podrobnosti ", hu: "Részletek ", sv: "Detaljer ", da: "Detaljer" })}
@@ -657,7 +502,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
               {copyTheDetails.copied ? Lang.match({ en: "Copied", zh: "已复制", hi: "कॉपी किया गया", es: "Copiado", ar: "تم النسخ", fr: "Copié", de: "Kopiert", ru: "Скопировано", pt: "Copiado", ja: "コピーしました", pa: "ਨਕਲ ਕੀਤਾ", bn: "কপি করা হয়েছে", id: "Disalin", ur: "کاپی کیا گیا", ms: "Disalin", it: "Copiato", tr: "Kopyalandı", ta: "நகலெடுக்கப்பட்டது", te: "నకలించబడింది", ko: "복사됨", vi: "Đã sao chép", pl: "Skopiowano", ro: "Copiat", nl: "Gekopieerd", el: "Αντιγράφηκε ", th: "คัดลอกแล้ว ", cs: "Zkopírováno ", hu: "Másolva ", sv: "Kopierat ", da: "Kopieret" }) : Lang.match({ en: "Copy", zh: "复制", hi: "कॉपी करें", es: "Copiar", ar: "نسخ", fr: "Copier", de: "Kopieren", ru: "Копировать", pt: "Copiar", ja: "コピー", pa: "ਨਕਲ ਕਰੋ", bn: "কপি করুন", id: "Salin", ur: "کاپی کریں", ms: "Salin", it: "Copia", tr: "Kopyala", ta: "நகலெடுக்கவும்", te: "నకలించు", ko: "복사", vi: "Sao chép", pl: "Kopiuj", ro: "Copiați", nl: "Kopiëren", el: "Αντιγραφή ", th: "คัดลอก ", cs: "Kopírovat ", hu: "Másolás ", sv: "Kopiera ", da: "Kopier" })}
             </WideContrastButton>
           </div>
-        </Fragment>}
+        </Fragment>
         <div className="h-8 grow" />
         <div className="flex items-center flex-wrap-reverse gap-2">
           <WideContrastButton
