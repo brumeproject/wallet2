@@ -191,6 +191,18 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return $entry.getStringByKeyOrThrow("SeedPhrase").getValueOrThrow().get()
   }, [$entry])
 
+  const requestOrThrow = useCallback(async <T,>(rpc: string, req: RpcRequestPreinit<unknown>): Promise<RpcResponse<T>> => {
+    const headers = { "Content-Type": "application/json" }
+    const body = JSON.stringify(new RpcCounter().prepare(req))
+
+    const response = await fetch(rpc, { method: "POST", headers, body })
+
+    if (!response.ok)
+      throw new Error("Could not fetch", { cause: response })
+
+    return RpcResponse.from<T>(await response.json())
+  }, [])
+
   const getEthereumAddressOrThrow = useCallback(async () => {
     const seed = new BitcoinSeedKey(await BitcoinSeedPhrase.derive(seedphrase))
     const xsig = await seed.derive(`m/44'/60'/0'/0/${subaccount}`)
@@ -207,18 +219,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
 
     return base58.encode(upub)
   }, [seedphrase, subaccount])
-
-  const requestOrThrow = useCallback(async <T,>(rpc: string, req: RpcRequestPreinit<unknown>): Promise<RpcResponse<T>> => {
-    const headers = { "Content-Type": "application/json" }
-    const body = JSON.stringify(new RpcCounter().prepare(req))
-
-    const response = await fetch(rpc, { method: "POST", headers, body })
-
-    if (!response.ok)
-      throw new Error("Could not fetch", { cause: response })
-
-    return RpcResponse.from<T>(await response.json())
-  }, [])
 
   const getEthereumTransactionOrThrow = useCallback(async (chain: SmallChainData, params: EthSendTransactionParams) => {
     const { chainId } = chain
@@ -252,7 +252,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     return EIP1559UnsignedTransaction.from({ chainId, nonce, gasLimit: gas, maxFeePerGas, maxPriorityFeePerGas, destination: to, amount: value, data })
   }, [requestOrThrow])
 
-  const respondOrThrow = useCallback(async (params: WcSessionRequestParams) => {
+  const signOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { chainId, request } = params
 
     if (request.method === "personal_sign") {
@@ -365,8 +365,8 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
   }, [seedphrase, subaccount])
 
   const approve = useTask(() => Promise.try(async () => {
-    await respondOrThrow(request.params).then(request.resolve).then(() => close(true))
-  }).catch(Errors.display), [request, respondOrThrow, close])
+    await signOrThrow(request.params).then(request.resolve).then(() => close(true))
+  }).catch(Errors.display), [request, signOrThrow, close])
 
   const decline = useTask(() => Promise.try(async () => {
     await Promise.resolve(new WcUserRejectedError()).then(request.reject).then(() => close(true))
