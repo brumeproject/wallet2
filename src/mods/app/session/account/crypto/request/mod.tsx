@@ -1,4 +1,3 @@
-import { base16 } from "@/libs/base16/mod.ts";
 import { WideContrastButton, WideOppositeButton } from "@/libs/button/mod.tsx";
 import { FlipCard } from "@/libs/card/mod.tsx";
 import { chainlist } from "@/libs/chainlist/mod.ts";
@@ -11,7 +10,6 @@ import { Lang } from "@/libs/lang/mod.ts";
 import { Nullable } from "@/libs/nullable/mod.ts";
 import { Spinner } from "@/libs/spinner/mod.tsx";
 import { useSubmit } from "@/libs/submit/mod.ts";
-import { abi, AbiString, AbiUint256 } from "@hazae41/abi";
 import { base58 } from "@hazae41/base58";
 import { BitcoinSeedPhrase } from "@hazae41/broca";
 import { SubpathProvider, useAnchorWithCoords, useHashSubpath, usePathContext } from "@hazae41/chemin";
@@ -21,7 +19,6 @@ import { EIP155UnsignedTransaction } from "@hazae41/eip155";
 import { EIP1559UnsignedTransaction } from "@hazae41/eip1559";
 import { EIP55Address } from "@hazae41/eip55";
 import { eip712, EIP712Data } from "@hazae41/eip712";
-import { Fixed } from "@hazae41/fixed";
 import { RpcCounter, RpcErrorInit, RpcRequestPreinit, RpcResponse } from "@hazae41/jsonrpc";
 import * as KDBX from "@hazae41/kdbx";
 import { keccak256 } from "@hazae41/keccak256";
@@ -466,10 +463,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     throw new WcUnsupportedMethodsError()
   }, [])
 
-  const [error, setError] = useState<Nullable<string>>()
-
-  const [tokens, setTokens] = useState<Array<{ value: number, symbol: string, explorer?: string }>>()
-
   const simulateOrThrow = useCallback(async (params: WcSessionRequestParams) => {
     const { request, chainId } = params
 
@@ -494,77 +487,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
         params: [body, "latest"]
       }).then(r => r.getOrThrow())
 
-      if (result.status === "0x0")
-        setError(result.error.message)
-
-      if (result.status === "0x1") {
-        const tokens = new Array<{ value: number, symbol: string, explorer?: string }>()
-
-        for (const log of result.logs) {
-          const { address, topics } = log
-
-          const [event] = topics
-
-          if (event === "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef") {
-            const from = `0x${topics[1].slice(-40)}`
-            const to = `0x${topics[2].slice(-40)}`
-
-            if (![from.toLowerCase(), to.toLowerCase()].includes(current.toLowerCase()))
-              continue
-
-            if (address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
-              const { symbol, decimals } = chain.nativeCurrency
-
-              const value = Number(new Fixed(BigInt(log.data), decimals).toString())
-
-              if (from.toLowerCase() === current.toLowerCase())
-                tokens.push({ value: -value, symbol })
-              if (to.toLowerCase() === current.toLowerCase())
-                tokens.push({ value: +value, symbol })
-
-              continue
-            }
-
-            const decode = (hex: `0x${string}`) => Uint8Array.fromHex(base16.padStart(hex.slice(2)))
-
-            const [symbol] = await requestOrThrow<`0x${string}`>(chain.rpc, {
-              method: "eth_call",
-              params: [{ to: address, data: "0x95d89b41" }, "latest"]
-            }).then(r => abi.decode([AbiString], decode(r.getOrThrow())))
-
-            const [decimals] = await requestOrThrow<`0x${string}`>(chain.rpc, {
-              method: "eth_call",
-              params: [{ to: address, data: "0x313ce567" }, "latest"]
-            }).then(r => abi.decode([AbiUint256], decode(r.getOrThrow())))
-
-            const value = Number(new Fixed(BigInt(log.data), Number(decimals)).toString())
-
-            if (from.toLowerCase() === current.toLowerCase())
-              tokens.push({ value: -value, symbol: symbol.replaceAll(/[^a-zA-Z0-9]+/g, ""), explorer: `https://blockscan.com/token/${address}?chainId=${chain.chainId}` })
-            if (to.toLowerCase() === current.toLowerCase())
-              tokens.push({ value: +value, symbol: symbol.replaceAll(/[^a-zA-Z0-9]+/g, ""), explorer: `https://blockscan.com/token/${address}?chainId=${chain.chainId}` })
-
-            continue
-          }
-
-          // if (event === "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
-          //   let previousOwner = `0x${topics[1].slice(-40)}`
-          //   let newOwner = `0x${topics[2].slice(-40)}`
-
-          //   if (previousOwner.toLowerCase() === current.toLowerCase())
-          //     previousOwner = "(you)"
-          //   if (newOwner.toLowerCase() === current.toLowerCase())
-          //     newOwner = "(you)"
-
-          //   // events.push({ event: "OwnershipTransferred", contract: address, previousOwner, newOwner })
-          // }
-
-          continue
-        }
-
-        setTokens(tokens)
-      }
-
       return result
     }
 
@@ -577,12 +499,7 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
     if (request.method === "eth_sendTransaction") {
       const [{ data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce }] = request.params as [EthSendTransactionParams]
 
-      if (simulation == null)
-        return
-      if (simulation.isErr())
-        return
-
-      return JSON.stringify({ chainId, data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce, result: simulation.get() }, null, 2)
+      return JSON.stringify({ chainId, data, from, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, to, value, nonce, result: simulation?.getOrNull() }, null, 2)
     }
 
     if (request.method === "eth_signTypedData_v4") {
@@ -682,61 +599,6 @@ export function CryptoRequestPage(props: { $entry: KDBX.Inner.KeePassFile.Entry 
             <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
               {message}
             </pre>
-          </div>
-        </Fragment>}
-        {error != null && <Fragment>
-          <div className="h-6" />
-          <div className="font-medium">
-            {Lang.match({ en: "Error", zh: "错误", hi: "त्रुटि", es: "Error", ar: "خطأ", fr: "Erreur", de: "Fehler", ru: "Ошибка", pt: "Erro", ja: "エラー", pa: "ਗਲਤੀ", bn: "ত্রুটি", id: "Kesalahan", ur: "خرابی", ms: "Kesalahan", it: "Errore", tr: "Hata", ta: "பிழை", te: "లోపం", ko: "오류", vi: "Lỗi", pl: "Błąd", ro: "Eroare", nl: "Foutmelding", el: "Σφάλμα ", th: "ข้อผิดพลาด ", cs: "Chyba ", hu: "Hiba ", sv: "Fel ", da: "Fejl" })}
-          </div>
-          <div className="text-default-contrast">
-            {Lang.match({ en: "The request is likely to fail with this message.", zh: "请求可能会因该消息而失败。", hi: "यह संदेश अनुरोध को विफल कर सकता है।", es: "Es probable que la solicitud falle con este mensaje.", ar: "من المحتمل أن يفشل الطلب مع هذه الرسالة.", fr: "Il est probable que la requête échoue avec ce message.", de: "Die Anfrage schlägt wahrscheinlich mit dieser Nachricht fehl.", ru: "Запрос, вероятно, завершится неудачей с этим сообщением.", pt: "É provável que a solicitação falhe com esta mensagem.", ja: "このメッセージでリクエストが失敗する可能性があります。", pa: "ਇਹ ਸੁਨੇਹਾ ਨਾਲ ਬੇਨਤੀ ਅਸਫਲ ਹੋ ਸਕਦੀ ਹੈ।", bn: "এই বার্তাটি সহ অনুরোধটি ব্যর্থ হতে পারে।", id: "Permintaan kemungkinan akan gagal dengan pesan ini.", ur: "یہ پیغام درخواست کو ناکام بنا سکتا ہے۔", ms: "Permintaan kemungkinan akan gagal dengan pesan ini.", it: "È probabile che la richiesta fallisca con questo messaggio.", tr: "Bu mesajla istek başarısız olabilir.", ta: "இந்த செய்தியுடன் கோரிக்கை தோல்வியடையக்கூடும்.", te: "ఈ సందేశంతో అభ్యర్థన విఫలమవుతుంది.", ko: "이 메시지로 요청이 실패할 가능성이 있습니다.", vi: "Yêu cầu có thể thất bại với thông báo này.", pl: "Żądanie prawdopodobnie zakończy się niepowodzeniem z tym komunikatem.", ro: "Cererea este susceptibilă de a eșua cu acest mesaj.", nl: "Het verzoek zal waarschijnlijk mislukken met dit bericht.", el: "Το αίτημα πιθανότατα θα αποτύχει με αυτό το μήνυμα ", th: "คำขออาจล้มเหลวด้วยข้อความนี้ ", cs: "Žádost pravděpodobně selže s touto zprávou ", hu: "A kérés valószínűleg ezzel az üzenettel fog meghiúsulni ", sv: "Förfrågan kommer sannolikt att misslyckas med detta meddelande ", da: "Anmodningen vil sandsynligvis mislykkes med denne besked" })}
-          </div>
-          <div className="h-4" />
-          <div className="flex flex-col items-center border border-default-contrast rounded-xl p-6">
-            <pre className="whitespace-pre-wrap text-wrap wrap-anywhere">
-              {error}
-            </pre>
-          </div>
-        </Fragment>}
-        {tokens != null && <Fragment>
-          <div className="h-6" />
-          <div className="font-medium">
-            {Lang.match({ en: "Balance change estimate", zh: "余额变动估计", hi: "बैलेंस परिवर्तन अनुमान", es: "Estimación de cambio de saldo", ar: "تقدير تغيير الرصيد", fr: "Estimation du changement de solde", de: "Schätzung der Saldenänderung", ru: "Оценка изменения баланса", pt: "Estimativa de mudança de saldo", ja: "残高変動の見積もり", pa: "ਬੈਲੰਸ ਬਦਲਾਅ ਅੰਦਾਜ਼ਾ", bn: "ব্যালেন্স পরিবর্তনের অনুমান", id: "Perkiraan perubahan saldo", ur: "بیلنس کی تبدیلی کا تخمینہ", ms: "Anggaran perubahan baki", it: "Stima della variazione del saldo", tr: "Bakiye değişikliği tahmini", ta: "சமநிலை மாற்றத்தின் மதிப்பீடு", te: "బ్యాలెన్స్ మార్పు అంచనా", ko: "잔액 변경 추정", vi: "Ước tính thay đổi số dư", pl: "Szacowana zmiana salda", ro: "Estimarea schimbării soldului", nl: "chatting van saldoverandering", el: "Εκτίμηση αλλαγής υπολοίπου", th: "การประมาณการเปลี่ยนแปลงยอดคงเหลือ", cs: "Odhad změny zůstatku", hu: "Egyenlegváltozás becslése", sv: "Beräknad saldoändring", da: "Estimat ændring af saldo" })}
-          </div>
-          <div className="text-default-contrast">
-            {Lang.match({ en: "How your balance will likely change.", zh: "您的余额可能会如何变化。", hi: "आपका बैलेंस कैसे बदल सकता है।", es: "Cómo es probable que cambie su saldo.", ar: "كيف من المحتمل أن يتغير رصيدك.", fr: "Comment votre solde va probablement changer.", de: "Wie sich Ihr Kontostand wahrscheinlich ändern wird.", ru: "Как, вероятно, изменится ваш баланс.", pt: "Como seu saldo provavelmente mudará.", ja: "残高がどのように変化するか。", pa: "ਤੁਹਾਡਾ ਬੈਲੰਸ ਕਿਵੇਂ ਬਦਲ ਸਕਦਾ ਹੈ।", bn: "আপনার ব্যালেন্স কিভাবে পরিবর্তিত হতে পারে।", id: "Bagaimana saldo Anda kemungkinan akan berubah.", ur: "آپ کا بیلنس کیسے تبدیل ہو سکتا ہے۔", ms: "Bagaimana baki Anda kemungkinan akan berubah.", it: "Come il tuo saldo probabilmente cambierà.", tr: "Bakiyenizin nasıl değişeceği muhtemeldir.", ta: "உங்கள் சமநிலை எப்படி மாறும் என்பது சாத்தியமாக உள்ளது.", te: "మీ బ్యాలెన్స్ ఎలా మారవచ్చు.", ko: "잔액이 어떻게 변할 수 있는지.", vi: "Số dư của bạn có thể thay đổi như thế nào.", pl: "Jak Twój balans prawdopodobnie się zmieni.", ro: "Cum se va schimba probabil soldul dvs.", nl: "Hoe uw saldo waarschijnlijk zal veranderen.", el: "Πώς πιθανότατα θα αλλάξει το υπόλοιπό σας ", th: "ยอดคงเหลือของคุณจะเปลี่ยนแปลงอย่างไร ", cs: "Jak se pravděpodobně změní váš zůstatek ", hu: "Hogyan változhat a egyenleged ", sv: "Hur ditt saldo sannolikt kommer att förändras ", da: "Hvordan dit saldo sandsynligvis vil ændre sig" })}
-          </div>
-          <div className="h-4" />
-          <div className="flex flex-col items-center gap-2 border border-default-contrast rounded-xl p-6">
-            {tokens.map((token, index) => <Fragment key={index}>
-              <div className="w-full rounded-xl po-2 bg-default-contrast">
-                {token.explorer != null &&
-                  <div className="flex items-center gap-2">
-                    <div className="font-medium wrap-break-word grow">
-                      {token.value.toLocaleString(Lang.get(), { signDisplay: "always", maximumSignificantDigits: 4 })}
-                    </div>
-                    <div className="font-medium">
-                      "{token.symbol}"
-                    </div>
-                    <a className=""
-                      rel="noopener noreferrer"
-                      href={token.explorer}
-                      target="_blank">
-                      <Outline.ArrowTopRightOnSquareIcon className="size-4" />
-                    </a>
-                  </div>}
-                {token.explorer == null &&
-                  <div className="flex items-center gap-2">
-                    <div className="font-medium wrap-break-word grow">
-                      {token.value.toLocaleString(Lang.get(), { signDisplay: "always", maximumSignificantDigits: 4 })}
-                    </div>
-                    <div className="font-medium">
-                      {token.symbol}
-                    </div>
-                  </div>}
-              </div>
-            </Fragment>)}
           </div>
         </Fragment>}
         {details != null && <Fragment>
